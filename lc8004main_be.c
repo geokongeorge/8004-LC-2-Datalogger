@@ -14795,44 +14795,18 @@ void storeChannelReading(int ch) {
     else
         FRAMaddress = (baseAddress * (outputPosition - 1))+(6 * (ch - 1) + 12); //calculate the external FRAM address
 
-    //if(MUX4_ENABLE.mflags.mux16_4!=TH8 && MUX4_ENABLE.mflags.mux16_4!=TH32)     //VER 6.0.9   REM VER 6.0.13
     if (MUX4_ENABLE.mflags.mux16_4 == Single | MUX4_ENABLE.mflags.mux16_4 == VW4 | MUX4_ENABLE.mflags.mux16_4 == VW16) //VER 6.0.13
     {
-        //if(ch==1)                                                               //Allow FRAM to wakeup  REV X REM REV AE
-        //{
-        //    write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading
-            //write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading 
-            //write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading
-            //write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading
-            //write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading
-        //}
         write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading
         write_Int_FRAM(FRAMaddress + 4, extThermreading); //store the external thermistor reading 12bit ADC value
     } 
     else
     if (MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW32) //VER 6.0.13
     {
-        //if(ch==1)                                                               //Allow FRAM to wakeup  REV X REM REV AE
-        //{
-        //    write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading
-            //write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading
-            //write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading
-            //write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading
-            //write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading
-        //}
         write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading
     } 
     else 
     {
-        //if(ch==1)                                                               //Allow FRAM to wakeup  REV X REM REV AE
-        //{
-        //    write_Int_FRAM(FRAMaddress, extThermreading); //8 or 32 channel therm mux: store the external thermistor reading 12bit ADC value
-        //    write_Int_FRAM(FRAMaddress, extThermreading); //8 or 32 channel therm mux: store the external thermistor reading 12bit ADC value
-        //    write_Int_FRAM(FRAMaddress, extThermreading); //8 or 32 channel therm mux: store the external thermistor reading 12bit ADC value
-        //    write_Int_FRAM(FRAMaddress, extThermreading); //8 or 32 channel therm mux: store the external thermistor reading 12bit ADC value
-        //    write_Int_FRAM(FRAMaddress, extThermreading); //8 or 32 channel therm mux: store the external thermistor reading 12bit ADC value
-        //}
-            
         write_Int_FRAM(FRAMaddress, extThermreading); //8 or 32 channel therm mux: store the external thermistor reading 12bit ADC value
     }
 
