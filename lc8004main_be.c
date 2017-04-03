@@ -14814,7 +14814,6 @@ void storeChannelReading(int ch) {
 
 unsigned long storeReading(int ch) {
     unsigned long FRAMaddress;
-    //unsigned int Y = 0; //TEST VER 6.0.4
     unsigned char baseAddress = 0; //VER 6.0.10
 
 
@@ -14824,20 +14823,6 @@ unsigned long storeReading(int ch) {
     userPosition=read_Int_FRAM(UserPositionaddress);                           //get the user position
     FRAM_MEMORY.memory=read_Int_FRAM(FRAM_MEMORYflagsaddress);             //get max # of arrays
     
-
-    /*REM VER 6.0.10:
-    if(MUX4_ENABLE.mflags.mux16_4==VW4)                                           //if 4 channel MUX  VER 6.0.7
-        FRAMaddress=(36*(outputPosition-1));                                  //calculate the external FRAM address (4 channel)
-    if(MUX4_ENABLE.mflags.mux16_4==VW16)                                           //if 16 channel MUX VER 6.0.7
-        FRAMaddress=(108*(outputPosition-1));                                 //calculate the external FRAM address (16 channel)
-    if(MUX4_ENABLE.mflags.mux16_4==Single)                                           //Single Channel    VER 6.0.7
-        FRAMaddress=(20*(outputPosition-1));                                  //calculate the external FRAM address (single channel);
-    if(MUX4_ENABLE.mflags.mux16_4==TH8)                                           //8 Channel    VER 6.0.7
-        FRAMaddress=(30*(outputPosition-1));                                  //calculate the external FRAM address (8 channel);
-    if(MUX4_ENABLE.mflags.mux16_4==TH32)                                           //32 Channel    VER 6.0.9
-        FRAMaddress=(80*(outputPosition-1));                                  //calculate the external FRAM address (32 channel);
-     */
-
     //VER 6.0.10:
     if (MUX4_ENABLE.mflags.mux16_4 == Single) //if Single Channel VW
         baseAddress = SingleVWBytes; //external FRAM base address (Single channel)
