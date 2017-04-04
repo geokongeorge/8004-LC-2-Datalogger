@@ -13,12 +13,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		3/31/2017
+//	DATE:		4/4/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   be
-//	CHECKSUM:	0x9a07 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0xc14c (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8632/30720   28%
-//	PGM(FLASH)MEM:  148107/261888 57%
+//	PGM(FLASH)MEM:  148101/261888 57%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -145,7 +145,7 @@
 //                                  Make a separate FRAM_ADDRESSa.h file for external FRAM addressing and include
 //      bd      3/29/17             Incorporate MODBUS Command decoding
 //                                  Perform one complete MODBUS transaction (read MODBUS address)
-//      be      3/31/17             Include FRAM_ADDRESSb.h to remap FRAM memory so common functions are contiguous
+//      be      4/4/17             Include FRAM_ADDRESSb.h to remap FRAM memory so common functions are contiguous
 //
 //
 //
@@ -5387,9 +5387,10 @@ void displayGageInfo(int channel) //display the gage information
     
     //if(MUX4_ENABLE.mflags.mux16_4!=TH8 && MUX4_ENABLE.mflags.mux16_4!=TH32)     //if VW MUX REV S REM REV T
 	//{                                                                         //REM REV T
-		address=CH1GTaddress+(0x1A*(channel-1));
+		//address=CH1GTaddress+(0x1A*(channel-1));                              //REM REV BE
+        address=CH1GTaddress+(2*(channel-1));                                   //REV BE
 		//Thermaddress=_4CHMuxCH1THaddress+(0x02*(channel-1));                  //REM REV T
-        Thermaddress=CH1THaddress+(0x02*(channel-1));                           //REV T
+        Thermaddress=CH1THaddress+(2*(channel-1));                              //REV T
 	//}                                                                         //REM REV T
     
     if(MUX4_ENABLE.mflags.mux16_4!=TH8 && MUX4_ENABLE.mflags.mux16_4!=TH32)     //REV T
@@ -6076,12 +6077,14 @@ void displayGageInfo(int channel) //display the gage information
 
             putsUART1(PB);
             while (BusyUART1());
-            TEMPVAL=read_longFRAM(PolyCoAaddress+0x0004);                        //extract coefficient B from FRAM   
+            //TEMPVAL=read_longFRAM(PolyCoAaddress+0x0004);                        //extract coefficient B from FRAM   REM REV BE
+            TEMPVAL=read_longFRAM(PolyCoAaddress+0x0080);                       //extract coefficient B from FRAM   REV BE
             formatandDisplayGageInfo(TEMPVAL);
 
             putsUART1(PC);
             while (BusyUART1());
-            TEMPVAL=read_longFRAM(PolyCoAaddress+0x0008);                        //extract coefficient C from FRAM   
+            //TEMPVAL=read_longFRAM(PolyCoAaddress+0x0008);                        //extract coefficient C from FRAM   REM REV BE
+            TEMPVAL=read_longFRAM(PolyCoAaddress+0x0100);                        //extract coefficient C from FRAM  REV BE
             formatandDisplayGageInfo(TEMPVAL);
         } else 
         {
@@ -6092,12 +6095,14 @@ void displayGageInfo(int channel) //display the gage information
 
             putsUART1(GF);
             while (BusyUART1());
-            TEMPVAL=read_longFRAM(ZeroReadingaddress+0x0004);                    //extract Gage Factor from FRAM 
+            //TEMPVAL=read_longFRAM(ZeroReadingaddress+0x0004);                    //extract Gage Factor from FRAM  REM REV BE
+            TEMPVAL=read_longFRAM(ZeroReadingaddress+0x0080);                    //extract Gage Factor from FRAM REV BE
             formatandDisplayGageInfo(TEMPVAL);
 
             putsUART1(GO);
             while (BusyUART1());
-            TEMPVAL=read_longFRAM(ZeroReadingaddress+0x0008);                    //extract Gage Offset from FRAM 
+            //TEMPVAL=read_longFRAM(ZeroReadingaddress+0x0008);                    //extract Gage Offset from FRAM  REM REV BE
+            TEMPVAL=read_longFRAM(ZeroReadingaddress+0x0100);                    //extract Gage Offset from FRAM REV BE
             formatandDisplayGageInfo(TEMPVAL);
         }
     }
@@ -12770,44 +12775,51 @@ void loadDefaults(void)
 
 
     //initialize gage types to 1:
-    for (i = CH1GTaddress; i < CH32GTaddress + 1; i += 0x001A)                  //channel gage type selection loop 
+    //for (i = CH1GTaddress; i < CH32GTaddress + 1; i += 0x001A)                  //channel gage type selection loop    REM REV BE
+    for (i = CH1GTaddress; i < CH32GTaddress + 1; i += 2)                       //channel gage type selection loop  REV BE
     {
         write_Int_FRAM(i,1);					//write 1 to channel gage type  
     }
 
     //initialize zero reading to 0:
-    for (i = CH1ZRaddress; i < CH32ZRaddress + 1; i += 0x001A) //channel zero reading selection loop
+    //for (i = CH1ZRaddress; i < CH32ZRaddress + 1; i += 0x001A) //channel zero reading selection loop  REM REV BE
+    for (i = CH1ZRaddress; i < CH32ZRaddress + 1; i += 4)                       //channel zero reading selection loop   REV BE
     {
         write_longFRAM(0,i);                                                    //write 0 to channel zero reading 
     }
 
 
     //initialize gage factor to 1:
-    for (i = CH1GFaddress; i < CH32GFaddress + 1; i += 0x001A) //channel gage factor selection loop
+    //for (i = CH1GFaddress; i < CH32GFaddress + 1; i += 0x001A) //channel gage factor selection loop   REM REV BE
+    for (i = CH1GFaddress; i < CH32GFaddress + 1; i += 4)                       //channel gage factor selection loop REV BE
     {
         write_longFRAM(1,i);                                                    //write 1 to channel gage factor  
     }
 
     //initialize gage offset to 0:
-    for (i = CH1GOaddress; i < CH32GOaddress + 1; i += 0x001A) //channel gage offset selection loop
+    //for (i = CH1GOaddress; i < CH32GOaddress + 1; i += 0x001A) //channel gage offset selection loop   REM REV BE
+    for (i = CH1GOaddress; i < CH32GOaddress + 1; i += 4)                       //channel gage offset selection loop REV BE
     {
         write_longFRAM(0,i);                                                    //write 0 to channel gage offset  
     }
 
     //initialize polynomial coefficient A to 0:
-    for (i = CH1PolyCoAaddress; i < CH32PolyCoAaddress + 1; i += 0x001A) //channel polynomial coefficient A selection loop
+    //for (i = CH1PolyCoAaddress; i < CH32PolyCoAaddress + 1; i += 0x001A) //channel polynomial coefficient A selection loop    REM REV BE
+    for (i = CH1PolyCoAaddress; i < CH32PolyCoAaddress + 1; i += 4)             //channel polynomial coefficient A selection loop  REV BE
     {
         write_longFRAM(0,i);                                                    //write 0 to channel polynomial coefficient A 
     }
 
     //initialize polynomial coefficient B to 1:
-    for (i = CH1PolyCoBaddress; i < CH32PolyCoBaddress + 1; i += 0x001A) //channel polynomial coefficient B selection loop
+    //for (i = CH1PolyCoBaddress; i < CH32PolyCoBaddress + 1; i += 0x001A) //channel polynomial coefficient B selection loop    REM REV BE
+    for (i = CH1PolyCoBaddress; i < CH32PolyCoBaddress + 1; i += 4)             //channel polynomial coefficient B selection loop  REV BE
     {
         write_longFRAM(1,i);                                                    //write 1 to channel polynomial coefficient B 
     }
 
     //initialize polynomial coefficient C to 0:
-    for (i = CH1PolyCoCaddress; i < CH32PolyCoCaddress + 1; i += 0x001A) //channel polynomial coefficient C selection loop
+    //for (i = CH1PolyCoCaddress; i < CH32PolyCoCaddress + 1; i += 0x001A) //channel polynomial coefficient C selection loop    REM REV BE
+    for (i = CH1PolyCoCaddress; i < CH32PolyCoCaddress + 1; i += 4)             //channel polynomial coefficient C selection loop  REV BE
     {
         write_longFRAM(0,i);                                                    //write 0 to channel polynomial coefficient C 
     }
@@ -14743,7 +14755,8 @@ void storeGageType(int channel, int gageType) {
     unsigned long address;                                                      //REV L
 
     //calculate indexed address for gage type                                   
-    address = CH1GTaddress + (0x1A * (channel - 1));
+    //address = CH1GTaddress + (0x1A * (channel - 1));                          REM REV BE
+    address = CH1GTaddress + (2 * (channel - 1));                               //REV BE
 
     //write the gage type to the calculated address
     write_Int_FRAM(address,gageType);                                           //store gage type in FRAM 
