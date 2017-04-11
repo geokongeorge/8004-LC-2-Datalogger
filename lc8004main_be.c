@@ -16,7 +16,7 @@
 //	DATE:		4/4/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   be
-//	CHECKSUM:	0xc14c (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0xc5bb (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8632/30720   28%
 //	PGM(FLASH)MEM:  148101/261888 57%
 
@@ -3475,10 +3475,12 @@ void CMDcomm(void)
                         }
                         while (BusyUART1());
 
+
                         if (LC2CONTROL2.flags2.Waiting) //display logging start time	
                         {
                             crlf();
                             displayLoggingWillStart();
+                            while (BusyUART1());                                    //REV BE
                         }
 
                         if (LC2CONTROL.flags.LoggingStopTime) //display logging stop time
@@ -3486,8 +3488,10 @@ void CMDcomm(void)
                             LC2CONTROL2.flags2.SetStopTime = 1; //set the flag to format the stop time
                             crlf();
                             displayLoggingWillStop();
+                            while (BusyUART1());                                    //REV BE
                             LC2CONTROL2.flags2.SetStopTime = 0; //reset the flag
                         }
+                        
 
                         crlf(); //display log interval status
 
@@ -6863,7 +6867,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
     if (MUX4_ENABLE.mflags.mux16_4 == Single) //Single Channel VW
     {
         FRAMaddress = SingleVWPosition;
-        NOB=28;                                                                 //28 bytes for binary download  REV AB
+        NOB=28;                                                                 //28 bytes for binary download  REV AB  
     }
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW4) //4 Channel VW
