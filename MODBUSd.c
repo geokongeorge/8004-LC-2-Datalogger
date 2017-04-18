@@ -1,4 +1,4 @@
-//****************************MODBUSa.c**********************************
+//****************************MODBUSc.c**********************************
 //
 //			8004 MODBUS COMMUNICATION ROUTINES
 //
@@ -6,43 +6,152 @@
 //REV A: 03/16/17                                                               Implement reception of MODBUS packet
 //                                                                              Implement 1.5 & 3.5 Timers
 //                                                                              Implement CRC generation and checking
-//REV B: 03/24/17                                                               Incorporate MODBUS slave addressing
+//REV B: 03/24/17                                                               Incorporate MODBUS slave addressing & decoding
+//REV C: 03/28/17                                                               Incorporate COMMAND decoding
+//REV D: 04/14/17                                                               Incorporate paging for memory addressing
 
 
-#include "MODBUSb.h"  
-#include "FRAM_ADDRESSa.h"                                                      
+#include "MODBUSd.h"  
+#include "FRAM_ADDRESSc.h"    
+#include "LC8004extFRAM_h.h"
 #include <xc.h>
 #include <uart.h>
 #include <stdbool.h>
 
 
-char MODBUSbuf[8];
+unsigned char MODBUS_RXbuf[125];                                                //125 registers max
+unsigned char MODBUS_TXbuf[125];                                                //125 registers max   
 unsigned int modbusaddressvalue;
+unsigned int ECHO=0;                                                            //REV D
 
 
 void MODBUScomm(void)
 {
+    unsigned char a=0;                                                          //loop index
     unsigned char arraysize=0;
+    unsigned long memaddressStart=0;                                          
     csum       csumdata;                                                        //csumdata[1] is MSB, csumdata[0] is LSB
+    csum       value;                                                           //value[1] is MSB, value[0] is LSB]
+    csum       registers;                                                       //registers[1] is MSB, registers [0] is LSB
+    
+    for(a=0;a<125;a++)                                                        //TEST REM
+    {
+        MODBUS_TXbuf[a]=0;                                                      //Clear the MODBUS_TXbuf[]                 
+    }                                                                           
     
     //Determine if crc value is correct:
     arraysize=MODBUS_RX();                                                      //Receive the incoming MODBUS packet
     csumdata.c=CRC(TEST,arraysize);                                             //compute the crc checksum
-    if((MODBUSbuf[(arraysize-1)] != csumdata.z[1]) | (MODBUSbuf[(arraysize-2)] != csumdata.z[0]))  //received crc does not agree with computed crc
+    if((MODBUS_RXbuf[(arraysize-1)] != csumdata.z[1]) | (MODBUS_RXbuf[(arraysize-2)] != csumdata.z[0]))  //received crc does not agree with computed crc
     {
         IFS3bits.T9IF=1;                                                        //exit if crc error
         return;
     }
+    
     //crc value is correct so test if address is correct:
     modbusaddressvalue=read_Int_FRAM(MODBUSaddress);
-    if(MODBUSbuf[ADDRESS]!=modbusaddressvalue)                                  //
+    if(MODBUS_RXbuf[ADDRESS]!=modbusaddressvalue)                                  //
     {
         IFS3bits.T9IF=1;                                                        //exit if not an address match
         return;
-    }        
+    }      
     
-    Nop();
+    
+    //address is correct so get the starting memory address that the function will work with:
+    if(MODBUS_RXbuf[COMMAND]==READ_HOLDING)
+    {
+        //get the memory page                                                   //REV D
+        memaddressStart=read_Int_FRAM(MODBUS_PAGEaddress);                      //REV D
+        memaddressStart<<=8;                                                    //Shift the page 8 bits to the left
+        memaddressStart|=MODBUS_RXbuf[REGISTER_MSB];                            //Add the MSB
+        memaddressStart<<=8;                                                    //Shift 8 bits to the left
+        memaddressStart|=MODBUS_RXbuf[REGISTER_LSB];                            //Add the LSB
+    }
+    
+    if(MODBUS_RXbuf[COMMAND]==WRITE_HOLDING)
+    {
+        memaddressStart=0x07;                                                   //load 0x07
+        memaddressStart<<=8;                                                    //Shift the 0x7 8 bits to the left
+        memaddressStart|=MODBUS_RXbuf[REGISTER_MSB];                            //Add the MSB
+        memaddressStart<<=8;                                                    //Shift 8 bits to the left
+        memaddressStart|=MODBUS_RXbuf[REGISTER_LSB];                            //Add the LSB        
+    }
+    
+    //get & perform the function:
+    switch(MODBUS_RXbuf[COMMAND])
+    {
+        case READ_HOLDING:                                                      //REV C
+            //get the number of registers to be read:
+            registers.z[1]=MODBUS_RXbuf[4];
+            registers.z[0]=MODBUS_RXbuf[5];
+            
+            for(a=0;a<((registers.c)*2);a+=2)
+            {
+                value.c=read_Int_FRAM((memaddressStart)+a);
+                MODBUS_TXbuf[a+3]=value.z[1];                                   //load the MSB of the value into MODBUS_TXbuf[] odd registers starting at 0x03
+                MODBUS_TXbuf[a+4]=value.z[0];                                   //load the LSB of the value into MODBUX_TXbuf[] even registers starting at 0x04
+            }
+            
+            MODBUS_TXbuf[BYTE_COUNT]=2*(registers.c);                           //REV C
+            break;
+            
+        case WRITE_HOLDING:
+            if((memaddressStart>=0x7FA6C) && (memaddressStart<=0x7FFFF))        //Registers are not write protected
+            {
+                MODBUS_TXbuf[REGISTER_MSB]=MODBUS_RXbuf[REGISTER_MSB];          //Load the TXbuf[] with Register address MSB
+                MODBUS_TXbuf[REGISTER_LSB]=MODBUS_RXbuf[REGISTER_LSB];          //Load the TXbuf[] with Register address LSB
+                value.z[1]=MODBUS_RXbuf[WRITE_DATA_MSB];                        //get the write data MSB
+                MODBUS_TXbuf[WRITE_DATA_MSB]=MODBUS_RXbuf[WRITE_DATA_MSB];      //Load the TXbuf[] with data MSB
+                value.z[0]=MODBUS_RXbuf[WRITE_DATA_LSB];                        //get the write data LSB
+                MODBUS_TXbuf[WRITE_DATA_LSB]=MODBUS_RXbuf[WRITE_DATA_LSB];      //Load the TXbuf[] with data LSB
+                write_Int_FRAM(memaddressStart, value.c);                       //Write to FRAM Register             
+            }
+            else
+            {
+                IFS3bits.T9IF=1;                                                //exit if write protected
+                return;                
+            }
+            Nop();
+            break;
+            
+        case WRITE_MULTIPLE:
+            Nop();
+            break;
+            
+        default:
+            Nop();
+            break;
+    }
+    
+    //Fill in remaining registers:
+    MODBUS_TXbuf[ADDRESS]=MODBUS_RXbuf[ADDRESS];
+    MODBUS_TXbuf[COMMAND]=MODBUS_RXbuf[COMMAND];
+    //MODBUS_TXbuf[BYTE_COUNT]=2*(registers.c);                                 //REM REV C
+    
+    //calculate and append the crc value to the end of the array (little endian)
+    if(MODBUS_RXbuf[COMMAND]==READ_HOLDING)
+    {
+        csumdata.c=CRC(GENERATE,MODBUS_TXbuf[BYTE_COUNT]+5);                    //compute the crc checksum on the MODBUS_TXbuf[]
+        MODBUS_TXbuf[a+3]= csumdata.z[0];                                       //attach crc LSB
+        MODBUS_TXbuf[a+4]= csumdata.z[1];                                       //attach crc MSB
+        ECHO=0;                                                                 //REV D
+    }
+    else
+    {
+        csumdata.c=CRC(GENERATE,8);                                             //REV D
+        MODBUS_TXbuf[6]= csumdata.z[0];                                         //attach crc LSB
+        MODBUS_TXbuf[7]= csumdata.z[1];                                         //attach crc MSB
+        ECHO=1;                                                                 //REV D
+    }
+    
+    //Transmit the array:
+    MODBUS_TX(ECHO);        
+    
+    IFS3bits.T9IF=1;                                                        //exit if not an address match
+    return;
 }
+
+
 void configMODBUStimers(void)
 {
     
@@ -107,25 +216,25 @@ unsigned int CRC(_Bool test, unsigned char size)
     unsigned int i=0;
     unsigned int x=0;
         
-    if(test)                                                                    //check received CRC against computed CRC
+    for(i=0;i<size-2;i++)                                                   //CRC calculation
     {
-        for(i=0;i<sizeof(MODBUSbuf)-2;i++)
+        if(test)
+            crcREG^=MODBUS_RXbuf[i];                                               
+        else
+            crcREG^=MODBUS_TXbuf[i]; 
+        for(x=0;x<8;x++)
         {
-            crcREG^=MODBUSbuf[i];                                               //XOR crcREG with MODBUSbuf{i}
-            for(x=0;x<8;x++)
+            if((crcREG & 0x0001) !=0)
             {
-                if((crcREG & 0x0001) !=0)
-                {
-                    crcREG>>=1;
-                    crcREG^=0xA001;
-                }
-                else
-                {
-                    crcREG>>=1;
-                }
+                crcREG>>=1;
+                crcREG^=0xA001;
             }
-
+            else
+            {
+                crcREG>>=1;
+            }
         }
+
     }
     
     return crcREG;
@@ -140,7 +249,7 @@ unsigned char MODBUS_RX(void)
     
     
     unsigned char i;   
-    char MODBUSdata=0;
+    unsigned char MODBUSdata=0;
     unsigned char T2counts=0;
 
     
@@ -153,9 +262,9 @@ unsigned char MODBUS_RX(void)
     {
         configMODBUStimers();                                                   //Setup TMR2 & TMR6 for packet timing
 
-        for (i = 0; i < 8; i++) //clear the buffer
+        for (i = 0; i < 125; i++) //clear the buffer
         {
-            MODBUSbuf[i] = 0;
+            MODBUS_RXbuf[i] = 0;
         }
 
         i = 0;                                                                  //initialize char buffer index
@@ -178,7 +287,6 @@ unsigned char MODBUS_RX(void)
                 {
                     T2CONbits.TON=0;                                            //Stop TMR2 
                     IFS0bits.T2IF=0;                                            //clear the interrupt flag
-                    testPoint(1,1);
                     T2counts+=1;                                                //increment the intercharacter timeout register
                     TMR2=0;                                                     //Clear the TMR2 register            
                     T2CONbits.TON=1;                                            //Restart TMR2
@@ -191,15 +299,9 @@ unsigned char MODBUS_RX(void)
                     PMD3bits.T6MD=1;                                            //Disable TMR6 module
                     IFS3bits.T9IF=1;                                            //Set the T9IF go to sleep
                     if(T2counts!=2)                                             //2 1.5 character timeouts occur before  end of packet   
-                    {
-                        testPoint(1,2);
                         return 0;
-                    }
                     else
-                    {
-                        testPoint(1,3);
                         return i;                                               //RETURN # OF CHARS IN ARRAY
-                    }
                 }
                 
 
@@ -208,7 +310,7 @@ unsigned char MODBUS_RX(void)
                 
                 MODBUSdata = ReadUART1();                                       //get the char from the USART buffer
                 
-                MODBUSbuf[i] = MODBUSdata;                                      //store the received char in the buffer(i)
+                MODBUS_RXbuf[i] = MODBUSdata;                                      //store the received char in the buffer(i)
                 MODBUSdata=0;                                                   //zero the MODBUSdata
                 i++;
                 
@@ -225,4 +327,26 @@ unsigned char MODBUS_RX(void)
     }                                                                           
     
     return 0;
+}
+
+void MODBUS_TX(unsigned int echo)                                               //REV D
+{
+    unsigned char i; 
+    
+    if(!echo)
+    {
+        for(i=0;i<MODBUS_TXbuf[BYTE_COUNT]+5;i++)                                   
+        {
+            putcUART1(MODBUS_TXbuf[i]);
+            while(BusyUART1());
+        }
+    }
+    else
+    {
+        for(i=0;i<8;i++)                                                        //REV D
+        {
+            putcUART1(MODBUS_TXbuf[i]);
+            while(BusyUART1());
+        }        
+    }
 }
