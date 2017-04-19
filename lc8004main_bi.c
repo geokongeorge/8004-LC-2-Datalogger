@@ -13,12 +13,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		4/18/2017
+//	DATE:		4/19/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   bi
-//	CHECKSUM:	0xec19 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x8e71 (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8634/30720   28%
-//	PGM(FLASH)MEM:  149361/261888 57%
+//	PGM(FLASH)MEM:  149310/261888 57%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -15477,6 +15477,10 @@ void take_One_Complete_Reading(unsigned char store)
 
         if (!store)
             IEC1bits.INT1IE = 0; //temporarily disable the INT2 interrupt
+        
+        VWreadingProcessed=-0.0;                                                //Store -0.0 to indicate channel is disabled    REV BI
+        extThermreading=0x0001;                                                 //Store -0.0 to indicate channel is disabled    REV BI
+        storeChannelReading(ch);                                                //store the reading REV BI
 
         if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32) //VER 6.0.9
         {
@@ -15486,8 +15490,6 @@ void take_One_Complete_Reading(unsigned char store)
 
                     if (!MUX_ENABLE1_16.e1flags.CH1) //is channel disabled?
                     {
-                        VWreadingProcessed=-0.0;                                //Store -0.0 to indicate channel is disabled    REV BI
-                        storeChannelReading(ch);                                //store the reading REV BI
                         MUX4_ENABLE.mflags.skip = 1; //set the skip flag
                         break; //break out of switch(ch)
                     }
@@ -15507,8 +15509,6 @@ void take_One_Complete_Reading(unsigned char store)
 
                     if (!MUX_ENABLE1_16.e1flags.CH2) //is channel disabled?
                     {
-                        VWreadingProcessed=-0.0;                                //Store -0.0 to indicate channel is disabled    REV BI
-                        storeChannelReading(ch);                                //store the reading REV BI                        
                         MUX4_ENABLE.mflags.skip = 1; //set the skip flag
                         break; //break out of switch(ch)
                     }
@@ -15528,8 +15528,6 @@ void take_One_Complete_Reading(unsigned char store)
 
                     if (!MUX_ENABLE1_16.e1flags.CH3) //is channel disabled?
                     {
-                        VWreadingProcessed=-0.0;                                //Store -0.0 to indicate channel is disabled    REV BI
-                        storeChannelReading(ch);                                //store the reading REV BI                        
                         MUX4_ENABLE.mflags.skip = 1; //set the skip flag
                         break; //break out of switch(ch)
                     }
@@ -15549,8 +15547,6 @@ void take_One_Complete_Reading(unsigned char store)
 
                     if (!MUX_ENABLE1_16.e1flags.CH4) //is channel disabled?
                     {
-                        VWreadingProcessed=-0.0;                                //Store -0.0 to indicate channel is disabled    REV BI
-                        storeChannelReading(ch);                                //store the reading REV BI                        
                         MUX4_ENABLE.mflags.skip = 1; //set the skip flag
                         break; //break out of switch(ch)
                     }
@@ -16140,13 +16136,7 @@ void take_One_Complete_Reading(unsigned char store)
                         MUX4_ENABLE.mflags.mux16_4 == VW4 |
                         MUX4_ENABLE.mflags.mux16_4 == VW16)
                 {
-                    Nop();                                                      //FOR TEST REV AE
-                    /*                                                          REM REV AE
-                    extThermreading = take_analog_reading(85); //take external thermistor reading
-                    extThermRaw=((Vref*extThermreading)/4096);	//convert to float voltage	 REV J  TEST REM REV K
-                    extThermProcessed=V_HT2C(extThermRaw,ch);		//convert to float degrees C	REV J
-                    extThermreading=f32toINT16(extThermProcessed);	//convert float to 16 bit	REV J
-                     */
+
                     //REV AE:
                     extThermreading = take_analog_reading(85); //take external thermistor reading
                     if(extThermreading>5000)
