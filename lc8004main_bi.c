@@ -16,8 +16,8 @@
 //	DATE:		4/20/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   bi
-//	CHECKSUM:	0x2895 (MPLABX ver 3.15 and XC16 ver 1.26)
-//	DATA(RAM)MEM:	8634/30720   28%
+//	CHECKSUM:	0x3900 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	DATA(RAM)MEM:	8636/30720   28%
 //	PGM(FLASH)MEM:  149205/261888 57%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
@@ -2031,8 +2031,8 @@ void CMDcomm(void)
                     {
                         PORT_CONTROL.flags.BluetoothTimerEN = 0;                //clear Bluetooth Timer enable flag
                         write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);	//store flag in FRAM`
-                        S1.statusflags.BT_Timer=0;                              //clear the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S1.status1);
+                        S_1.status1flags.BT_Timer=0;                              //clear the MODBUS status flag    REV BF
+                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
                         disableAlarm(Alarm2);                                   //disable the Alarm2 interrupt		
                         BTStatus();                                             //display Bluetooth status
                         break;
@@ -2044,8 +2044,8 @@ void CMDcomm(void)
                         PORT_CONTROL.flags.PortTimerEN=0;                       //clear the Control Port Timer enable flag
                         PORT_CONTROL.flags.BTTime = 0;                          //clear the BTtime flag
                         write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);	//store flag in FRAM 
-                        S1.statusflags.BT_Timer=1;                              //set the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S1.status1);
+                        S_1.status1flags.BT_Timer=1;                              //set the MODBUS status flag    REV BF
+                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
                         delay(4000);                                            //REV AE    if this delay required? TEST
                         enableAlarm(Alarm2); //enable the Alarm2 interrupt
                         BTStatus();                                             //display Bluetooth status
@@ -2740,8 +2740,8 @@ void CMDcomm(void)
                             while (BusyUART1());
                             LC2CONTROL.flags.LogInterval = 0; //clear the Log interval flag
                             write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM  
-                            S1.statusflags.Logint=0;                            //Clear the MODBUS status flag    REV BF
-                            write_Int_FRAM(MODBUS_STATUS1address,S1.status1);
+                            S_1.status1flags.Logint=0;                            //Clear the MODBUS status flag    REV BF
+                            write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
                             break;
                         }
                         crlf();
@@ -2773,8 +2773,8 @@ void CMDcomm(void)
                             LC2CONTROL.flags.LogInterval = 1; //Set Log intervals flag
                             write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM  VER 6.0.13  
                             
-                            S1.statusflags.Logint=1;                            //Set the MODBUS status flag    REV BF
-                            write_Int_FRAM(MODBUS_STATUS1address,S1.status1);
+                            S_1.status1flags.Logint=1;                            //Set the MODBUS status flag    REV BF
+                            write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
 
                             DISPLAY_CONTROL.flags.Synch = 0; //clear the Synch flag
                             write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//store flags in FRAM 
@@ -2958,8 +2958,8 @@ void CMDcomm(void)
                         write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//store flag in FRAM  
                         MUX4_ENABLE.mflags.mux16_4=0;                           //clear the mux flags   REV K
                         MUX4_ENABLE.mflags.mux16_4 = Single;                    //Single Channel Datalogger selected
-                        S1.statusflags.CFG=Single;                              //set the MODBUS status flags    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S1.status1);        
+                        S_1.status1flags.CFG=Single;                              //set the MODBUS status flags    REV BF
+                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);        
                         write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);	//store flag in FRAM  
                         MUX_ENABLE1_16.e1flags.CH1=1;                           //REV K
                         write_Int_FRAM(MUX_ENABLE1_16flagsaddress,MUX_ENABLE1_16.MUXen1_16);  //REV K
@@ -3010,8 +3010,8 @@ void CMDcomm(void)
 
                         MUX4_ENABLE.mflags.mux16_4 = VW4; //4 channel VW/TH mux selected  VER 6.0.7
                         write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);	//store flag in FRAM  
-                        S1.statusflags.CFG=VW4;                                 //set the MODBUS status flags    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S1.status1);      
+                        S_1.status1flags.CFG=VW4;                                 //set the MODBUS status flags    REV BF
+                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);      
                         LogIntLength = minScanFourVW;
                         hms(minScanFourVW, 0); //load 10S scan interval if 4 channel mode
                         putsUART1(MUX4); //Display 4 Channel Mux Selected.
@@ -3032,8 +3032,8 @@ void CMDcomm(void)
 
                         MUX4_ENABLE.mflags.mux16_4 = TH8; //8 channel thermistor mux selected VER 6.0.7
                         write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);	//store flag in FRAM 
-                        S1.statusflags.CFG=TH8;                                 //set the MODBUS status flags    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S1.status1);                              
+                        S_1.status1flags.CFG=TH8;                                 //set the MODBUS status flags    REV BF
+                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                              
                         LogIntLength = minScanEightTH;
                         hms(5, 0); //load 5S scan interval if 8 channel thermistor mode
                         putsUART1(MUX8); //Display 8 Channel Mux Selected.
@@ -3054,8 +3054,8 @@ void CMDcomm(void)
 
                         MUX4_ENABLE.mflags.mux16_4 = TH32; //32 channel thermistor mux selected
                         write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);	//store flag in FRAM
-                        S1.statusflags.CFG=TH32;                                //set the MODBUS status flags    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S1.status1);                              
+                        S_1.status1flags.CFG=TH32;                                //set the MODBUS status flags    REV BF
+                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                              
                         LogIntLength = minScanThirtytwoTH;
                         hms(10, 0); //load 10S scan interval if 32 channel thermistor mode
                         putsUART1(MUX32); //Display 32 Channel Mux Selected.
@@ -3075,8 +3075,8 @@ void CMDcomm(void)
 
                         MUX4_ENABLE.mflags.mux16_4 = VW16; //16 channel VW/TH mux selected VER 6.0.7
                         write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);	//store flag in FRAM 
-                        S1.statusflags.CFG=VW16;                                //set the MODBUS status flags    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S1.status1);                              
+                        S_1.status1flags.CFG=VW16;                                //set the MODBUS status flags    REV BF
+                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                              
                         LogIntLength = minScanSixteenVW;
                         hms(minScanSixteenVW, 0); //load 30S scan interval if 16 channel mode
                         putsUART1(MUX16); //Display 16 Channel Mux Selected.
@@ -3097,8 +3097,8 @@ void CMDcomm(void)
 
                         MUX4_ENABLE.mflags.mux16_4 = VW8; //8 channel VW mux selected
                         write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);	//store flag in FRAM 
-                        S1.statusflags.CFG=VW8;                                 //set the MODBUS status flags    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S1.status1);                              
+                        S_1.status1flags.CFG=VW8;                                 //set the MODBUS status flags    REV BF
+                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                              
                         LogIntLength = minScanEightVW;
                         hms(minScanEightVW, 0); //load min scan interval if 8 channel VW mode
                         putsUART1(MUX8VW); //Display 8 Channel VW Mux Selected.
@@ -3119,8 +3119,8 @@ void CMDcomm(void)
 
                         MUX4_ENABLE.mflags.mux16_4 = VW32; //32 channel VW mux selected
                         write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);	//store flag in FRAM 
-                        S1.statusflags.CFG=VW32;                                //set the MODBUS status flags    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S1.status1);                              
+                        S_1.status1flags.CFG=VW32;                                //set the MODBUS status flags    REV BF
+                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                              
                         LogIntLength = minScanThirtytwoVW;
                         hms(minScanThirtytwoVW, 0); //load min scan interval if 32 channel VW mode
                         putsUART1(MUX32VW); //Display 32 Channel VW Mux Selected.
@@ -3260,8 +3260,8 @@ void CMDcomm(void)
                     {
                         CONTROL = 0;
                         _READ=1;                                                //OFF the LED   REV B
-                        S1.statusflags.CP=0;                                    //clear the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S1.status1);
+                        S_1.status1flags.CP=0;                                    //clear the MODBUS status flag    REV BF
+                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
                         if (!PORT_CONTROL.flags.CPTime) //turn off control port
                             PORT_CONTROL.flags.ControlPortON = 0; //clear flag if not in scheduled ON time
                         PORT_CONTROL.flags.O0issued = 1; //set O0issued flag
@@ -3274,8 +3274,8 @@ void CMDcomm(void)
                     {
                         CONTROL = 1; //turn on control port
                         _READ=0;                                                //LED ON    REV B
-                        S1.statusflags.CP=1;                                    //set the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S1.status1);
+                        S_1.status1flags.CP=1;                                    //set the MODBUS status flag    REV BF
+                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
                         PORT_CONTROL.flags.ControlPortON = 1;
                         PORT_CONTROL.flags.O0issued = 0; //clear O0issued flag
                         write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);	//store flag in FRAM  
@@ -3287,8 +3287,8 @@ void CMDcomm(void)
                     {
                         PORT_CONTROL.flags.PortTimerEN = 0;                     //clear Port Timer enable flag
                         write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);	//store flag in FRAM`
-                        S1.statusflags.CP_Timer=0;                              //clear the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S1.status1);
+                        S_1.status1flags.CP_Timer=0;                              //clear the MODBUS status flag    REV BF
+                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
                         disableAlarm(Alarm2); //disable the Alarm2 interrupt		
                         controlPortStatus(1);                                   //display control port status   REV AG
                         break;
@@ -3300,8 +3300,8 @@ void CMDcomm(void)
                         PORT_CONTROL.flags.BluetoothTimerEN = 0;                //clear Bluetooth Timer enable flag REV AG
                         PORT_CONTROL.flags.CPTime = 0;                          //clear the CPtime flag
                         write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);	//store flag in FRAM  
-                        S1.statusflags.CP_Timer=1;                              //set the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S1.status1);                        
+                        S_1.status1flags.CP_Timer=1;                              //set the MODBUS status flag    REV BF
+                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                        
                         delay(4000);                                            //REV AE    if this delay required? TEST
                         enableAlarm(Alarm2); //enable the Alarm2 interrupt
                         controlPortStatus(1);                                   //display control port status   REV AG
@@ -3661,8 +3661,8 @@ void CMDcomm(void)
 
                         LC2CONTROL.flags.LoggingStopTime = 1; //set the LoggingStopTime flag		
                         write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM 
-                        S1.statusflags.SP=1;                                    //set the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S1.status1);                              
+                        S_1.status1flags.SP=1;                                    //set the MODBUS status flag    REV BF
+                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                              
                         LC2CONTROL2.flags2.SetStopTime = 1; //set the SetStopTime flag
 
                         Buf2DateTime(buffer); //get Logging Stop Time from buffer
@@ -3671,8 +3671,8 @@ void CMDcomm(void)
                             LC2CONTROL.flags.ERROR = 0; //clear the ERROR flag
                             LC2CONTROL.flags.LoggingStopTime = 0; //clear the LoggingStopTime flag
                             write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM  
-                            S1.statusflags.SP=0;                                //clear the MODBUS status flag    REV BF
-                            write_Int_FRAM(MODBUS_STATUS1address,S1.status1);      
+                            S_1.status1flags.SP=0;                                //clear the MODBUS status flag    REV BF
+                            write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);      
                             LC2CONTROL2.flags2.SetStopTime = 0; //clear the SetStopTime flag
                             break;
                         }
@@ -3861,8 +3861,8 @@ void CMDcomm(void)
                         LC2CONTROL.flags.LoggingStartTime = 1;
                         LC2CONTROL.flags.Logging = 0;
                         write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM 
-                        S1.statusflags.ST=1;                                    //set the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S1.status1);                          
+                        S_1.status1flags.ST=1;                                    //set the MODBUS status flag    REV BF
+                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                          
                         LC2CONTROL2.flags2.SetStartTime = 1; //Going to set Start time	
                         DISPLAY_CONTROL.flags.Synch = 0; //make sure Synch flag is clear	
                         write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//store flags in FRAM  
@@ -3876,8 +3876,8 @@ void CMDcomm(void)
                             LC2CONTROL.flags.ERROR = 0; //clear the ERROR flag
                             LC2CONTROL.flags.LoggingStartTime = 0; //clear the LoggingStartTime flag
                             write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM 
-                            S1.statusflags.ST=0;                                //clear the MODBUS status flag    REV BF
-                            write_Int_FRAM(MODBUS_STATUS1address,S1.status1);                              
+                            S_1.status1flags.ST=0;                                //clear the MODBUS status flag    REV BF
+                            write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                              
                             LC2CONTROL2.flags2.SetStartTime = 0; //clear the SetStartTime flag
                             break;
                         }
@@ -3974,8 +3974,8 @@ void CMDcomm(void)
                         crlf();
                         DISPLAY_CONTROL.flags.Synch = 0; //clear the Synch flag
                         write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//store flags in FRAM 
-                        S1.statusflags.Sync=0;                                  //clear the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S1.status1);                        
+                        S_1.status1flags.Sync=0;                                  //clear the MODBUS status flag    REV BF
+                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                        
                         putsUART1(Synchnot); //"Readings are not synchronized to the top of the hour"
                         while (BusyUART1());
 
@@ -3997,8 +3997,8 @@ void CMDcomm(void)
                         crlf();
                         DISPLAY_CONTROL.flags.Synch = 1; //set the Synch flag
                         write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//store flags in FRAM 
-                        S1.statusflags.Sync=1;                                  //set the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S1.status1);                                
+                        S_1.status1flags.Sync=1;                                  //set the MODBUS status flag    REV BF
+                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                                
                         putsUART1(Synch); //"Readings are synchronized to the top of the hour"
                         while (BusyUART1());
 
@@ -4554,8 +4554,8 @@ void CMDcomm(void)
                         shutdownTimer(TimeOut);                                 //Reset 15S timer   REV Z
                         DISPLAY_CONTROL.flags.WrapMemory = 0; //clear the wrap memory flag
                         write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//store flags in FRAM 
-                        S1.statusflags.Wrap=0;                                  //Clear the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S1.status1);
+                        S_1.status1flags.Wrap=0;                                  //Clear the MODBUS status flag    REV BF
+                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
                         putsUART1(Loggingwillstopmemfull);
                         while (BusyUART1());
                         break;
@@ -4567,8 +4567,8 @@ void CMDcomm(void)
                         shutdownTimer(TimeOut);                                 //Reset 15S timer   REV Z
                         DISPLAY_CONTROL.flags.WrapMemory = 1; //set the wrap memory flag
                         write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//store flags in FRAM`
-                        S1.statusflags.Wrap=1;                                  //Set the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S1.status1);                        
+                        S_1.status1flags.Wrap=1;                                  //Set the MODBUS status flag    REV BF
+                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                        
                         putsUART1(Loggingwillnotstopmemfull);
                         while (BusyUART1());
                         break;
@@ -5129,8 +5129,8 @@ void disableBT(void)                                                            
     {
         DISPLAY_CONTROL.flags.BT=0;                                             //clear the BT flag
         write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);    //store flags in FRAM   
-        S1.statusflags.BT=0;                                                    //Clear the MODBUS status flag    REV BF
-        write_Int_FRAM(MODBUS_STATUS1address,S1.status1);
+        S_1.status1flags.BT=0;                                                    //Clear the MODBUS status flag    REV BF
+        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
         _BT_RESET=0;                                                            //make sure RESET is low    
         BT_BAUD=0;                                                              //make sure BT_BAUD is low          
         BT_ENABLE=0;                                                            //Powerdown Bluetooth
@@ -10506,8 +10506,8 @@ void enableBT(void)                                                      //REV A
     BT_BAUD=0;                                                                  //Set baudrate to 115.2k    REV AD
     DISPLAY_CONTROL.flags.BT=1;                                                 //set the BT flag
     write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);        //store flags in FRAM  
-    S1.statusflags.BT=1;                                                        //set the MODBUS status flag    REV BF
-    write_Int_FRAM(MODBUS_STATUS1address,S1.status1);
+    S_1.status1flags.BT=1;                                                        //set the MODBUS status flag    REV BF
+    write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
     PMD3bits.T6MD=0;                                                            //Enable Timer 6   REV AE
     //crlf();                                                                   REM REV AG
     //putsUART1(BTEnabled);                                                      //Display "Bluetooth Disabled."    REM REV AG
@@ -14708,8 +14708,8 @@ void startLogging(void) {
     LC2CONTROL.flags.LoggingStartTime = 0;
     write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flags in FRAM 
     
-    S1.statusflags.Logging=1;                                                   //Set the MODBUS status flag    REV BF
-    write_Int_FRAM(MODBUS_STATUS1address,S1.status1);
+    S_1.status1flags.Logging=1;                                                   //Set the MODBUS status flag    REV BF
+    write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
 
     DISPLAY_CONTROL.flags.monitorWasEnabled = 0; //clear the BPD flags
     DISPLAY_CONTROL.flags.newPointer = 0;
@@ -14758,8 +14758,8 @@ void stopLogging(void)
     LC2CONTROL.flags.LoggingStopTime = 0; //Clear Stop Logging flag
     write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM 
     
-    S1.statusflags.Logging=0;                                                   //Clear the MODBUS status flag    REV BF
-    write_Int_FRAM(MODBUS_STATUS1address,S1.status1);
+    S_1.status1flags.Logging=0;                                                  //Clear the MODBUS status flag    REV BF
+    write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
 
 
     LC2CONTROL2.flags2.Waiting = 0; //Clear the Waiting flag
@@ -18107,9 +18107,9 @@ void __attribute__((__interrupt__)) _INT1Interrupt(void)                        
                 Nop();
                 PORT_CONTROL.flags.ControlPortON = 1; //set flag
                 PORT_CONTROL.flags.CPTime = 1; //set flag
-                S1.statusflags.CP=1;                                            //set the MODBUS status flag    REV BF
-                S1.statusflags.CP_Timer=1;                                      //set the MODBUS status flag    REV BF
-                write_Int_FRAM(MODBUS_STATUS1address,S1.status1);
+                S_1.status1flags.CP=1;                                            //set the MODBUS status flag    REV BF
+                S_1.status1flags.CP_Timer=1;                                      //set the MODBUS status flag    REV BF
+                write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
 
                 PortOffHours=read_Int_FRAM(PortOffHoursaddress);                //write Port OFF hours to RTC 
                 setClock(RTCAlarm2HoursAddress, PortOffHours);
@@ -18124,9 +18124,9 @@ void __attribute__((__interrupt__)) _INT1Interrupt(void)                        
                 PORT_CONTROL.flags.ControlPortON = 0; //clear flag
                 PORT_CONTROL.flags.O0issued = 0; //clear flag
                 PORT_CONTROL.flags.CPTime = 0; //clear flag
-                S1.statusflags.CP=0;                                            //clear the MODBUS status flag    REV BF
-                S1.statusflags.CP_Timer=0;                                      //clear the MODBUS status flag    REV BF
-                write_Int_FRAM(MODBUS_STATUS1address,S1.status1);                
+                S_1.status1flags.CP=0;                                            //clear the MODBUS status flag    REV BF
+                S_1.status1flags.CP_Timer=0;                                      //clear the MODBUS status flag    REV BF
+                write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                
                 PortOnHours=read_Int_FRAM(PortOnHoursaddress);                  //write Port ON hours to RTC  
                 setClock(RTCAlarm2HoursAddress, PortOnHours);
                 PortOnMinutes=read_Int_FRAM(PortOnMinutesaddress);              //write Port ON minutes to RTC    
