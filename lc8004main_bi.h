@@ -1124,7 +1124,7 @@ void clockMux(unsigned int);
 void clockSwitch(unsigned char);                                                //REV AF
 void clockThMux(unsigned int);                                                  
 void CMDcomm(void);                                                             //REV BA
-void config_Ports_Low_Power(void);
+//void config_Ports_Low_Power(void);
 void configShutdownTimer(void);                                                 //REV Z
 void configTimers(void);                                                        //REV M
 void configUARTnormal(void);
