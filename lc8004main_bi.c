@@ -13,12 +13,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		4/19/2017
+//	DATE:		4/20/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   bi
-//	CHECKSUM:	0x8e71 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x2895 (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8634/30720   28%
-//	PGM(FLASH)MEM:  149310/261888 57%
+//	PGM(FLASH)MEM:  149205/261888 57%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -149,7 +149,7 @@
 //      bf      4/11/17             Implement MODBUS Read & write holding registers
 //      bg      4/17/17             Incorporate paging for MODBUS addressing of holding registers
 //      bh      4/18/17             Change Seconds_Since_Midnight value that is stored in FRAM from type 32 bit float to type 32 bit unsigned long  
-//      bi      4/19/17             Store -0.0 in FRAM addresses for disabled channel value
+//      bi      4/20/17             Store -0.0 in FRAM addresses for disabled channel value
 //
 //
 //
@@ -4755,7 +4755,7 @@ void CMDcomm(void)
 
 
 
-
+/*
 void config_Ports_Low_Power(void) {
     TRISA = 0x1400; //RA12 & RA10 is input
     LATA = 0x0000;
@@ -4788,6 +4788,8 @@ void config_Ports_Low_Power(void) {
     //ADCON2=0;                                                                   //VDD & VSS are references
     //ADCON1bits.ADON=0;                                                          //make sure ADC off
 }
+*/
+
 
 void configShutdownTimer(void)
 {
