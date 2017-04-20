@@ -357,14 +357,23 @@ typedef struct{                                                                 
                                                                                 //000   VW/TH4
 	unsigned 	ST:1;                                                           //1=Start Time Enabled,0=Disabled   1=Enable Start Time,0=Disable
     unsigned 	SP:1;                                                           //1=Stop Time Enabled,0=Disabled    1=Enable Stop Time,0=Disable
-	unsigned	R:1;                                                            //                                  1=Reset memory pointers
-	unsigned	X:1;                                                            //                                  1=Take single reading not stored
-    unsigned    E:1;                                                            //                                  1=Sleep
 }Status1ControlBits;
 typedef union{ unsigned int status1;
-Status1ControlBits statusflags;
+Status1ControlBits status1flags;
 }s1flags;
-s1flags	S1;
+s1flags	S_1;
+
+//REV BI
+//MODBUS CONTROL1 REGISTER:
+typedef struct{                                                                 //WRITE
+	unsigned	X:1;                                                            //1=Take single reading not stored
+	unsigned	R:1;                                                            //1=Reset memory pointers
+}Control1ControlBits;
+typedef union{ unsigned int control1;
+Control1ControlBits control1flags;
+}c1flags;
+c1flags	C_1;
+
 
 //*********************************************************************
 
