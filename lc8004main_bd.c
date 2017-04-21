@@ -13,12 +13,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		4/21/2017
+//	DATE:		3/24/2017
 //	DESIGNER: 	GEORGE MOORE
-//	REVISION:   ca
-//	CHECKSUM:	0x3900 (MPLABX ver 3.15 and XC16 ver 1.26)
-//	DATA(RAM)MEM:	8636/30720   28%
-//	PGM(FLASH)MEM:  149205/261888 57%
+//	REVISION:   bc
+//	CHECKSUM:	0xa3b9 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	DATA(RAM)MEM:	8604/30720   28%
+//	PGM(FLASH)MEM:  147153/261888 56%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -138,19 +138,9 @@
 //                                  rename Comm() CMDcomm()
 //                                  Add MODBUSa.c,.h
 //                                  Debug MODBUS t3,5 end-of-frame detection & t1,5 intercharacter timing
-//                                  Add ":::"<CR> to enter MODBUS comms and bootup with stream of ";;;;;;;"etc to enter command-line comms
 //      bb      3/21/17             Add CRC computation
 //      bc      3/24/17             Add MODBUS slave addressing
 //                                  include MODBUSb.c,.h
-//                                  Make a separate FRAM_ADDRESSa.h file for external FRAM addressing and include
-//      bd      3/29/17             Incorporate MODBUS Command decoding
-//                                  Perform one complete MODBUS transaction (read MODBUS address)
-//      be      4/4/17              Include FRAM_ADDRESSb.h to remap FRAM memory so common functions are contiguous
-//      bf      4/11/17             Implement MODBUS Read & write holding registers
-//      bg      4/17/17             Incorporate paging for MODBUS addressing of holding registers
-//      bh      4/18/17             Change Seconds_Since_Midnight value that is stored in FRAM from type 32 bit float to type 32 bit unsigned long  
-//      bi      4/20/17             Store -0.0 in FRAM addresses for disabled channel value
-//      ca      4/20/17             Same as rev bi but uC pinout for 8004 rev 1 pcb
 //
 //
 //
@@ -192,20 +182,19 @@
 
 
 //	The following files are included in the MPLAB project:
-//	Z:\8004\LC8004main_ca.c (main source: x is revision level)
+//	Z:\8004\LC8004main_bc.c (main source: x is revision level)
 //	Z:\8004\LC8004delay_b.c
-//	Z:\8004\LC8004extFRAM_i.c
+//	Z:\8004\LC8004extFRAM_h.c
 //  Z:\8004\AD5241a.c
-//  Z:\8004\MODBUSe.c                                                           REV BH
+//  Z:\8004\MODBUSb.c                                                           REV BA
 
 //	Header Files:
 //#include "p33FJ256GP710A.h"
-//#include "LC8004extFRAM_i.h"                              
-//#include "LC8004main_ca.h"
+//#include "LC8004extFRAM_h.h"                              
+//#include "LC8004main_bc.h"
 //#include "LC8004delay_b.h"
 //#include "AD5241a.h"
-//#include "MODBUSe.h"                                                          REV BH
-//#include "FRAM_ADDRESSc.h                                                     REV BE
+//#include "MODBUSb.h"                                                          REV BA
 //#include <outcompare.h>
 //#include <ports.h>
 //#include <timer.h>
@@ -227,12 +216,11 @@
 //						Includes
 //--------------------------------------------------------------
 #include "p33FJ256GP710A.h"
-#include "LC8004extFRAM_i.h"                                                    //REV BH
-#include "LC8004main_ca.h"
+#include "LC8004extFRAM_h.h"                              
+#include "LC8004main_bc.h"
 #include "LC8004delay_b.h"                                                      //REV Z
 #include "AD5241a.h"
-#include "MODBUSe.h"                                                            //REV BH
-#include "FRAM_ADDRESSc.h"
+#include "MODBUSb.h"                                                            //REV BA
 #include <outcompare.h>
 #include <ports.h>
 #include <timer.h>
@@ -324,15 +312,8 @@ int main(void)
     baudrate = read_Int_FRAM(baudrateaddress);
     if ((baudrate != brg9600) && (baudrate != brg115200) && (baudrate != brg230400) && (baudrate != brg460800)) //FRAM does not contain valid baud rate value  REV AE
     {
-        baudrate = brg115200;                                                   //set initial baud rate to 115200 bps           
-        write_Int_FRAM(baudrateaddress, baudrate);                              //store baudrate in FRAM   
-    }
-    
-    MODBUSaddressvalue=read_Int_FRAM(MODBUSaddress);
-    if(MODBUSaddressvalue<1 | MODBUSaddressvalue>247)
-    {
-        MODBUSaddressvalue=1;                                                   //Initialize MODBUS address to 1
-        write_Int_FRAM(MODBUSaddress,MODBUSaddressvalue);                       //store in FRAM
+        baudrate = brg115200; //set initial baud rate to 115200 bps           
+        write_Int_FRAM(baudrateaddress, baudrate); //store baudrate in FRAM   
     }
     
     configUARTnormal();                                                         //TEST
@@ -621,10 +602,10 @@ void Blink(unsigned char times)
         {
             _READ = 0;                                                          //Light the LED
             //delay(20000);                                                     REM REV AE
-            delay(80000);                                                        //REV AE
+            delay(80000);                                                       //REV AE
             _READ=1;                                                            //Off the LED
             //delay(20000);                                                     REM REV AE
-            delay(320000);                                                       //REV AE
+            delay(80000);                                                       //REV AE
         }
         else
         {   
@@ -633,7 +614,7 @@ void Blink(unsigned char times)
             delay(80000);                                                       //REV AE
             _READ = 0;                                                          //Light the LED
             //delay(20000);                                                     REM REV AE
-            delay(320000);                                                       //REV AE
+            delay(80000);                                                       //REV AE
         }
     }
 
@@ -1733,11 +1714,9 @@ void CMDcomm(void)
                     putsUART1(Displaynnnn);                                     //Dnnnnn				Display nnnn arrays (formatted) from pointer
                     while (BusyUART1());
 
-                    /***********************************************************REM REV BC
                     crlf();
                     putsUART1(DisplayXnnnn);                                    //DXnnnnn				Display nnnn arrays (not formatted) from pointer
                     while (BusyUART1());
-                    
                     
                     crlf();
                     putsUART1(DX);                                              //DX                    Current Download Data Format    REV AF
@@ -1750,8 +1729,7 @@ void CMDcomm(void)
                     crlf();
                     putsUART1(Dx1);                                             //DX1                    Binary Data Download   REV AF
                     while(BusyUART1());
-                    ***********************************************************/
-                                
+
                     crlf();
                     putsUART1(End);                                             //E						End communications and go to sleep
                     while (BusyUART1());
@@ -1843,10 +1821,6 @@ void CMDcomm(void)
                     crlf();
                     putsUART1(Logdisenable);                                    //LD,LE					Log intervals Disable, Enable
                     while (BusyUART1());
-                    
-                    crlf();                                                     //MAddd                 MODBUS Address (1-247)  REV BC
-                    putsUART1(Modbusaddress);                                   //REV BC
-                    while(BusyUART1());                                         //REV BC
 
                     crlf();
                     putsUART1(Monitorstatus);                                   //M,MD,ME				Monitor status, Disable, Enable
@@ -2032,8 +2006,6 @@ void CMDcomm(void)
                     {
                         PORT_CONTROL.flags.BluetoothTimerEN = 0;                //clear Bluetooth Timer enable flag
                         write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);	//store flag in FRAM`
-                        S_1.status1flags.BT_Timer=0;                              //clear the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
                         disableAlarm(Alarm2);                                   //disable the Alarm2 interrupt		
                         BTStatus();                                             //display Bluetooth status
                         break;
@@ -2044,9 +2016,7 @@ void CMDcomm(void)
                         PORT_CONTROL.flags.BluetoothTimerEN = 1;                //set Bluetooth Timer enable flag
                         PORT_CONTROL.flags.PortTimerEN=0;                       //clear the Control Port Timer enable flag
                         PORT_CONTROL.flags.BTTime = 0;                          //clear the BTtime flag
-                        write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);	//store flag in FRAM 
-                        S_1.status1flags.BT_Timer=1;                              //set the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
+                        write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);	//store flag in FRAM  
                         delay(4000);                                            //REV AE    if this delay required? TEST
                         enableAlarm(Alarm2); //enable the Alarm2 interrupt
                         BTStatus();                                             //display Bluetooth status
@@ -2741,8 +2711,6 @@ void CMDcomm(void)
                             while (BusyUART1());
                             LC2CONTROL.flags.LogInterval = 0; //clear the Log interval flag
                             write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM  
-                            S_1.status1flags.Logint=0;                            //Clear the MODBUS status flag    REV BF
-                            write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
                             break;
                         }
                         crlf();
@@ -2773,10 +2741,6 @@ void CMDcomm(void)
                             while (BusyUART1());
                             LC2CONTROL.flags.LogInterval = 1; //Set Log intervals flag
                             write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM  VER 6.0.13  
-                            
-                            S_1.status1flags.Logint=1;                            //Set the MODBUS status flag    REV BF
-                            write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
-
                             DISPLAY_CONTROL.flags.Synch = 0; //clear the Synch flag
                             write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//store flags in FRAM 
 
@@ -2868,40 +2832,6 @@ void CMDcomm(void)
                         while (BusyUART1());
                         break;
                     }
-                    
-                    //REV BC:
-                    if (buffer[1] == capA && buffer[2]==cr)                     //MA received
-                    {
-                        crlf();
-                        NAdata=read_Int_FRAM(MODBUSaddress);					//read MODBUS Address from FRAM 
-                        putsUART1(ModbusaddressIS);                             //MODBUS address:
-                        while (BusyUART1());
-                        sprintf(NABUF, "%d", NAdata);                           //format MODBUS address
-                        putsUART1(NABUF);                                       //display MODBUS address
-                        while (BusyUART1());
-                        break;
-                        //break;                                                //REM REV BC
-                    }
-                    
-                    if (buffer[1] == capA && ((isdigit(buffer[2]) && buffer[3] == cr) |
-                            (isdigit(buffer[2]) && isdigit(buffer[3]) && buffer[4] == cr) |
-                            (isdigit(buffer[2]) && isdigit(buffer[3]) && isdigit(buffer[4]) && buffer[5] == cr))) //Enter MODBUS Address
-                    {
-                        crlf();
-                        while (BusyUART1());
-                        MODBUSaddressvalue = Buffer2Decimal(buffer, i, 2);      //extract MODBUS address from buffer
-                        if (MODBUSaddressvalue == 0 | MODBUSaddressvalue>247)   // ERROR
-                            break;
-                        write_Int_FRAM(MODBUSaddress,MODBUSaddressvalue);		//store MODBUS address in FRAM   
-                        NAdata=read_Int_FRAM(MODBUSaddress);					//read MODBUS address from FRAM  
-                        putsUART1(ModbusaddressIS);                             //"MODBUS address:"
-                        while (BusyUART1());
-                        sprintf(NABUF, "%d", NAdata);                           //format MODBUS address
-                        putsUART1(NABUF);                                       //display MODBUS address
-                        while (BusyUART1());
-                        break;
-                    }
-                    //**********************************************************
 
                     if (buffer[1] == capD) //MD received
                     {
@@ -2958,10 +2888,9 @@ void CMDcomm(void)
                         DISPLAY_CONTROL.flags.TH=0;                           //VW Configuration  
                         write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//store flag in FRAM  
                         MUX4_ENABLE.mflags.mux16_4=0;                           //clear the mux flags   REV K
-                        MUX4_ENABLE.mflags.mux16_4 = Single;                    //Single Channel Datalogger selected
-                        S_1.status1flags.CFG=Single;                              //set the MODBUS status flags    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);        
+                        MUX4_ENABLE.mflags.mux16_4 = Single; //Single Channel Datalogger selected
                         write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);	//store flag in FRAM  
+                        //MUX_ENABLE1_16.MUXen1_16=0;                             //clear the mux enable flags REM REV R    
                         MUX_ENABLE1_16.e1flags.CH1=1;                           //REV K
                         write_Int_FRAM(MUX_ENABLE1_16flagsaddress,MUX_ENABLE1_16.MUXen1_16);  //REV K
                         
@@ -3011,8 +2940,6 @@ void CMDcomm(void)
 
                         MUX4_ENABLE.mflags.mux16_4 = VW4; //4 channel VW/TH mux selected  VER 6.0.7
                         write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);	//store flag in FRAM  
-                        S_1.status1flags.CFG=VW4;                                 //set the MODBUS status flags    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);      
                         LogIntLength = minScanFourVW;
                         hms(minScanFourVW, 0); //load 10S scan interval if 4 channel mode
                         putsUART1(MUX4); //Display 4 Channel Mux Selected.
@@ -3032,9 +2959,7 @@ void CMDcomm(void)
                         }
 
                         MUX4_ENABLE.mflags.mux16_4 = TH8; //8 channel thermistor mux selected VER 6.0.7
-                        write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);	//store flag in FRAM 
-                        S_1.status1flags.CFG=TH8;                                 //set the MODBUS status flags    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                              
+                        write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);	//store flag in FRAM  
                         LogIntLength = minScanEightTH;
                         hms(5, 0); //load 5S scan interval if 8 channel thermistor mode
                         putsUART1(MUX8); //Display 8 Channel Mux Selected.
@@ -3054,9 +2979,7 @@ void CMDcomm(void)
                         }
 
                         MUX4_ENABLE.mflags.mux16_4 = TH32; //32 channel thermistor mux selected
-                        write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);	//store flag in FRAM
-                        S_1.status1flags.CFG=TH32;                                //set the MODBUS status flags    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                              
+                        write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);	//store flag in FRAM  
                         LogIntLength = minScanThirtytwoTH;
                         hms(10, 0); //load 10S scan interval if 32 channel thermistor mode
                         putsUART1(MUX32); //Display 32 Channel Mux Selected.
@@ -3075,9 +2998,7 @@ void CMDcomm(void)
                         }
 
                         MUX4_ENABLE.mflags.mux16_4 = VW16; //16 channel VW/TH mux selected VER 6.0.7
-                        write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);	//store flag in FRAM 
-                        S_1.status1flags.CFG=VW16;                                //set the MODBUS status flags    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                              
+                        write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);	//store flag in FRAM  
                         LogIntLength = minScanSixteenVW;
                         hms(minScanSixteenVW, 0); //load 30S scan interval if 16 channel mode
                         putsUART1(MUX16); //Display 16 Channel Mux Selected.
@@ -3097,9 +3018,7 @@ void CMDcomm(void)
                         }
 
                         MUX4_ENABLE.mflags.mux16_4 = VW8; //8 channel VW mux selected
-                        write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);	//store flag in FRAM 
-                        S_1.status1flags.CFG=VW8;                                 //set the MODBUS status flags    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                              
+                        write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);	//store flag in FRAM  
                         LogIntLength = minScanEightVW;
                         hms(minScanEightVW, 0); //load min scan interval if 8 channel VW mode
                         putsUART1(MUX8VW); //Display 8 Channel VW Mux Selected.
@@ -3119,9 +3038,7 @@ void CMDcomm(void)
                         }
 
                         MUX4_ENABLE.mflags.mux16_4 = VW32; //32 channel VW mux selected
-                        write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);	//store flag in FRAM 
-                        S_1.status1flags.CFG=VW32;                                //set the MODBUS status flags    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                              
+                        write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);	//store flag in FRAM  
                         LogIntLength = minScanThirtytwoVW;
                         hms(minScanThirtytwoVW, 0); //load min scan interval if 32 channel VW mode
                         putsUART1(MUX32VW); //Display 32 Channel VW Mux Selected.
@@ -3261,8 +3178,6 @@ void CMDcomm(void)
                     {
                         CONTROL = 0;
                         _READ=1;                                                //OFF the LED   REV B
-                        S_1.status1flags.CP=0;                                    //clear the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
                         if (!PORT_CONTROL.flags.CPTime) //turn off control port
                             PORT_CONTROL.flags.ControlPortON = 0; //clear flag if not in scheduled ON time
                         PORT_CONTROL.flags.O0issued = 1; //set O0issued flag
@@ -3275,8 +3190,6 @@ void CMDcomm(void)
                     {
                         CONTROL = 1; //turn on control port
                         _READ=0;                                                //LED ON    REV B
-                        S_1.status1flags.CP=1;                                    //set the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
                         PORT_CONTROL.flags.ControlPortON = 1;
                         PORT_CONTROL.flags.O0issued = 0; //clear O0issued flag
                         write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);	//store flag in FRAM  
@@ -3286,10 +3199,8 @@ void CMDcomm(void)
 
                     if (buffer[1] == capD && buffer[2] == cr) //OD<CR> received
                     {
-                        PORT_CONTROL.flags.PortTimerEN = 0;                     //clear Port Timer enable flag
+                        PORT_CONTROL.flags.PortTimerEN = 0; //clear Port Timer enable flag
                         write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);	//store flag in FRAM`
-                        S_1.status1flags.CP_Timer=0;                              //clear the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
                         disableAlarm(Alarm2); //disable the Alarm2 interrupt		
                         controlPortStatus(1);                                   //display control port status   REV AG
                         break;
@@ -3301,8 +3212,6 @@ void CMDcomm(void)
                         PORT_CONTROL.flags.BluetoothTimerEN = 0;                //clear Bluetooth Timer enable flag REV AG
                         PORT_CONTROL.flags.CPTime = 0;                          //clear the CPtime flag
                         write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);	//store flag in FRAM  
-                        S_1.status1flags.CP_Timer=1;                              //set the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                        
                         delay(4000);                                            //REV AE    if this delay required? TEST
                         enableAlarm(Alarm2); //enable the Alarm2 interrupt
                         controlPortStatus(1);                                   //display control port status   REV AG
@@ -3511,12 +3420,10 @@ void CMDcomm(void)
                         }
                         while (BusyUART1());
 
-
                         if (LC2CONTROL2.flags2.Waiting) //display logging start time	
                         {
                             crlf();
                             displayLoggingWillStart();
-                            while (BusyUART1());                                    //REV BE
                         }
 
                         if (LC2CONTROL.flags.LoggingStopTime) //display logging stop time
@@ -3524,10 +3431,8 @@ void CMDcomm(void)
                             LC2CONTROL2.flags2.SetStopTime = 1; //set the flag to format the stop time
                             crlf();
                             displayLoggingWillStop();
-                            while (BusyUART1());                                    //REV BE
                             LC2CONTROL2.flags2.SetStopTime = 0; //reset the flag
                         }
-                        
 
                         crlf(); //display log interval status
 
@@ -3661,9 +3566,7 @@ void CMDcomm(void)
                         }
 
                         LC2CONTROL.flags.LoggingStopTime = 1; //set the LoggingStopTime flag		
-                        write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM 
-                        S_1.status1flags.SP=1;                                    //set the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                              
+                        write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM  
                         LC2CONTROL2.flags2.SetStopTime = 1; //set the SetStopTime flag
 
                         Buf2DateTime(buffer); //get Logging Stop Time from buffer
@@ -3672,8 +3575,6 @@ void CMDcomm(void)
                             LC2CONTROL.flags.ERROR = 0; //clear the ERROR flag
                             LC2CONTROL.flags.LoggingStopTime = 0; //clear the LoggingStopTime flag
                             write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM  
-                            S_1.status1flags.SP=0;                                //clear the MODBUS status flag    REV BF
-                            write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);      
                             LC2CONTROL2.flags2.SetStopTime = 0; //clear the SetStopTime flag
                             break;
                         }
@@ -3707,17 +3608,6 @@ void CMDcomm(void)
                         putsUART1(trapBUF);
                         while (BusyUART1());
                         crlf();
-                        
-                        //REV BC:
-                        NAdata=read_Int_FRAM(MODBUSaddress);                    //read MODBUS Address from FRAM  
-                        putsUART1(ModbusaddressIS);                             //"MODBUS Address:"
-                        while (BusyUART1());
-                        sprintf(NABUF, "%d", NAdata);                           //format MODBUS address
-                        putsUART1(NABUF);                                       //display MODBUS address
-                        while (BusyUART1());
-                        crlf();
-                        //******************************************************
-                        
                         NAdata=read_Int_FRAM(Netaddress);			//read Network Address from FRAM  
                         putsUART1(NetworkaddressIS); //"Network address:"
                         while (BusyUART1());
@@ -3861,9 +3751,7 @@ void CMDcomm(void)
 
                         LC2CONTROL.flags.LoggingStartTime = 1;
                         LC2CONTROL.flags.Logging = 0;
-                        write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM 
-                        S_1.status1flags.ST=1;                                    //set the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                          
+                        write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM  
                         LC2CONTROL2.flags2.SetStartTime = 1; //Going to set Start time	
                         DISPLAY_CONTROL.flags.Synch = 0; //make sure Synch flag is clear	
                         write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//store flags in FRAM  
@@ -3876,9 +3764,7 @@ void CMDcomm(void)
                         if (LC2CONTROL.flags.ERROR) {
                             LC2CONTROL.flags.ERROR = 0; //clear the ERROR flag
                             LC2CONTROL.flags.LoggingStartTime = 0; //clear the LoggingStartTime flag
-                            write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM 
-                            S_1.status1flags.ST=0;                                //clear the MODBUS status flag    REV BF
-                            write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                              
+                            write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM  
                             LC2CONTROL2.flags2.SetStartTime = 0; //clear the SetStartTime flag
                             break;
                         }
@@ -3975,8 +3861,6 @@ void CMDcomm(void)
                         crlf();
                         DISPLAY_CONTROL.flags.Synch = 0; //clear the Synch flag
                         write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//store flags in FRAM 
-                        S_1.status1flags.Sync=0;                                  //clear the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                        
                         putsUART1(Synchnot); //"Readings are not synchronized to the top of the hour"
                         while (BusyUART1());
 
@@ -3998,8 +3882,6 @@ void CMDcomm(void)
                         crlf();
                         DISPLAY_CONTROL.flags.Synch = 1; //set the Synch flag
                         write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//store flags in FRAM 
-                        S_1.status1flags.Sync=1;                                  //set the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                                
                         putsUART1(Synch); //"Readings are synchronized to the top of the hour"
                         while (BusyUART1());
 
@@ -4555,8 +4437,6 @@ void CMDcomm(void)
                         shutdownTimer(TimeOut);                                 //Reset 15S timer   REV Z
                         DISPLAY_CONTROL.flags.WrapMemory = 0; //clear the wrap memory flag
                         write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//store flags in FRAM 
-                        S_1.status1flags.Wrap=0;                                  //Clear the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
                         putsUART1(Loggingwillstopmemfull);
                         while (BusyUART1());
                         break;
@@ -4568,8 +4448,6 @@ void CMDcomm(void)
                         shutdownTimer(TimeOut);                                 //Reset 15S timer   REV Z
                         DISPLAY_CONTROL.flags.WrapMemory = 1; //set the wrap memory flag
                         write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//store flags in FRAM`
-                        S_1.status1flags.Wrap=1;                                  //Set the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                        
                         putsUART1(Loggingwillnotstopmemfull);
                         while (BusyUART1());
                         break;
@@ -4737,7 +4615,7 @@ void CMDcomm(void)
 
             } //end of switch
 
-            prompt();                                                       
+            prompt();                                                       //ASCII
             
             for (i = 0; i < 22; i++)                                            //clear the buffer
             {
@@ -4756,7 +4634,7 @@ void CMDcomm(void)
 
 
 
-/*
+
 void config_Ports_Low_Power(void) {
     TRISA = 0x1400; //RA12 & RA10 is input
     LATA = 0x0000;
@@ -4789,8 +4667,6 @@ void config_Ports_Low_Power(void) {
     //ADCON2=0;                                                                   //VDD & VSS are references
     //ADCON1bits.ADON=0;                                                          //make sure ADC off
 }
-*/
-
 
 void configShutdownTimer(void)
 {
@@ -5130,8 +5006,6 @@ void disableBT(void)                                                            
     {
         DISPLAY_CONTROL.flags.BT=0;                                             //clear the BT flag
         write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);    //store flags in FRAM   
-        S_1.status1flags.BT=0;                                                    //Clear the MODBUS status flag    REV BF
-        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
         _BT_RESET=0;                                                            //make sure RESET is low    
         BT_BAUD=0;                                                              //make sure BT_BAUD is low          
         BT_ENABLE=0;                                                            //Powerdown Bluetooth
@@ -5447,10 +5321,9 @@ void displayGageInfo(int channel) //display the gage information
     
     //if(MUX4_ENABLE.mflags.mux16_4!=TH8 && MUX4_ENABLE.mflags.mux16_4!=TH32)     //if VW MUX REV S REM REV T
 	//{                                                                         //REM REV T
-		//address=CH1GTaddress+(0x1A*(channel-1));                              //REM REV BE
-        address=CH1GTaddress+(2*(channel-1));                                   //REV BE
+		address=CH1GTaddress+(0x1A*(channel-1));
 		//Thermaddress=_4CHMuxCH1THaddress+(0x02*(channel-1));                  //REM REV T
-        Thermaddress=CH1THaddress+(2*(channel-1));                              //REV T
+        Thermaddress=CH1THaddress+(0x02*(channel-1));                           //REV T
 	//}                                                                         //REM REV T
     
     if(MUX4_ENABLE.mflags.mux16_4!=TH8 && MUX4_ENABLE.mflags.mux16_4!=TH32)     //REV T
@@ -6137,14 +6010,12 @@ void displayGageInfo(int channel) //display the gage information
 
             putsUART1(PB);
             while (BusyUART1());
-            //TEMPVAL=read_longFRAM(PolyCoAaddress+0x0004);                        //extract coefficient B from FRAM   REM REV BE
-            TEMPVAL=read_longFRAM(PolyCoAaddress+0x0080);                       //extract coefficient B from FRAM   REV BE
+            TEMPVAL=read_longFRAM(PolyCoAaddress+0x0004);                        //extract coefficient B from FRAM   
             formatandDisplayGageInfo(TEMPVAL);
 
             putsUART1(PC);
             while (BusyUART1());
-            //TEMPVAL=read_longFRAM(PolyCoAaddress+0x0008);                        //extract coefficient C from FRAM   REM REV BE
-            TEMPVAL=read_longFRAM(PolyCoAaddress+0x0100);                        //extract coefficient C from FRAM  REV BE
+            TEMPVAL=read_longFRAM(PolyCoAaddress+0x0008);                        //extract coefficient C from FRAM   
             formatandDisplayGageInfo(TEMPVAL);
         } else 
         {
@@ -6155,14 +6026,12 @@ void displayGageInfo(int channel) //display the gage information
 
             putsUART1(GF);
             while (BusyUART1());
-            //TEMPVAL=read_longFRAM(ZeroReadingaddress+0x0004);                    //extract Gage Factor from FRAM  REM REV BE
-            TEMPVAL=read_longFRAM(ZeroReadingaddress+0x0080);                    //extract Gage Factor from FRAM REV BE
+            TEMPVAL=read_longFRAM(ZeroReadingaddress+0x0004);                    //extract Gage Factor from FRAM 
             formatandDisplayGageInfo(TEMPVAL);
 
             putsUART1(GO);
             while (BusyUART1());
-            //TEMPVAL=read_longFRAM(ZeroReadingaddress+0x0008);                    //extract Gage Offset from FRAM  REM REV BE
-            TEMPVAL=read_longFRAM(ZeroReadingaddress+0x0100);                    //extract Gage Offset from FRAM REV BE
+            TEMPVAL=read_longFRAM(ZeroReadingaddress+0x0008);                    //extract Gage Offset from FRAM 
             formatandDisplayGageInfo(TEMPVAL);
         }
     }
@@ -6858,7 +6727,6 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
     }uarrays;
     uarrays TXARRAY;                                                            //TXARRAY.ArrayBytes.msb, TXARRAY.array.lsb
     
-    /*REM REV BH:
     typedef struct                                                              //REV AB
     {
 	unsigned char BINARY_LSB;                                                            //Checksum LSB for binary Tx
@@ -6870,8 +6738,6 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
     CHKSUMBytes arrays;
     }xarrays;
     xarrays CHECKSUM;                                                           //CHECKSUM.CHKSUMBytes.D,C,B,A
-    */
-    
     
     char BUF[10]; //temporary storage for display data                          //REV J
     unsigned char NOB;                                                          //Number Of Bytes REV AA
@@ -6880,23 +6746,23 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
     unsigned char day;
     unsigned int julian;
     unsigned int year;
-    //unsigned int extThermreading = 0;                                         //REM REV BH
+    unsigned int extThermreading = 0;
     //unsigned int intThermreading = 0;                                         //REM REV K
     int intThermreading=0;                                                      //REV K
     int mainBatreading = 0;
     //int displayArray;                                                         //REM REV AB
     //int tempdisplayArray = 0; //VER 6.0.2
     unsigned int displayChannel = 0;
-    //unsigned BUFidx = 0;                                                        //REV AB REM REV BH
+    unsigned BUFidx = 0;                                                        //REV AB 
     unsigned long i;                                                            //REV B
     unsigned int maxchannelplusone;
     //unsigned int pointer = 0;
     unsigned long FRAMaddress;
     unsigned long tempoutputPosition = 0; //for DEBUG
     float mainBat = 0.0;
-    //float intThermRaw = 0.0;                                                  REM REV BH
-    //float intThermProcessed = 0.0;                                            REM REV BH
-    //float extThermRaw = 0.0;                                                  REM REV BH
+    float intThermRaw = 0.0;
+    float intThermProcessed = 0.0;
+    float extThermRaw = 0.0;
     float extThermProcessed = 0.0;
     //float percent = 0.0;
 
@@ -6926,7 +6792,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
     if (MUX4_ENABLE.mflags.mux16_4 == Single) //Single Channel VW
     {
         FRAMaddress = SingleVWPosition;
-        NOB=28;                                                                 //28 bytes for binary download  REV AB  
+        NOB=28;                                                                 //28 bytes for binary download  REV AB
     }
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW4) //4 Channel VW
@@ -7114,12 +6980,12 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
         {
             month = toMonthDay(julian, year, 1);                                //get the month from the julian date
             day = toMonthDay(julian, year, 0);                                  //get the day from the julian date
-            sprintf(BUF, "%d", month);                                          //format the month data 
+            sprintf(BUF, "%d", month);                                          //format the month data ASCII
             putsUART1(BUF);                                                     //display it
             while (BusyUART1());
             putcUART1(comma);                                                   // , DELIMITER
             while(BusyUART1());
-            sprintf(BUF, "%d", day);                                            //format the day data   
+            sprintf(BUF, "%d", day);                                            //format the day data   ASCII
             putsUART1(BUF);                                                     //display it
             while (BusyUART1());
             putcUART1(comma);                                                   // , DELIMITER
@@ -7127,7 +6993,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
         } 
         else                                                                    //decimal day
         {
-            sprintf(BUF, "%d", julian);                                         
+            sprintf(BUF, "%d", julian);                                         //ASCII
             putsUART1(BUF);
             while (BusyUART1());
             putcUART1(comma);                                                   // , DELIMITER
@@ -7144,8 +7010,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
 
 
     IEC1bits.INT1IE = 0;                                                        //Disable INT1
-    //read_Flt_FRAM(FRAMaddress + 4, 1);                                        //REM REV BH
-    TESTSECONDS=read_longFRAM(FRAMaddress + 4);                                 //REV BH
+    read_Flt_FRAM(FRAMaddress + 4, 1);
     IEC1bits.INT1IE = 1;                                                        //Enable INT1
     seconds2hms(TESTSECONDS);
 
@@ -7158,7 +7023,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
             while(BusyUART1());
         }
 
-        sprintf(BUF, "%d", hour);                                               //format the hour data  
+        sprintf(BUF, "%d", hour);                                               //format the hour data  ASCII
         putsUART1(BUF);                                                         //display it
         while (BusyUART1());
         if (LC2CONTROL.flags.TimeFormat)                                        //hh,mm format
@@ -7182,7 +7047,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
             while(BusyUART1());
         }
 
-        sprintf(BUF, "%d", minute);                                             //format the minute data    
+        sprintf(BUF, "%d", minute);                                             //format the minute data    ASCII
         putsUART1(BUF);                                                         //display it
         while (BusyUART1());
         putcUART1(comma);                                                       // , DELIMITER
@@ -7197,7 +7062,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
     //SECOND
     //if (!LC2CONTROL2.flags2.d)                                                  //VER 6.0.2   REM VER BA
     //{                                                                          REM VER BA
-        sprintf(BUF, "%d", second);                                             //format the second data    
+        sprintf(BUF, "%d", second);                                             //format the second data    ASCII
         putsUART1(BUF);                                                         //display it
         while (BusyUART1());
         putcUART1(comma);                                                       // , DELIMITER
@@ -9348,10 +9213,10 @@ void displayTempReading(void) {
     unsigned char day;
     unsigned int julian;
     unsigned int year;
-    //unsigned int extTherm = 0;                                                  //REV T   REM REV BH
+    unsigned int extTherm = 0;                                                  //REV T
     //unsigned int intThermreading = 0;                                         //REM REV K
     int intThermreading=0;                                                      //REV K
-    //unsigned int tempTherm = 0; //VER 6.0.6   REM REV BH
+    unsigned int tempTherm = 0; //VER 6.0.6
     int mainBatreading = 0;
     unsigned long i;                                                            //REV B
     //unsigned int pointer = 0;
@@ -9361,7 +9226,7 @@ void displayTempReading(void) {
     float mainBat = 0.0;
     //float intThermRaw = 0.0;
     //float intThermProcessed = 0.0;
-    //float extThermRaw = 0.0;                                                  REM REV BH
+    float extThermRaw = 0.0;
     float extThermProcessed = 0.0;
     //float percent = 0.0;
     //float tempGage = 0.0;
@@ -10507,8 +10372,6 @@ void enableBT(void)                                                      //REV A
     BT_BAUD=0;                                                                  //Set baudrate to 115.2k    REV AD
     DISPLAY_CONTROL.flags.BT=1;                                                 //set the BT flag
     write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);        //store flags in FRAM  
-    S_1.status1flags.BT=1;                                                        //set the MODBUS status flag    REV BF
-    write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
     PMD3bits.T6MD=0;                                                            //Enable Timer 6   REV AE
     //crlf();                                                                   REM REV AG
     //putsUART1(BTEnabled);                                                      //Display "Bluetooth Disabled."    REM REV AG
@@ -12841,51 +12704,44 @@ void loadDefaults(void)
 
 
     //initialize gage types to 1:
-    //for (i = CH1GTaddress; i < CH32GTaddress + 1; i += 0x001A)                  //channel gage type selection loop    REM REV BE
-    for (i = CH1GTaddress; i < CH32GTaddress + 1; i += 2)                       //channel gage type selection loop  REV BE
+    for (i = CH1GTaddress; i < CH32GTaddress + 1; i += 0x001A)                  //channel gage type selection loop 
     {
         write_Int_FRAM(i,1);					//write 1 to channel gage type  
     }
 
     //initialize zero reading to 0:
-    //for (i = CH1ZRaddress; i < CH32ZRaddress + 1; i += 0x001A) //channel zero reading selection loop  REM REV BE
-    for (i = CH1ZRaddress; i < CH32ZRaddress + 1; i += 4)                       //channel zero reading selection loop   REV BE
+    for (i = CH1ZRaddress; i < CH32ZRaddress + 1; i += 0x001A) //channel zero reading selection loop
     {
         write_longFRAM(0,i);                                                    //write 0 to channel zero reading 
     }
 
 
     //initialize gage factor to 1:
-    //for (i = CH1GFaddress; i < CH32GFaddress + 1; i += 0x001A) //channel gage factor selection loop   REM REV BE
-    for (i = CH1GFaddress; i < CH32GFaddress + 1; i += 4)                       //channel gage factor selection loop REV BE
+    for (i = CH1GFaddress; i < CH32GFaddress + 1; i += 0x001A) //channel gage factor selection loop
     {
         write_longFRAM(1,i);                                                    //write 1 to channel gage factor  
     }
 
     //initialize gage offset to 0:
-    //for (i = CH1GOaddress; i < CH32GOaddress + 1; i += 0x001A) //channel gage offset selection loop   REM REV BE
-    for (i = CH1GOaddress; i < CH32GOaddress + 1; i += 4)                       //channel gage offset selection loop REV BE
+    for (i = CH1GOaddress; i < CH32GOaddress + 1; i += 0x001A) //channel gage offset selection loop
     {
         write_longFRAM(0,i);                                                    //write 0 to channel gage offset  
     }
 
     //initialize polynomial coefficient A to 0:
-    //for (i = CH1PolyCoAaddress; i < CH32PolyCoAaddress + 1; i += 0x001A) //channel polynomial coefficient A selection loop    REM REV BE
-    for (i = CH1PolyCoAaddress; i < CH32PolyCoAaddress + 1; i += 4)             //channel polynomial coefficient A selection loop  REV BE
+    for (i = CH1PolyCoAaddress; i < CH32PolyCoAaddress + 1; i += 0x001A) //channel polynomial coefficient A selection loop
     {
         write_longFRAM(0,i);                                                    //write 0 to channel polynomial coefficient A 
     }
 
     //initialize polynomial coefficient B to 1:
-    //for (i = CH1PolyCoBaddress; i < CH32PolyCoBaddress + 1; i += 0x001A) //channel polynomial coefficient B selection loop    REM REV BE
-    for (i = CH1PolyCoBaddress; i < CH32PolyCoBaddress + 1; i += 4)             //channel polynomial coefficient B selection loop  REV BE
+    for (i = CH1PolyCoBaddress; i < CH32PolyCoBaddress + 1; i += 0x001A) //channel polynomial coefficient B selection loop
     {
         write_longFRAM(1,i);                                                    //write 1 to channel polynomial coefficient B 
     }
 
     //initialize polynomial coefficient C to 0:
-    //for (i = CH1PolyCoCaddress; i < CH32PolyCoCaddress + 1; i += 0x001A) //channel polynomial coefficient C selection loop    REM REV BE
-    for (i = CH1PolyCoCaddress; i < CH32PolyCoCaddress + 1; i += 4)             //channel polynomial coefficient C selection loop  REV BE
+    for (i = CH1PolyCoCaddress; i < CH32PolyCoCaddress + 1; i += 0x001A) //channel polynomial coefficient C selection loop
     {
         write_longFRAM(0,i);                                                    //write 0 to channel polynomial coefficient C 
     }
@@ -13162,26 +13018,26 @@ void pluck(unsigned int _Fstart, unsigned int _Fstop, unsigned int _cycles) {
 
 void pluckOFF(void)                                                             //REV E
 {
-    //_P1G=1;                                                                     //Make sure pluck driver is off
+    _P1G=1;                                                                     //Make sure pluck driver is off
     Nop();
-    //_P2G=1;
+    _P2G=1;
     Nop();
-    //N1G=0;
+    N1G=0;
     Nop();
-    //N2G=0;
+    N2G=0;
     Nop();
 }
 
 
 void pluckPOS(void)                                                             //REV E
 {
-    //N2G=0;
+    N2G=0;
     Nop();
-    //_P1G=1;        
+    _P1G=1;        
     Nop();
-    //_P2G=0;                                                                     //Turn on Excitation + alternation
+    _P2G=0;                                                                     //Turn on Excitation + alternation
     Nop();
-    //N1G=1;
+    N1G=1;
     Nop();
 
 }
@@ -13189,13 +13045,13 @@ void pluckPOS(void)                                                             
 
 void pluckNEG(void)                                                             //REV E
 {
-    //_P2G=1;                                                                     //Turn on Excitation - alternation
+    _P2G=1;                                                                     //Turn on Excitation - alternation
     Nop();
-    //N1G=0;
+    N1G=0;
     Nop();
-    //N2G=1;
+    N2G=1;
     Nop();
-    //_P1G=0;
+    _P1G=0;
     Nop();
 }
 
@@ -13870,7 +13726,7 @@ void resetMemory(void)
     data = 0; //reset memory pointers                                         //TEST REM REV V
     //data=28900;                                                                  //TEST REV V
     write_Int_FRAM(MemoryStatusaddress,data);                                   
-    //write_Int_FRAM(Offsetaddress,data);                                       REM REV BE
+    write_Int_FRAM(Offsetaddress,data);    
 
     data = 1;                                                                 //TEST REM REV V
     //data=28901;                                                                  //TEST REV V
@@ -14010,8 +13866,7 @@ void setADCsleep()                                                              
     //Configure PORTC:
     AD1PCFGL=0xFFFF;
     AD2PCFGL=0xFFFF;
-    //TRISC=0x9002;                                                               //Configure PORTC REM REV CA
-    TRISC=0x9000;                                                               //Configure PORTC   REV CA
+    TRISC=0x9002;                                                               //Configure PORTC
     LATC=0x0000;
 }
 
@@ -14019,10 +13874,8 @@ void setADCsleep()                                                              
 void setADCwake(void)
 {
      //Configure ADC for Digital I/O & Analog inputs:                            //REV E
-    //AD2PCFGL=0xFEC2;                                                            //AN0,2,3,4,5,8 are analog    REM REV CA
-    //AD1PCFGL=0xFEC2;                                                            //all else digital    REM REV CA
-    AD2PCFGL=0xFCC2;                                                            //AN0,2,3,4,5,8,9 are analog  REV CA
-    AD1PCFGL=0xFCC2;                                                            //all else digital  REV CA
+    AD2PCFGL=0xFEC2;                                                            //AN0,2,3,4,5,8 are analog
+    AD1PCFGL=0xFEC2;                                                            //all else digital
     AD1PCFGH=0xFFFF;   
 }
 
@@ -14474,117 +14327,6 @@ void setClock(unsigned char address,unsigned char data)                         
 }
 
 
-void setup(void)                                                                //REV CA
-{
-    
-    //Configure ADC for Digital I/O & Analog inputs:
-    AD2PCFGLbits.PCFG15=1;                                                      //AN15 cfg as digital pin   
-    AD2PCFGLbits.PCFG14=1;                                                      //AN14 cfg as digital pin
-    AD2PCFGLbits.PCFG13=1;                                                      //AN13 cfg as digital pin
-    AD2PCFGLbits.PCFG12=1;                                                      //AN12 cfg as digital pin
-    AD2PCFGLbits.PCFG11=1;                                                      //AN11 cfg as digital pin
-    AD2PCFGLbits.PCFG10=1;                                                      //AN10 cfg as digital pin
-    AD2PCFGLbits.PCFG9=0;                                                       //AN9 cfg as analog input   (V_AGC)
-    AD2PCFGLbits.PCFG8=0;                                                       //AN8 cfg as analog input   (VW_LPF)
-    AD2PCFGLbits.PCFG7=1;                                                       //AN7 cfg as digital pin
-    AD2PCFGLbits.PCFG6=1;                                                       //AN6 cfg as digital pin
-    AD2PCFGLbits.PCFG5=0;                                                       //AN5 cfg as analog input   (V_LITH)
-    AD2PCFGLbits.PCFG4=0;                                                       //AN4 cfg as analog input   (V_TH_EXT)
-    AD2PCFGLbits.PCFG3=0;                                                       //AN3 cfg as analog input   (12V_SENSE)
-    AD2PCFGLbits.PCFG2=0;                                                       //AN2 cfg as analog input   (3V_SENSE)
-    AD2PCFGLbits.PCFG1=1;                                                       //AN1 cfg as digital pin
-    AD2PCFGLbits.PCFG0=0;                                                       //AN0 cfg as analog input   (VW)
-    
-    AD1PCFGLbits.PCFG15=1;                                                      //AN15 cfg as digital pin   
-    AD1PCFGLbits.PCFG14=1;                                                      //AN14 cfg as digital pin
-    AD1PCFGLbits.PCFG13=1;                                                      //AN13 cfg as digital pin
-    AD1PCFGLbits.PCFG12=1;                                                      //AN12 cfg as digital pin
-    AD1PCFGLbits.PCFG11=1;                                                      //AN11 cfg as digital pin
-    AD1PCFGLbits.PCFG10=1;                                                      //AN10 cfg as digital pin
-    AD1PCFGLbits.PCFG9=0;                                                       //AN9 cfg as analog input   (V_AGC)
-    AD1PCFGLbits.PCFG8=0;                                                       //AN8 cfg as analog input   (VW_LPF)
-    AD1PCFGLbits.PCFG7=1;                                                       //AN7 cfg as digital pin
-    AD1PCFGLbits.PCFG6=1;                                                       //AN6 cfg as digital pin
-    AD1PCFGLbits.PCFG5=0;                                                       //AN5 cfg as analog input   (V_LITH)
-    AD1PCFGLbits.PCFG4=0;                                                       //AN4 cfg as analog input   (V_TH_EXT)
-    AD1PCFGLbits.PCFG3=0;                                                       //AN3 cfg as analog input   (12V_SENSE)
-    AD1PCFGLbits.PCFG2=0;                                                       //AN2 cfg as analog input   (3V_SENSE)
-    AD1PCFGLbits.PCFG1=1;                                                       //AN1 cfg as digital pin
-    AD1PCFGLbits.PCFG0=0;                                                       //AN0 cfg as analog input   (VW)    
-    AD1PCFGL=0xFEC2;                                                            //all else digital
-
-    AD1PCFGHbits.PCFG16=1;                                                      //Set AN16-32 as digital pins    
-    AD1PCFGHbits.PCFG17=1;                                                      
-    AD1PCFGHbits.PCFG18=1;
-    AD1PCFGHbits.PCFG19=1;
-    AD1PCFGHbits.PCFG20=1;
-    IFS1bits.INT1IF=0;                                                          //Clear the interrupt flag  
-    AD1PCFGHbits.PCFG21=1;
-    IFS1bits.INT2IF=0;                                                          //Clear the interrupt flag
-    AD1PCFGHbits.PCFG22=1;
-    AD1PCFGHbits.PCFG23=1;  
-    AD1PCFGHbits.PCFG24=1;
-    AD1PCFGHbits.PCFG25=1;
-    AD1PCFGHbits.PCFG26=1;
-    AD1PCFGHbits.PCFG27=1;  
-    AD1PCFGHbits.PCFG28=1;
-    AD1PCFGHbits.PCFG29=1;
-    AD1PCFGHbits.PCFG30=1;
-    AD1PCFGHbits.PCFG31=1;    
-    
-    IFS1bits.INT1IF=0;                                                            
-    //Configure PORTA:
-    TRISA=0;                                                                    //PORTA configured as outputs                                                   
-    TRISAbits.TRISA13=1;                                                        //analog input
-    TRISAbits.TRISA12=1;                                                        //analog input
-    TRISAbits.TRISA10=1;                                                        //analog Vref
-    LATA=0;                                                                     //all low
-
-    //Configure PORTB:
-    TRISB=0;
-    TRISBbits.TRISB9=1;                                                         //analog input
-    TRISBbits.TRISB8=1;                                                         //analog input
-    TRISBbits.TRISB5=1;                                                         //analog input
-    TRISBbits.TRISB4=1;                                                         //analog input
-    TRISBbits.TRISB3=1;                                                         //analog input
-    TRISBbits.TRISB2=1;                                                         //analog input
-    TRISBbits.TRISB0=1;                                                         //analog input
-    LATB=0;
-
-    //Configure PORTC:
-    TRISC=0x9000;
-    LATC=0;                                                                
-    
-    //Configure PORTD:
-    TRISD=0x0020;
-    LATD=0;
-    LATDbits.LATD1=1;                                                           //Set CLK_RST high
-    
-    //Configure PORTE:
-    TRISE=0;
-    LATE=0;
-    
-    //Configure PORTF:
-    TRISF=0;
-    TRISFbits.TRISF8=1;                                                         //USB_PWR input
-    TRISFbits.TRISF7=1;                                                         //_232 input
-    TRISFbits.TRISF2=1;                                                         //Rx input
-    LATF=0x0;
-    LATFbits.LATF6=1;                                                           //set WP high
-    LATFbits.LATF4=1;                                                           //set _RS485RX_EN high
-    LATFbits.LATF3=1;                                                           //set Tx high
-    LATFbits.LATF1=1;                                                           //set _READ high
-    
-    //Configure PORTG:
-    TRISG=0;
-    LATG=0;    
-    
-    PMD1=0x0000;                                                                //ENABLE ALL MODULES
-    PMD2=0x0000;
-    PMD3=0x0000;
-}
-
-/*REM REV CA:
 void setup(void)
 {
     //Configure ADC for Digital I/O & Analog inputs:                            //REV E
@@ -14646,12 +14388,11 @@ void setup(void)
     PMD2=0x0000;
     PMD3=0x0000;
 }
-*/
 
 void shutdown(void) 
 {
-    //unsigned int BT_ON_TIME=0x8f8a;                                             //2 Seconds REV AE    REM REV BH
-    //unsigned int BT_OFF_TIME=0x8f8a;                                            //2 Seconds REV AE    REM REV BH
+    unsigned int BT_ON_TIME=0x8f8a;                                             //2 Seconds REV AE
+    unsigned int BT_OFF_TIME=0x8f8a;                                            //2 Seconds REV AE
     
     //mainBatreading = take_analog_reading(87); //test the 12V_SENSE input      //TEST REM REV D
     //if (mainBatreading < 820) //12V_SENSE <0.5V, so not connected
@@ -14823,9 +14564,6 @@ void startLogging(void) {
     LC2CONTROL.flags.Logging = 1; //Set Logging flag
     LC2CONTROL.flags.LoggingStartTime = 0;
     write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flags in FRAM 
-    
-    S_1.status1flags.Logging=1;                                                   //Set the MODBUS status flag    REV BF
-    write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
 
     DISPLAY_CONTROL.flags.monitorWasEnabled = 0; //clear the BPD flags
     DISPLAY_CONTROL.flags.newPointer = 0;
@@ -14872,11 +14610,7 @@ void stopLogging(void)
     LC2CONTROL.flags.Logging = 0; //Clear Logging flag
     LC2CONTROL.flags.LoggingStartTime = 0; //Clear Start Logging flag
     LC2CONTROL.flags.LoggingStopTime = 0; //Clear Stop Logging flag
-    write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM 
-    
-    S_1.status1flags.Logging=0;                                                  //Clear the MODBUS status flag    REV BF
-    write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
-
+    write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM  `
 
     LC2CONTROL2.flags2.Waiting = 0; //Clear the Waiting flag
     LC2CONTROL2.flags2.SetStopTime = 0; //clear the set stop time flag
@@ -14943,8 +14677,7 @@ void storeGageType(int channel, int gageType) {
     unsigned long address;                                                      //REV L
 
     //calculate indexed address for gage type                                   
-    //address = CH1GTaddress + (0x1A * (channel - 1));                          REM REV BE
-    address = CH1GTaddress + (2 * (channel - 1));                               //REV BE
+    address = CH1GTaddress + (0x1A * (channel - 1));
 
     //write the gage type to the calculated address
     write_Int_FRAM(address,gageType);                                           //store gage type in FRAM 
@@ -14996,18 +14729,44 @@ void storeChannelReading(int ch) {
     else
         FRAMaddress = (baseAddress * (outputPosition - 1))+(6 * (ch - 1) + 12); //calculate the external FRAM address
 
+    //if(MUX4_ENABLE.mflags.mux16_4!=TH8 && MUX4_ENABLE.mflags.mux16_4!=TH32)     //VER 6.0.9   REM VER 6.0.13
     if (MUX4_ENABLE.mflags.mux16_4 == Single | MUX4_ENABLE.mflags.mux16_4 == VW4 | MUX4_ENABLE.mflags.mux16_4 == VW16) //VER 6.0.13
     {
+        //if(ch==1)                                                               //Allow FRAM to wakeup  REV X REM REV AE
+        //{
+        //    write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading
+            //write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading 
+            //write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading
+            //write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading
+            //write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading
+        //}
         write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading
         write_Int_FRAM(FRAMaddress + 4, extThermreading); //store the external thermistor reading 12bit ADC value
     } 
     else
     if (MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW32) //VER 6.0.13
     {
+        //if(ch==1)                                                               //Allow FRAM to wakeup  REV X REM REV AE
+        //{
+        //    write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading
+            //write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading
+            //write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading
+            //write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading
+            //write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading
+        //}
         write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading
     } 
     else 
     {
+        //if(ch==1)                                                               //Allow FRAM to wakeup  REV X REM REV AE
+        //{
+        //    write_Int_FRAM(FRAMaddress, extThermreading); //8 or 32 channel therm mux: store the external thermistor reading 12bit ADC value
+        //    write_Int_FRAM(FRAMaddress, extThermreading); //8 or 32 channel therm mux: store the external thermistor reading 12bit ADC value
+        //    write_Int_FRAM(FRAMaddress, extThermreading); //8 or 32 channel therm mux: store the external thermistor reading 12bit ADC value
+        //    write_Int_FRAM(FRAMaddress, extThermreading); //8 or 32 channel therm mux: store the external thermistor reading 12bit ADC value
+        //    write_Int_FRAM(FRAMaddress, extThermreading); //8 or 32 channel therm mux: store the external thermistor reading 12bit ADC value
+        //}
+            
         write_Int_FRAM(FRAMaddress, extThermreading); //8 or 32 channel therm mux: store the external thermistor reading 12bit ADC value
     }
 
@@ -15015,6 +14774,7 @@ void storeChannelReading(int ch) {
 
 unsigned long storeReading(int ch) {
     unsigned long FRAMaddress;
+    //unsigned int Y = 0; //TEST VER 6.0.4
     unsigned char baseAddress = 0; //VER 6.0.10
 
 
@@ -15024,6 +14784,20 @@ unsigned long storeReading(int ch) {
     userPosition=read_Int_FRAM(UserPositionaddress);                           //get the user position
     FRAM_MEMORY.memory=read_Int_FRAM(FRAM_MEMORYflagsaddress);             //get max # of arrays
     
+
+    /*REM VER 6.0.10:
+    if(MUX4_ENABLE.mflags.mux16_4==VW4)                                           //if 4 channel MUX  VER 6.0.7
+        FRAMaddress=(36*(outputPosition-1));                                  //calculate the external FRAM address (4 channel)
+    if(MUX4_ENABLE.mflags.mux16_4==VW16)                                           //if 16 channel MUX VER 6.0.7
+        FRAMaddress=(108*(outputPosition-1));                                 //calculate the external FRAM address (16 channel)
+    if(MUX4_ENABLE.mflags.mux16_4==Single)                                           //Single Channel    VER 6.0.7
+        FRAMaddress=(20*(outputPosition-1));                                  //calculate the external FRAM address (single channel);
+    if(MUX4_ENABLE.mflags.mux16_4==TH8)                                           //8 Channel    VER 6.0.7
+        FRAMaddress=(30*(outputPosition-1));                                  //calculate the external FRAM address (8 channel);
+    if(MUX4_ENABLE.mflags.mux16_4==TH32)                                           //32 Channel    VER 6.0.9
+        FRAMaddress=(80*(outputPosition-1));                                  //calculate the external FRAM address (32 channel);
+     */
+
     //VER 6.0.10:
     if (MUX4_ENABLE.mflags.mux16_4 == Single) //if Single Channel VW
         baseAddress = SingleVWBytes; //external FRAM base address (Single channel)
@@ -15043,10 +14817,7 @@ unsigned long storeReading(int ch) {
 
     write_Int_FRAM(FRAMaddress, year);                                          //store the year data
     write_Int_FRAM(FRAMaddress + 2, julian); //store the decimal date
-
-
-    //write_Flt_FRAM(FRAMaddress + 4, seconds_since_midnight); //store the current time (absolute)  REM REV BH
-    write_longFRAM(seconds_since_midnight,FRAMaddress + 4);                     //store the current time in seconds REV BH
+    write_Flt_FRAM(FRAMaddress + 4, seconds_since_midnight); //store the current time (absolute)
     write_Int_FRAM(FRAMaddress + 8, mainBatreading); //store the 3V battery voltage 12bit ADC value
     write_Int_FRAM(FRAMaddress + 10, intThermreading); //store the internal thermistor reading 12bit ADC value
 
@@ -15595,10 +15366,6 @@ void take_One_Complete_Reading(unsigned char store)
 
         if (!store)
             IEC1bits.INT1IE = 0; //temporarily disable the INT2 interrupt
-        
-        VWreadingProcessed=-0.0;                                                //Store -0.0 to indicate channel is disabled    REV BI
-        extThermreading=0x0001;                                                 //Store -0.0 to indicate channel is disabled    REV BI
-        storeChannelReading(ch);                                                //store the reading REV BI
 
         if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32) //VER 6.0.9
         {
@@ -16254,7 +16021,13 @@ void take_One_Complete_Reading(unsigned char store)
                         MUX4_ENABLE.mflags.mux16_4 == VW4 |
                         MUX4_ENABLE.mflags.mux16_4 == VW16)
                 {
-
+                    Nop();                                                      //FOR TEST REV AE
+                    /*                                                          REM REV AE
+                    extThermreading = take_analog_reading(85); //take external thermistor reading
+                    extThermRaw=((Vref*extThermreading)/4096);	//convert to float voltage	 REV J  TEST REM REV K
+                    extThermProcessed=V_HT2C(extThermRaw,ch);		//convert to float degrees C	REV J
+                    extThermreading=f32toINT16(extThermProcessed);	//convert float to 16 bit	REV J
+                     */
                     //REV AE:
                     extThermreading = take_analog_reading(85); //take external thermistor reading
                     if(extThermreading>5000)
@@ -18223,9 +17996,6 @@ void __attribute__((__interrupt__)) _INT1Interrupt(void)                        
                 Nop();
                 PORT_CONTROL.flags.ControlPortON = 1; //set flag
                 PORT_CONTROL.flags.CPTime = 1; //set flag
-                S_1.status1flags.CP=1;                                            //set the MODBUS status flag    REV BF
-                S_1.status1flags.CP_Timer=1;                                      //set the MODBUS status flag    REV BF
-                write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
 
                 PortOffHours=read_Int_FRAM(PortOffHoursaddress);                //write Port OFF hours to RTC 
                 setClock(RTCAlarm2HoursAddress, PortOffHours);
@@ -18240,9 +18010,6 @@ void __attribute__((__interrupt__)) _INT1Interrupt(void)                        
                 PORT_CONTROL.flags.ControlPortON = 0; //clear flag
                 PORT_CONTROL.flags.O0issued = 0; //clear flag
                 PORT_CONTROL.flags.CPTime = 0; //clear flag
-                S_1.status1flags.CP=0;                                            //clear the MODBUS status flag    REV BF
-                S_1.status1flags.CP_Timer=0;                                      //clear the MODBUS status flag    REV BF
-                write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                
                 PortOnHours=read_Int_FRAM(PortOnHoursaddress);                  //write Port ON hours to RTC  
                 setClock(RTCAlarm2HoursAddress, PortOnHours);
                 PortOnMinutes=read_Int_FRAM(PortOnMinutesaddress);              //write Port ON minutes to RTC    
