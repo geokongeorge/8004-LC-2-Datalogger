@@ -13,12 +13,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		4/21/2017
+//	DATE:		4/24/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   ca
-//	CHECKSUM:	0x3900 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x46f5 (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8636/30720   28%
-//	PGM(FLASH)MEM:  149205/261888 57%
+//	PGM(FLASH)MEM:  149451/261888 57%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -150,7 +150,7 @@
 //      bg      4/17/17             Incorporate paging for MODBUS addressing of holding registers
 //      bh      4/18/17             Change Seconds_Since_Midnight value that is stored in FRAM from type 32 bit float to type 32 bit unsigned long  
 //      bi      4/20/17             Store -0.0 in FRAM addresses for disabled channel value
-//      ca      4/20/17             Same as rev bi but uC pinout for 8004 rev 1 pcb
+//      ca      4/24/17             Same as rev bi but uC pinout for 8004 rev 1 pcb
 //
 //
 //
@@ -14511,7 +14511,7 @@ void setup(void)                                                                
     AD1PCFGLbits.PCFG2=0;                                                       //AN2 cfg as analog input   (3V_SENSE)
     AD1PCFGLbits.PCFG1=1;                                                       //AN1 cfg as digital pin
     AD1PCFGLbits.PCFG0=0;                                                       //AN0 cfg as analog input   (VW)    
-    AD1PCFGL=0xFEC2;                                                            //all else digital
+    //AD1PCFGL=0xFEC2;                                                            //all else digital
 
     AD1PCFGHbits.PCFG16=1;                                                      //Set AN16-32 as digital pins    
     AD1PCFGHbits.PCFG17=1;                                                      
@@ -14531,57 +14531,127 @@ void setup(void)                                                                
     AD1PCFGHbits.PCFG29=1;
     AD1PCFGHbits.PCFG30=1;
     AD1PCFGHbits.PCFG31=1;    
-    
     IFS1bits.INT1IF=0;                                                            
+
     //Configure PORTA:
     TRISA=0;                                                                    //PORTA configured as outputs                                                   
+    //Inputs:
     TRISAbits.TRISA13=1;                                                        //analog input
     TRISAbits.TRISA12=1;                                                        //analog input
     TRISAbits.TRISA10=1;                                                        //analog Vref
-    LATA=0;                                                                     //all low
-
+    //Outputs:
+    LATAbits.LATA0=0;                                                           //Unused = 0
+    LATAbits.LATA1=0;                                                           //Unused = 0
+    LATAbits.LATA2=0;                                                           //SCL_VW = 0
+    LATAbits.LATA3=0;                                                           //SDA_VW = 0
+    LATAbits.LATA4=0;                                                           //Unused = 0
+    LATAbits.LATA5=0;                                                           //Unused = 0
+    LATAbits.LATA6=0;                                                           //Unused = 0
+    LATAbits.LATA7=0;                                                           //Unused = 0
+    LATAbits.LATA9=0;                                                           //Unused = 0
+    LATAbits.LATA14=0;                                                          //Unused = 0
+    LATAbits.LATA15-0;                                                          //Unused = 0
+    
     //Configure PORTB:
     TRISB=0;
-    TRISBbits.TRISB9=1;                                                         //analog input
-    TRISBbits.TRISB8=1;                                                         //analog input
-    TRISBbits.TRISB5=1;                                                         //analog input
-    TRISBbits.TRISB4=1;                                                         //analog input
-    TRISBbits.TRISB3=1;                                                         //analog input
-    TRISBbits.TRISB2=1;                                                         //analog input
-    TRISBbits.TRISB0=1;                                                         //analog input
-    LATB=0;
-
-    //Configure PORTC:
-    TRISC=0x9000;
-    LATC=0;                                                                
+    //Inputs:
+    TRISBbits.TRISB9=1;                                                         //analog input  V_AGC
+    TRISBbits.TRISB8=1;                                                         //analog input  VW_LPF
+    TRISBbits.TRISB5=1;                                                         //analog input  V_LITH
+    TRISBbits.TRISB4=1;                                                         //analog input  V_TH_EXT
+    TRISBbits.TRISB3=1;                                                         //analog input  12V_SENSE
+    TRISBbits.TRISB2=1;                                                         //analog input  3V_SENSE
+    TRISBbits.TRISB0=1;                                                         //analog input  VW
+    //Outputs:
+    LATBbits.LATB1=0;                                                           //Unused = 0
+    LATBbits.LATB6=0;                                                           //Unused = 0
+    LATBbits.LATB7=0;                                                           //Unused = 0
+    LATBbits.LATB10=0;                                                          //Unused = 0
+    LATBbits.LATB11=0;                                                          //Unused = 0
+    LATBbits.LATB12=0;                                                          //Unused = 0
+    LATBbits.LATB13=0;                                                          //Unused = 0
+    LATBbits.LATB14=0;                                                          //Unused = 0
+    LATBbits.LATB15=0;                                                          //Unused = 0
     
+    //Configure PORTC:
+    TRISC=0;
+    //Inputs:
+    TRISCbits.TRISC15=1;                                                        //Osc
+    TRISCbits.TRISC12=1;                                                        //Osc
+    //Outputs:
+    LATCbits.LATC1=0;                                                           //VW100 (T2CK input) = 0
+    LATCbits.LATC2=0;                                                           //_AMP_SHDN = 0
+    LATCbits.LATC3=0;                                                           //IN1 = 0
+    LATCbits.LATC4=0;                                                           //EXC_EN = 0
+
     //Configure PORTD:
-    TRISD=0x0020;
-    LATD=0;
-    LATDbits.LATD1=1;                                                           //Set CLK_RST high
+    TRISD=0;
+    //Inputs:
+    TRISDbits.TRISD5=1;                                                         //input BT_CONNECT
+    //Outputs:
+    LATDbits.LATD0=0;                                                           //FLTCLK = 0
+    LATDbits.LATD1=1;                                                           //_CLK_RST = 1
+    LATDbits.LATD2=0;                                                           //+3.3V_X_CONTROL = 0
+    LATDbits.LATD3=0;                                                           //SAMPLE_LITHIUM = 0
+    LATDbits.LATD4=0;                                                           //_BT_RESET = 0
+    LATDbits.LATD6=0;                                                           //BT_ENABLE = 0
+    LATDbits.LATD7=0;                                                           //SLEEP = 0
+    LATDbits.LATD8=0;                                                           //TEST2 = 0
+    LATDbits.LATD9=0;                                                           //TEST1 = 0
+    LATDbits.LATD10=0;                                                          //Unused = 0
+    LATDbits.LATD11=0;                                                          //Unused = 0
+    LATDbits.LATD12=0;                                                          //BT_FR = 0
+    LATDbits.LATD13=0;                                                          //_BT_RESET = 0
+    LATDbits.LATD14=0;                                                          //Unused = 0
+    LATDbits.LATD15=0;                                                          //RS485TX_EN = 0
     
     //Configure PORTE:
     TRISE=0;
-    LATE=0;
-    
+    //Outputs:
+    LATEbits.LATE0=0;                                                           //Unused = 0
+    LATEbits.LATE1=0;                                                           //Unused = 0
+    LATEbits.LATE2=0;                                                           //Unused = 0
+    LATEbits.LATE3=0;                                                           //Unused = 0
+    LATEbits.LATE4=0;                                                           //Unused = 0
+    LATEbits.LATE5=0;                                                           //_EXC_EN = 0
+    LATEbits.LATE6=0;                                                           //9V_EXC = 0
+    LATEbits.LATE7=0;                                                           //Unused = 0
+
     //Configure PORTF:
     TRISF=0;
-    TRISFbits.TRISF8=1;                                                         //USB_PWR input
-    TRISFbits.TRISF7=1;                                                         //_232 input
+    //Inputs:
     TRISFbits.TRISF2=1;                                                         //Rx input
-    LATF=0x0;
-    LATFbits.LATF6=1;                                                           //set WP high
-    LATFbits.LATF4=1;                                                           //set _RS485RX_EN high
-    LATFbits.LATF3=1;                                                           //set Tx high
-    LATFbits.LATF1=1;                                                           //set _READ high
+    TRISFbits.TRISF7=1;                                                         //_232 input
+    TRISFbits.TRISF8=1;                                                         //USB_PWR input
+    //Outputs:
+    LATFbits.LATF0=0;                                                           //CONTROL=0
+    LATFbits.LATF1=1;                                                           //_READ = 1
+    LATFbits.LATF3=1;                                                           //U1TX = 1
+    LATFbits.LATF4=1;                                                           //_RS485RX_EN = 1
+    LATFbits.LATF5=0;                                                           //_232SHDN = 0
+    LATFbits.LATF6=1;                                                           //WP = 1
+    LATFbits.LATF12=0;                                                          //MUX_CLOCK = 0
+    LATFbits.LATF13=0;                                                          //MUX_RESET = 0
     
     //Configure PORTG:
     TRISG=0;
-    LATG=0;    
+    //Outputs:
+    LATGbits.LATG0=0;                                                           //Unused
+    LATGbits.LATG1=0;                                                           //Unused
+    LATGbits.LATG2=1;                                                           //I2C SCL
+    LATGbits.LATG3=1;                                                           //I2C SDA
+    LATGbits.LATG6=0;                                                           //IN2
+    LATGbits.LATG7=0;                                                           //Unused    
+    LATGbits.LATG8=0;                                                           //Unused
+    LATGbits.LATG9=0;                                                           //Unused
+    LATGbits.LATG12=0;                                                          //A
+    LATGbits.LATG13=0;                                                          //B
+    LATGbits.LATG14=0;                                                          //C
+    LATGbits.LATG15=0;                                                          //D
     
-    PMD1=0x0000;                                                                //ENABLE ALL MODULES
-    PMD2=0x0000;
-    PMD3=0x0000;
+    //PMD1=0x0000;                                                                //ENABLE ALL MODULES
+    //PMD2=0x0000;
+    //PMD3=0x0000;
 }
 
 /*REM REV CA:
