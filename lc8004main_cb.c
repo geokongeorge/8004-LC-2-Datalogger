@@ -13,12 +13,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		4/24/2017
+//	DATE:		4/25/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   cb
-//	CHECKSUM:	0x53f6 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x7468 (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8636/30720   28%
-//	PGM(FLASH)MEM:  149448/261888 57%
+//	PGM(FLASH)MEM:  149466/261888 57%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -151,7 +151,8 @@
 //      bh      4/18/17             Change Seconds_Since_Midnight value that is stored in FRAM from type 32 bit float to type 32 bit unsigned long  
 //      bi      4/20/17             Store -0.0 in FRAM addresses for disabled channel value
 //      ca      4/24/17             Same as rev bi but uC pinout for 8004 rev 1 pcb
-//      cb      4/24/17             Modify pluck routines for DRV8839 H-bridge VW excitation
+//      cb      4/25/17             Modify pluck routines for DRV8839 H-bridge VW excitation
+//                                  Modify order of initial HSPLL clock setup at program startup. Add waiting for PLL to lock
 //
 //
 //
@@ -258,9 +259,12 @@
 
 int main(void) 
 {
-    CLKDIVbits.PLLPRE=0;                                                        //PLL Prescaler N1 value (DIV/2)    REV AE
-    CLKDIVbits.PLLPOST=0;                                                       //PLL Postcaler N2 value (DIV/2)    REV AE
+    //CLKDIVbits.PLLPRE=0;                                                        //PLL Prescaler N1 value (DIV/2)    REM REV CB
+    //CLKDIVbits.PLLPOST=0;                                                       //PLL Postcaler N2 value (DIV/2)    REM REV CB
     PLLFBDbits.PLLDIV=14;                                                       //PLL Feedback Divisor M value (x16)    REV AE
+    CLKDIVbits.PLLPOST=0;                                                       //PLL Postcaler N2 value (DIV/2)    REV CB
+    CLKDIVbits.PLLPRE=0;                                                        //PLL Prescaler N1 value (DIV/2)    REV CB
+    while(!OSCCONbits.LOCK){};                                                  //Wait for PLL to lock  REV CB
     setup();                                                                    //REV Y
     
     restoreSettings();                                                          //reload the settings from FRAM REV Z      
