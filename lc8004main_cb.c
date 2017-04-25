@@ -152,7 +152,7 @@
 //      bi      4/20/17             Store -0.0 in FRAM addresses for disabled channel value
 //      ca      4/24/17             Same as rev bi but uC pinout for 8004 rev 1 pcb
 //      cb      4/25/17             Modify pluck routines for DRV8839 H-bridge VW excitation
-//                                  Modify order of initial HSPLL clock setup at program startup. Add waiting for PLL to lock
+//                                  Modify order of initial HSPLL clock setup at program startup. Add Nop()s between HSPLL register writes. Add waiting for PLL to lock
 //
 //
 //
@@ -261,9 +261,13 @@ int main(void)
 {
     //CLKDIVbits.PLLPRE=0;                                                        //PLL Prescaler N1 value (DIV/2)    REM REV CB
     //CLKDIVbits.PLLPOST=0;                                                       //PLL Postcaler N2 value (DIV/2)    REM REV CB
+    Nop();
     PLLFBDbits.PLLDIV=14;                                                       //PLL Feedback Divisor M value (x16)    REV AE
+    Nop();
     CLKDIVbits.PLLPOST=0;                                                       //PLL Postcaler N2 value (DIV/2)    REV CB
+    Nop();
     CLKDIVbits.PLLPRE=0;                                                        //PLL Prescaler N1 value (DIV/2)    REV CB
+    Nop();
     while(!OSCCONbits.LOCK){};                                                  //Wait for PLL to lock  REV CB
     setup();                                                                    //REV Y
     
@@ -4197,7 +4201,7 @@ void CMDcomm(void)
                                     putsUART1(_5VEXCON);                        //display "Excitation on."
                                     while (BusyUART1());   
                                     
-                                    pluckOFF();    
+                                    pluckON();                                  //REV CB 
                                     //_EXC_EN=1;
                                     //V12_EXC=0;   
                                     _3VX_on();                                  //power-up analog circuitry  
@@ -4206,11 +4210,11 @@ void CMDcomm(void)
                                     while (!IFS0bits.U1RXIF)                    //wait until a key is pressed
                                     {
                                         pluckPOS();
-                                        //delay(332);                             //500nS positive alternation  REM REV AE
-                                        delay(1328);                            //REV AE
+                                        //delay(332);                             //500uS positive alternation  REM REV AE
+                                        delay(1220);                            //REV CB
                                         pluckNEG();
-                                        //delay(332);                             //500nS negative alternation  REM REV AE
-                                        delay(1328);                            //REV AE    
+                                        //delay(332);                             //500uS negative alternation  REM REV AE
+                                        delay(1220);                            //REV CB    
                                     }
                                     IFS0bits.U1RXIF = 0;                        //clear the UART1 interrupt flag
                                     RxDataTemp = ReadUART1();                   //get the char from the UART buffer to clear it
@@ -10724,13 +10728,12 @@ void enableVWchannel(unsigned char gageType)                                    
     unsigned char gainGT4=0x30;
     unsigned char gainGT5=0x10;
     unsigned char gainGT6=0x00;
-    //unsigned int g=0;                                                           //FOR TEST ONLY REV H
     
     switch(gageType)
     {
         case 1:                                                                 //Set Fco for 4.608 KHz
             write_AD5241(gainGT1);                                              //Set initial gain
-            timeHigh=7;
+            timeHigh=7;                                                      
             A=0;                                                                //Setup PLL VCO
             B=0;
             C=0;                                                                //R=23.7K
@@ -10739,7 +10742,7 @@ void enableVWchannel(unsigned char gageType)                                    
             
         case 2:                                                                 //Set Fco for 6.144 KHz
             write_AD5241(gainGT2);                                              //Set initial gain
-            timeHigh=5;
+            timeHigh=5;                                                       
             A=1;                                                                //Setup PLL VCO
             B=1;
             C=0;                                                                //R=15.8K
@@ -13119,8 +13122,9 @@ void pluck(unsigned int _Fstart, unsigned int _Fstop, unsigned int _cycles) {
     float Fstart_tcy_halfperiod = ((1.0 / _Fstart) / tcy) / 2.0;                //compute # of tcy for start frequency
     float Fstop_tcy_halfperiod = ((1.0 / _Fstop) / tcy) / 2.0;                  //compute # of tcy for stop frequency
     float step = (Fstart_tcy_halfperiod - Fstop_tcy_halfperiod) / (_cycles / 2);//compute step
-
     unsigned int timer_value = 65536 - Fstart_tcy_halfperiod;
+    
+    pluckON();                                                                  //REV CB
 
     PMD1bits.T3MD=0;                                                            //enable TMR3   REV L
 
@@ -13169,12 +13173,15 @@ void pluckOFF(void)                                                             
 {
     IN1=0;
     IN2=0;
-    EXC_EN=0;
+    EXC_EN=0;                                                                   //Disable H-Bridge
+    _EXC_EN=1;                                                                  //Turn off Excitation supply
+    
 }
 
 void pluckON(void)                                                              //REV CB
 {
-    EXC_EN=1;                                                                   //Turn on H-Bridge
+    _EXC_EN=0;                                                                  //Turn on Excitation supply GLITCHES THE +3.3V SUPPLY
+    EXC_EN=1;                                                                   //Enable H-Bridge   REV CB
 }
 
 void pluckPOS(void)                                                             //REV CB
