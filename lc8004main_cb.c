@@ -16,9 +16,9 @@
 //	DATE:		5/2/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   cb
-//	CHECKSUM:	0x2329 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x3d0f (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8638/30720   28%
-//	PGM(FLASH)MEM:  150156/261888 57%
+//	PGM(FLASH)MEM:  150462/261888 57%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -154,6 +154,7 @@
 //      cb      5/2/17              Modify pluck routines for DRV8839 H-bridge VW excitation
 //                                  Modify order of initial HSPLL clock setup at program startup. Add Nop()s between HSPLL register writes. Add waiting for PLL to lock
 //                                  Add MODBUS Status register handling
+//                                  Add MODBUS Enable/Disable Bluetooth
 //
 //
 //
