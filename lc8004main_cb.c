@@ -13,12 +13,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		4/25/2017
+//	DATE:		5/2/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   cb
-//	CHECKSUM:	0x7468 (MPLABX ver 3.15 and XC16 ver 1.26)
-//	DATA(RAM)MEM:	8636/30720   28%
-//	PGM(FLASH)MEM:  149466/261888 57%
+//	CHECKSUM:	0x2329 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	DATA(RAM)MEM:	8638/30720   28%
+//	PGM(FLASH)MEM:  150156/261888 57%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -151,8 +151,9 @@
 //      bh      4/18/17             Change Seconds_Since_Midnight value that is stored in FRAM from type 32 bit float to type 32 bit unsigned long  
 //      bi      4/20/17             Store -0.0 in FRAM addresses for disabled channel value
 //      ca      4/24/17             Same as rev bi but uC pinout for 8004 rev 1 pcb
-//      cb      4/25/17             Modify pluck routines for DRV8839 H-bridge VW excitation
+//      cb      5/2/17              Modify pluck routines for DRV8839 H-bridge VW excitation
 //                                  Modify order of initial HSPLL clock setup at program startup. Add Nop()s between HSPLL register writes. Add waiting for PLL to lock
+//                                  Add MODBUS Status register handling
 //
 //
 //
@@ -234,6 +235,7 @@
 #include "LC8004delay_b.h"                                                      //REV Z
 #include "AD5241a.h"
 #include "MODBUSe.h"                                                            //REV BH
+//#include "MODBUSd.h"                                                            //REV BH
 #include "FRAM_ADDRESSc.h"
 #include <outcompare.h>
 #include <ports.h>
@@ -397,6 +399,12 @@ int main(void)
     if(DISPLAY_CONTROL.flags.BT)                                                //Enable Bluetooth if previously enabled    REV AF
         enableBT();
     
+    if(PORT_CONTROL.flags.ControlPortON)                                        //Turn on Control Port if previously on     REV BC
+    {
+        CONTROL = 1; //turn on control port
+        _READ=0;                                                                //LED ON    REV B        
+    }
+    
     DISPLAY_CONTROL.flags.Synch = 1; //default Synch setting
     //restoreSettings(); //reload the settings from FRAM                        //REM REV Z
     
@@ -540,6 +548,8 @@ void _3VX_on(void)
     V3_X_CONTROL = 1;                                                           //turn on +3VX
     //delay(73730);                                                               //10mS delay  REM REV AE
     delay(294920);                                                              //10mS delay    REV AE
+    SCL_VW=1;                                                                   //drive high    REV CB
+    SDA_VW=1;                                                                   //drive high    REV CB
     //TRISAbits.TRISA2=1;                                                         //Configure RA2 as INPUT
     //LATAbits.LATA2=1;                                                           //drive high
     //TRISAbits.TRISA3=1;                                                         //Configure RA3 as INPUT
@@ -2022,6 +2032,8 @@ void CMDcomm(void)
                             PORT_CONTROL.flags.BluetoothON = 0;                 //clear flag if not in scheduled ON time
                         PORT_CONTROL.flags.B0issued = 1;                        //set B0issued flag
                         write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);	//store flag in FRAM  
+                        S_1.status1flags.BT=0;                                  //clear the MODBUS status flag    REV CB
+                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);      //REV CB
                         BTStatus();                                             //display Bluetooth status                        
                         break;
                     }
@@ -2032,6 +2044,8 @@ void CMDcomm(void)
                         PORT_CONTROL.flags.BluetoothON = 1;
                         PORT_CONTROL.flags.B0issued = 0;                        //clear B0issued flag
                         write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);	//store flag in FRAM  
+                        S_1.status1flags.BT=1;                                  //set the MODBUS status flag    REV CB
+                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);      //REV CB
                         BTStatus();                                             //display Bluetooth status
                         break;
                     }
@@ -4207,6 +4221,7 @@ void CMDcomm(void)
                                     _3VX_on();                                  //power-up analog circuitry  
                                     //_EXC_EN=0;                                  //Enable the Excitation power supply
                                     IFS0bits.U1RXIF = 0;                        //clear the UART1 interrupt flag
+                                    
                                     while (!IFS0bits.U1RXIF)                    //wait until a key is pressed
                                     {
                                         pluckPOS();
@@ -4340,7 +4355,8 @@ void CMDcomm(void)
                                     }
                                     while (BusyUART1());
                                     crlf();
-                                    _3VX_on();                                  //power-up analog circuitry   
+                                    _3VX_on();                                  //power-up analog circuitry 
+                                    _AMP_SHDN=1;                                 //Enable the AGC amp    REV BC
                                     enableVWchannel(testmenuBUF[0]-0x30);                      
                                     IFS0bits.U1RXIF = 0;                        //clear the UART1 interrupt flag
                                     while (!IFS0bits.U1RXIF);                    //wait until a key is pressed
@@ -5325,6 +5341,7 @@ void disableVWchannel(void)                                                     
     PMD1bits.T3MD=1;                                                            //Disable Timer3 module
     PMD1bits.T2MD=1;                                                            //Disable Timer2 module
     PMD2bits.OC1MD=1;                                                           //Disable Output Compare1 module
+    _AMP_SHDN=0;                                                                 //Disable the AGC amp    REV BC
 }
 
 void displayBCD(void) //convert BCDtens and BCDones to ascii
@@ -10722,12 +10739,21 @@ unsigned int f32toINT16(float value)                                            
 void enableVWchannel(unsigned char gageType)                                    //REV H
 {
     unsigned int timeHigh=0;
-    unsigned char gainGT1=0xFF;
-    unsigned char gainGT2=0x80;
-    unsigned char gainGT3=0x40;
-    unsigned char gainGT4=0x30;
-    unsigned char gainGT5=0x10;
-    unsigned char gainGT6=0x00;
+    //REM REV CB
+    //unsigned char gainGT1=0xFF;
+    //unsigned char gainGT2=0x80;
+    //unsigned char gainGT3=0x40;
+    //unsigned char gainGT4=0x30;
+    //unsigned char gainGT5=0x10;
+    //unsigned char gainGT6=0x00;
+    
+    //TEST REV CB - SET ALL GAINS TO 1
+    unsigned char gainGT1=0x03;
+    unsigned char gainGT2=0x03;
+    unsigned char gainGT3=0x03;
+    unsigned char gainGT4=0x03;
+    unsigned char gainGT5=0x03;
+    unsigned char gainGT6=0x03;
     
     switch(gageType)
     {
@@ -13125,7 +13151,6 @@ void pluck(unsigned int _Fstart, unsigned int _Fstop, unsigned int _cycles) {
     unsigned int timer_value = 65536 - Fstart_tcy_halfperiod;
     
     pluckON();                                                                  //REV CB
-
     PMD1bits.T3MD=0;                                                            //enable TMR3   REV L
 
     T2CONbits.T32 = 0;                                                          //make sure 32 bit mode is off
@@ -13174,14 +13199,21 @@ void pluckOFF(void)                                                             
     IN1=0;
     IN2=0;
     EXC_EN=0;                                                                   //Disable H-Bridge
+    V9_EXC=0;                                                                   //9V TEST REV CB
     _EXC_EN=1;                                                                  //Turn off Excitation supply
-    
 }
 
 void pluckON(void)                                                              //REV CB
 {
-    _EXC_EN=0;                                                                  //Turn on Excitation supply GLITCHES THE +3.3V SUPPLY
+    IN1=0;                                                                      //Make sure H-Bridge outputs are off
+    IN2=0;
+    //EXC_EN=1;                                                                   //Enable H-Bridge   REV CB    TEST REM
+    _EXC_EN=0;                                                                  //Turn on Excitation supply
+    delay(4000);                                                                //delay for stabilization REV CB
     EXC_EN=1;                                                                   //Enable H-Bridge   REV CB
+    //V9_EXC=1;                                                                   //9V TEST REV CB
+    delay(4000);                                                                //delay for stabilization
+    Nop();                                                                      //TEST POINT
 }
 
 void pluckPOS(void)                                                             //REV CB
@@ -13906,7 +13938,7 @@ void restoreSettings(void)
     outputPosition=read_Int_FRAM(OutputPositionaddress);                        //get the memory pointer
     userPosition=read_Int_FRAM(UserPositionaddress);                            //get the user position
     TotalStopSeconds=read_longFRAM(TotalStopSecondsaddress);                    //get the stored stop time
-
+    S_1.status1=read_Int_FRAM(MODBUS_STATUS1address);                           //REV BC
 }
 
 unsigned long RTChms2s(unsigned char x) //returns total seconds in RTC register
@@ -14611,7 +14643,7 @@ void setup(void)                                                                
     LATEbits.LATE2=0;                                                           //Unused = 0
     LATEbits.LATE3=0;                                                           //Unused = 0
     LATEbits.LATE4=0;                                                           //Unused = 0
-    LATEbits.LATE5=0;                                                           //_EXC_EN = 0
+    LATEbits.LATE5=1;                                                           //_EXC_EN = 1
     LATEbits.LATE6=0;                                                           //9V_EXC = 0
     LATEbits.LATE7=0;                                                           //Unused = 0
 
@@ -16296,6 +16328,7 @@ void take_One_Complete_Reading(unsigned char store)
             {
                 Blink(1);
                 enableVWchannel(gageType);                                      //configure the PLL and LPF REV M
+                
                 if (!store)
                     IEC1bits.INT1IE = 0; //temporarily disable the INT2 interrupt
                 //WDTSWEnable; //Start WDT TEST LC2MUX                          //TEST REM REV K
@@ -16573,7 +16606,9 @@ float take_reading(unsigned char gageType)                                      
         pluck(800, 1600, 384);                                                  //800-1600 Hz Sweep    
 
     delay(80000);                                                               //30mS delay for PLL settling REV AE
+    _AMP_SHDN=1;                                                                 //Enable the AGC amp    REV BC
     digits = read_vw();                                                         //get the VW digits
+    _AMP_SHDN=0;                                                                 //Disable the AGC amp    REV BC
     //VCO_MAX=0;                                                                //from VER 5.8.1.4
     //resetVWchannel();                                                         //put the VW channel in standby mode    from VER 5.8.1.4
     _3VX_off(); //power-down analog circuitry   VER 6.0.0
