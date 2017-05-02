@@ -41,6 +41,8 @@ extern unsigned char MMSB;
 extern unsigned char MMMSB; 
 extern unsigned int TimeOut;                                                    //15 second timeout
 extern void handleCOMError(void);
+extern void enableBT(void);                                                     //REV E
+extern void disableBT(void);                                                    //REV E
 
 #define TEST        true
 #define GENERATE    false
