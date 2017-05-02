@@ -9,7 +9,8 @@
 //REV B: 03/24/17                                                               Incorporate MODBUS slave addressing & decoding
 //REV C: 03/28/17                                                               Incorporate COMMAND decoding
 //REV D: 04/14/17                                                               Incorporate paging for memory addressing
-//REV E: 04/19/17                                                               Include LC8004extFRAM_i.h
+//REV E: 05/02/17                                                               Include LC8004extFRAM_i.h
+//                                                                              Add Status register handling
 
 
 #include "MODBUSe.h"  
@@ -24,6 +25,8 @@ unsigned char MODBUS_RXbuf[125];                                                
 unsigned char MODBUS_TXbuf[125];                                                //125 registers max   
 unsigned int modbusaddressvalue;
 unsigned int ECHO=0;                                                            //REV D
+unsigned int i=0;                                                               //REV CB
+
 
 
 void MODBUScomm(void)
@@ -34,7 +37,8 @@ void MODBUScomm(void)
     csum       csumdata;                                                        //csumdata[1] is MSB, csumdata[0] is LSB
     csum       value;                                                           //value[1] is MSB, value[0] is LSB]
     csum       registers;                                                       //registers[1] is MSB, registers [0] is LSB
-    
+    bitflags   tempStatusValue;                                                 //temporary register for comparison REV CB 
+        
     for(a=0;a<125;a++)                                                        //TEST REM
     {
         MODBUS_TXbuf[a]=0;                                                      //Clear the MODBUS_TXbuf[]                 
@@ -99,6 +103,7 @@ void MODBUScomm(void)
         case WRITE_HOLDING:
             if((memaddressStart>=0x7FA6C) && (memaddressStart<=0x7FFFF))        //Registers are not write protected
             {
+                tempStatusValue.status=read_Int_FRAM(MODBUS_STATUS1address);         //REV CB
                 MODBUS_TXbuf[REGISTER_MSB]=MODBUS_RXbuf[REGISTER_MSB];          //Load the TXbuf[] with Register address MSB
                 MODBUS_TXbuf[REGISTER_LSB]=MODBUS_RXbuf[REGISTER_LSB];          //Load the TXbuf[] with Register address LSB
                 value.z[1]=MODBUS_RXbuf[WRITE_DATA_MSB];                        //get the write data MSB
@@ -146,9 +151,172 @@ void MODBUScomm(void)
     }
     
     //Transmit the array:
-    MODBUS_TX(ECHO);        
+    MODBUS_TX(ECHO);    
     
-    IFS3bits.T9IF=1;                                                        //exit if not an address match
+    //Perform the requested function if Status register was written            //REV CB
+    
+    if(memaddressStart==0xfea4 && MODBUS_RXbuf[COMMAND]==WRITE_HOLDING)         //write to STATUS Register  REV CB
+    {
+        if(tempStatusValue.status != value.c)                                        //if new value is different than what's present
+        {
+            for(i=0;i<16;i++)
+            {
+                //if (TEMPS_1.i == S_1.i)    //no difference
+                //    continue;
+                switch(i)
+                {
+                    case 0:                                              
+                        if(tempStatusValue.statusflags.bit0)
+                            Nop();
+                            //start Logging();
+                        else
+                            Nop();
+                            //stop Logging();
+                        break;
+                    
+                    case 1:
+                        if(tempStatusValue.statusflags.bit1)
+                            Nop();
+                            //enable LogInts();
+	                    else
+                            Nop();
+                            //disable Logints();
+                        break;
+                    
+                    case 2:
+                        if(tempStatusValue.statusflags.bit2)
+                            Nop();
+                            //enable memory wrap();
+                        else
+                            Nop();
+                            //Disable memory wrap();
+                        break;
+		
+                    case 3:
+                        if(tempStatusValue.statusflags.bit3)
+                            Nop();
+                            //enableBT();
+                        else
+                            Nop();
+                            //disableBT();
+                        break;
+		
+                    case 4:
+                        if(tempStatusValue.statusflags.bit4)
+                            Nop();
+                            //enableBTtimer();
+                        else
+                            Nop();
+                            //disableBTtimer();
+                        break;
+		
+                    case 5:
+                        if(tempStatusValue.statusflags.bit5)
+                            Nop();
+                            //enableCP();
+                        else
+                            Nop();
+                            //disableCP();
+                        break;
+		
+                    case 6:
+                        if(tempStatusValue.statusflags.bit6)
+                            Nop();
+                            //enableCPtimer()l
+                        else
+                            Nop();
+                            //disableCPtimer();
+                        break;
+		
+                    case 7:
+                        if(tempStatusValue.statusflags.bit7)
+                            Nop();
+                            //enableSynch();
+                        else
+                            Nop();
+                            //disableSynch();
+                        break;
+                        
+                    case 8:                                                     //Handle CFG seperately
+                        break;
+		
+                    case 9:
+                        break;
+		
+                    case 10:
+                        break;
+		
+                    case 11:
+                        if(tempStatusValue.statusflags.bit11)
+                            Nop();
+                            //EnableStartTime();
+                        else
+                            Nop();
+                            //DisableStartTime();
+                        break;
+                        
+                    case 12:
+                        if(tempStatusValue.statusflags.bit12)
+                            Nop();
+                            //enableStopTime();
+                        else
+                            Nop();
+                            //disableStopTime();
+                        break;
+		
+                    default:
+                        break;
+                }
+            }
+            
+            switch(tempStatusValue.statusflags.bit8910)
+            {
+                case 0:
+                    Nop();
+                    //MX4();
+                    break;
+		
+                case 1:
+                    Nop();
+                    //MX16();
+                    break;
+            
+                case 2:
+                    Nop();
+                    //MX1();
+                    break;
+            
+                case 3:
+                    Nop();
+                    //MX8T();
+                    break;
+            
+                case 4:
+                    Nop();
+                    //MX32();
+                    break;
+            
+                case 5:
+                    Nop();
+                    //MX32T();
+                    break;
+            
+                case 6:
+                    Nop();
+                    //MX8();
+                    break;
+            
+                default:
+                    break;
+            }
+			
+        
+        }
+        
+    }
+   
+    
+    IFS3bits.T9IF=1;                                                            //exit if not an address match
     return;
 }
 
