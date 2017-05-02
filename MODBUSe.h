@@ -8,6 +8,32 @@ typedef union{
 }csum;
 
 
+//MODBUS STATUS REGISTER:
+typedef struct{                                                                 //      READ                              WRITE
+	unsigned	bit0:1;                                                      //1=Started, 0=Stopped              1=Start, 0=Stop                  Lsb
+	unsigned 	bit1:1;                                                       //1=Log Ints Enabled, 0=Disabled    1=Enable, 0=Disable
+	unsigned 	bit2:1;                                                         //1=Memory Wrap Enabled, 0=Disabled 1=Enable, 0=Disable
+	unsigned	bit3:1;                                                           //1=Bluetooth ON, 0=OFF             1=Turn BT ON, 0=Turn OFF
+	unsigned	bit4:1;                                                     //1=BT Timer Enabled, 0=Disabled    1=Enable BT Timer, 0=Disable
+	unsigned	bit5:1;                                                           //1=Control Port ON, 0=OFF          1=Turn ON, 0=Turn OFF
+	unsigned	bit6:1;                                                     //1=CP Timer Enabled, 0=Disabled    1=Enable CP Timer, 0=Disable
+	unsigned	bit7:1;                                                         //1=Readings Sync'd, 0=not Sync'd   1=Sync Readings,0=Don't Sync
+	unsigned	bit8910:3;                                                          //110   VW8 		
+                                                                                //101   TH32
+                                                                                //100   VW32
+                                                                                //011   TH8
+                                                                                //010   VW/TH Single
+                                                                                //001   VW/TH16
+                                                                                //000   VW/TH4
+	unsigned 	bit11:1;                                                           //1=Start Time Enabled,0=Disabled   1=Enable Start Time,0=Disable
+    unsigned 	bit12:1;                                                           //1=Stop Time Enabled,0=Disabled    1=Enable Stop Time,0=Disable    Msb
+}StatusBits;
+typedef union{ unsigned int status;
+StatusBits statusflags;
+}bitflags;
+
+
+
 extern unsigned int baudrate;
 extern unsigned char MSB;                                                       
 extern unsigned char LSB;                                                       
