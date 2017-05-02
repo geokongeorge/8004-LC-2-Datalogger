@@ -1,6 +1,6 @@
 
 
-#include "LC8004delay_a.h"
+#include "LC8004delay_b.h"
 #include <timer.h>
 
 
@@ -13,8 +13,8 @@ extern	const float tcy;
 //
 //	Delay for a specific # of processor cycles
 //
-//	Parameters received: unsigned long (multiples of 7.3728MHz Fcy)
-//						 Tcy=1/7.3728E6=135.633680556nS
+//	Parameters received: unsigned long (multiples of 29.4912MHz Fcy)
+//						 Tcy=1/29.4912E6=33.9084201389 nS
 //	Returns: nothing
 //
 //	Called from: main()
@@ -22,7 +22,7 @@ extern	const float tcy;
 //***************************************************************************
 void delay(unsigned long x)
 {
-	while(--x);			//decrement x until 0
+	while(--x);                                                                 //decrement x until 0
 }
 
 
