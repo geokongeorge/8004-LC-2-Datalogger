@@ -15,7 +15,7 @@
 //
 //	Parameters received: none
 //	Returns: unsigned char value
-//
+//  Fcy=29.4912 MHz
 //
 //***************************************************************************
 unsigned char read_AD5241(void)
@@ -28,7 +28,7 @@ unsigned char read_AD5241(void)
                             I2C2_STOP_DIS & I2C2_RESTART_DIS &
                             I2C2_START_DIS);
 
-    unsigned int config2=0x10;                                                  //value for I2C2BRG at 400KHz    
+    unsigned int config2=0x44;                                                  //value for I2C2BRG at 400KHz    
     unsigned char potRead=0x59;                                                 //slave address for read
     unsigned char value=0;  
     
@@ -75,7 +75,7 @@ void write_AD5241(unsigned char tap)
                             I2C2_STOP_DIS & I2C2_RESTART_DIS &
                             I2C2_START_DIS);
 
-    unsigned int config2=0x10;                                                  //value for I2C2BRG at 400KHz    
+    unsigned int config2=0x44;                                                  //value for I2C2BRG at 400KHz    
 
     unsigned char potWrite=0x58;                                                //slave address for write
     //unsigned char potRead=0x59;                                                 //slave address for read
