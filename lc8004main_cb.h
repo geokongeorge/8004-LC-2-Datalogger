@@ -311,7 +311,7 @@ tempflags	DEC_TEMP;
 //REV BA
 //MODBUS STATUS1 REGISTER:
 typedef struct{                                                                 //      READ                              WRITE
-	unsigned	Logging:1;                                                      //1=Started, 0=Stopped              1=Start, 0=Stop                  Msb
+	unsigned	Logging:1;                                                      //1=Started, 0=Stopped              1=Start, 0=Stop                  Lsb
 	unsigned 	Logint:1;                                                       //1=Log Ints Enabled, 0=Disabled    1=Enable, 0=Disable
 	unsigned 	Wrap:1;                                                         //1=Memory Wrap Enabled, 0=Disabled 1=Enable, 0=Disable
 	unsigned	BT:1;                                                           //1=Bluetooth ON, 0=OFF             1=Turn BT ON, 0=Turn OFF
@@ -327,7 +327,7 @@ typedef struct{                                                                 
                                                                                 //001   VW/TH16
                                                                                 //000   VW/TH4
 	unsigned 	ST:1;                                                           //1=Start Time Enabled,0=Disabled   1=Enable Start Time,0=Disable
-    unsigned 	SP:1;                                                           //1=Stop Time Enabled,0=Disabled    1=Enable Stop Time,0=Disable
+    unsigned 	SP:1;                                                           //1=Stop Time Enabled,0=Disabled    1=Enable Stop Time,0=Disable    Msb
 }Status1ControlBits;
 typedef union{ unsigned int status1;
 Status1ControlBits status1flags;
@@ -554,6 +554,8 @@ unsigned int decimalRTC;
 #define RTCStatusAddress		0x0F
 
 //PortA Defines
+#define SCL_VW                  LATAbits.LATA2      //SCL for AD5241 digital pot    (output)    REV CB
+#define SDA_VW                  LATAbits.LATA3      //SDA for AD5241 digital pot    (output)    REV CB
 #define _CLK_INT                PORTAbits.RA12		//RTC Interrupt - falling edge	(INPUT)
 #define PAUSE                   PORTAbits.RA13      //External control input    (INPUT) REV CA
 
