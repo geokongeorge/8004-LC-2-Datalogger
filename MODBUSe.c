@@ -38,6 +38,7 @@ void MODBUScomm(void)
     csum       value;                                                           //value[1] is MSB, value[0] is LSB]
     csum       registers;                                                       //registers[1] is MSB, registers [0] is LSB
     bitflags   tempStatusValue;                                                 //temporary register for comparison REV CB 
+    bitflags   tempValueValue;                                                  //convert value into bitfield register
         
     for(a=0;a<125;a++)                                                        //TEST REM
     {
@@ -155,18 +156,23 @@ void MODBUScomm(void)
     
     //Perform the requested function if Status register was written            //REV CB
     
-    if(memaddressStart==0xfea4 && MODBUS_RXbuf[COMMAND]==WRITE_HOLDING)         //write to STATUS Register  REV CB
+    
+    if(memaddressStart==0x7fea4 && MODBUS_RXbuf[COMMAND]==WRITE_HOLDING)         //write to STATUS Register  REV CB
     {
         if(tempStatusValue.status != value.c)                                        //if new value is different than what's present
         {
+            tempValueValue.status = value.c;                                            //store received flags
+            
             for(i=0;i<16;i++)
             {
-                //if (TEMPS_1.i == S_1.i)    //no difference
-                //    continue;
+
                 switch(i)
                 {
-                    case 0:                                              
-                        if(tempStatusValue.statusflags.bit0)
+                    case 0:    
+                        if (tempStatusValue.statusflags.bit0 == tempValueValue.statusflags.bit0)    //no difference between received and stored value
+                            break;
+                        
+                        if(tempValueValue.statusflags.bit0)
                             Nop();
                             //start Logging();
                         else
@@ -175,7 +181,10 @@ void MODBUScomm(void)
                         break;
                     
                     case 1:
-                        if(tempStatusValue.statusflags.bit1)
+                        if (tempStatusValue.statusflags.bit1 == tempValueValue.statusflags.bit1)    //no difference between received and stored value
+                            break;                        
+                        
+                        if(tempValueValue.statusflags.bit1)
                             Nop();
                             //enable LogInts();
 	                    else
@@ -184,7 +193,10 @@ void MODBUScomm(void)
                         break;
                     
                     case 2:
-                        if(tempStatusValue.statusflags.bit2)
+                        if (tempStatusValue.statusflags.bit2 == tempValueValue.statusflags.bit2)    //no difference between received and stored value
+                            break;                        
+                        
+                        if(tempValueValue.statusflags.bit2)
                             Nop();
                             //enable memory wrap();
                         else
@@ -193,16 +205,20 @@ void MODBUScomm(void)
                         break;
 		
                     case 3:
-                        if(tempStatusValue.statusflags.bit3)
-                            Nop();
-                            //enableBT();
+                        if (tempStatusValue.statusflags.bit3 == tempValueValue.statusflags.bit3)    //no difference between received and stored value
+                            break;                        
+                        
+                        if(tempValueValue.statusflags.bit3)
+                            enableBT();
                         else
-                            Nop();
-                            //disableBT();
+                            disableBT();
                         break;
 		
                     case 4:
-                        if(tempStatusValue.statusflags.bit4)
+                        if (tempStatusValue.statusflags.bit4 == tempValueValue.statusflags.bit4)    //no difference between received and stored value
+                            break;                        
+                        
+                        if(tempValueValue.statusflags.bit4)
                             Nop();
                             //enableBTtimer();
                         else
@@ -211,7 +227,10 @@ void MODBUScomm(void)
                         break;
 		
                     case 5:
-                        if(tempStatusValue.statusflags.bit5)
+                        if (tempStatusValue.statusflags.bit5 == tempValueValue.statusflags.bit5)    //no difference between received and stored value
+                            break;                        
+                        
+                        if(tempValueValue.statusflags.bit5)
                             Nop();
                             //enableCP();
                         else
@@ -220,7 +239,10 @@ void MODBUScomm(void)
                         break;
 		
                     case 6:
-                        if(tempStatusValue.statusflags.bit6)
+                        if (tempStatusValue.statusflags.bit6 == tempValueValue.statusflags.bit6)    //no difference between received and stored value
+                            break;                        
+                        
+                        if(tempValueValue.statusflags.bit6)
                             Nop();
                             //enableCPtimer()l
                         else
@@ -229,7 +251,10 @@ void MODBUScomm(void)
                         break;
 		
                     case 7:
-                        if(tempStatusValue.statusflags.bit7)
+                        if (tempStatusValue.statusflags.bit7 == tempValueValue.statusflags.bit7)    //no difference between received and stored value
+                            break;                        
+                        
+                        if(tempValueValue.statusflags.bit7)
                             Nop();
                             //enableSynch();
                         else
@@ -247,7 +272,10 @@ void MODBUScomm(void)
                         break;
 		
                     case 11:
-                        if(tempStatusValue.statusflags.bit11)
+                        if (tempStatusValue.statusflags.bit11 == tempValueValue.statusflags.bit11)    //no difference between received and stored value
+                            break;                        
+                        
+                        if(tempValueValue.statusflags.bit11)
                             Nop();
                             //EnableStartTime();
                         else
@@ -256,7 +284,10 @@ void MODBUScomm(void)
                         break;
                         
                     case 12:
-                        if(tempStatusValue.statusflags.bit12)
+                        if (tempStatusValue.statusflags.bit12 == tempValueValue.statusflags.bit12)    //no difference between received and stored value
+                            break;      
+                        
+                        if(tempValueValue.statusflags.bit12)
                             Nop();
                             //enableStopTime();
                         else
@@ -269,8 +300,10 @@ void MODBUScomm(void)
                 }
             }
             
-            switch(tempStatusValue.statusflags.bit8910)
+            switch(tempValueValue.statusflags.bit8910)
             {
+                if (tempStatusValue.statusflags.bit8910 == tempValueValue.statusflags.bit8910)    //no difference between received and stored value
+                            break;                
                 case 0:
                     Nop();
                     //MX4();
