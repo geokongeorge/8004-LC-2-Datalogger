@@ -308,7 +308,7 @@ DecimalTempBits temp;
 }tempflags;
 tempflags	DEC_TEMP;
 
-//REV BA
+
 //MODBUS STATUS1 REGISTER:
 typedef struct{                                                                 //      READ                              WRITE
 	unsigned	Logging:1;                                                      //1=Started, 0=Stopped              1=Start, 0=Stop                  Lsb
@@ -327,24 +327,27 @@ typedef struct{                                                                 
                                                                                 //001   VW/TH16
                                                                                 //000   VW/TH4
 	unsigned 	ST:1;                                                           //1=Start Time Enabled,0=Disabled   1=Enable Start Time,0=Disable
-    unsigned 	SP:1;                                                           //1=Stop Time Enabled,0=Disabled    1=Enable Stop Time,0=Disable    Msb
+    unsigned 	SP:1;                                                           //1=Stop Time Enabled,0=Disabled    1=Enable Stop Time,0=Disable    
+    unsigned    X:1;                                                            //1=Take single reading not stored                                  Msb
+
 }Status1ControlBits;
 typedef union{ unsigned int status1;
 Status1ControlBits status1flags;
 }s1flags;
 s1flags	S_1;
 
+/*
 //REV BI
 //MODBUS CONTROL1 REGISTER:
 typedef struct{                                                                 //WRITE
-	unsigned	X:1;                                                            //1=Take single reading not stored
-	unsigned	R:1;                                                            //1=Reset memory pointers
+    unsigned	X:1;                                                            //1=Take single reading not stored  REV CE
+	unsigned	R:1;                                                            //1=Reset memory pointers           REV CE    
 }Control1ControlBits;
 typedef union{ unsigned int control1;
 Control1ControlBits control1flags;
 }c1flags;
 c1flags	C_1;
-
+*/
 
 //*********************************************************************
 
@@ -658,8 +661,7 @@ unsigned int decimalRTC;
 //sector size (bytes)
 #define SingleVWBytes           18                                              //29015 readings max
 #define VW4Bytes                36                                              //14507 readings max
-//#define VW8Bytes                50                                              //10445 readings max  REM REV BE
-#define VW8Bytes                44                                              //10445 readings max    REV BE
+#define VW8Bytes                44                                              //10445 readings max    
 #define VW16Bytes               108                                             //4835 readings max
 #define VW32Bytes               140                                             //3730 readings max
 #define TH8Bytes                28                                              //18652 readings max
