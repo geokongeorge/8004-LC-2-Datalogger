@@ -84,9 +84,6 @@ extern unsigned char MMSB;
 extern unsigned char MMMSB; 
 char NackTest=0;                                                                 //REV G
 char TEST=0;
-//unsigned int config2read=0x05;                                                  //d64 value for I2C1BRG at 925KHz      REM REV H
-//unsigned int config2write=0x10;                                               //d64 value for I2C1BRG at 400KHz    
-//unsigned int config2write=0x05;                                                 //d64 value for I2C1BRG at 925KHz     REM REV H
 unsigned int config2read=0x18;                                                  //d64 value for I2C1BRG at 925KHz   REV H
 unsigned int config2write=0x18;                                                 //d64 value for I2C1BRG at 925KHz   REV H
 //******************************************************************************
