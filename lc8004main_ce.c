@@ -16,8 +16,8 @@
 //	DATE:		5/3/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   ce
-//	CHECKSUM:	0x7f5d (MPLABX ver 3.15 and XC16 ver 1.26)
-//	DATA(RAM)MEM:	8638/30720   28%
+//	CHECKSUM:	0x717f (MPLABX ver 3.15 and XC16 ver 1.26)
+//	DATA(RAM)MEM:	8636/30720   28%
 //	PGM(FLASH)MEM:  150873/261888 58%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
