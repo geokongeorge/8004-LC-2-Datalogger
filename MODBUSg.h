@@ -27,8 +27,8 @@ typedef struct{                                                                 
                                                                                 //001   VW/TH16
                                                                                 //000   VW/TH4
 	unsigned 	bit11:1;                                                        //1=Start Time Enabled,0=Disabled   1=Enable Start Time,0=Disable
-    unsigned 	bit12:1;                                                        //1=Stop Time Enabled,0=Disabled    1=Enable Stop Time,0=Disable    Msb
-    unsigned    bit13:1;                                                        //'X' command   1=Take Reading & store in X memory
+    unsigned 	bit12:1;                                                        //1=Stop Time Enabled,0=Disabled    1=Enable Stop Time,0=Disable    
+    unsigned    bit13:1;                                                        //'X' command   1=Take Reading & store in X memory                  Msb
 }StatusBits;
 typedef union{ unsigned int status;
 StatusBits statusflags;
