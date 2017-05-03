@@ -289,6 +289,14 @@ void MODBUScomm(void)
                             Nop();
                             //disableStopTime();
                         break;
+                        
+                    case 13:                                                    //REV G
+                        if (tempStatusValue.statusflags.bit13 == tempValueValue.statusflags.bit13)    //no difference between received and stored value
+                            break;      
+                        
+                        X();                                                    //take 'X' Reading  
+                        tempValueValue.statusflags.bit13=0;                     //clear this bit on exit
+                        break;                        
 		
                     default:
                         break;
