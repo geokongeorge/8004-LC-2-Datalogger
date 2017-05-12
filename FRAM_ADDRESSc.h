@@ -46,8 +46,8 @@
 #define startHoursaddress           0x7fa9c                                     //2 bytes  
 #define startMinutesaddress         0x7fa9e                                     //2 bytes    
 #define startSecondsaddress         0x7faa0                                     //2 bytes    
-#define scratchaddress              0x7faa2                                     //2 bytes 
-#define Netaddress                  0x7faa4                                     //2 bytes
+#define scratchaddress              0x7faa2                                     //4 bytes 
+#define Netaddress                  0x7faa6                                     //2 bytes
 
 
 //IDaddress = beginning of 16 character ID array 
