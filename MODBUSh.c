@@ -30,13 +30,15 @@ unsigned char MODBUS_TXbuf[125];                                                
 unsigned int modbusaddressvalue;
 unsigned int ECHO=0;                                                            //REV D
 unsigned int i=0;                                                               //REV CB
+//unsigned int temp=0;                                                            //REV H
 
 
 void MODBUScomm(void)
 {
     unsigned char a=0;                                                          //loop index
     unsigned char arraysize=0;
-    unsigned long memaddressStart=0;                                          
+    unsigned long memaddressStart=0;     
+    unsigned int testvalue=0;                                                   //REV H
     csum       csumdata;                                                        //csumdata[1] is MSB, csumdata[0] is LSB
     csum       value;                                                           //value[1] is MSB, value[0] is LSB]
     csum       registers;                                                       //registers[1] is MSB, registers [0] is LSB
@@ -332,11 +334,9 @@ void MODBUScomm(void)
                             break;
                         
                         if(tempValueValue.statusflags.bit15)
-                            Nop();
-                            //start Logging();
+                            testvalue=START();                                  //Start Logging
                         else
-                            Nop();
-                            //stop Logging();
+                            testvalue=STOP();                                   //Stop Logging
                         break;                        
 		
                     default:
