@@ -13,12 +13,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		5/4/2017
+//	DATE:		5/12/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   cf
-//	CHECKSUM:	0x62ec (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0xa4aa (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8636/30720   28%
-//	PGM(FLASH)MEM:  150897/261888 58%
+//	PGM(FLASH)MEM:  151293/261888 58%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -158,8 +158,10 @@
 //      cc      5/2/17              Continue adding MODBUS Control functions (WF)(OP) (WF) (SR)
 //      cd      5/2/17              Add MODBUS CFG selection
 //      ce      5/3/17              Incorporate MODBUS 'X' command
-//      cf      5/4/17              Reorder members of S_1 register (MODBUS STATUS1) so that CFG bits are least significant and X,Logging are MSB
+//      cf      5/12/17              Reorder members of S_1 register (MODBUS STATUS1) so that CFG bits are least significant and X,Logging are MSB
 //                                  include MODBUSh.h,.c
+//                                  add START() and STOP() functions
+//                                  Debug VW Read functions
 //
 //
 //
@@ -281,7 +283,7 @@ int main(void)
     restoreSettings();                                                          //reload the settings from FRAM REV Z      
     LC2CONTROL2.flags2.scheduled=0;                                             //REV W
     write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);                  //store flag in FRAM REV W
-    //stopLogging();                                                              //TEST REV K
+    stopLogging();                                                              //TEST REV K
     
     SLEEP12V = 0; //Set 12V regulator into switchmode
     wait2S(); //provide a 2S delay to allow DS3231 to stabilize
@@ -673,11 +675,11 @@ void BTStatus(void)                                                             
     crlf();
     if(DISPLAY_CONTROL.flags.BT)
     {
-        putsUART1(BTEnabled);                                                   //Display BT Enabled
+        putsUART1(BTON);                                                   //Display BT Enabled
     }
     else
     {
-        putsUART1(BTDisabled);                                                  //Display BT Disabled
+        putsUART1(BTOFF);                                                  //Display BT Disabled
     }
     while(BusyUART1());
     
@@ -1537,21 +1539,25 @@ void clockMux(unsigned int delayValue) {
 void clockSwitch(unsigned char targetclock)                                     //REV AF
 {
         ClrWdt();
-        WDTSWEnable;                                                            //Start WDT
+        WDTSWEnable;                                                            //Start WDT   
         __builtin_disi(0x3fff);                                                 //Disable Interrupts
+       
         //CLOCKSWITCH
         if(targetclock)                                                         //new oscillator is HSPLL
         {
+            LC2CONTROL2.flags2.uCclock=1;                                       //REV CF
             __builtin_write_OSCCONH(3);                                         //Set the new oscillator to HS with PLL
             __builtin_write_OSCCONL(1);                                         //Request clock switch
         }
         else
         {
+            LC2CONTROL2.flags2.uCclock=0;                                       //REV CF
             __builtin_write_OSCCONH(2);                                         //Set the new oscillator to HS for getFrequency())
             __builtin_write_OSCCONL(1);                                         //Request clock switch            
         }
         while(OSCCONbits.OSWEN);                                                //wait until clock switch is complete
-        WDTSWDisable;                                                           //stop WDT
+        WDTSWDisable;                                                           //stop WDT    
+        
         __builtin_disi(0x0000);                                                 //Re-enable interrupts and return
 }
 
@@ -1598,7 +1604,6 @@ void CMDcomm(void)
     int SR_SAVE;
     int TBLPAG_SAVE;
     int tensScanInterval = 0;
-    int testScanInterval = 0;
     unsigned int DisplayArrayPointer = 0;
     unsigned int response;
     unsigned int data;                                                          //FOR FRAM TEST
@@ -3564,6 +3569,11 @@ void CMDcomm(void)
 
                     if (buffer[1] == capP && buffer[2] == cr) //SP received
                     {
+                        if(STOP())                                              //REV CF
+                            crlf();
+                        break;                                                  //REV CF
+                        
+                        /*REM REV CF
                         crlf();
 
                         if (!LC2CONTROL.flags.Logging && !LC2CONTROL.flags.LoggingStopTime &&!LC2CONTROL.flags.LoggingStartTime) {
@@ -3585,7 +3595,7 @@ void CMDcomm(void)
                         }
 
                         //configUARTsleep();    REM REV D
-
+                        */
                     }
 
                     if (buffer[1] == capP && isdigit(buffer[2])) //Enter Stop Logging Time
@@ -3724,6 +3734,10 @@ void CMDcomm(void)
                     //**********************************************Start Logging************************************************
                     if (buffer[1] == capT && buffer[2] == cr) //ST received
                     {
+                        if(START())                                             //REV CF
+                            return;                                             //REV CF
+                        break;                                                  //REV CF
+                        /*REM REV CF
                         if (USB_PWR)
                             LC2CONTROL.flags.USBpower = 1; //set flag if powered by USB
                         else
@@ -3774,6 +3788,7 @@ void CMDcomm(void)
 
                         putsUART1(Loggingalreadystarted); //Logging already started!
                         while (BusyUART1());
+                        */
                     }
 
 
@@ -4249,13 +4264,14 @@ void CMDcomm(void)
                                     while (BusyUART1());
                                     crlf();
                                     _3VX_on();                                  //power-up analog circuitry 
-                                    _AMP_SHDN=1;                                 //Enable the AGC amp    REV BC
+                                    LC2CONTROL2.flags2.uCclock=1;               //set flag for HSPLL osc    REV CF
                                     enableVWchannel(testmenuBUF[0]-0x30);                      
                                     IFS0bits.U1RXIF = 0;                        //clear the UART1 interrupt flag
                                     while (!IFS0bits.U1RXIF);                    //wait until a key is pressed
                                     IFS0bits.U1RXIF = 0;                        //KEY PRESSED - clear the UART1 interrupt flag
                                     RxDataTemp = ReadUART1();                   //get the char from the UART buffer to clear it
                                     disableVWchannel();                         //turn off the VW channel
+                                    LC2CONTROL2.flags2.uCclock=0;               //Reset the flag    REV CF
                                     _3VX_off();                                 //power-down the analog circuitry 
                                     putcUART1(0x0D);                            //<CR>
                                     while (BusyUART1());
@@ -10648,28 +10664,39 @@ void enableVWchannel(unsigned char gageType)                                    
     //unsigned char gainGT5=0x10;
     //unsigned char gainGT6=0x00;
     
-    //TEST REV CB - SET ALL GAINS TO 1
-    unsigned char gainGT1=0x03;
-    unsigned char gainGT2=0x03;
-    unsigned char gainGT3=0x03;
-    unsigned char gainGT4=0x03;
-    unsigned char gainGT5=0x03;
-    unsigned char gainGT6=0x03;
+    //TEST REV CB - SET ALL GAINS TO 25
+    unsigned char gainGT1=0x40;
+    unsigned char gainGT2=0x40;
+    unsigned char gainGT3=0x40;
+    unsigned char gainGT4=0x40;
+    unsigned char gainGT5=0x40;
+    unsigned char gainGT6=0x40;
     
+    _AMP_SHDN=1;                                                                //Enable the AGC amp    REV CF
     switch(gageType)
     {
-        case 1:                                                                 //Set Fco for 4.608 KHz
+        case 1:                                                                 //Set Fco for 4.770 KHz
             write_AD5241(gainGT1);                                              //Set initial gain
-            timeHigh=7;                                                      
+
+            if(LC2CONTROL2.flags2.uCclock)                                      //if HSPLL osc  REV CF
+                timeHigh=31;                                                    //Fco=4.770KHz
+            else
+                timeHigh=7;                                                     //HS osc  
+
             A=0;                                                                //Setup PLL VCO
             B=0;
             C=0;                                                                //R=23.7K
             D=0;                                                                //C=470pF
             break;
             
-        case 2:                                                                 //Set Fco for 6.144 KHz
+        case 2:                                                                 //Set Fco for 6.370 KHz
             write_AD5241(gainGT2);                                              //Set initial gain
-            timeHigh=5;                                                       
+            
+            if(LC2CONTROL2.flags2.uCclock)                                      //if HSPLL  REV CF
+                timeHigh=23;                                                    //Fco=6.370KHz
+            else
+                timeHigh=5;                                                       
+  
             A=1;                                                                //Setup PLL VCO
             B=1;
             C=0;                                                                //R=15.8K
@@ -10678,25 +10705,40 @@ void enableVWchannel(unsigned char gageType)                                    
             
         case 3:                                                                 //Set Fco for 1.603 KHz
             write_AD5241(gainGT3);                                              //Set initial gain
-            timeHigh=23;
+            
+            if(LC2CONTROL2.flags2.uCclock)                                      //if HSPLL  REV CF
+                timeHigh=92;                                                    //Fco=1.603KHZ
+            else
+                timeHigh=23;                                                    //Fco=1.603 KHz  
+
             A=1;                                                                //Setup PLL VCO
             B=0;
             C=0;                                                                //R=18K
             D=1;                                                                //C=1800pF
             break;
             
-        case 4:                                                                 //Set Fco for 3.686 KHz
+        case 4:                                                                 //Set Fco for 3.820 KHz
             write_AD5241(gainGT4);                                              //Set initial gain
-            timeHigh=9;
+            
+            if(LC2CONTROL2.flags2.uCclock)                                      //if HSPLL  REV CF
+                timeHigh=38;                                                    //Fco=3.820KHz
+            else
+                timeHigh=9;                                                     //Fco=3.820KHz  
+
             A=0;                                                                //Setup PLL VCO
             B=0;
             C=0;                                                                //R=23.7K
             D=0;                                                                //C=470pF
             break;
             
-        case 5:                                                                 //Set Fco for 6.144 KHz
+        case 5:                                                                 //Set Fco for 6.370 KHz
             write_AD5241(gainGT5);                                              //Set initial gain
-            timeHigh=5;
+            
+            if(LC2CONTROL2.flags2.uCclock)                                      //if HSPLL  REV CF
+                timeHigh=23;                                                    //Fco=6.370KHz
+            else
+                timeHigh=5;                                                     //Fco=6.370KHz  
+
             A=1;                                                                //Setup PLL VCO
             B=1;
             C=0;                                                                //R=15.8K
@@ -10705,7 +10747,12 @@ void enableVWchannel(unsigned char gageType)                                    
             
         case 6:                                                                 //Set Fco for 2.168 KHz
             write_AD5241(gainGT6);                                              //Set initial gain
-            timeHigh=17;
+            
+            if(LC2CONTROL2.flags2.uCclock)                                      //if HSPLL  REV CF
+                timeHigh=68;                                                    //2.168KHz
+            else
+                timeHigh=17;                                                    //2.168KHz  
+
             A=1;                                                                //Setup PLL VCO
             B=1;
             C=1;                                                                //R=9.98K
@@ -10714,7 +10761,12 @@ void enableVWchannel(unsigned char gageType)                                    
             
         default:
             write_AD5241(gainGT5);                                              //Set initial gain
-            timeHigh=5;
+            
+            if(LC2CONTROL2.flags2.uCclock)                                      //if HSPLL  REV CF
+                timeHigh=23;                                                    //Fco=6.370KHz
+            else
+                timeHigh=5;                                                     //Fco=6.370KHz  
+            
             A=1;                                                                //Setup PLL VCO
             B=1;
             C=0;                                                                //R=15.8K
@@ -10735,7 +10787,6 @@ void enableVWchannel(unsigned char gageType)                                    
     T2CONbits.TCS=0;                                                            //Clock is Fcy
     PR2=timeHigh;                                                               //set the Timer2 Period Register 
     T2CONbits.TON=1;                                                            //Start Timer2
-    
 }
 
 
@@ -12525,10 +12576,10 @@ float getFrequency(void)
 	unsigned int i=0;                                                           //VER 5.8.1.3
 	unsigned int loopsTotal=1;                                                  //REV O
 	
-    
     clockSwitch(0);                                                             //Switch to HS oscillator (Fcy=7.3728MHz)   REV AF
+    enableVWchannel(gageType);                                                  //configure the PLL and LPF TEST REV CF
     configTimers(); 
-    delay(50000);                                                                
+    delay(50000);  
    
 	for(i=0;i<loopsTotal;i++)
 	{
@@ -12546,6 +12597,7 @@ float getFrequency(void)
 		IEC1bits.T5IE=1;                                                        //enable 512mS interrupt
 
 		OpenTimer1(T1_ON & T1_GATE_OFF & T1_PS_1_64 & T1_SOURCE_INT, 0x7900);	//setup Timer 1	 for 300mS timeout TEST REM REV M
+
 		//Synchronize to VW:
 		while(!VW100 && !IFS0bits.T1IF);                                        //wait while VW(100) is low
 		while(VW100 && !IFS0bits.T1IF);                                         //wait while VW(100) is high
@@ -12558,22 +12610,25 @@ float getFrequency(void)
 		if(!IFS0bits.T1IF)                                                      //Capture frequency				
 		{
 			T4CONbits.TON=1;                                                    //start 256mS timer	
-			while(!IFS0bits.T1IF && CaptureFlag==0);                            //TEST REM REV N
-            //while(CaptureFlag==0);                                              //wait for 256mS gate to terminate
-			//{	
-			//	Nop();                                                          //wait for 256mS to expire
-			//}
+            
+            //MONITOR V_AGC AND CONTROL GAIN OF AGC AMP DURING F CAPTURE
+			while(!IFS0bits.T1IF && CaptureFlag==0);                            //wait for 256mS gate to terminate or 300mS time out to occur
+            //{
+            //  CONTROL AGC AMP LOOP
+            //}
             
 			if(IFS0bits.T1IF)
-				return 0;                                                       //timeout waiting for VW_100
+                return 0;                                                       //timeout waiting for VW_100
+
             T7CONbits.TON=0;                                                    //shut off counter
 			T4CONbits.TON=0;                                                    //shut off timer
 			CaptureFlag=0;                                                      //Reset captureFlag		
-			VWcount=(VWcountMSW*65536)+VWcountLSW;                            //Totalize counter  REV O
+			VWcount=(VWcountMSW*65536)+VWcountLSW;                              //Totalize counter  REV O
             frequency=(VWcount/mS256)*10.0;                                     //convert to frequency	REV M
 			frequencyTotal=frequencyTotal+frequency;                            //VER 5.8.1.3
 		}
 	}
+
 	frequency=frequencyTotal/(loopsTotal*1.0);                                  //VER 5.8.1.3
 	//shutdownTimer(TimeOut);                                                     //Reset 15S timer	REM REV Z
     disableTimers();
@@ -13856,7 +13911,9 @@ float read_vw(void)
 	float frequency=0.0;
 	float digits=0.0;
 
+
 	frequency=getFrequency();
+
 	if(frequency==0.0)
 		VWflagsbits.VWerror=1;						//set reading error flag if timeout occurs
 
@@ -14872,7 +14929,7 @@ void start32KHz(void)
 
 
 void startLogging(void) {
-    //WDTSWEnable;                                                                //TEST REM REV N
+    //WDTSWEnable;                                                                //TEST REM REV CF
 
     if (LC2CONTROL.flags.LogInterval) 
     {
@@ -14891,7 +14948,8 @@ void startLogging(void) {
         write_Int_FRAM(LogItRemain6address,LogItRemain6);  
     }
 
-    if (!DISPLAY_CONTROL.flags.Shutup) {
+    if (!DISPLAY_CONTROL.flags.Shutup && !LC2CONTROL2.flags2.Modbus)            //REV CF
+    {
         putsUART1(Loggingstarted); //Logging started
         while (BusyUART1());
         putcUART1(cr);
@@ -14918,7 +14976,8 @@ void startLogging(void) {
     DISPLAY_CONTROL.flags.Scan = 0;
     write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//store flags in FRAM`
 
-    crlf();
+    if(!LC2CONTROL2.flags2.Modbus)                                              //REV CF
+        crlf();
 
     LC2CONTROL2.flags2.Waiting = 0; //Clear the Waiting flag
     write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);	//store flag in FRAM`
@@ -14931,10 +14990,82 @@ void startLogging(void) {
     enableINT1(); //enable INT1 (take a reading on interrupt)
     //configUARTnormal();   REM REV D
     INTCON1bits.NSTDIS = 0; //Reset nesting of interrupts                     //TEST REM REV N
-    ClrWdt();
-    WDTSWDisable;
+    //ClrWdt();                                                                 TEST REM REV CF
+    //WDTSWDisable;                                                             TEST REM REV CF
 }
 
+
+unsigned int START(void)                                                        //REV CF
+{
+
+    if (USB_PWR)
+        LC2CONTROL.flags.USBpower = 1;                                          //set flag if powered by USB
+    else
+        LC2CONTROL.flags.USBpower = 0;
+
+    IEC1bits.INT1IE = 0;                                                        //temporarily disable the INT2 interrupt	
+    LC2CONTROL2.full2=read_Int_FRAM(LC2CONTROL2flagsaddress);                   //restore flags from FRAM     
+    IEC1bits.INT1IE = 1;                                                        //re-enable INT2 interrupt	
+
+ 
+    delay(400);  
+    if(!LC2CONTROL2.flags2.Modbus)                                              //only if command line
+        crlf();
+    
+    testScanInterval = 0;                                                           //set ScanInterval to 0
+    ScanInterval = hms2s();                                                     //get the stored scan interval
+    testScanInterval = checkScanInterval();                                         //test for minimum allowable Scan Interval
+
+    if (testScanInterval)                                                       //if error
+    {
+        if(!LC2CONTROL2.flags2.Modbus)                                          //if command line
+        {
+            if (LC2CONTROL.flags.LogInterval)                                   //Log Intervals?
+            {
+                putsUART1(MinInterror);                                         //ERROR: Minumum Log Interval Length for this configuration is :
+            } else 
+            {
+                putsUART1(Minscanerror);                                        //ERROR: Minumum Scan Interval for this configuration is :
+            }
+            while (BusyUART1());
+            sprintf(trapBUF, "%d", testScanInterval);                           //minimum scan interval in seconds
+            putsUART1(trapBUF);
+            while (BusyUART1());
+            putsUART1(Seconds);
+            while (BusyUART1());
+            return 0;                                                           //return error
+        }
+        else
+        {
+            return 0;                                                           //return error in MODBUS
+        }
+    }
+    
+    if (!LC2CONTROL.flags.Logging)                                              //is Logging flag clear?
+    {
+        if (DISPLAY_CONTROL.flags.Synch)
+            VWflagsbits.synch = 1;
+        LC2CONTROL2.flags2.FirstReading = 1;                                    //set the first reading flag
+        LC2CONTROL2.flags2.Interrupt = 0;                                       //clear the INT2 interrupt flag
+        IEC1bits.INT1IE = 0;                                                    //temporarily disable the INT2 interrupt
+        write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);              //store flags in FRAM 
+        IEC1bits.INT1IE = 1;                                                    //re-enable INT2 interrupt
+        startLogging();
+        return 1;                                                               //logging started
+    }
+
+    if(!LC2CONTROL2.flags2.Modbus)
+    {
+        putsUART1(Loggingalreadystarted); //Logging already started!
+        while (BusyUART1());
+        return 0;
+    }
+    else
+    {
+        return 0;
+    }
+}
+   
 
 void stop32KHz(void)
 {
@@ -14944,6 +15075,8 @@ void stop32KHz(void)
     temp=(temp&&0xFE);										//AND it with 0xFE to clear the EN32kHz bit
     setClock(RTCStatusAddress,temp);						//load it to the RTC
 }
+
+
 
 void stopLogging(void) 
 {
@@ -15022,6 +15155,39 @@ void stopLogging(void)
     LogItRemain6 = LogIt6;
     write_Int_FRAM(LogItRemain6address,LogItRemain6);  
 }
+
+unsigned int STOP(void)                                                         //REV CF
+{
+    if(!LC2CONTROL2.flags2.Modbus)
+        crlf();
+
+    if (!LC2CONTROL.flags.Logging && !LC2CONTROL.flags.LoggingStopTime &&!LC2CONTROL.flags.LoggingStartTime) 
+    {
+        if(!LC2CONTROL2.flags2.Modbus)
+        {
+            putsUART1(Loggingalreadystopped);                                   //Logging already stopped!
+            while (BusyUART1());
+        }
+        return 0;
+    }
+
+    if (LC2CONTROL.flags.Logging || LC2CONTROL.flags.LoggingStartTime || LC2CONTROL.flags.LoggingStopTime) //is a logging flag set?
+    {
+        LC2CONTROL2.flags2.scheduled=0;                                         //clear the scheduled flag  REV W
+        write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);              //store in FRAM REV W
+        stopLogging();
+        if(!LC2CONTROL2.flags2.Modbus)
+        {
+            if (!DISPLAY_CONTROL.flags.Shutup) 
+            {
+                putsUART1(Loggingstopped);                                      //Logging stopped
+                while (BusyUART1());
+            }
+        }
+        return 1;
+    }
+}
+
 
 void storeGageType(int channel, int gageType) {
     unsigned long address;                                                      //REV L
@@ -15615,8 +15781,11 @@ void take_One_Complete_Reading(unsigned char store)
     float extThermRaw=0.0;                                                      //REV J
 	float extThermProcessed=0.0;                                                //REV J
 
-    _3VX_on();                                                                  //power-up analog circuitry TEST REV U
     
+    
+    _3VX_on();                                                                  //power-up analog circuitry TEST REV U
+    U1MODEbits.UARTEN=0;                                                        //Disable the COM PORT  REV CF
+  
     if (store) //VER 6.0.13
     {
         SLEEP12V = 0; //set regulator into switchmode when wake from sleep
@@ -15643,7 +15812,11 @@ void take_One_Complete_Reading(unsigned char store)
     } else 
     {
         if (LC2CONTROL2.flags2.Interrupt) //did INT2 interrupt occur during this period?
+        {
+            U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  REV CF
+            U1STAbits.UTXEN=1;                                                          //Re-enable the COM PORT    REV CF
             return; //abort if it did
+        }
     }
 
     year = RTCtoDecimal(RTCyears); //convert BCD RTC data to decimal
@@ -15663,7 +15836,11 @@ void take_One_Complete_Reading(unsigned char store)
     Nop();
 
     if (!store && LC2CONTROL2.flags2.Interrupt)
+    {
+        U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  REV CF
+        U1STAbits.UTXEN=1;                                                          //Re-enable the COM PORT    REV CF
         return;
+    }
 
     if (store) 
     {
@@ -15678,6 +15855,8 @@ void take_One_Complete_Reading(unsigned char store)
             DISPLAY_CONTROL.flags.TakingReading = 0; //Reset the Taking Reading flag  
             write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//store flags in FRAM VER 6.0.13  
             stopLogging(); //and it's past the Stop Logging time
+            U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  REV CF
+            U1STAbits.UTXEN=1;                                                          //Re-enable the COM PORT    REV CF
             return;
         }
     } else 
@@ -16346,7 +16525,11 @@ void take_One_Complete_Reading(unsigned char store)
             Nop();
             Nop();
             if (LC2CONTROL2.flags2.Interrupt)
+            {
+                U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  REV CF
+                U1STAbits.UTXEN=1;                                                          //Re-enable the COM PORT    REV CF
                 return;
+            }
         }
 
         if (MUX4_ENABLE.mflags.skip) //skip channel
@@ -16364,21 +16547,25 @@ void take_One_Complete_Reading(unsigned char store)
             if (gageType > 0 && gageType <= 6) //VW                             //REV J
             {
                 Blink(1);
-                enableVWchannel(gageType);                                      //configure the PLL and LPF REV M
-                
+                //enableVWchannel(gageType);                                      //configure the PLL and LPF REV M REM REV CF
                 if (!store)
                     IEC1bits.INT1IE = 0; //temporarily disable the INT2 interrupt
-                //WDTSWEnable; //Start WDT TEST LC2MUX                          //TEST REM REV K
+                //WDTSWEnable;                                                  //Start WDT TEST REM REV CF                          
                 VWreading = take_reading(gageType); //take VW reading (or other gage type) 
                 disableVWchannel();                                             //REV X
-                ClrWdt(); //clear the WDT TEST LC2MUX
-                WDTSWDisable; //Stop WDT TEST LC2MUX
+
+                //ClrWdt();                                                     //clear the WDT TEST REM REV CF
+                //WDTSWDisable;                                                 //Stop WDT TEST REM REV CF
                 if (!store) {
                     IEC1bits.INT1IE = 1; //re-enable the INT2 interrupt
                     Nop();
                     Nop();
                     if (LC2CONTROL2.flags2.Interrupt)
+                    {
+                        U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  REV CF   
+                        U1STAbits.UTXEN=1;                                                          //Re-enable the COM PORT    REV CF
                         return;
+                    }
                 }
                 if (VWreading == 0.0)
                     VWreadingProcessed = -999999; //error message
@@ -16449,7 +16636,11 @@ void take_One_Complete_Reading(unsigned char store)
             Nop();
             Nop();
             if (LC2CONTROL2.flags2.Interrupt)
+            {
+                U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  
+                U1STAbits.UTXEN=1;                                                          //Re-enable the COM PORT    REV CF
                 return;
+            }
         }
     } //end of MUX loop for(ch)
 
@@ -16471,7 +16662,11 @@ void take_One_Complete_Reading(unsigned char store)
         Nop();
         Nop();
         if (LC2CONTROL2.flags2.Interrupt)
+        {
+            U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  
+            U1STAbits.UTXEN=1;                                                          //Re-enable the COM PORT    REV CF
             return;
+        }
     }
 
     //Determine whether 3V or 12V battery is connected
@@ -16485,7 +16680,11 @@ void take_One_Complete_Reading(unsigned char store)
         Nop();
         Nop();
         if (LC2CONTROL2.flags2.Interrupt)
+        {
+            U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  
+            U1STAbits.UTXEN=1;                                                          //Re-enable the COM PORT    REV CF
             return;
+        }
     }
 
 
@@ -16504,7 +16703,11 @@ void take_One_Complete_Reading(unsigned char store)
             Nop();
             Nop();
             if (LC2CONTROL2.flags2.Interrupt)
+            {
+                U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  REV CF
+                U1STAbits.UTXEN=1;                                                          //Re-enable the COM PORT    REV CF
                 return;
+            }
         }
         batteryVoltage = (((Vref * mainBatreading) / 4096) * mul3V);  //convert to voltage    REV Z
     } 
@@ -16525,11 +16728,17 @@ void take_One_Complete_Reading(unsigned char store)
         Nop();
         Nop();
         if (LC2CONTROL2.flags2.Interrupt) //did INT2 interrupt occur during this period?
+        {
+            U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  REV CF
+            U1STAbits.UTXEN=1;                                                          //Re-enable the COM PORT    REV CF
             return; //abort reading if it did
+        }
 
         _3VX_off(); //power-down the analog circuitry
         //config_Ports_Low_Power();
 
+        U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  REV CF
+        U1STAbits.UTXEN=1;                                                          //Re-enable the COM PORT    REV CF
         if(!LC2CONTROL2.flags2.Modbus)                                          //If command line interface REV CE
         {
             IEC1bits.INT1IE = 0; //temporarily disable the INT1 interrupt
@@ -16558,7 +16767,8 @@ void take_One_Complete_Reading(unsigned char store)
 
     _3VX_off(); //power-down the analog circuitry
     //config_Ports_Low_Power();
-
+    U1MODEbits.UARTEN=1;                                                        //Re-enable the COM PORT    REV CF
+    U1STAbits.UTXEN=1;                                                          //Re-enable the COM PORT    REV CF
     //if ((LC2CONTROL.flags.Monitor && (USB_PWR | !_232 | BT_CONNECT)) |        REM REV CE
     //        (LC2CONTROL.flags.Monitor && (!USB_PWR | _232 | !BT_CONNECT) && LC2CONTROL.flags.NetEnabled && netTest == 1)) 
     if ((!LC2CONTROL2.flags2.Modbus && LC2CONTROL.flags.Monitor && (USB_PWR | !_232 | BT_CONNECT)) |
@@ -16594,6 +16804,8 @@ float take_reading(unsigned char gageType)                                      
     float lithium = 0.0;
     //float digitsMax=0.0;                                                        //REV M
 
+    //PMD1bits.AD1MD=0;                                                           //Enable ADC1   REV CF
+    //PMD3bits.AD2MD=0;                                                           //Enable ADC2   REV CF
     _3VX_on(); //power-up analog circuitry VER 6.0.0
     //Blink(1);                                                                 //REM REV O
 
@@ -16638,13 +16850,10 @@ float take_reading(unsigned char gageType)                                      
     
     if (gageType == 6)                                                          
         pluck(800, 1600, 384);                                                  //800-1600 Hz Sweep    
-
+     
     delay(80000);                                                               //30mS delay for PLL settling REV AE
-    _AMP_SHDN=1;                                                                 //Enable the AGC amp    REV BC
+    //delay(80000);                                                                //allow the AGC amp to come online  REV CF
     digits = read_vw();                                                         //get the VW digits
-    _AMP_SHDN=0;                                                                 //Disable the AGC amp    REV BC
-    //VCO_MAX=0;                                                                //from VER 5.8.1.4
-    //resetVWchannel();                                                         //put the VW channel in standby mode    from VER 5.8.1.4
     _3VX_off(); //power-down analog circuitry   VER 6.0.0
     return digits; //give it to take_One_Complete_Reading()
 }
@@ -17601,8 +17810,8 @@ void wait(void) //VER 6.0.2
 {
     unsigned char t = 0;
 
-    //ClrWdt();
-    //WDTSWEnable;                                                                //Start WDT
+    //ClrWdt();                                                                 TEST REM REV CF
+    //WDTSWEnable;                                                               //Start WDT    TEST REM REV CF
 
     while (!t) {
         RxData = ReadUART1();
@@ -17610,7 +17819,7 @@ void wait(void) //VER 6.0.2
         if (RxData == xon)
             t = 1;
     }
-    //WDTSWDisable;                                                               //Stop WDT
+    //WDTSWDisable;                                                               //Stop WDT    TEST REM REV CF
 }
 
 void wait2S(void) 
@@ -18312,7 +18521,7 @@ void __attribute__((__interrupt__)) _AltU1RXInterrupt(void)                     
 void __attribute__((__interrupt__)) _INT1Interrupt(void)                        //This is the RTC ISR when time to read occurs  REV B
 {
     unsigned char   tempRTC;                                                    //REV AH
-    //WDTSWEnable; //TEST VER 6.0.10                                            //TEST REM REV B
+    //WDTSWEnable; //TEST VER 6.0.10                                            //TEST REM REV CF
     IFS1bits.INT1IF = 0; //clear the interrupt flag                             //REV B
     //TEST REV O:
     INTCON1bits.NSTDIS = 0;
@@ -18370,8 +18579,8 @@ void __attribute__((__interrupt__)) _INT1Interrupt(void)                        
             TMR4 = tempTMR4;
             if (!LC2CONTROL.flags.NetEnabled && LC2CONTROL.flags.USBpower)
                 T4CONbits.TON = 1; //turn Timer4/5 back on
-            //ClrWdt();                                                         //TEST REM VER 6.0.10
-            //WDTSWDisable;                                                     //TEST REM VER 6.0.10
+            //ClrWdt();                                                         //TEST REM REV CF
+            //WDTSWDisable;                                                     //TEST REM REV CF
             U1STAbits.OERR = 0; //clear flag if overrun error
             PMD3bits.T9MD=0;                                                    //Make sure TMR9 module is enabled  REV Z
             IFS3bits.T9IF = 1;
@@ -18451,14 +18660,14 @@ void __attribute__((__interrupt__)) _INT1Interrupt(void)                        
 
     }
 
-    ClrWdt(); //TEST VER 6.0.10
-    WDTSWDisable; //TEST VER 6.0.10
+    //ClrWdt(); //TEST VER 6.0.10                                               TEST REM REV CF    
+    //WDTSWDisable; //TEST VER 6.0.10                                           TEST REM REV CF
 }
 
 void __attribute__((__interrupt__)) _AltINT1Interrupt(void)                     //This is the RTC ALTERNATE ISR when time to read occurs
 {
     unsigned char   tempRTC;                                                    //REV AH
-    //WDTSWEnable; //TEST VER 6.0.10                                            //TEST REM REV B
+    //WDTSWEnable; //TEST VER 6.0.10                                            //TEST REM REV CF
     IFS1bits.INT1IF = 0; //clear the interrupt flag                             //REV B
     //TEST REV O:
     INTCON1bits.NSTDIS = 0;
@@ -18515,8 +18724,8 @@ void __attribute__((__interrupt__)) _AltINT1Interrupt(void)                     
             TMR4 = tempTMR4;
             if (!LC2CONTROL.flags.NetEnabled && LC2CONTROL.flags.USBpower)
                 T4CONbits.TON = 1; //turn Timer4/5 back on
-            //ClrWdt();                                                         //TEST REM VER 6.0.10
-            //WDTSWDisable;                                                     //TEST REM VER 6.0.10
+            //ClrWdt();                                                         //TEST REM REV CF
+            //WDTSWDisable;                                                     //TEST REM REV CF
             U1STAbits.OERR = 0; //clear flag if overrun error
             PMD3bits.T9MD=0;                                                    //Make sure TMR9 module is enabled  REV Z
             IFS3bits.T9IF = 1;
@@ -18588,8 +18797,8 @@ void __attribute__((__interrupt__)) _AltINT1Interrupt(void)                     
 
     }
 
-    ClrWdt(); //TEST VER 6.0.10
-    WDTSWDisable; //TEST VER 6.0.10
+    //ClrWdt(); //TEST VER 6.0.10                                               TEST REM REV CF
+    //WDTSWDisable; //TEST VER 6.0.10                                           TEST REM REV CF
 }
 
 //REV AE:
