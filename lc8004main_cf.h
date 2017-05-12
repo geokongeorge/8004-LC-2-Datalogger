@@ -114,14 +114,17 @@ typedef struct{
 	unsigned Monitor:1;				//0=monitor not active,1=monitor active
 	unsigned LogInterval:1;                 	//0=log intervals not active,1=log intervals active
 	unsigned LoggingStartTime:1;                    //0=no logging start time set,1=logging start time set
+    
 	unsigned LoggingStopTime:1;                     //0=no logging stop time set,1=logging stop time set
 	unsigned ID:1;					//0=no ID entered,1=ID entered
 	unsigned DateFormat:1;                          //0=julian,1=Month,Day
 	unsigned LeapYear:1;            		//0=normal year,1=leap year
+    
 	unsigned ScanError:1;                   	//0=Scan interval OK, 1=Scan interval invalid character error
 	unsigned USBpower:1;                            //0=USB not connected,1=USB connected and powering LC-2x4
 	unsigned _3Vpower:1;                            //0=3v Battery not supplying power,1=3V battery supplying power
 	unsigned ERROR:1;				//0=no error,1=error
+    
 	unsigned Conversion:1;                          //0=Linear Conversion, 1=Polynomial Conversion
 	unsigned TimeFormat:1;                          //0=hhmm, 1=hh,mm
 	unsigned NetEnabled:1;          		//0=Network disabled, 1=Network enabled
@@ -139,19 +142,23 @@ typedef struct{
 	unsigned SetStopTime:1;                         //0=Stop time not being set,1=Stop time being set
 	unsigned LoggingStartTimeTemp:1;        	//0=LoggingStartTime wasn't set,1=LoggingStartTime was set
 	unsigned SetStartTimeTemp:1;                    //0=SetStartTime wasn't set,1=SetStartTime was set
+    
 	unsigned GageDisplay:1;                 	//used to tell toBCD() that gage display is calling
 	unsigned InputSelection:2;                      //00=VW,01=EXTERNAL,10=PLUCK,11=GROUND
 	unsigned ON:1;					//0=LC-2X shutdown,1=LC-2X powered
 	unsigned FirstReading:1;                        //0=subsequent reading,1=first reading
+    
 	unsigned Interrupt:1;                           //0=no INT2 interrupt occurred,1=INT2 interrupt occurred
 	unsigned X:1;					//0='X' command not in process,1='X' command in process
 	unsigned Waiting:1;				//0=Scheduled Logging started,1=Waiting for 1st reading of scheduled logging	
 	//unsigned FU:1;					//0=firmware not being updated,1=firmware being updated     REM VER 6.0.5
 	unsigned R:1;					//0=R0-R1, 1=R1-R0
+    
     //unsigned d:1;                                   //0=ASCII data download, 1=Binary data download     REM VER BA
     unsigned Modbus:1;                              //0=Command line communications, 1=MODBUS communications    VER BA
     unsigned ID:1;                                  //0=don't display ID in Binary data download, 1=display ID in Binary data download  VER 6.0.2 REM REV AA
     unsigned scheduled:1;                                                       //0=readings not scheduled, 1=readings scheduled    REV W
+    unsigned uCclock:1;                                                         //0=HS osc (Fcy=7.3728MHz) 1=HSPLL osc (Fcy=29.4912 MHz)
 }LoggingFlag2Bits;
 typedef union{ unsigned int full2;
 LoggingFlag2Bits flags2;
@@ -398,6 +405,7 @@ unsigned char MMMSB=0;
 unsigned char LSB=0;                                    
 char tempBUF[10];						
 char testBUF[20];					//FOR TEST ONLT
+char trapBUF[6];                                                                //REV CF
 unsigned char Thermtype=0;                                                      //REV J
 unsigned char BCDones=0;
 unsigned char BCDtens=0;
@@ -502,6 +510,8 @@ int gageType=0;
 int NAdata=0;						//network address value for display		
 int netTest=0;			
 int stopTimeTest;
+
+int testScanInterval = 0;                                                       //REV CF
 
 const float tcy=0.0000000339084201389;                                          //29.4912MHz Fcy    REV AE
 const float mS512=511.965;                                                      //REV M
@@ -812,8 +822,10 @@ char BT0[]={"BT0                    Disable Bluetooth."};                       
 char BT1[]={"BT1                    Enable Bluetooth."};                        //REV AD
 char BTD[]={"BTD                    Bluetooth Timer Disabled"};                 //REV AG
 char BTE[]={"BTE                    Bluetooth Timer Enabled"};                  //REV AG
-char BTDisabled[]={"Bluetooth Disabled."};                                      //REV AD
-char BTEnabled[]={"Bluetooth Enabled."};                                        //REV AD
+//char BTDisabled[]={"Bluetooth Disabled."};                                    //REM REV CF
+char BTOFF[]={"Bluetooth OFF."};                                                //REV CF
+//char BTEnabled[]={"Bluetooth Enabled."};                                        //REM REV CF
+char BTON[]={"Bluetooth ON."};                                                  //REV CF
 char BTDisablenotAllowed[]={"Disabling Bluetooth not allowed while connected."};//REV AD
 char BTTIMEREN[]={"Bluetooth Timer Enabled"};                                   //REV AG
 char BTTIMERDIS[]={"Bluetooth Timer Disabled"};                                 //REV AG
@@ -1211,7 +1223,9 @@ void setChannelConversion(int, int);
 void setup(void);               //VER 6.0.0
 void shutdown(void);
 void shutdownNetworked(void);
+unsigned int START(void);                                                       //REV CF
 void startLogging(void);
+unsigned int STOP(void);                                                        //REV CF
 void stopLogging(void);
 void storeGageType(int channel, int gageType);
 void storeLogInterval(int, int);
@@ -1242,6 +1256,9 @@ void wait2S(void);                                                              
 void wrap_one(void);                                                            //REV CC
 void wrap_stop(void);                                                           
 void wrap_zero(void);                                                           //REV CC
+void X(void);                                                                   //REV CE
+
+
 //RTC prototypes:                                                               //REV D
 void displayClock(unsigned char data);
 void disableAlarm(unsigned char);			
@@ -1253,5 +1270,5 @@ void setChannelThermtype(int,char);                                             
 void setClock(unsigned char address,unsigned char data);
 void start32KHz(void);
 void stop32KHz(void);
-void X(void);                                                                   //REV CE
+
 #endif
