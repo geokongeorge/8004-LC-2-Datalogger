@@ -86,6 +86,8 @@ extern void MX8T(void);                                                         
 extern void MX16(void);                                                         //REV G
 extern void MX32(void);                                                         //REV G
 extern void MX32T(void);                                                        //REV G
+extern unsigned int START(void);                                                //REV H
+extern unsigned int STOP(void);                                                 //REV H
 extern void X(void);                                                            //REV G
 
 #define TEST        true
