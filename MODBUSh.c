@@ -18,7 +18,7 @@
 
 
 #include "MODBUSh.h"  
-#include "FRAM_ADDRESSc.h"    
+#include "FRAM_ADDRESSd.h"                                                      //REV H    
 #include "LC8004extFRAM_i.h"
 #include <xc.h>
 #include <uart.h>
@@ -216,6 +216,12 @@ void MODBUScomm(void)
                 {
 
                     case 3:                                                     //unused
+                        if (tempStatusValue.statusflags.bit3 == tempValueValue.statusflags.bit3)    //no difference between received and stored value
+                            break;                        
+                        
+                        if(tempValueValue.statusflags.bit3)                     //load the RTC current time registers from FRAM
+                            WRITE_TIME();
+                        tempValueValue.statusflags.bit3=0;                      //clear this bit on exit
                         break;
                         
                     case 4:
@@ -318,7 +324,13 @@ void MODBUScomm(void)
                             //disableStopTime();
                         break;
                         
-                    case 13:                                                    //unused
+                    case 13:                                                    //
+                        if (tempStatusValue.statusflags.bit13 == tempValueValue.statusflags.bit13)    //no difference between received and stored value
+                            break;      
+                        
+                        if(tempValueValue.statusflags.bit13)
+                            READ_TIME();                                        //get the RTC current time registers & store in FRAM
+                        tempValueValue.statusflags.bit13=0;                     //clear this bit on exit                            
                         break;
                         
                     case 14:                                                    //REV G
@@ -537,6 +549,9 @@ void MODBUS_TX(unsigned int echo)                                               
 {
     unsigned char i; 
     
+    _RS485RX_EN=1;                                                              //Disable the RS485 Rx  REV H
+    RS485TX_EN=1;                                                               //Enable the RS485 Tx   REV H
+    
     if(!echo)
     {
         for(i=0;i<MODBUS_TXbuf[BYTE_COUNT]+5;i++)                                   
@@ -553,4 +568,7 @@ void MODBUS_TX(unsigned int echo)                                               
             while(BusyUART1());
         }        
     }
+    
+    RS485TX_EN=0;                                                               //Disable the RS485 Tx   REV H
+    _RS485RX_EN=0;                                                              //Enable the RS485 Rx  REV H
 }
