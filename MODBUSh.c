@@ -15,6 +15,7 @@
 //REV G: 05/02/17                                                               Add CFG selection
 //REV H: 05/04/17                                                               Change CFG bits to LSB of MODBUS STATUS1 register
 //                                                                              Change X and Logging bits to MSB of MODBUS STATUS1 register
+//                                                                              Add 'R', "RESET" & switch to cmd line functions
 
 
 #include "MODBUSh.h"  
@@ -30,7 +31,6 @@ unsigned char MODBUS_TXbuf[125];                                                
 unsigned int modbusaddressvalue;
 unsigned int ECHO=0;                                                            //REV D
 unsigned int i=0;                                                               //REV CB
-//unsigned int temp=0;                                                            //REV H
 
 
 void MODBUScomm(void)
@@ -44,6 +44,8 @@ void MODBUScomm(void)
     csum       registers;                                                       //registers[1] is MSB, registers [0] is LSB
     bitflags   tempStatusValue;                                                 //temporary register for comparison REV CB 
     bitflags   tempValueValue;                                                  //convert value into bitfield register
+    bitflags2  tempStatus2Value;                                                //temporary register for comparison REV H
+    bitflags2  tempValue2Value;                                                 //convert value into bitfield register REV H
         
     for(a=0;a<125;a++)                                                        //TEST REM
     {
@@ -138,7 +140,6 @@ void MODBUScomm(void)
     //Fill in remaining registers:
     MODBUS_TXbuf[ADDRESS]=MODBUS_RXbuf[ADDRESS];
     MODBUS_TXbuf[COMMAND]=MODBUS_RXbuf[COMMAND];
-    //MODBUS_TXbuf[BYTE_COUNT]=2*(registers.c);                                 //REM REV C
     
     //calculate and append the crc value to the end of the array (little endian)
     if(MODBUS_RXbuf[COMMAND]==READ_HOLDING)
@@ -162,7 +163,8 @@ void MODBUScomm(void)
     //Perform the requested function if Status register was written            //REV CB
     
     
-    if(memaddressStart==0x7fea4 && MODBUS_RXbuf[COMMAND]==WRITE_HOLDING)         //write to STATUS Register  REV CB
+    if(memaddressStart==0x7fea4 && MODBUS_RXbuf[COMMAND]==WRITE_HOLDING)        //write to STATUS1 Register  REM REV H
+    //if(memaddressStart==MODBUS_STATUS1address && MODBUS_RXbuf[COMMAND]==WRITE_HOLDING)        //write to STATUS1 Register  REV H        
     {
         if(tempStatusValue.status != value.c)                                        //if new value is different than what's present
         {
@@ -361,7 +363,100 @@ void MODBUScomm(void)
         }
         
     }
-   
+
+    
+    
+    if(memaddressStart==MODBUS_STATUS2address && MODBUS_RXbuf[COMMAND]==WRITE_HOLDING)        //write to STATUS2 Register  REV H
+    {
+        if(tempStatus2Value.status2 != value.c)                                  //if new value is different than what's present
+        {
+            tempValue2Value.status2 = value.c;                                   //store received flags
+            
+            for(i=0;i<16;i++)                                                   //REV H
+            {
+
+                switch(i)
+                {
+
+                    case 0:                                                     //unused
+                        if (tempStatus2Value.status2flags.bit0 == tempValue2Value.status2flags.bit0)    //no difference between received and stored value
+                            break;                        
+                        
+                        if(tempValue2Value.status2flags.bit0)                   //Reset memory pointers REV H
+                            R();
+    
+                        tempValue2Value.status2flags.bit0=0;                    //clear this bit on exit
+                        break;
+                        
+                    case 1:
+                        if (tempStatus2Value.status2flags.bit1 == tempValue2Value.status2flags.bit1)    //no difference between received and stored value
+                            break;                        
+                        
+                        if(tempValue2Value.status2flags.bit1)
+                            RST();                                              //Reset uC  REV H
+
+                        tempValue2Value.status2flags.bit1=0;                    //clear this bit on exit
+                        break;
+                    
+                    case 2:
+                        if (tempStatus2Value.status2flags.bit2 == tempValue2Value.status2flags.bit2)    //no difference between received and stored value
+                            break;                        
+                        
+                        if(tempValue2Value.status2flags.bit2)
+                            CMD_LINE();
+                        tempValue2Value.status2flags.bit2=0;                    //clear this bit on exit
+                        break;
+		
+                    case 3:
+                        break;
+		
+                    case 4:
+                        break;
+		
+                    case 5:
+                        break;
+		
+                    case 6:
+                        break;
+		
+                    case 7:
+                        break;
+                        
+                    case 8:
+                        break;
+                        
+                    case 9:
+                        break;
+                        
+                    case 10: 
+                        break;
+                        
+                    case 11:  
+                        break;   
+                        
+                    case 12:
+                        break;         
+                        
+                    case 13:
+                        break;           
+
+                    case 14:
+                        break;           
+
+                    case 15:
+                        break;                                   
+		
+                    default:
+                        break;
+                }
+            }
+            
+
+        
+        }
+        
+    }
+    
     
     IFS3bits.T9IF=1;                                                            //exit if not an address match
     return;
