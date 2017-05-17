@@ -48,7 +48,7 @@
 #define startMinutesaddress         0x7fa9e                                     //2 bytes    
 #define startSecondsaddress         0x7faa0                                     //2 bytes    
 #define scratchaddress              0x7faa2                                     //4 bytes 
-//#define Netaddress                  0x7faa6                                     //2 bytes REM REV D
+#define Netaddress                  0x7faa6                                     //2 bytes REM REV D
 
 
 //IDaddress = beginning of 16 character ID array 
@@ -390,5 +390,6 @@
 #define RTCHours                    0x7feb0                                     //2 bytes   REV D
 #define RTCMinutes                  0x7feb2                                     //2 bytes   REV D
 #define RTCSeconds                  0x7feb4                                     //2 bytes   REV D
+#define MODBUS_STATUS2address       0x7feb6                                     //2 bytes   REV D
                                                                                 
 #endif
