@@ -1087,7 +1087,7 @@ void clockMux(unsigned int);
 void clockSwitch(unsigned char);                                                //REV AF
 void clockThMux(unsigned int);                                                  
 void CMDcomm(void);                                                             //REV BA
-//void config_Ports_Low_Power(void);
+void CMD_LINE(void);                                                            //REV CH
 void configShutdownTimer(void);                                                 //REV Z
 void configTimers(void);                                                        //REV M
 void configUARTnormal(void);
@@ -1157,7 +1157,9 @@ void processReading(float, int);
 void processDS3231Temperature(int);                                             //REV K
 void prompt(void);
 int qualifyNetAddress(void);
+void R(void);                                                                   //REV CH
 void READ_TIME(void);                                                           //REV CG
+void RST(void);                                                                 //REV CH
 float read_vw(void);                                                            //REV M
 void resetMemory(void);
 void restoreSettings(void);
