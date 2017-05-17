@@ -8,7 +8,7 @@ typedef union{
 }csum;
 
 //REV H:
-//MODBUS STATUS REGISTER:
+//MODBUS STATUS1 REGISTER:
 typedef struct{                                                                 //      READ                              WRITE
 	unsigned	bit012:3;                                                       //110   VW8 		
                                                                                 //101   TH32
@@ -36,12 +36,38 @@ typedef union{ unsigned int status;
 StatusBits statusflags;
 }bitflags;
 
+//REV H:
+//MODBUS STATUS2 REGISTER:
+typedef struct{                                                                 //      READ                              WRITE
+	unsigned	bit0:1;                                                         //'R' command   1=Reset Memory Pointers                             Lsb      		
+    unsigned    bit1:1;                                                         //"RESET" command   1=Reboot uC
+    unsigned    bit2:1;                                                         //"CMD LINE"        1=Reboot into command line interface
+	unsigned 	bit3:1;                                                         //unused
+	unsigned 	bit4:1;                                                         //unused
+	unsigned	bit5:1;                                                         //unused
+	unsigned	bit6:1;                                                         //unused
+	unsigned	bit7:1;                                                         //unused
+	unsigned	bit8:1;                                                         //unused
+	unsigned	bit9:1;                                                         //unused
+	unsigned 	bit10:1;                                                        //unused
+    unsigned 	bit11:1;                                                        //unused    
+    unsigned    bit12:1;                                                        //unused
+    unsigned    bit13:1;                                                        //unused                  
+    unsigned	bit14:1;                                                        //unused                                                            Msb    
+    unsigned    bit15:1;
+}Status2Bits;
+typedef union{ unsigned int status2;
+Status2Bits status2flags;
+}bitflags2;
+
+
 extern unsigned int baudrate;
 extern unsigned char MSB;                                                       
 extern unsigned char LSB;                                                       
 extern unsigned char MMSB;                                                      
 extern unsigned char MMMSB; 
 extern unsigned int TimeOut;                                                    //15 second timeout
+extern void CMD_LINE(void);                                                     //REV H
 extern void handleCOMError(void);
 extern void enableBT(void);                                                     //REV E
 extern void disableBT(void);                                                    //REV E
@@ -58,7 +84,9 @@ extern void MX8T(void);                                                         
 extern void MX16(void);                                                         //REV G
 extern void MX32(void);                                                         //REV G
 extern void MX32T(void);                                                        //REV G
+extern void R(void);                                                            //REV H
 extern void READ_TIME(void);                                                    //REV H
+extern void RST(void);                                                          //REV H
 extern unsigned int START(void);                                                //REV H
 extern unsigned int STOP(void);                                                 //REV H
 extern void WRITE_TIME(void);                                                   //REV H
