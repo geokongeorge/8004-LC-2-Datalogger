@@ -13,12 +13,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		5/16/2017
+//	DATE:		5/17/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   ch
-//	CHECKSUM:	0x2ce3 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0xca30 (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8434/30720   27%
-//	PGM(FLASH)MEM:  148263/261888 57%
+//	PGM(FLASH)MEM:  148665/261888 57%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -163,7 +163,8 @@
 //                                  add START() and STOP() functions
 //                                  Debug VW Read functions
 //      cg      5/16/17             Add MODBUS Clock Read and Clock Write
-//      ch      5/16/17             Remove all references to cmd line networking
+//      ch      5/17/17             Remove all references to cmd line networking
+//                                  Add MODBUS 'R', "RESET", Enable/Disable Log Intervals, Enable/Disable Start Time & Enable/Disable Stop Time
 //
 //
 //
@@ -375,11 +376,7 @@ int main(void)
 
            if(RxData==semicolon)
            {
-               LC2CONTROL2.flags2.Modbus=0;                                     //clear the Modbus flag
-               write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);       //store flag in FRAM`
-               _RS485RX_EN=1;                                                   //Disable RS485 Rx  REV CG
-               asm("RESET");
-               //break;                                                           //break out of for loop
+               CMD_LINE();                                                      //Reboot into command line interface    REV CH
            }
        }
     }
@@ -459,11 +456,13 @@ FRAMTest=write_intFRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);	//store flag 
     DISPLAY_CONTROL.flags.Shutdown = 0;
     shutdownTimer(TimeOut);                                                     //Reset 15S timer       REV Z
     
+    ///*TEST REM
     if(LC2CONTROL2.flags2.Modbus)                                               //if MODBUS REV CG
         _RS485RX_EN=0;                                                          //enable RS485 Rx   REV CG
     else                                                                        //REV CG
         _RS485RX_EN=1;                                                          //disable RS485 Rx if not   REV CG
-
+    
+    
     DISPLAY_CONTROL.flags.Shutdown=1;                                         //TEST REM VER BA
     IFS3bits.T9IF=1;                                                          //TEST REM VER BA
     shutdown();                                                               //TEST REM VER BA
@@ -517,12 +516,12 @@ FRAMTest=write_intFRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);	//store flag 
         }
         */
         
-        //if (!LC2CONTROL.flags.NetEnabled)                                     REM REV CH
-        //{                                                                     REM REV CH
-            //shutdownTimer(TimeOut);                                             //Reset 15S timer   REV Z TEST REM
+        //if (!LC2CONTROL.flags.NetEnabled)                                     //REM REV CH
+        //{                                                                     //REM REV CH
+        //shutdownTimer(TimeOut);                                                 //Reset 15S timer   REM REV CH
         LC2CONTROL2.flags2.ON = 0;
         write_Int_FRAM(LC2CONTROL2flagsaddress, LC2CONTROL2.full2); //store flag in FRAM  
-        //}                                                                     REM REV CH
+        //}                                                                     //REM REV CH
     } //end of while(1)
 } //end of main()
 
@@ -3331,13 +3330,7 @@ void CMDcomm(void)
 
                         if (response == capY && RxData == cr) //yes, so clear memory
                         {
-                            FRAM_MEMORY.flags.memEmpty = 1; //set the memory empty flag
-                            write_Int_FRAM(FRAM_MEMORYflagsaddress,FRAM_MEMORY.memory);	//store flag in FRAM  
-                            resetMemory(); //clear FRAM data memory and reset pointers
-                            PORT_CONTROL.flags.O0issued = 0; //clear O0 issued flag
-                            PORT_CONTROL.flags.CPTime = 0; //clear CPTime flag
-                            write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);	//store flag in FRAM  
-                            setClock(0x0F, 0); //Clear the RTC Alarm flags
+                            R();
                             crlf();
                             putsUART1(MEMcleared); //Memory cleared
                             while (BusyUART1());
@@ -3360,10 +3353,8 @@ void CMDcomm(void)
                         } else {
                             putsUART1(Resetting);
                             while (BusyUART1());
-                            LC2CONTROL.flags.Reset = 1; //Set the Reset flag
-                            write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM  
-                            crlf();
-                            asm("RESET");
+                            crlf();                                             //REV CH
+                            RST();                                            //REV CH
                         }
                     }
 
@@ -4647,41 +4638,13 @@ void CMDcomm(void)
 } //end of CMDcomm()
 
 
-
-/*
-void config_Ports_Low_Power(void) {
-    TRISA = 0x1400; //RA12 & RA10 is input
-    LATA = 0x0000;
-
-    TRISC = 0x0000;
-    LATC = 0x0000;
-
-    TRISD = 0xF000; //configure port D:bits 15-12 as input, bits 11-0 as output
-
-    if (!CONTROL) //PORT was OFF
-        LATD = 0x0302; //All low except 3.3VXMEM, WP & READ LED    VER 6.0.4
-    else
-        LATD = 0x0342; //PORT was ON
-
-    TRISF = 0x0004; //RF2 is input
-    LATF = 0x0008; //RF3 is output high
-
-    TRISG = 0x0001; //configure port G: all output
-    if (netTest) {
-        PORTG = 0x000C; //drive all outputs low except SDA and SCL   VER 6.0.4
-        //LATG=0x000C;                                                             //drive all outputs low except SDA and SCL
-    } else {
-        PORTG = 0x004C; //drive all outputs low except _RS485TX_EN, SDA and SCL
-        //LATG=0x004C;                                                           //drive all outputs low except _RS485TX_EN, SDA and SCL
-    }
-
-    WP = 1; //VER 6.0.4
-
-    ADPCFG = 0; //all analog channels
-    //ADCON2=0;                                                                   //VDD & VSS are references
-    //ADCON1bits.ADON=0;                                                          //make sure ADC off
+void CMD_LINE(void)
+{
+    LC2CONTROL2.flags2.Modbus=0;                                     //clear the Modbus flag
+    write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);       //store flag in FRAM`
+    _RS485RX_EN=1;                                                   //Disable RS485 Rx  REV CG
+    asm("RESET");    
 }
-*/
 
 
 void configShutdownTimer(void)
@@ -13812,6 +13775,17 @@ int readDS3231temperature(void)
 }
 
 
+void R(void)                                                                    //Reset memory pointers REV CH
+{
+    FRAM_MEMORY.flags.memEmpty = 1;                                             //set the memory empty flag
+    write_Int_FRAM(FRAM_MEMORYflagsaddress,FRAM_MEMORY.memory);                 //store flag in FRAM  
+    resetMemory();                                                              //clear FRAM data memory and reset pointers
+    PORT_CONTROL.flags.O0issued = 0;                                            //clear O0 issued flag
+    PORT_CONTROL.flags.CPTime = 0;                                              //clear CPTime flag
+    write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);              //store flag in FRAM  
+    setClock(0x0F, 0);                                                          //Clear the RTC Alarm flags    
+}
+
 void READ_TIME(void)                                                            //REV CG
 {
     unsigned int RTCvalue=0;                                                    //REV CG    
@@ -13904,6 +13878,14 @@ void READ_TIME(void)                                                            
     {
         displayClock(RTCdata);                                                  //display it    
     }
+}
+
+
+void RST(void)                                                                  //REV CH
+{
+    LC2CONTROL.flags.Reset = 1; //Set the Reset flag
+    write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM  
+    asm("RESET");    
 }
 
 /*REM REV M:
@@ -14014,13 +13996,10 @@ void resetMemory(void)
     unsigned int data;
 
 
-    data = 0; //reset memory pointers                                         //TEST REM REV V
-    //data=28900;                                                                  //TEST REV V
+    data = 0;                                                                   //reset memory pointers                                         
     write_Int_FRAM(MemoryStatusaddress,data);                                   
-    //write_Int_FRAM(Offsetaddress,data);                                       REM REV BE
 
-    data = 1;                                                                 //TEST REM REV V
-    //data=28901;                                                                  //TEST REV V
+    data = 1;                                                                   //TEST REM REV V
     write_Int_FRAM(OutputPositionaddress,data);    
     write_Int_FRAM(UserPositionaddress,data);  
 
@@ -14032,11 +14011,6 @@ void resetMemory(void)
     write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);        //store flags in FRAM 
 }
 
-/*REM REV M:
-void resetVWchannel(void) {
-    Nop();
-}
-*/
 
 void restoreSettings(void) 
 {
@@ -14839,7 +14813,8 @@ void shutdown(void)
     U1MODEbits.WAKE=1;     
 
     IFS1bits.INT1IF=0;                                                          //Make sure INT1 flag is clear  REV O
-
+    if(LC2CONTROL2.flags2.Modbus)                                               //REV CH
+        IFS0bits.U1RXIF=0;                                                          //Clear the UART1 interrupt flag if set REV CH
     Sleep();                                                                    //SLEEP & continue with next command after wakeup - no vector TEST REM REV AE
         
     SLEEP12V = 0; //set regulator into switchmode when wake from sleep
@@ -14932,6 +14907,7 @@ void startLogging(void) {
     enableINT1(); //enable INT1 (take a reading on interrupt)
     //configUARTnormal();   REM REV D
     INTCON1bits.NSTDIS = 0; //Reset nesting of interrupts                     //TEST REM REV N
+    IFS3bits.T9IF=1;                                                            //set the T9 interrupt flag to force shutdown   REV CH
     //ClrWdt();                                                                 TEST REM REV CF
     //WDTSWDisable;                                                             TEST REM REV CF
 }
@@ -16733,6 +16709,9 @@ void take_One_Complete_Reading(unsigned char store)
 
     if(store)                                                                   //REV N
         checkSynch(ReadingTimeSeconds); //adjust time of next scheduled reading if necessary
+    
+    if(store)                                                                   //force shutdown after reading if logging   REV CH
+        IFS3bits.T9IF=1;
 }
 
 float take_reading(unsigned char gageType)                                      //take a reading, x is gage type    REV M
