@@ -381,15 +381,53 @@
 #define CH31THaddress               0x7fea0                                     //CH31 thermistor type  2 bytes
 #define CH32THaddress               0x7fea2                                     //CH32 thermistor type  2 bytes
 
-#define MODBUS_STATUS1address       0x7fea4                                     //MODBUS STATUS1 flags  2 bytes
-#define MODBUSaddress               0x7fea6                                     //2 bytes    
-#define MODBUS_PAGEaddress          0x7fea8                                     //2 bytes
-#define RTCYears                    0x7feaa                                     //2 bytes   REV D
-#define RTCMonths                   0x7feac                                     //2 bytes   REV D
-#define RTCDays                     0x7feae                                     //2 bytes   REV D
-#define RTCHours                    0x7feb0                                     //2 bytes   REV D
-#define RTCMinutes                  0x7feb2                                     //2 bytes   REV D
-#define RTCSeconds                  0x7feb4                                     //2 bytes   REV D
-#define MODBUS_STATUS2address       0x7feb6                                     //2 bytes   REV D
+#define LogIt1MASTERaddress                0x7fea4                                     //2 bytes
+#define LogIt2MASTERaddress                0x7fea6                                     //2 bytes
+#define LogIt3MASTERaddress                0x7fea8                                     //2 bytes
+#define LogIt4MASTERaddress                0x7feaa                                     //2 bytes
+#define LogIt5MASTERaddress                0x7feac                                     //2 bytes
+#define LogIt6MASTERaddress                0x7feae                                     //2 bytes
+#define SingleLogIt1MASTERaddress          0x7feb0                                     //2 bytes
+#define SingleLogIt2MASTERaddress          0x7feb2                                     //2 bytes
+#define SingleLogIt3MASTERaddress          0x7feb4                                     //2 bytes
+#define SingleLogIt4MASTERaddress          0x7feb6                                     //2 bytes
+#define SingleLogIt5MASTERaddress          0x7feb8                                     //2 bytes
+#define SingleLogIt6MASTERaddress          0x7feba                                     //2 bytes
+#define LogIntLength1MASTERaddress         0x7febc                                     //4 bytes
+#define LogIntLength2MASTERaddress         0x7fec0                                     //4 bytes
+#define LogIntLength3MASTERaddress         0x7fec4                                     //4 bytes
+#define LogIntLength4MASTERaddress         0x7fec8                                     //4 bytes
+#define LogIntLength5MASTERaddress         0x7fecc                                     //4 bytes
+#define LogIntLength6MASTERaddress         0x7fed0                                     //4 bytes
+#define SingleLogIntLength1MASTERaddress   0x7fed4                                     //4 bytes
+#define SingleLogIntLength2MASTERaddress   0x7fed8                                     //4 bytes
+#define SingleLogIntLength3MASTERaddress   0x7fedc                                     //4 bytes
+#define SingleLogIntLength4MASTERaddress   0x7fee0                                     //4 bytes
+#define SingleLogIntLength5MASTERaddress   0x7fee4                                     //4 bytes
+#define SingleLogIntLength6MASTERaddress   0x7fee8                                     //4 bytes
+#define LogItRemain1MASTERaddress          0x7feec                                     //2 bytes
+#define LogItRemain2MASTERaddress          0x7feee                                     //2 bytes
+#define LogItRemain3MASTERaddress          0x7fef0                                     //2 bytes
+#define LogItRemain4MASTERaddress          0x7fef2                                     //2 bytes
+#define LogItRemain5MASTERaddress          0x7fef4                                     //2 bytes
+#define LogItRemain6MASTERaddress          0x7fef6                                     //2 bytes
+#define SingleLogItRemain1MASTERaddress    0x7fef8                                     //2 bytes
+#define SingleLogItRemain2MASTERaddress    0x7fefa                                     //2 bytes
+#define SingleLogItRemain3MASTERaddress    0x7fefc                                     //2 bytes
+#define SingleLogItRemain4MASTERaddress    0x7fefe                                     //2 bytes
+#define SingleLogItRemain5MASTERaddress    0x7ff00                                     //2 bytes
+#define SingleLogItRemain6MASTERaddress    0x7ff02                                     //2 bytes
+
+#define MODBUS_STATUS1address               0x7ff04                                     //MODBUS STATUS1 flags  2 bytes
+#define MODBUS_STATUS2address               0x7ff06                                     //MODBUS STATUS2 flags  2 bytes   REV D
+#define MODBUSaddress                       0x7ff08                                     //2 bytes    
+#define MODBUS_PAGEaddress                  0x7ff0a                                     //2 bytes
+#define RTCYearsaddress                     0x7ff0c                                     //2 bytes   REV D
+#define RTCMonthsaddress                    0x7ff0e                                     //2 bytes   REV D
+#define RTCDaysaddress                      0x7ff10                                     //2 bytes   REV D
+#define RTCHoursaddress                     0x7ff12                                     //2 bytes   REV D
+#define RTCMinutesaddress                   0x7ff14                                     //2 bytes   REV D
+#define RTCSecondsaddress                   0x7ff16                                     //2 bytes   REV D
+
                                                                                 
 #endif
