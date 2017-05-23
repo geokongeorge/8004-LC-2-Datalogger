@@ -42,7 +42,7 @@ typedef struct{                                                                 
 	unsigned	bit0:1;                                                         //'R' command   1=Reset Memory Pointers                             Lsb      		
     unsigned    bit1:1;                                                         //"RESET" command   1=Reboot uC
     unsigned    bit2:1;                                                         //"CMD LINE"        1=Reboot into command line interface
-	unsigned 	bit3:1;                                                         //unused
+	unsigned 	bit3:1;                                                         //ADD LOAD DEFAULTS SWITCH
 	unsigned 	bit4:1;                                                         //unused
 	unsigned	bit5:1;                                                         //unused
 	unsigned	bit6:1;                                                         //unused
@@ -68,7 +68,9 @@ extern unsigned char MMSB;
 extern unsigned char MMMSB; 
 extern unsigned int TimeOut;                                                    //15 second timeout
 extern void CMD_LINE(void);                                                     //REV H
+extern void DISLOGINT(void);                                                    //REV CI
 extern void handleCOMError(void);
+extern void ENLOGINT(void);                                                     //REV CI
 extern void enableBT(void);                                                     //REV E
 extern void disableBT(void);                                                    //REV E
 extern void enableOP(void);                                                     //REV F
