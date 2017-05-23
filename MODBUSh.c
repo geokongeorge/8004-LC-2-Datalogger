@@ -230,12 +230,10 @@ void MODBUScomm(void)
                         if (tempStatusValue.statusflags.bit4 == tempValueValue.statusflags.bit4)    //no difference between received and stored value
                             break;                        
                         
-                        if(tempValueValue.statusflags.bit4)
-                            Nop();
-                            //enable LogInts();
-	                    else
-                            Nop();
-                            //disable Logints();
+                        if(tempValueValue.statusflags.bit4)                     //enable Log Intervals
+                            ENLOGINT();
+                        else
+                            DISLOGINT();                                        //disable Log Intervals
                         break;
                     
                     case 5:
@@ -378,7 +376,7 @@ void MODBUScomm(void)
                 switch(i)
                 {
 
-                    case 0:                                                     //unused
+                    case 0:                                                     
                         if (tempStatus2Value.status2flags.bit0 == tempValue2Value.status2flags.bit0)    //no difference between received and stored value
                             break;                        
                         
@@ -408,6 +406,12 @@ void MODBUScomm(void)
                         break;
 		
                     case 3:
+                        if (tempStatus2Value.status2flags.bit3 == tempValue2Value.status2flags.bit3)    //no difference between received and stored value
+                            break;                        
+                        
+                        if(tempValue2Value.status2flags.bit3)
+                            loadDefaults();                                     //load default settings
+                        tempValue2Value.status2flags.bit3=0;                    //clear this bit on exit                        
                         break;
 		
                     case 4:
