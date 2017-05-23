@@ -1,4 +1,4 @@
-//****************************LC8004extFRAM_h.c**********************************
+//****************************LC8004extFRAM_i.c**********************************
 //
 //			FM24V10 FRAM functions
 //
@@ -13,6 +13,7 @@
 //REV H  01/26/17   Adjust I2C baud rate generator value for Fcy=29.4912MHz (8004 rev ae)   
 //REV I  04/19/17   Swap byte addresses in read_longFRAM() and write_longFRAM() so byte order in FRAM
 //                  will be MSB - LSB instead of LSB - MSB
+//                  Change all instances of long int to unsigned long int
 
 
 #include "LC8004extFRAM_i.h"                                                    //external FRAM function prototypes
@@ -69,7 +70,7 @@ typedef union                                                                   
 typedef union                                                                   //union for storing 32 bit long value in 16 bit FRAM registers
 {
 	
-	long l;                                                                     //32 bit long data
+	unsigned long l;                                                                     //32 bit long data REV I
 	unsigned int e[2];                                                          // (2) 16 bit words of 32 bit data
 
 } tFRAMLong;
@@ -311,13 +312,12 @@ unsigned int read_Int_FRAM(unsigned long absAdd)
 //
 //	Write 32 bit long data to FRAM address
 //
-//	Parameters received: long FRAM data, FRAM address
+//	Parameters received: unsigned long FRAM data, FRAM address
 //	Returns: nothing
 //
 //
 //***************************************************************************
-//void write_longFRAM(long l, unsigned int add)                                 
-void write_longFRAM(long l, unsigned long add)                                   
+void write_longFRAM(unsigned long l, unsigned long add)                         //REV I                         
 {
 	tFRAMLong temp;                                                             //variable temp is type tEEPROMFloat
 	temp.l=l;                                                                   //32 bit data
@@ -341,9 +341,11 @@ void write_longFRAM(long l, unsigned long add)
 //
 //***************************************************************************
 //long read_longFRAM(unsigned int add)                                          //REM REV C
-long read_longFRAM(unsigned long add)                                           //REV C
+//long read_longFRAM(unsigned long add)                                           //REV C
+unsigned long read_longFRAM(unsigned long add)                                           //REV I
 {
-	long tempLong=0;
+	//long tempLong=0;                                                          REM REV I
+    unsigned long tempLong=0;                                                   //REV I
 
 	tFRAMLong temp;					//variable temp is type tEEPROMlong
 
