@@ -67,6 +67,10 @@ extern unsigned char LSB;
 extern unsigned char MMSB;                                                      
 extern unsigned char MMMSB; 
 extern unsigned int TimeOut;                                                    //15 second timeout
+extern void BT_D(void);                                                         //REV H
+extern void BT_E(void);                                                         //REV H
+extern void BTONE(void);                                                        //REV H
+extern void BTZERO(void);                                                       //REV H
 extern void CMD_LINE(void);                                                     //REV H
 extern void DISLOGINT(void);                                                    //REV CI
 extern void handleCOMError(void);
@@ -86,6 +90,8 @@ extern void MX8T(void);                                                         
 extern void MX16(void);                                                         //REV G
 extern void MX32(void);                                                         //REV G
 extern void MX32T(void);                                                        //REV G
+extern void O_D(void);                                                          //REV H
+extern void O_E(void);                                                          //REV H
 extern void R(void);                                                            //REV H
 extern void READ_TIME(void);                                                    //REV H
 extern void RST(void);                                                          //REV H
