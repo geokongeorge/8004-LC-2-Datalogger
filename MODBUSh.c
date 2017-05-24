@@ -251,9 +251,9 @@ void MODBUScomm(void)
                             break;                        
                         
                         if(tempValueValue.statusflags.bit6)
-                            enableBT();
+                            BTONE();                                            //REV H
                         else
-                            disableBT();
+                            BTZERO();                                           //REV H
                         break;
 		
                     case 7:
@@ -261,11 +261,9 @@ void MODBUScomm(void)
                             break;                        
                         
                         if(tempValueValue.statusflags.bit7)
-                            Nop();
-                            //enableBTtimer();
+                            BT_E();                                             //REV H
                         else
-                            Nop();
-                            //disableBTtimer();
+                            BT_D();                                             //REV H
                         break;
 		
                     case 8:
@@ -283,11 +281,9 @@ void MODBUScomm(void)
                             break;                        
                         
                         if(tempValueValue.statusflags.bit9)
-                            Nop();
-                            //enableCPtimer()l
+                            O_E();                                              //REV H
                         else
-                            Nop();
-                            //disableCPtimer();
+                            O_D();                                              //REV H
                         break;
 		
                     case 10:
