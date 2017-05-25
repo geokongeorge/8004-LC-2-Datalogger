@@ -26,6 +26,9 @@
 #include <stdbool.h>
 
 
+
+
+
 unsigned char MODBUS_RXbuf[125];                                                //125 registers max
 unsigned char MODBUS_TXbuf[125];                                                //125 registers max   
 unsigned int modbusaddressvalue;
@@ -42,12 +45,12 @@ void MODBUScomm(void)
     csum       csumdata;                                                        //csumdata[1] is MSB, csumdata[0] is LSB
     csum       value;                                                           //value[1] is MSB, value[0] is LSB]
     csum       registers;                                                       //registers[1] is MSB, registers [0] is LSB
-    bitflags   tempStatusValue;                                                 //temporary register for comparison REV CB 
-    bitflags   tempValueValue;                                                  //convert value into bitfield register
-    bitflags2  tempStatus2Value;                                                //temporary register for comparison REV H
-    bitflags2  tempValue2Value;                                                 //convert value into bitfield register REV H
+    s1flags   tempStatusValue;                                                  //temporary register for comparison REV CJ
+    s1flags   tempValueValue;                                                   //convert value into bitfield register   REV CJ
+    s2flags   tempStatus2Value;                                                 //temporary register for comparison REV CJ
+    s2flags   tempValue2Value;                                                  //convert value into bitfield register REV CJ
         
-    for(a=0;a<125;a++)                                                        //TEST REM
+    for(a=0;a<125;a++)                                                        
     {
         MODBUS_TXbuf[a]=0;                                                      //Clear the MODBUS_TXbuf[]                 
     }                                                                           
@@ -111,7 +114,7 @@ void MODBUScomm(void)
         case WRITE_HOLDING:
             if((memaddressStart>=0x7FA6C) && (memaddressStart<=0x7FFFF))        //Registers are not write protected
             {
-                tempStatusValue.status=read_Int_FRAM(MODBUS_STATUS1address);         //REV CB
+                tempStatusValue.status1=read_Int_FRAM(MODBUS_STATUS1address);         //REV CB
                 MODBUS_TXbuf[REGISTER_MSB]=MODBUS_RXbuf[REGISTER_MSB];          //Load the TXbuf[] with Register address MSB
                 MODBUS_TXbuf[REGISTER_LSB]=MODBUS_RXbuf[REGISTER_LSB];          //Load the TXbuf[] with Register address LSB
                 value.z[1]=MODBUS_RXbuf[WRITE_DATA_MSB];                        //get the write data MSB
@@ -160,22 +163,21 @@ void MODBUScomm(void)
     //Transmit the array:
     MODBUS_TX(ECHO);    
     
-    //Perform the requested function if Status register was written            //REV CB
+    //Perform the requested function if Status register was written             //REV CB
     
     
-    if(memaddressStart==0x7fea4 && MODBUS_RXbuf[COMMAND]==WRITE_HOLDING)        //write to STATUS1 Register  REM REV H
-    //if(memaddressStart==MODBUS_STATUS1address && MODBUS_RXbuf[COMMAND]==WRITE_HOLDING)        //write to STATUS1 Register  REV H        
+    if(memaddressStart==MODBUS_STATUS1address && MODBUS_RXbuf[COMMAND]==WRITE_HOLDING)        //write to STATUS1 Register  REV H        
     {
-        if(tempStatusValue.status != value.c)                                        //if new value is different than what's present
+        if(tempStatusValue.status1 != value.c)                                  //if new value is different than what's present
         {
-            tempValueValue.status = value.c;                                            //store received flags
+            tempValueValue.status1 = value.c;                                   //store received flags
             
-            switch(tempValueValue.statusflags.bit012)                           //REV H
+            switch(tempValueValue.status1flags._CFG)                             //REV H
             {
-                if (tempStatusValue.statusflags.bit012 == tempValueValue.statusflags.bit012)    //no difference between received and stored value
+                if (tempStatusValue.status1flags._CFG == tempValueValue.status1flags._CFG)    //no difference between received and stored value
                             break;  
                 
-                if(tempStatusValue.statusflags.bit15)                            //if logging    REV H
+                if(tempStatusValue.status1flags._Logging)                        //if logging    REV H
                     break;                                                      //Don't allow CFG change    REV H
                 
                 case 0:                                                         //MX4   REV H
@@ -218,89 +220,89 @@ void MODBUScomm(void)
                 {
 
                     case 3:                                                     //unused
-                        if (tempStatusValue.statusflags.bit3 == tempValueValue.statusflags.bit3)    //no difference between received and stored value
+                        if (tempStatusValue.status1flags._Setrtc == tempValueValue.status1flags._Setrtc)    //no difference between received and stored value
                             break;                        
                         
-                        if(tempValueValue.statusflags.bit3)                     //load the RTC current time registers from FRAM
+                        if(tempValueValue.status1flags._Setrtc)                     //load the RTC current time registers from FRAM
                             WRITE_TIME();
-                        tempValueValue.statusflags.bit3=0;                      //clear this bit on exit
+                        tempValueValue.status1flags._Setrtc=0;                      //clear this bit on exit
                         break;
                         
                     case 4:
-                        if (tempStatusValue.statusflags.bit4 == tempValueValue.statusflags.bit4)    //no difference between received and stored value
+                        if (tempStatusValue.status1flags._Logint == tempValueValue.status1flags._Logint)    //no difference between received and stored value
                             break;                        
                         
-                        if(tempValueValue.statusflags.bit4)                     //enable Log Intervals
+                        if(tempValueValue.status1flags._Logint)                     //enable Log Intervals
                             ENLOGINT();
                         else
                             DISLOGINT();                                        //disable Log Intervals
                         break;
                     
                     case 5:
-                        if (tempStatusValue.statusflags.bit5 == tempValueValue.statusflags.bit5)    //no difference between received and stored value
+                        if (tempStatusValue.status1flags._Wrap == tempValueValue.status1flags._Wrap)    //no difference between received and stored value
                             break;                        
                         
-                        if(tempValueValue.statusflags.bit5)
-                            wrap_one();
+                        if(tempValueValue.status1flags._Wrap)
+                            wrap_one();                                         //Enable memory wrapping
                         else
-                            wrap_zero();
+                            wrap_zero();                                        //Disable memory wrapping    
                         break;
 		
                     case 6:
-                        if (tempStatusValue.statusflags.bit6 == tempValueValue.statusflags.bit6)    //no difference between received and stored value
+                        if (tempStatusValue.status1flags._BT == tempValueValue.status1flags._BT)    //no difference between received and stored value
                             break;                        
                         
-                        if(tempValueValue.statusflags.bit6)
-                            BTONE();                                            //REV H
+                        if(tempValueValue.status1flags._BT)
+                            BTONE();                                            //Turn Bluetooth module ON          //REV H
                         else
-                            BTZERO();                                           //REV H
+                            BTZERO();                                           //Turn Bluetooth module OFF         //REV H
                         break;
 		
                     case 7:
-                        if (tempStatusValue.statusflags.bit7 == tempValueValue.statusflags.bit7)    //no difference between received and stored value
+                        if (tempStatusValue.status1flags._BT_Timer == tempValueValue.status1flags._BT_Timer)    //no difference between received and stored value
                             break;                        
                         
-                        if(tempValueValue.statusflags.bit7)
-                            BT_E();                                             //REV H
+                        if(tempValueValue.status1flags._BT_Timer)
+                            BT_E();                                             //Enable Bluetooth Timer            //REV H
                         else
-                            BT_D();                                             //REV H
+                            BT_D();                                             //Disable Bluetooth Timer           //REV H
                         break;
 		
                     case 8:
-                        if (tempStatusValue.statusflags.bit8 == tempValueValue.statusflags.bit8)    //no difference between received and stored value
+                        if (tempStatusValue.status1flags._OP == tempValueValue.status1flags._OP)    //no difference between received and stored value
                             break;                        
                         
-                        if(tempValueValue.statusflags.bit8)
-                            enableOP();                                         //REV F
+                        if(tempValueValue.status1flags._OP)
+                            enableOP();                                         //Activate Output Port              //REV F
                         else
-                            disableOP();                                        //REV F
+                            disableOP();                                        //Deactivate Output Port            //REV F
                         break;
 		
                     case 9:
-                        if (tempStatusValue.statusflags.bit9 == tempValueValue.statusflags.bit9)    //no difference between received and stored value
+                        if (tempStatusValue.status1flags._OP_Timer == tempValueValue.status1flags._OP_Timer)    //no difference between received and stored value
                             break;                        
                         
-                        if(tempValueValue.statusflags.bit9)
-                            O_E();                                              //REV H
+                        if(tempValueValue.status1flags._OP_Timer)
+                            O_E();                                              //Enable Output Port Timer          //REV H
                         else
-                            O_D();                                              //REV H
+                            O_D();                                              //Disable Output Port Timer         //REV H
                         break;
 		
                     case 10:
-                        if (tempStatusValue.statusflags.bit10 == tempValueValue.statusflags.bit10)    //no difference between received and stored value
+                        if (tempStatusValue.status1flags._Sync == tempValueValue.status1flags._Sync)    //no difference between received and stored value
                             break;                        
                         
-                        if(tempValueValue.statusflags.bit10)
-                            synch_one();
+                        if(tempValueValue.status1flags._Sync)
+                            synch_one();                                        //Enable synchronized readings      //REV H
                         else
-                            synch_zero();
+                            synch_zero();                                       //Disable synchronized readings     //REV H
                         break;
                         
                     case 11:
-                        if (tempStatusValue.statusflags.bit11 == tempValueValue.statusflags.bit11)    //no difference between received and stored value
+                        if (tempStatusValue.status1flags._ST == tempValueValue.status1flags._ST)    //no difference between received and stored value
                             break;                        
                         
-                        if(tempValueValue.statusflags.bit11)
+                        if(tempValueValue.status1flags._ST)
                             Nop();
                             //EnableStartTime();
                         else
@@ -309,10 +311,10 @@ void MODBUScomm(void)
                         break;
                         
                     case 12:
-                        if (tempStatusValue.statusflags.bit12 == tempValueValue.statusflags.bit12)    //no difference between received and stored value
+                        if (tempStatusValue.status1flags._SP == tempValueValue.status1flags._SP)    //no difference between received and stored value
                             break;      
                         
-                        if(tempValueValue.statusflags.bit12)
+                        if(tempValueValue.status1flags._SP)
                             Nop();
                             //enableStopTime();
                         else
@@ -321,27 +323,27 @@ void MODBUScomm(void)
                         break;
                         
                     case 13:                                                    //
-                        if (tempStatusValue.statusflags.bit13 == tempValueValue.statusflags.bit13)    //no difference between received and stored value
+                        if (tempStatusValue.status1flags._Readrtc == tempValueValue.status1flags._Readrtc)    //no difference between received and stored value
                             break;      
                         
-                        if(tempValueValue.statusflags.bit13)
-                            READ_TIME();                                        //get the RTC current time registers & store in FRAM
-                        tempValueValue.statusflags.bit13=0;                     //clear this bit on exit                            
+                        if(tempValueValue.status1flags._Readrtc)
+                            READ_TIME();                                        //get the RTC current time registers & store in FRAM    //REV H
+                        tempValueValue.status1flags._Readrtc=0;                  //clear this bit on exit                            
                         break;
                         
                     case 14:                                                    //REV G
-                        if (tempStatusValue.statusflags.bit14 == tempValueValue.statusflags.bit14)    //no difference between received and stored value
+                        if (tempStatusValue.status1flags._X == tempValueValue.status1flags._X)    //no difference between received and stored value
                             break;      
                         
                         X();                                                    //take 'X' Reading  
-                        tempValueValue.statusflags.bit14=0;                     //clear this bit on exit
+                        tempValueValue.status1flags._X=0;                        //clear this bit on exit
                         break;   
                         
                     case 15:    
-                        if (tempStatusValue.statusflags.bit15 == tempValueValue.statusflags.bit15)    //no difference between received and stored value
+                        if (tempStatusValue.status1flags._Logging == tempValueValue.status1flags._Logging)    //no difference between received and stored value
                             break;
                         
-                        if(tempValueValue.statusflags.bit15)
+                        if(tempValueValue.status1flags._Logging)
                             testvalue=START();                                  //Start Logging
                         else
                             testvalue=STOP();                                   //Stop Logging
@@ -373,44 +375,56 @@ void MODBUScomm(void)
                 {
 
                     case 0:                                                     
-                        if (tempStatus2Value.status2flags.bit0 == tempValue2Value.status2flags.bit0)    //no difference between received and stored value
+                        if (tempStatus2Value.status2flags._R == tempValue2Value.status2flags._R)    //no difference between received and stored value
                             break;                        
                         
-                        if(tempValue2Value.status2flags.bit0)                   //Reset memory pointers REV H
+                        if(tempValue2Value.status2flags._R)                      //Reset memory pointers REV H
                             R();
     
-                        tempValue2Value.status2flags.bit0=0;                    //clear this bit on exit
+                        tempValue2Value.status2flags._R=0;                       //clear this bit on exit
                         break;
                         
                     case 1:
-                        if (tempStatus2Value.status2flags.bit1 == tempValue2Value.status2flags.bit1)    //no difference between received and stored value
+                        if (tempStatus2Value.status2flags._RST == tempValue2Value.status2flags._RST)    //no difference between received and stored value
                             break;                        
                         
-                        if(tempValue2Value.status2flags.bit1)
+                        if(tempValue2Value.status2flags._RST)
                             RST();                                              //Reset uC  REV H
 
-                        tempValue2Value.status2flags.bit1=0;                    //clear this bit on exit
+                        tempValue2Value.status2flags._RST=0;                     //clear this bit on exit
                         break;
                     
                     case 2:
-                        if (tempStatus2Value.status2flags.bit2 == tempValue2Value.status2flags.bit2)    //no difference between received and stored value
+                        if (tempStatus2Value.status2flags._CMD == tempValue2Value.status2flags._CMD)    //no difference between received and stored value
                             break;                        
                         
-                        if(tempValue2Value.status2flags.bit2)
+                        if(tempValue2Value.status2flags._CMD)
+                        {
+                            tempValue2Value.status2flags._CMD=0;                 //clear this bit on exit 
                             CMD_LINE();
-                        tempValue2Value.status2flags.bit2=0;                    //clear this bit on exit
+                        }
+                        
                         break;
 		
                     case 3:
-                        if (tempStatus2Value.status2flags.bit3 == tempValue2Value.status2flags.bit3)    //no difference between received and stored value
+                        if (tempStatus2Value.status2flags._LD == tempValue2Value.status2flags._LD)    //no difference between received and stored value
                             break;                        
                         
-                        if(tempValue2Value.status2flags.bit3)
+                        if(tempValue2Value.status2flags._LD)
                             loadDefaults();                                     //load default settings
-                        tempValue2Value.status2flags.bit3=0;                    //clear this bit on exit                        
+                        tempValue2Value.status2flags._LD=0;                      //clear this bit on exit                        
                         break;
 		
                     case 4:
+                        if (tempStatus2Value.status2flags._CNV == tempValue2Value.status2flags._CNV)    //no difference between received and stored value
+                            break;                        
+                        
+                        if(tempValue2Value.status2flags._CNV)                    //Linear Conversions
+                            Nop();                          
+                        else                                                    //Log Conversions
+                            Nop();
+                        
+                        tempValue2Value.status2flags._CNV=0;                      //clear this bit on exit                            
                         break;
 		
                     case 5:
