@@ -315,36 +315,62 @@ DecimalTempBits temp;
 }tempflags;
 tempflags	DEC_TEMP;
 
+/*
 //REV CF:
 //MODBUS STATUS1 REGISTER:
-typedef struct{                                                                 //      READ                              WRITE
-	unsigned	CFG:3;                                                          //110   VW8                                                         Lsb
-                                                                                //101   TH32
-                                                                                //100   VW32
-                                                                                //011   TH8
-                                                                                //010   VW/TH Single
-                                                                                //001   VW/TH16
-                                                                                //000   VW/TH4
-    unsigned    bit3:1;                                                         //unused
-	unsigned 	Logint:1;                                                       //1=Log Ints Enabled, 0=Disabled    1=Enable, 0=Disable
-	unsigned 	Wrap:1;                                                         //1=Memory Wrap Enabled, 0=Disabled 1=Enable, 0=Disable
-	unsigned	BT:1;                                                           //1=Bluetooth ON, 0=OFF             1=Turn BT ON, 0=Turn OFF
-	unsigned	BT_Timer:1;                                                     //1=BT Timer Enabled, 0=Disabled    1=Enable BT Timer, 0=Disable
-	unsigned	CP:1;                                                           //1=Control Port ON, 0=OFF          1=Turn ON, 0=Turn OFF
-	unsigned	CP_Timer:1;                                                     //1=CP Timer Enabled, 0=Disabled    1=Enable CP Timer, 0=Disable
-	unsigned	Sync:1;                                                         //1=Readings Sync'd, 0=not Sync'd   1=Sync Readings,0=Don't Sync
-
-	unsigned 	ST:1;                                                           //1=Start Time Enabled,0=Disabled   1=Enable Start Time,0=Disable
-    unsigned 	SP:1;                                                           //1=Stop Time Enabled,0=Disabled    1=Enable Stop Time,0=Disable    
-    unsigned    bit13:1;                                                        //unused
-    unsigned    X:1;                                                            //1=Take single reading not stored                                  
-	unsigned	Logging:1;                                                      //1=Started, 0=Stopped              1=Start, 0=Stop                 Msb    
+typedef struct{                                                                 //   BIT          READ                              WRITE
+	unsigned	CFG:3;                                                          //   012    110   VW8                               VW8                       Lsb
+                                                                                //          101   TH32                              TH32
+                                                                                //          100   VW32                              VW32
+                                                                                //          011   TH8                               TH8
+                                                                                //          010   VW/TH Single                      VW/TH Single
+                                                                                //          001   VW/TH16                           VW/TH16
+                                                                                //          000   VW/TH4                            VW/TH4
+    unsigned    Setrtc:1;                                                       //   3                                        1=RTC Current Time Set REV CJ
+	unsigned 	Logint:1;                                                       //   4      1=Log Ints Enabled, 0=Disabled    1=Enable, 0=Disable
+	unsigned 	Wrap:1;                                                         //   5      1=Memory Wrap Enabled, 0=Disabled 1=Enable, 0=Disable
+	unsigned	BT:1;                                                           //   6      1=Bluetooth ON, 0=OFF             1=Turn BT ON, 0=Turn OFF
+	unsigned	BT_Timer:1;                                                     //   7      1=BT Timer Enabled, 0=Disabled    1=Enable BT Timer, 0=Disable
+	unsigned	OP:1;                                                           //   8      1=Output Port ON, 0=OFF           1=Turn ON, 0=Turn OFF
+	unsigned	OP_Timer:1;                                                     //   9      1=OP Timer Enabled, 0=Disabled    1=Enable OP Timer, 0=Disable
+	unsigned	Sync:1;                                                         //   10     1=Readings Sync'd, 0=not Sync'd   1=Sync Readings,0=Don't Sync
+	unsigned 	ST:1;                                                           //   11     1=Start Time Enabled,0=Disabled   1=Enable Start Time,0=Disable
+    unsigned 	SP:1;                                                           //   12     1=Stop Time Enabled,0=Disabled    1=Enable Stop Time,0=Disable    
+    unsigned    Readrtc:1;                                                      //   13                                       1=RTC Current Time Read
+    unsigned    X:1;                                                            //   14                                       1=Take single reading not stored                                  
+	unsigned	Logging:1;                                                      //   15     1=Started, 0=Stopped              1=Start, 0=Stop                 Msb    
 }Status1ControlBits;
 typedef union{ unsigned int status1;
 Status1ControlBits status1flags;
 }s1flags;
 s1flags	S_1;
 
+
+//REV CJ:
+//MODBUS STATUS2 REGISTER:
+typedef struct{                                                                 //   BIT          READ                              WRITE
+	unsigned	R:1;                                                            //   0              0                           1=Reset Memory Pointers           Lsb
+    unsigned    RST:1;                                                          //   1              0                           1=Reboot uC  
+    unsigned    CMD:1;                                                          //   2              0                           1=Reboot into command line interface
+	unsigned 	LD:1;                                                           //   3              0                           1=Load Defaults
+	unsigned 	CNV:1;                                                          //   4      1=Linear Conversion,0=Poly          1=Select Linear, 0=Select Poly
+	unsigned	bit5:1;                                                          
+	unsigned	bit6:1;                                                     
+	unsigned	bit7:1;                                                           
+	unsigned	bit8:1;                                                     
+	unsigned	bit9:1;                                                         
+	unsigned 	bit10:1;                                                           
+    unsigned 	bit11:1;                                                              
+    unsigned    bit12:1;                                                      
+    unsigned    bit13:1;                                                                                             
+	unsigned	bit14:1;
+    unsigned    bit15:1;                                                        //                                                                                  Msb    
+}Status2ControlBits;
+typedef union{ unsigned int status2;
+Status2ControlBits status2flags;
+}s2flags;
+s2flags	S_2;
+*/
 //*********************************************************************
 
 //------------------Global Variables-------------------------------------
