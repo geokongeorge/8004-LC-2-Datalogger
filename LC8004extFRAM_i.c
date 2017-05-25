@@ -75,7 +75,7 @@ typedef union                                                                   
 
 } tFRAMLong;
 
-
+extern void crlf(void);                                                         //REV I
 extern float gageReading;
 extern unsigned long TESTSECONDS;
 unsigned long add=0;
