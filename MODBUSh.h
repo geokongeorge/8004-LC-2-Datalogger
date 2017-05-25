@@ -7,58 +7,62 @@ typedef union{
 	unsigned char z[2];                                                         //(2) Bytes of 16bit crc data
 }csum;
 
+
+
 //REV H:
 //MODBUS STATUS1 REGISTER:
-typedef struct{                                                                 //      READ                              WRITE
-	unsigned	bit012:3;                                                       //110   VW8 		
-                                                                                //101   TH32
-                                                                                //100   VW32
-                                                                                //011   TH8
-                                                                                //010   VW/TH Single
-                                                                                //001   VW/TH16
-                                                                                //000   VW/TH4	
-    unsigned    bit3:1;                                                         //1=RTC Current Time Set
-	unsigned 	bit4:1;                                                         //1=Log Ints Enabled, 0=Disabled    1=Enable, 0=Disable
-	unsigned 	bit5:1;                                                         //1=Memory Wrap Enabled, 0=Disabled 1=Enable, 0=Disable
-	unsigned	bit6:1;                                                         //1=Bluetooth ON, 0=OFF             1=Turn BT ON, 0=Turn OFF
-	unsigned	bit7:1;                                                         //1=BT Timer Enabled, 0=Disabled    1=Enable BT Timer, 0=Disable
-	unsigned	bit8:1;                                                         //1=Control Port ON, 0=OFF          1=Turn ON, 0=Turn OFF
-	unsigned	bit9:1;                                                         //1=CP Timer Enabled, 0=Disabled    1=Enable CP Timer, 0=Disable
-	unsigned	bit10:1;                                                        //1=Readings Sync'd, 0=not Sync'd   1=Sync Readings,0=Don't Sync
+typedef struct{                                                                 //   BIT          READ                              WRITE
+	unsigned	_CFG:3;                                                          //   012    110   VW8                               VW8                       Lsb
+                                                                                //          101   TH32                              TH32
+                                                                                //          100   VW32                              VW32
+                                                                                //          011   TH8                               TH8
+                                                                                //          010   VW/TH Single                      VW/TH Single
+                                                                                //          001   VW/TH16                           VW/TH16
+                                                                                //          000   VW/TH4                            VW/TH4
+    unsigned    _Setrtc:1;                                                       //   3                                        1=RTC Current Time Set REV CJ
+	unsigned 	_Logint:1;                                                       //   4      1=Log Ints Enabled, 0=Disabled    1=Enable, 0=Disable
+	unsigned 	_Wrap:1;                                                         //   5      1=Memory Wrap Enabled, 0=Disabled 1=Enable, 0=Disable
+	unsigned	_BT:1;                                                           //   6      1=Bluetooth ON, 0=OFF             1=Turn BT ON, 0=Turn OFF
+	unsigned	_BT_Timer:1;                                                     //   7      1=BT Timer Enabled, 0=Disabled    1=Enable BT Timer, 0=Disable
+	unsigned	_OP:1;                                                           //   8      1=Output Port ON, 0=OFF           1=Turn ON, 0=Turn OFF
+	unsigned	_OP_Timer:1;                                                     //   9      1=OP Timer Enabled, 0=Disabled    1=Enable OP Timer, 0=Disable
+	unsigned	_Sync:1;                                                         //   10     1=Readings Sync'd, 0=not Sync'd   1=Sync Readings,0=Don't Sync
+	unsigned 	_ST:1;                                                           //   11     1=Start Time Enabled,0=Disabled   1=Enable Start Time,0=Disable
+    unsigned 	_SP:1;                                                           //   12     1=Stop Time Enabled,0=Disabled    1=Enable Stop Time,0=Disable    
+    unsigned    _Readrtc:1;                                                      //   13                                       1=RTC Current Time Read
+    unsigned    _X:1;                                                            //   14                                       1=Take single reading not stored                                  
+	unsigned	_Logging:1;                                                      //   15     1=Started, 0=Stopped              1=Start, 0=Stop                 Msb    
+}Status1ControlBits;
+typedef union{ unsigned int status1;
+Status1ControlBits status1flags;
+}s1flags;
+s1flags	S_1;
 
-	unsigned 	bit11:1;                                                        //1=Start Time Enabled,0=Disabled   1=Enable Start Time,0=Disable
-    unsigned 	bit12:1;                                                        //1=Stop Time Enabled,0=Disabled    1=Enable Stop Time,0=Disable    
-    unsigned    bit13:1;                                                        //1=RTC Current Time Read
-    unsigned    bit14:1;                                                        //'X' command   1=Take Reading & store in X memory                  
-    unsigned	bit15:1;                                                        //1=Logging Started, 0=Stopped      1=Start, 0=Stop                  Msb    
-}StatusBits;
-typedef union{ unsigned int status;
-StatusBits statusflags;
-}bitflags;
 
-//REV H:
+//REV CJ:
 //MODBUS STATUS2 REGISTER:
-typedef struct{                                                                 //      READ                              WRITE
-	unsigned	bit0:1;                                                         //'R' command   1=Reset Memory Pointers                             Lsb      		
-    unsigned    bit1:1;                                                         //"RESET" command   1=Reboot uC
-    unsigned    bit2:1;                                                         //"CMD LINE"        1=Reboot into command line interface
-	unsigned 	bit3:1;                                                         //ADD LOAD DEFAULTS SWITCH
-	unsigned 	bit4:1;                                                         //unused
-	unsigned	bit5:1;                                                         //unused
-	unsigned	bit6:1;                                                         //unused
-	unsigned	bit7:1;                                                         //unused
-	unsigned	bit8:1;                                                         //unused
-	unsigned	bit9:1;                                                         //unused
-	unsigned 	bit10:1;                                                        //unused
-    unsigned 	bit11:1;                                                        //unused    
-    unsigned    bit12:1;                                                        //unused
-    unsigned    bit13:1;                                                        //unused                  
-    unsigned	bit14:1;                                                        //unused                                                            Msb    
-    unsigned    bit15:1;
-}Status2Bits;
+typedef struct{                                                                 //   BIT          READ                              WRITE
+	unsigned	_R:1;                                                            //   0              0                           1=Reset Memory Pointers           Lsb
+    unsigned    _RST:1;                                                          //   1              0                           1=Reboot uC  
+    unsigned    _CMD:1;                                                          //   2              0                           1=Reboot into command line interface
+	unsigned 	_LD:1;                                                           //   3              0                           1=Load Defaults
+	unsigned 	_CNV:1;                                                          //   4      1=Linear Conversion,0=Poly          1=Select Linear, 0=Select Poly
+	unsigned	bit5:1;                                                          
+	unsigned	bit6:1;                                                     
+	unsigned	bit7:1;                                                           
+	unsigned	bit8:1;                                                     
+	unsigned	bit9:1;                                                         
+	unsigned 	bit10:1;                                                           
+    unsigned 	bit11:1;                                                              
+    unsigned    bit12:1;                                                      
+    unsigned    bit13:1;                                                                                             
+	unsigned	bit14:1;
+    unsigned    bit15:1;                                                        //                                                                                  Msb    
+}Status2ControlBits;
 typedef union{ unsigned int status2;
-Status2Bits status2flags;
-}bitflags2;
+Status2ControlBits status2flags;
+}s2flags;
+s2flags	S_2;
 
 
 extern unsigned int baudrate;
@@ -83,6 +87,7 @@ extern void synch_one(void);                                                    
 extern void synch_zero(void);                                                   //REV G
 extern void wrap_zero(void);                                                    //REV F
 extern void wrap_one(void);                                                     //REV F
+extern void loadDefaults(void);                                                 //REV H
 extern void MX1(void);                                                          //REV G
 extern void MX4(void);                                                          //REV G
 extern void MX8(void);                                                          //REV G
