@@ -11,7 +11,7 @@
 //REV D: 04/14/17                                                               Incorporate paging for memory addressing
 //REV E: 05/02/17                                                               Include LC8004extFRAM_i.h
 //                                                                              Add Status register handling
-//REV F: 05/02/17                                                               Continue to add functions to the Status register
+//REV F: 05/02/17                                                               Continue to add functions to the Status register (BT,OP,SR,WF)
 
 
 #include "MODBUSf.h"  

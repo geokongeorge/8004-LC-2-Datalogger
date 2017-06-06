@@ -1,6 +1,6 @@
 
-#ifndef LC8004main_bb_H
-#define LC8004main_bb_H
+#ifndef LC8004main_bc_H
+#define LC8004main_bc_H
 
 // DSPIC33FJ256GP710A Configuration Bit Settings
 
@@ -462,6 +462,7 @@ unsigned int tempTMR4=0;
 unsigned int tempTMR5=0;
 unsigned int trap=0;
 unsigned int RxData;					//holds value of UART1 receive buffer
+unsigned int MODBUSaddressvalue;                                                //REV BC
 float percent=0.0;
 float processedReading=0.0;
 long LogIntLength=10;					
@@ -565,7 +566,7 @@ unsigned char BCDfifty;
 unsigned int decimalRTC;
 
 
-
+/*REM REV BC:
 //----------CONTROL/CONFIGURATION REGISTERS STORED IN EXTERNAL MEMORY------------------------------
 
 //NOTE: Data Memory (Readings) from 0x0 to 0x7f81f                              //522.272kB data  
@@ -946,7 +947,8 @@ unsigned int decimalRTC;
 #define startMinutesaddress         0x7fea2                                     //start time minutes    REV W
 #define startSecondsaddress         0x7fea4                                     //start time seconds    REV W
 #define scratchaddress              0x7fea6                                     //REV AA
-                                                                                
+#define MODBUSaddress               0x7fea8                                     //REV BC
+*/                                                                               
 
 
 //----------------------------------------------------------------------------
@@ -1258,15 +1260,16 @@ char DF[]={"DF                     Date Format(0=julian,1=month,day)"};
 char Disabled[]={"DISABLED"};
 char DisabledDisplay[]={"---"};
 char Displaynext[]={"N                      Display Next time to read"};
-char Displaynnnn[]={"Dnnnnn                 Display nnnnn arrays (ascii format) from pointer"};
-char DisplayXnnnn[]={"DXnnnnn                Display nnnnn arrays (binary format) from pointer"};
+//char Displaynnnn[]={"Dnnnnn                 Display nnnnn arrays (ascii format) from pointer"};   REM REV BC
+char Displaynnnn[]={"Dnnnnn                 Display nnnnn arrays from pointer"};    //REV BC
+//char DisplayXnnnn[]={"DXnnnnn                Display nnnnn arrays (binary format) from pointer"}; REM REV BC
 char DL[]={"DL		       Datalogger Type"};					
 char DnotAllowed[]={"DEFAULT Not Allowed While Logging"};
-char DX[]={"DX                     Current Download Data Format."};             //REV AF
-char Dx0[]={"DX0                    ASCII Data Download."};                     //REV AF
-char Dx1[]={"DX1                    Binary Data Download."};                    //REV AF
-char DX0[]={"ASCII Data Download."};                                            //VER 6.0.2
-char DX1[]={"Binary Data Download."};                                           //VER 6.0.2
+//char DX[]={"DX                     Current Download Data Format."};             //REV AF  REM REV BC
+//char Dx0[]={"DX0                    ASCII Data Download."};                     //REV AF  REM REV BC
+//char Dx1[]={"DX1                    Binary Data Download."};                    //REV AF  REM REV BC
+//char DX0[]={"ASCII Data Download."};                                            //VER 6.0.2   REM REV BC
+//char DX1[]={"Binary Data Download."};                                           //VER 6.0.2   REM REV BC
 
 char Enabled[]={"ENABLED"};
 char End[]={"E                      End communications and go to sleep"};
@@ -1329,6 +1332,8 @@ char Loglist[]={"              Log Intervals List"};
 char LogIntStopTime[]={"Log Intervals Not Allowed When Using Preset Stop Logging Time."};	
 char LogIntWhileLogging[]={"Enabling Log Intervals Not Allowed While Logging."};			
 
+char Modbusaddress[]={"MAddd		       MODBUS Address (1-247)"};            //REV BC
+char ModbusaddressIS[]={"MODBUS Address: "};                                    //REV BC
 char Mainbattery[]={"Main Battery."};
 char MEMcleared[]={"Memory cleared."};
 char MEMnotcleared[]={"Memory not cleared."};
@@ -1389,7 +1394,7 @@ char Reset[]={"R                      Reset memory"};
 char RESET[]={"RESET                  RESET processor"};		
 char Resetting[]={"Resetting..."};								
 char ResetComplete[]={"RESET COMPLETE"};						
-char Rev[]={"bb"};
+char Rev[]={"bc"};
 char RnotAllowed[]={"RESET Not Allowed While Logging"};			
 char RUsure[]={"Are you sure(Y/N)?"};
 char R0[]={"R0-R1"};				

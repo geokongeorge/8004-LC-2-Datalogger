@@ -16,9 +16,9 @@
 //	DATE:		5/31/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   ck
-//	CHECKSUM:	0x57ab (MPLABX ver 3.15 and XC16 ver 1.26)
-//	DATA(RAM)MEM:	8436/30720   27%
-//	PGM(FLASH)MEM:  149469/261888 57%
+//	CHECKSUM:	0x2296 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	DATA(RAM)MEM:	8490/30720   28%
+//	PGM(FLASH)MEM:  149613/261888 57%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency

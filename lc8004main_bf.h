@@ -722,7 +722,7 @@ unsigned int decimalRTC;
 #define stx             0x02            //ASCII Start Of Text                   //REV AA
 #define etx             0x03            //ASCII End Of Text                     //REV AA
 #define eot             0x04            //ASCII End Of Transmission             //REV AA
-#define	backspace		0x08;			//ASCII Backspace
+#define	backspace		0x08			//ASCII Backspace
 #define tab             0x09			//ASCII Printer Tab
 #define lf              0x0A			//ASCII Line Feed
 #define page			0x0C			//ASCII Page Feed

@@ -13,12 +13,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		3/24/2017
+//	DATE:		3/29/2017
 //	DESIGNER: 	GEORGE MOORE
-//	REVISION:   bc
-//	CHECKSUM:	0xa3b9 (MPLABX ver 3.15 and XC16 ver 1.26)
-//	DATA(RAM)MEM:	8604/30720   28%
-//	PGM(FLASH)MEM:  147153/261888 56%
+//	REVISION:   bd
+//	CHECKSUM:	0x5b11 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	DATA(RAM)MEM:	8632/30720   28%
+//	PGM(FLASH)MEM:  147948/261888 56%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -138,9 +138,13 @@
 //                                  rename Comm() CMDcomm()
 //                                  Add MODBUSa.c,.h
 //                                  Debug MODBUS t3,5 end-of-frame detection & t1,5 intercharacter timing
+//                                  Add ":::"<CR> to enter MODBUS comms and bootup with stream of ";;;;;;;"etc to enter command-line comms
 //      bb      3/21/17             Add CRC computation
 //      bc      3/24/17             Add MODBUS slave addressing
 //                                  include MODBUSb.c,.h
+//                                  Make a separate FRAM_ADDRESSa.h file for external FRAM addressing and include
+//      bd      3/29/17             Incorporate MODBUS Command decoding
+//                                  Perform one complete MODBUS transaction (read MODBUS address)
 //
 //
 //
@@ -182,19 +186,19 @@
 
 
 //	The following files are included in the MPLAB project:
-//	Z:\8004\LC8004main_bc.c (main source: x is revision level)
+//	Z:\8004\LC8004main_bd.c (main source: x is revision level)
 //	Z:\8004\LC8004delay_b.c
 //	Z:\8004\LC8004extFRAM_h.c
 //  Z:\8004\AD5241a.c
-//  Z:\8004\MODBUSb.c                                                           REV BA
+//  Z:\8004\MODBUSc.c                                                           REV BA
 
 //	Header Files:
 //#include "p33FJ256GP710A.h"
 //#include "LC8004extFRAM_h.h"                              
-//#include "LC8004main_bc.h"
+//#include "LC8004main_bd.h"
 //#include "LC8004delay_b.h"
 //#include "AD5241a.h"
-//#include "MODBUSb.h"                                                          REV BA
+//#include "MODBUSc.h"                                                          REV BA
 //#include <outcompare.h>
 //#include <ports.h>
 //#include <timer.h>
@@ -217,10 +221,11 @@
 //--------------------------------------------------------------
 #include "p33FJ256GP710A.h"
 #include "LC8004extFRAM_h.h"                              
-#include "LC8004main_bc.h"
+#include "LC8004main_bd.h"
 #include "LC8004delay_b.h"                                                      //REV Z
 #include "AD5241a.h"
-#include "MODBUSb.h"                                                            //REV BA
+#include "MODBUSc.h"                                                            //REV BA
+#include "FRAM_ADDRESSa.h"                                                      //REV BC
 #include <outcompare.h>
 #include <ports.h>
 #include <timer.h>
@@ -312,8 +317,15 @@ int main(void)
     baudrate = read_Int_FRAM(baudrateaddress);
     if ((baudrate != brg9600) && (baudrate != brg115200) && (baudrate != brg230400) && (baudrate != brg460800)) //FRAM does not contain valid baud rate value  REV AE
     {
-        baudrate = brg115200; //set initial baud rate to 115200 bps           
-        write_Int_FRAM(baudrateaddress, baudrate); //store baudrate in FRAM   
+        baudrate = brg115200;                                                   //set initial baud rate to 115200 bps           
+        write_Int_FRAM(baudrateaddress, baudrate);                              //store baudrate in FRAM   
+    }
+    
+    MODBUSaddressvalue=read_Int_FRAM(MODBUSaddress);
+    if(MODBUSaddressvalue<1 | MODBUSaddressvalue>247)
+    {
+        MODBUSaddressvalue=1;                                                   //Initialize MODBUS address to 1
+        write_Int_FRAM(MODBUSaddress,MODBUSaddressvalue);                       //store in FRAM
     }
     
     configUARTnormal();                                                         //TEST
@@ -602,10 +614,10 @@ void Blink(unsigned char times)
         {
             _READ = 0;                                                          //Light the LED
             //delay(20000);                                                     REM REV AE
-            delay(80000);                                                       //REV AE
+            delay(80000);                                                        //REV AE
             _READ=1;                                                            //Off the LED
             //delay(20000);                                                     REM REV AE
-            delay(80000);                                                       //REV AE
+            delay(320000);                                                       //REV AE
         }
         else
         {   
@@ -614,7 +626,7 @@ void Blink(unsigned char times)
             delay(80000);                                                       //REV AE
             _READ = 0;                                                          //Light the LED
             //delay(20000);                                                     REM REV AE
-            delay(80000);                                                       //REV AE
+            delay(320000);                                                       //REV AE
         }
     }
 
@@ -1714,9 +1726,11 @@ void CMDcomm(void)
                     putsUART1(Displaynnnn);                                     //Dnnnnn				Display nnnn arrays (formatted) from pointer
                     while (BusyUART1());
 
+                    /***********************************************************REM REV BC
                     crlf();
                     putsUART1(DisplayXnnnn);                                    //DXnnnnn				Display nnnn arrays (not formatted) from pointer
                     while (BusyUART1());
+                    
                     
                     crlf();
                     putsUART1(DX);                                              //DX                    Current Download Data Format    REV AF
@@ -1729,7 +1743,8 @@ void CMDcomm(void)
                     crlf();
                     putsUART1(Dx1);                                             //DX1                    Binary Data Download   REV AF
                     while(BusyUART1());
-
+                    ***********************************************************/
+                                
                     crlf();
                     putsUART1(End);                                             //E						End communications and go to sleep
                     while (BusyUART1());
@@ -1821,6 +1836,10 @@ void CMDcomm(void)
                     crlf();
                     putsUART1(Logdisenable);                                    //LD,LE					Log intervals Disable, Enable
                     while (BusyUART1());
+                    
+                    crlf();                                                     //MAddd                 MODBUS Address (1-247)  REV BC
+                    putsUART1(Modbusaddress);                                   //REV BC
+                    while(BusyUART1());                                         //REV BC
 
                     crlf();
                     putsUART1(Monitorstatus);                                   //M,MD,ME				Monitor status, Disable, Enable
@@ -2832,6 +2851,40 @@ void CMDcomm(void)
                         while (BusyUART1());
                         break;
                     }
+                    
+                    //REV BC:
+                    if (buffer[1] == capA && buffer[2]==cr)                     //MA received
+                    {
+                        crlf();
+                        NAdata=read_Int_FRAM(MODBUSaddress);					//read MODBUS Address from FRAM 
+                        putsUART1(ModbusaddressIS);                             //MODBUS address:
+                        while (BusyUART1());
+                        sprintf(NABUF, "%d", NAdata);                           //format MODBUS address
+                        putsUART1(NABUF);                                       //display MODBUS address
+                        while (BusyUART1());
+                        break;
+                        //break;                                                //REM REV BC
+                    }
+                    
+                    if (buffer[1] == capA && ((isdigit(buffer[2]) && buffer[3] == cr) |
+                            (isdigit(buffer[2]) && isdigit(buffer[3]) && buffer[4] == cr) |
+                            (isdigit(buffer[2]) && isdigit(buffer[3]) && isdigit(buffer[4]) && buffer[5] == cr))) //Enter MODBUS Address
+                    {
+                        crlf();
+                        while (BusyUART1());
+                        MODBUSaddressvalue = Buffer2Decimal(buffer, i, 2);      //extract MODBUS address from buffer
+                        if (MODBUSaddressvalue == 0 | MODBUSaddressvalue>247)   // ERROR
+                            break;
+                        write_Int_FRAM(MODBUSaddress,MODBUSaddressvalue);		//store MODBUS address in FRAM   
+                        NAdata=read_Int_FRAM(MODBUSaddress);					//read MODBUS address from FRAM  
+                        putsUART1(ModbusaddressIS);                             //"MODBUS address:"
+                        while (BusyUART1());
+                        sprintf(NABUF, "%d", NAdata);                           //format MODBUS address
+                        putsUART1(NABUF);                                       //display MODBUS address
+                        while (BusyUART1());
+                        break;
+                    }
+                    //**********************************************************
 
                     if (buffer[1] == capD) //MD received
                     {
@@ -3608,6 +3661,17 @@ void CMDcomm(void)
                         putsUART1(trapBUF);
                         while (BusyUART1());
                         crlf();
+                        
+                        //REV BC:
+                        NAdata=read_Int_FRAM(MODBUSaddress);                    //read MODBUS Address from FRAM  
+                        putsUART1(ModbusaddressIS);                             //"MODBUS Address:"
+                        while (BusyUART1());
+                        sprintf(NABUF, "%d", NAdata);                           //format MODBUS address
+                        putsUART1(NABUF);                                       //display MODBUS address
+                        while (BusyUART1());
+                        crlf();
+                        //******************************************************
+                        
                         NAdata=read_Int_FRAM(Netaddress);			//read Network Address from FRAM  
                         putsUART1(NetworkaddressIS); //"Network address:"
                         while (BusyUART1());
@@ -4615,7 +4679,7 @@ void CMDcomm(void)
 
             } //end of switch
 
-            prompt();                                                       //ASCII
+            prompt();                                                       
             
             for (i = 0; i < 22; i++)                                            //clear the buffer
             {
@@ -6980,12 +7044,12 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
         {
             month = toMonthDay(julian, year, 1);                                //get the month from the julian date
             day = toMonthDay(julian, year, 0);                                  //get the day from the julian date
-            sprintf(BUF, "%d", month);                                          //format the month data ASCII
+            sprintf(BUF, "%d", month);                                          //format the month data 
             putsUART1(BUF);                                                     //display it
             while (BusyUART1());
             putcUART1(comma);                                                   // , DELIMITER
             while(BusyUART1());
-            sprintf(BUF, "%d", day);                                            //format the day data   ASCII
+            sprintf(BUF, "%d", day);                                            //format the day data   
             putsUART1(BUF);                                                     //display it
             while (BusyUART1());
             putcUART1(comma);                                                   // , DELIMITER
@@ -6993,7 +7057,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
         } 
         else                                                                    //decimal day
         {
-            sprintf(BUF, "%d", julian);                                         //ASCII
+            sprintf(BUF, "%d", julian);                                         
             putsUART1(BUF);
             while (BusyUART1());
             putcUART1(comma);                                                   // , DELIMITER
@@ -7023,7 +7087,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
             while(BusyUART1());
         }
 
-        sprintf(BUF, "%d", hour);                                               //format the hour data  ASCII
+        sprintf(BUF, "%d", hour);                                               //format the hour data  
         putsUART1(BUF);                                                         //display it
         while (BusyUART1());
         if (LC2CONTROL.flags.TimeFormat)                                        //hh,mm format
@@ -7047,7 +7111,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
             while(BusyUART1());
         }
 
-        sprintf(BUF, "%d", minute);                                             //format the minute data    ASCII
+        sprintf(BUF, "%d", minute);                                             //format the minute data    
         putsUART1(BUF);                                                         //display it
         while (BusyUART1());
         putcUART1(comma);                                                       // , DELIMITER
@@ -7062,7 +7126,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
     //SECOND
     //if (!LC2CONTROL2.flags2.d)                                                  //VER 6.0.2   REM VER BA
     //{                                                                          REM VER BA
-        sprintf(BUF, "%d", second);                                             //format the second data    ASCII
+        sprintf(BUF, "%d", second);                                             //format the second data    
         putsUART1(BUF);                                                         //display it
         while (BusyUART1());
         putcUART1(comma);                                                       // , DELIMITER

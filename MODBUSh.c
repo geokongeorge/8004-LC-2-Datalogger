@@ -33,15 +33,18 @@ unsigned char MODBUS_RXbuf[125];                                                
 unsigned char MODBUS_TXbuf[125];                                                //125 registers max   
 unsigned int modbusaddressvalue;
 unsigned int ECHO=0;                                                            //REV D
-unsigned int i=0;                                                               //REV CB
+
 
 
 void MODBUScomm(void)
 {
     unsigned char a=0;                                                          //loop index
     unsigned char arraysize=0;
-    unsigned long memaddressStart=0;     
+    unsigned long memaddressStart=0;    
+    unsigned int modbusaddressvalue;
     unsigned int testvalue=0;                                                   //REV H
+    unsigned int i=0;                                                           //REV CK
+    unsigned int ECHO=0;
     csum       csumdata;                                                        //csumdata[1] is MSB, csumdata[0] is LSB
     csum       value;                                                           //value[1] is MSB, value[0] is LSB]
     csum       registers;                                                       //registers[1] is MSB, registers [0] is LSB

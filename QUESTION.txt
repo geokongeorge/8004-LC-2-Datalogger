@@ -1,0 +1,73 @@
+?
+Command                Description
+------------------------------------------------
+BT                     Bluetooth sTatus.
+BT0                    Disable Bluetooth.
+BT1                    Enable Bluetooth.
+BTD                    Bluetooth Timer Disabled
+BTE                    Bluetooth Timer Enabled
+C                      view current Clock
+CSmm/dd/yy/hh:mm:ss    Clock Set
+DEFAULT                Load factory DEFAULT settings
+DF                     Date Format(0=julian,1=month,day)
+DL		       Datalogger Type
+Dnnnnn                 Display nnnnn arrays from pointer
+E                      End communications and go to sleep
+Gnn/c/tt/szzzzzz/sffffff/soooooo
+or
+Gnn/c/tt/saaaaaa/sbbbbbb/scccccc
+
+Gage information, where;
+                       nn = Channel #
+		       c = Conversion Type(L/P)
+		       tt = Gage Type
+
+		       For Linear (L) Conversion:
+                       szzzzzz = zero reading with sign
+                       sffffff = gage factor with sign
+                       soooooo = offset with sign
+
+		       For Polynomial (P) Conversion:
+                       saaaaaa = polynomial coefficient A with sign
+                       sbbbbbb = polynomial coefficient B with sign
+                       scccccc = polynomial coefficient C with sign
+
+IDdddddddddddddddd     view current ID,set to dddddddddddddddd
+Ln/lllll/iii	       view Log intervals/change n interval
+                       lllll = length
+                       iii = iterations of interval
+LD,LE                  Log intervals Disable, Enable
+MAddd		       MODBUS Address (1-247)
+M,MD,ME                Monitor status, Disable, Enable
+MXS		       Display Multiplexer Setup
+MX#		       Select Multiplexer Configuration(1,4,8,8T,16,32,32T)
+N                      Display Next time to read
+NAddd		       Network Address (1-256)
+NS,ND,NE	       Network Status, Disable, Enable
+O                      pOrt status
+O0                     pOrt OFF (0)
+O1                     pOrt ON (1)
+OD                     pOrt timer Disabled
+OE                     pOrt timer Enabled
+OThh:mm                pOrt/Bluetooth sTart time
+OPhh:mm                pOrt/Bluetooth stoP time
+Pnnnnn                 Position array pointer to nnnnn
+R                      Reset memory
+RESET                  RESET processor
+S,SS                   datalogger Status, System Status
+SCnnnnn                view SCan interval/enter nnnnn interval
+SPhh:mm                StoP logging, hh:mm = stop time
+SR                     Synchronize Readings(0=not synch'd,1=synch'd)
+SThh:mm                STart logging, hh:mm = start time
+SV                     Software Version
+Tnn/t                  Thermistor information, where;
+                       nn = Channel #
+                       t = Thermistor Type (0,1,2)
+TF                     Time Format(0=hhmm,1=hh,mm)
+TR,TR0                 display TRap count, zero TRap count
+VL		       display Lithium cell Voltage
+V3		       display 3V Battery Voltage
+V12		       display 12V Battery Voltage
+WF                     Wrap Format(0=don't wrap memory,1=wrap memory
+X                      Single Reading - NOT stored
+*
