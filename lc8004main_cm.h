@@ -1220,8 +1220,8 @@ float INT16tof32(void);                                                         
 void loadDefaults(void);
 int main(void);
 void MODBUScomm(void);                                                          //REV CK
-//void MODBUS_DisableStartTime(void);                                             //REV CK
-//void MODBUS_DisableStopTime(void);                                              //REV CK 
+void MODBUS_DisableStartTime(void);                                             //REV CM
+void MODBUS_DisableStopTime(void);                                              //REV CM 
 void MODBUS_EnableStartTime(void);                                              //REV CK
 void MODBUS_EnableStopTime(void);                                               //REV CK
 unsigned char MODBUS_RX(void);                                                  //REV CK

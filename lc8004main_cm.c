@@ -16,9 +16,9 @@
 //	DATE:		6/5/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   cm
-//	CHECKSUM:	0xd3d9 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0xd117 (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8490/30720   28%
-//	PGM(FLASH)MEM:  149850/261888 57%
+//	PGM(FLASH)MEM:  150117/261888 57%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -298,7 +298,11 @@ int main(void)
     
     //REV Y
     
-    restoreSettings();                                                          //reload the settings from FRAM REV Z      
+    restoreSettings();                                                          //reload the settings from FRAM REV Z   
+    
+    LC2CONTROL.flags.Logging=0;                                                 //TEST REV CM
+    write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);                     //TEST REV CM
+    
     LC2CONTROL2.flags2.scheduled=0;                                             //REV W
     write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);                  //store flag in FRAM REV W
     //stopLogging();                                                              //TEST REV K
@@ -13558,8 +13562,9 @@ void MODBUScomm(void)                                                           
                             break;                        
                         
                         if(tempValueValue.status1flags._ST)
-                            MODBUS_EnableStartTime();                           //REV CK
-                        tempValueValue.status1flags._ST=0;                      //clear this bit on exit 
+                            MODBUS_EnableStartTime();                           //REV CM
+                        else
+                            MODBUS_DisableStartTime();
                         break;
                         
                     case 12:
@@ -13568,7 +13573,8 @@ void MODBUScomm(void)                                                           
                         
                         if(tempValueValue.status1flags._SP)
                             MODBUS_EnableStopTime();                            //REV CM
-                        tempValueValue.status1flags._SP=0;                      //clear this bit on exit 
+                        else
+                            MODBUS_DisableStopTime();
                         break;
                         
                     case 13:                                                    //
@@ -13748,6 +13754,18 @@ void MODBUScomm(void)                                                           
 }
 
 
+void MODBUS_DisableStartTime(void)                                              //REV 
+{
+    LC2CONTROL.flags.Logging = 0;                                               //set the Logging flag    
+    LC2CONTROL.flags.LoggingStartTime=0;                                        //clear the logging start time flag
+    write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);                     //save flag
+    LC2CONTROL2.flags2.Waiting=0;                                               //set the waiting flag
+    LC2CONTROL2.flags2.scheduled=0;                                             
+    write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);
+    S_1.status1flags._ST=0;                                                     //set the MODBUS Start Time Enabled flag
+    write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);   
+}
+
 void MODBUS_EnableStartTime(void)                                               //REV CK
 {
     unsigned int    value=0;
@@ -13780,14 +13798,22 @@ void MODBUS_EnableStartTime(void)                                               
     //S_1.status1flags._Logging=1;                                                //set the MODBUS Logging flag TEST REM
     write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
     
-    testPoint(1,1);
     enableAlarm(Alarm1);                                      
-    testPoint(1,1);
     enableINT1();                                                               //enable INT1 (take a reading on interrupt) 
     INTCON2bits.INT1EP=1;                                                       //interrupt on negative edge
     INTCON1bits.NSTDIS = 0;                                                     //reset nesting of interrupts   	  
 }
 
+
+void MODBUS_DisableStopTime(void)                                               //REV CM
+{
+    LC2CONTROL.flags.LoggingStopTime = 0;                                       //set the LoggingStopTime flag		
+    write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);                     //store flag in FRAM 
+    S_1.status1flags._SP=0;                                                     //clear the MODBUS status flag    
+    write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                              
+    LC2CONTROL2.flags2.SetStopTime = 0;                                         //clear the SetStopTime flag    
+    write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);
+}
 
 void MODBUS_EnableStopTime(void)                                                //REV CM
 {
@@ -16054,10 +16080,17 @@ unsigned int STOP(void)                                                         
         return 0;
     }
 
-    if (LC2CONTROL.flags.Logging || LC2CONTROL.flags.LoggingStartTime || LC2CONTROL.flags.LoggingStopTime) //is a logging flag set?
-    {
+    //if (LC2CONTROL.flags.Logging | LC2CONTROL.flags.LoggingStartTime | LC2CONTROL.flags.LoggingStopTime) //is a logging flag set?
+    //{
+        LC2CONTROL.flags.Logging=0;                                             //REV CM
+        LC2CONTROL.flags.LoggingStopTime=0;                                     //REV CM
+        write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);                 //REV CM
         LC2CONTROL2.flags2.scheduled=0;                                         //clear the scheduled flag  REV W
         write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);              //store in FRAM REV W
+        S_1.status1flags._Logging=0;                                            //clear the MODBUS lOGGING flag     REV CM
+        S_1.status1flags._SP=0;                                                 //clear the MODBUS Enable Stop Logging Time flag    REV CM
+        S_1.status1flags._ST=0;                                                 //clear the MODBUS Enable Start Logging Time flag   REV CM
+        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
         stopLogging();
         if(!LC2CONTROL2.flags2.Modbus)
         {
@@ -16067,8 +16100,10 @@ unsigned int STOP(void)                                                         
                 while (BusyUART1());
             }
         }
+        LC2CONTROL2.flags2.Waiting=0;
+        write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);              //REV CM
         return 1;
-    }
+    //}
 }
 
 
