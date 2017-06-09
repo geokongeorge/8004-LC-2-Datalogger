@@ -359,6 +359,31 @@ unsigned long read_longFRAM(unsigned long add)                                  
 }
 
 
+//REV CN:
+//***************************************************************************
+//				read_float()
+//
+//	Read 32 bit float data stored at FRAM address
+//
+//	Parameters received: FRAM address
+//	Returns: float data
+//
+//
+//***************************************************************************
+float read_float(unsigned long add)                                           
+{
+	float tempfloat=0.0;                                                   
+
+	tFRAMFloat temp;                                                            //variable temp is type tFRAMfloat
+
+    temp.d[1]=read_Int_FRAM(add);                                               //read lower 16 bits of 32 to temp.e[1] REV i
+	temp.d[0]=read_Int_FRAM(add+2);                                             //read upper 16 bits of 32 to temp.e[0]     REV i
+
+	tempfloat=temp.f;
+	return tempfloat;
+}
+
+
 
 //***************************************************************************
 //				write_Flt_FRAM()
