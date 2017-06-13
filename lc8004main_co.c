@@ -16,9 +16,9 @@
 //	DATE:		6/9/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   co
-//	CHECKSUM:	0x9d88 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x6ada (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8490/30720   28%
-//	PGM(FLASH)MEM:  147834/261888 56%
+//	PGM(FLASH)MEM:  147951/261888 56%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -231,7 +231,7 @@
 //	Header Files:
 //#include "p33FJ256GP710A.h"
 //#include "LC8004extFRAM_i.h"                              
-//#include "LC8004main_cn.h"
+//#include "LC8004main_co.h"
 //#include "LC8004delay_b.h"
 //#include "AD5241a.h"
 //#include "FRAM_ADDRESSe.h                                                     REV CO
@@ -13188,7 +13188,8 @@ void loadDefaults(void)
     LC2CONTROL2.flags2.SetStopTime = 0; //clear the set stop time flag
     LC2CONTROL2.flags2.R = 1; //set the R flag
     LC2CONTROL2.flags2.scheduled=0;                                             //REV W
-    S_1.status1flags._SP=0;                                                      //clear the MODBUS Stop Time flag
+    S_1.status1flags._SP=0;                                                     //clear the MODBUS Stop Time flag
+    S_1.status1flags._ST=0;                                                     //clear the MODBUS Start Time flag  REV CO
     write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);                  //store flag in FRAM  
 
     // Linear Conversions:
@@ -13272,42 +13273,50 @@ void loadDefaults(void)
     //initialize scan intervals:
     if (MUX4_ENABLE.mflags.mux16_4 == Single) //Single VW Channel
     {
+        S_1.status1flags._CFG=Single;                                           //REV CO
         LogIntLength = minScanSingleVW;
         hms(minScanSingleVW, 0);
+        
     }
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW4) //4 channel VW MUX
     {
+        S_1.status1flags._CFG=VW4;                                              //REV CO
         LogIntLength = minScanFourVW;
         hms(minScanFourVW, 0);
     }
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW8) //8 channel VW MUX
     {
+        S_1.status1flags._CFG=VW8;                                              //REV CO
         LogIntLength = minScanEightVW;
         hms(minScanEightVW, 0);
     }
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW16) //16 channel VW MUX
     {
+        S_1.status1flags._CFG=VW16;                                             //REV CO
         LogIntLength = minScanSixteenVW;
         hms(minScanSixteenVW, 0);
     }
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW32) //32 channel VW MUX
     {
+        S_1.status1flags._CFG=VW32;                                             //REV CO
         LogIntLength = minScanThirtytwoVW;
         hms(minScanThirtytwoVW, 0);
     }
 
     if (MUX4_ENABLE.mflags.mux16_4 == TH8) //8 channel TH MUX
     {
+        S_1.status1flags._CFG=TH8;                                              //REV CO
         LogIntLength = minScanEightTH;
         hms(minScanEightTH, 0);
     }
 
     if (MUX4_ENABLE.mflags.mux16_4 == TH32) //32 channel TH MUX
     {
+        S_1.status1flags._CFG=TH32;                                             //REV CO
         LogIntLength = minScanThirtytwoTH;
         hms(minScanThirtytwoTH, 0);
     }

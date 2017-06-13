@@ -100,29 +100,29 @@
 #define SingleLogItRemain6address	0x7fb20                                     //2 bytes
 
 //MODBUS:
-#define passwordaddress             0x7fb22                                     //2 bytes   REV E
-#define baudrateaddress             0x7fb24                                     //2 bytes
-#define MODBUSaddress               0x7fb26                                     //2 bytes  
-#define MODBUS_PAGEaddress          0x7fb28                                     //2 bytes
-#define MODBUS_STATUS1address       0x7fb2a                                     //MODBUS STATUS1 flags  2 bytes
-#define MODBUS_STATUS2address       0x7fb2c                                     //MODBUS STATUS2 flags  2 bytes   REV D
-#define RTCYearsaddress             0x7fb2e                                     //2 bytes   REV D
-#define RTCMonthsaddress            0x7fb30                                     //2 bytes   REV D
-#define RTCDaysaddress              0x7fb32                                     //2 bytes   REV D
-#define RTCHoursaddress             0x7fb34                                     //2 bytes   REV D
-#define RTCMinutesaddress           0x7fb36                                     //2 bytes   REV D
-#define RTCSecondsaddress           0x7fb38                                     //2 bytes   REV D
-#define RESERVED1                   0x7fb3a
-#define RESERVED2                   0x7fb3c
-#define RESERVED3                   0x7fb3e
-#define RESERVED4                   0x7fb40
-#define RESERVED5                   0x7fb42
-#define RESERVED6                   0x7fb44
-#define RESERVED7                   0x7fb46
-#define RESERVED8                   0x7fb48
-#define RESERVED9                   0x7fb4a
-#define RESERVED10                  0x7fb4c
-#define RESERVED11                  0x7fb4e
+#define passwordaddressHIGH         0x7fb22                                     //4 bytes   REV E
+#define passwordaddressLOW          0x7fb24                                     
+#define baudrateaddress             0x7fb26                                     //2 bytes
+#define MODBUSaddress               0x7fb28                                     //2 bytes  
+#define MODBUS_PAGEaddress          0x7fb2a                                     //2 bytes
+#define MODBUS_STATUS1address       0x7fb2c                                     //MODBUS STATUS1 flags  2 bytes
+#define MODBUS_STATUS2address       0x7fb2e                                     //MODBUS STATUS2 flags  2 bytes   REV D
+#define RTCYearsaddress             0x7fb30                                     //2 bytes   REV D
+#define RTCMonthsaddress            0x7fb32                                     //2 bytes   REV D
+#define RTCDaysaddress              0x7fb34                                     //2 bytes   REV D
+#define RTCHoursaddress             0x7fb36                                     //2 bytes   REV D
+#define RTCMinutesaddress           0x7fb38                                     //2 bytes   REV D
+#define RTCSecondsaddress           0x7fb3a                                     //2 bytes   REV D
+#define RESERVED1                   0x7fb3c
+#define RESERVED2                   0x7fb3e
+#define RESERVED3                   0x7fb40
+#define RESERVED4                   0x7fb42
+#define RESERVED5                   0x7fb44
+#define RESERVED6                   0x7fb46
+#define RESERVED7                   0x7fb48
+#define RESERVED8                   0x7fb4a
+#define RESERVED9                   0x7fb4c
+#define RESERVED10                  0x7fb4e
 
 
 //Gage Type Addresses (0x7fb50 -> 0x7fb8e)  64 Bytes                           
