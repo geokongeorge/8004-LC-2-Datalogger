@@ -4521,33 +4521,33 @@ __c30_signature
 .data               0x2928          0x2
  .data              0x2928          0x2 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(xgenld_cdfFnopuxX.XXeo)
 
-_03E87900_at_address_00F80006
+_03ED9900_at_address_00F80006
                   0xf80006          0x2
- _03E87900_at_address_00F80006
+ _03ED9900_at_address_00F80006
                   0xf80006          0x2 build/default/production/_ext/1472/lc8004main_co.o
                   0xf80006                  _FOSCSEL
 
-_03E87960_at_address_00F80008
+_03ED9960_at_address_00F80008
                   0xf80008          0x2
- _03E87960_at_address_00F80008
+ _03ED9960_at_address_00F80008
                   0xf80008          0x2 build/default/production/_ext/1472/lc8004main_co.o
                   0xf80008                  _FOSC
 
-_03E879C0_at_address_00F8000A
+_03ED99C0_at_address_00F8000A
                   0xf8000a          0x2
- _03E879C0_at_address_00F8000A
+ _03ED99C0_at_address_00F8000A
                   0xf8000a          0x2 build/default/production/_ext/1472/lc8004main_co.o
                   0xf8000a                  _FWDT
 
-_03E87A20_at_address_00F8000C
+_03ED9A20_at_address_00F8000C
                   0xf8000c          0x2
- _03E87A20_at_address_00F8000C
+ _03ED9A20_at_address_00F8000C
                   0xf8000c          0x2 build/default/production/_ext/1472/lc8004main_co.o
                   0xf8000c                  _FPOR
 
-_03E87A80_at_address_00F8000E
+_03ED9A80_at_address_00F8000E
                   0xf8000e          0x2
- _03E87A80_at_address_00F8000E
+ _03ED9A80_at_address_00F8000E
                   0xf8000e          0x2 build/default/production/_ext/1472/lc8004main_co.o
                   0xf8000e                  _FICD
 

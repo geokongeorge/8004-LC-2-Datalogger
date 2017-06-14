@@ -16,7 +16,7 @@
 //	DATE:		6/9/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   co
-//	CHECKSUM:	0x6ada (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x6b56 (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8490/30720   28%
 //	PGM(FLASH)MEM:  147951/261888 56%
 
@@ -10851,9 +10851,11 @@ void enableVWchannel(unsigned char gageType)                                    
     
     unsigned char gainGT1=0x40;
     unsigned char gainGT2=0x40;
-    unsigned char gainGT3=0x40;
+    //unsigned char gainGT3=0x40;
+    unsigned char gainGT3=0x20;                                                 //TEST REV CO
     unsigned char gainGT4=0x40;
-    unsigned char gainGT5=0x20;
+    //unsigned char gainGT5=0x20;
+    unsigned char gainGT5=0x08;                                                 //TEST REV CO
     unsigned char gainGT6=0x40;
     
     _AMP_SHDN=1;                                                                //Enable the AGC amp    REV CF
