@@ -13,12 +13,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		6/14/2017
+//	DATE:		6/15/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   cp
-//	CHECKSUM:	0x8500 (MPLABX ver 3.15 and XC16 ver 1.26)
-//	DATA(RAM)MEM:	8490/30720   28%
-//	PGM(FLASH)MEM:  147969/261888 57%
+//	CHECKSUM:	0x9ea0 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	DATA(RAM)MEM:	8494/30720   28%
+//	PGM(FLASH)MEM:  148089/261888 57%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -181,7 +181,8 @@
 //      cn      6/9/17              Debug inadvertent cast from float to int32 when writing to/reading from FRAM of Zero Readings, Gage Factors, Gage Offsets & 
 //                                  polynomial coefficients
 //      co      6/9/17              include FRAM_ADDRESSe.h
-//      cp      6/14/17             Add timeout timer to MODBUS comms
+//      cp      6/14/17             Add 15S timeout timer to MODBUS comms
+//                                  (MODBUS) Password protect the baud rate,address,Hardware Rev,Firmware Rev and Serial ## registers
 //
 //
 //
@@ -490,9 +491,9 @@ FRAMTest=write_intFRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);	//store flag 
         _RS485RX_EN=1;                                                          //disable RS485 Rx if not   REV CG
     
     
-    DISPLAY_CONTROL.flags.Shutdown=1;                                         //TEST REM VER BA
-    IFS3bits.T9IF=1;                                                          //TEST REM VER BA
-    shutdown();                                                               //TEST REM VER BA
+    DISPLAY_CONTROL.flags.Shutdown=1;                                           //TEST REM VER BA
+    IFS3bits.T9IF=1;                                                            //TEST REM VER BA
+    shutdown();                                                                 //TEST REM VER BA
 
     while (1) //infinite loop
     {
@@ -501,7 +502,6 @@ FRAMTest=write_intFRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);	//store flag 
         {
             if(LC2CONTROL2.flags2.Modbus)                                       //REV BA
             {
-               shutdownTimer(TimeOut);  
                MODBUScomm();                                                     //REV BA     
             }
             else                                                                //REV BA
@@ -13511,24 +13511,28 @@ void MODBUScomm(void)                                                           
     s1flags   tempValueValue;                                                   //convert value into bitfield register   REV CJ
     s2flags   tempStatus2Value;                                                 //temporary register for comparison REV CJ
     s2flags   tempValue2Value;                                                  //convert value into bitfield register REV CJ
-        
+    
+
     for(a=0;a<125;a++)                                                        
     {
         MODBUS_TXbuf[a]=0;                                                      //Clear the MODBUS_TXbuf[]                 
-    }                                                                           
+    }                                                                              
     
     //Determine if crc value is correct:
     arraysize=MODBUS_RX();                                                      //Receive the incoming MODBUS packet
+    if(arraysize==0)                                                            //REV CP
+        return;                                                                 //REV CP
+        
     csumdata.c=CRC(TEST,arraysize);                                             //compute the crc checksum
     if((MODBUS_RXbuf[(arraysize-1)] != csumdata.z[1]) | (MODBUS_RXbuf[(arraysize-2)] != csumdata.z[0]))  //received crc does not agree with computed crc
     {
-        //IFS3bits.T9IF=1;                                                        //exit if crc error   REM REV CP
+        IFS3bits.T9IF=1;                                                        //exit if crc error   
         return;
     }
     
     //crc value is correct so test if address is correct:
     modbusaddressvalue=read_Int_FRAM(MODBUSaddress);
-    if(MODBUS_RXbuf[ADDRESS]!=modbusaddressvalue)                                  //
+    if(MODBUS_RXbuf[ADDRESS]!=modbusaddressvalue)                                  
     {
         IFS3bits.T9IF=1;                                                        //exit if not an address match
         return;
@@ -13539,22 +13543,18 @@ void MODBUScomm(void)                                                           
     if(MODBUS_RXbuf[COMMAND]==READ_HOLDING)
     {
         //get the memory page                                                   //REV D
-        //memaddressStart=read_Int_FRAM(MODBUS_PAGEaddress);                      //REM REV CL
-        //memaddressStart<<=8;                                                    //Shift the page 8 bits to the left   REM REV CL
         memaddressStart|=MODBUS_RXbuf[REGISTER_MSB];                            //Add the MSB
         memaddressStart<<=8;                                                    //Shift 8 bits to the left
         memaddressStart|=MODBUS_RXbuf[REGISTER_LSB];                            //Add the LSB
         memaddressStart*=2;                                                     //Multiply incoming register address x2 to get absolute memory address  REV CL
-        pageadd=read_Int_FRAM(MODBUS_PAGEaddress);                                 //REV CL
-        pageadd<<=16;                                                               //REV CL
-        memaddressStart+=pageadd;                                                  //REV CL
-        Nop();
+        pageadd=read_Int_FRAM(MODBUS_PAGEaddress);                              //REV CL
+        pageadd<<=16;                                                           //REV CL
+        memaddressStart+=pageadd;                                               //REV CL
     }
     
-    if(MODBUS_RXbuf[COMMAND]==WRITE_HOLDING)
+    //if(MODBUS_RXbuf[COMMAND]==WRITE_HOLDING)                                  REM REV CP
+    if(MODBUS_RXbuf[COMMAND]==WRITE_HOLDING | MODBUS_RXbuf[COMMAND]==WRITE_MULTIPLE)    //REV CP
     {
-        //memaddressStart=0x07;                                                   //load 0x07   REM REV CL
-        //memaddressStart<<=8;                                                    //Shift the 0x7 8 bits to the left    REM REV CL
         memaddressStart|=MODBUS_RXbuf[REGISTER_MSB];                            //Add the MSB
         memaddressStart<<=8;                                                    //Shift 8 bits to the left
         memaddressStart|=MODBUS_RXbuf[REGISTER_LSB];                            //Add the LSB
@@ -13562,7 +13562,6 @@ void MODBUScomm(void)                                                           
         pageadd=7;                                                              //REV CL
         pageadd<<=16;                                                           //REV CL
         memaddressStart+=pageadd;                                               //REV CL 
-        Nop();
     }
     
     //get & perform the function:
@@ -13572,17 +13571,17 @@ void MODBUScomm(void)                                                           
             //get the number of registers to be read:
             registers.z[1]=MODBUS_RXbuf[4];
             registers.z[0]=MODBUS_RXbuf[5];
-            
+
             for(a=0;a<((registers.c)*2);a+=2)
             {
                 value.c=read_Int_FRAM((memaddressStart)+a);
                 MODBUS_TXbuf[a+3]=value.z[1];                                   //load the MSB of the value into MODBUS_TXbuf[] odd registers starting at 0x03
                 MODBUS_TXbuf[a+4]=value.z[0];                                   //load the LSB of the value into MODBUX_TXbuf[] even registers starting at 0x04
             }
-            
+
             MODBUS_TXbuf[BYTE_COUNT]=2*(registers.c);                           //REV C
             break;
-            
+
         case WRITE_HOLDING:
             if((memaddressStart>=0x7FA6C) && (memaddressStart<=0x7FFFF))        //Registers are not write protected
             {
@@ -13597,25 +13596,43 @@ void MODBUScomm(void)                                                           
             }
             else
             {
-                //IFS3bits.T9IF=1;                                                //exit if write protected REM REV CP
+                IFS3bits.T9IF=1;                                                //exit if write protected REM REV CP
                 return;                
             }
-            Nop();
             break;
-            
+
         case WRITE_MULTIPLE:
-            Nop();
+            if((memaddressStart>=0x7FA6C) && (memaddressStart<=0x7FFFF))        //Registers are not write protected
+            {
+                if(memaddressStart==0x7FB22)                                    //Password being written?
+                {
+                    Nop();
+                }
+                //tempStatusValue.status1=read_Int_FRAM(MODBUS_STATUS1address);   //REV CB
+                //MODBUS_TXbuf[REGISTER_MSB]=MODBUS_RXbuf[REGISTER_MSB];          //Load the TXbuf[] with Register address MSB
+                //MODBUS_TXbuf[REGISTER_LSB]=MODBUS_RXbuf[REGISTER_LSB];          //Load the TXbuf[] with Register address LSB
+                //value.z[1]=MODBUS_RXbuf[WRITE_DATA_MSB];                        //get the write data MSB
+                //MODBUS_TXbuf[WRITE_DATA_MSB]=MODBUS_RXbuf[WRITE_DATA_MSB];      //Load the TXbuf[] with data MSB
+                //value.z[0]=MODBUS_RXbuf[WRITE_DATA_LSB];                        //get the write data LSB
+                //MODBUS_TXbuf[WRITE_DATA_LSB]=MODBUS_RXbuf[WRITE_DATA_LSB];      //Load the TXbuf[] with data LSB
+                //write_Int_FRAM(memaddressStart, value.c);                       //Write to FRAM Register             
+            }
+            else
+            {
+                IFS3bits.T9IF=1;                                                //exit if write protected REM REV CP
+                return;                
+            }            
+            if(memaddressStart==passwordaddressHIGH)
             break;
-            
+
         default:
-            Nop();
             break;
     }
-    
+
     //Fill in remaining registers:
     MODBUS_TXbuf[ADDRESS]=MODBUS_RXbuf[ADDRESS];
     MODBUS_TXbuf[COMMAND]=MODBUS_RXbuf[COMMAND];
-    
+
     //calculate and append the crc value to the end of the array (little endian)
     if(MODBUS_RXbuf[COMMAND]==READ_HOLDING)
     {
@@ -13631,60 +13648,59 @@ void MODBUScomm(void)                                                           
         MODBUS_TXbuf[7]= csumdata.z[1];                                         //attach crc MSB
         ECHO=1;                                                                 //REV D
     }
-    
+
     //Transmit the array:
     MODBUS_TX(ECHO);    
+    IFS3bits.T9IF=0;                                                            //REV CP
+    shutdownTimer(TimeOut);                                                     //start 15S shutdown timer	REV CP
     
     //Perform the requested function if Status register was written             //REV CB
-    
-    
     if(memaddressStart==MODBUS_STATUS1address && MODBUS_RXbuf[COMMAND]==WRITE_HOLDING)        //write to STATUS1 Register  REV H        
     {
         if(tempStatusValue.status1 != value.c)                                  //if new value is different than what's present
         {
             tempValueValue.status1 = value.c;                                   //store received flags
-            
+
             switch(tempValueValue.status1flags._CFG)                             //REV H
             {
                 if (tempStatusValue.status1flags._CFG == tempValueValue.status1flags._CFG)    //no difference between received and stored value
-                            break;  
-                
+                    break;  
+
                 if(tempStatusValue.status1flags._Logging)                        //if logging    REV H
                     break;                                                      //Don't allow CFG change    REV H
-                
+
                 case 0:                                                         //MX4   REV H
                     MX4();                                                      //Configure for 4VW/4TH
                     break;
-		
+
                 case 1:
                     MX16();
                     break;
-            
+
                 case 2:
                     MX1();
                     break;
-                
+
                 case 3:
                     MX8T();
                     break;
-            
+
                 case 4:
                     MX32();
                     break;
-            
+
                 case 5:
                     MX32T();
                     break;
-            
+
                 case 6:
                     MX8();
                     break;
-            
+
                 default:
                     break;
             }
-			
-            
+
             for(i=3;i<16;i++)                                                   //REV H
             {
 
@@ -13694,148 +13710,144 @@ void MODBUScomm(void)                                                           
                     case 3:                                                     //unused
                         if (tempStatusValue.status1flags._Setrtc == tempValueValue.status1flags._Setrtc)    //no difference between received and stored value
                             break;                        
-                        
-                        if(tempValueValue.status1flags._Setrtc)                     //load the RTC current time registers from FRAM
+
+                        if(tempValueValue.status1flags._Setrtc)                 //load the RTC current time registers from FRAM
                             WRITE_TIME();
-                        tempValueValue.status1flags._Setrtc=0;                      //clear this bit on exit
-                        break;
-                        
+                            tempValueValue.status1flags._Setrtc=0;              //clear this bit on exit
+                            break;
+
                     case 4:
                         if (tempStatusValue.status1flags._Logint == tempValueValue.status1flags._Logint)    //no difference between received and stored value
                             break;                        
-                        
-                        if(tempValueValue.status1flags._Logint)                     //enable Log Intervals
+
+                        if(tempValueValue.status1flags._Logint)                 //enable Log Intervals
                             ENLOGINT();
                         else
                             DISLOGINT();                                        //disable Log Intervals
                         break;
-                    
+
                     case 5:
                         if (tempStatusValue.status1flags._Wrap == tempValueValue.status1flags._Wrap)    //no difference between received and stored value
                             break;                        
-                        
+
                         if(tempValueValue.status1flags._Wrap)
                             wrap_one();                                         //Enable memory wrapping
                         else
                             wrap_zero();                                        //Disable memory wrapping    
                         break;
-		
+
                     case 6:
                         if (tempStatusValue.status1flags._BT == tempValueValue.status1flags._BT)    //no difference between received and stored value
                             break;                        
-                        
+
                         if(tempValueValue.status1flags._BT)
                             BTONE();                                            //Turn Bluetooth module ON          //REV H
                         else
                             BTZERO();                                           //Turn Bluetooth module OFF         //REV H
                         break;
-		
+
                     case 7:
                         if (tempStatusValue.status1flags._BT_Timer == tempValueValue.status1flags._BT_Timer)    //no difference between received and stored value
                             break;                        
-                        
+
                         if(tempValueValue.status1flags._BT_Timer)
                             BT_E();                                             //Enable Bluetooth Timer            //REV H
                         else
                             BT_D();                                             //Disable Bluetooth Timer           //REV H
                         break;
-		
+
                     case 8:
                         if (tempStatusValue.status1flags._OP == tempValueValue.status1flags._OP)    //no difference between received and stored value
                             break;                        
-                        
+
                         if(tempValueValue.status1flags._OP)
                             enableOP();                                         //Activate Output Port              //REV F
                         else
                             disableOP();                                        //Deactivate Output Port            //REV F
                         break;
-		
+
                     case 9:
                         if (tempStatusValue.status1flags._OP_Timer == tempValueValue.status1flags._OP_Timer)    //no difference between received and stored value
                             break;                        
-                        
+
                         if(tempValueValue.status1flags._OP_Timer)
                             O_E();                                              //Enable Output Port Timer          //REV H
                         else
                             O_D();                                              //Disable Output Port Timer         //REV H
                         break;
-		
+
                     case 10:
                         if (tempStatusValue.status1flags._Sync == tempValueValue.status1flags._Sync)    //no difference between received and stored value
                             break;                        
-                        
+
                         if(tempValueValue.status1flags._Sync)
                             synch_one();                                        //Enable synchronized readings      //REV H
                         else
                             synch_zero();                                       //Disable synchronized readings     //REV H
                         break;
-                        
+
                     case 11:
                         if (tempStatusValue.status1flags._ST == tempValueValue.status1flags._ST)    //no difference between received and stored value
                             break;                        
-                        
+
                         if(tempValueValue.status1flags._ST)
                             MODBUS_EnableStartTime();                           //REV CM
                         else
                             MODBUS_DisableStartTime();
                         break;
-                        
+
                     case 12:
                         if (tempStatusValue.status1flags._SP == tempValueValue.status1flags._SP)    //no difference between received and stored value
                             break;      
-                        
+
                         if(tempValueValue.status1flags._SP)
                             MODBUS_EnableStopTime();                            //REV CM
                         else
                             MODBUS_DisableStopTime();
                         break;
-                        
+
                     case 13:                                                    //
                         if (tempStatusValue.status1flags._Readrtc == tempValueValue.status1flags._Readrtc)    //no difference between received and stored value
                             break;      
-                        
+
                         if(tempValueValue.status1flags._Readrtc)
                             READ_TIME();                                        //get the RTC current time registers & store in FRAM    //REV H
                         tempValueValue.status1flags._Readrtc=0;                  //clear this bit on exit                            
                         break;
-                        
+
                     case 14:                                                    //REV G
                         if (tempStatusValue.status1flags._X == tempValueValue.status1flags._X)    //no difference between received and stored value
                             break;      
-                        
+
                         X();                                                    //take 'X' Reading  
                         tempValueValue.status1flags._X=0;                        //clear this bit on exit
                         break;   
-                        
+
                     case 15:    
                         if (tempStatusValue.status1flags._Logging == tempValueValue.status1flags._Logging)    //no difference between received and stored value
                             break;
-                        
+
                         if(tempValueValue.status1flags._Logging)
                             testvalue=START();                                  //Start Logging
                         else
                             testvalue=STOP();                                   //Stop Logging
                         break;                        
-		
+
                     default:
                         break;
                 }
             }
-            
-
-        
         }
-        
     }
 
-    
+
     
     if(memaddressStart==MODBUS_STATUS2address && MODBUS_RXbuf[COMMAND]==WRITE_HOLDING)        //write to STATUS2 Register  REV H
     {
         if(tempStatus2Value.status2 != value.c)                                  //if new value is different than what's present
         {
             tempValue2Value.status2 = value.c;                                   //store received flags
-            
+
             for(i=0;i<16;i++)                                                   //REV H
             {
 
@@ -13845,49 +13857,49 @@ void MODBUScomm(void)                                                           
                     case 0:                                                     
                         if (tempStatus2Value.status2flags._R == tempValue2Value.status2flags._R)    //no difference between received and stored value
                             break;                        
-                        
+
                         if(tempValue2Value.status2flags._R)                      //Reset memory pointers REV H
                             R();
-    
+
                         tempValue2Value.status2flags._R=0;                       //clear this bit on exit
                         break;
-                        
+
                     case 1:
                         if (tempStatus2Value.status2flags._RST == tempValue2Value.status2flags._RST)    //no difference between received and stored value
                             break;                        
-                        
+
                         if(tempValue2Value.status2flags._RST)
                             RST();                                              //Reset uC  REV H
 
                         tempValue2Value.status2flags._RST=0;                     //clear this bit on exit
                         break;
-                    
+
                     case 2:
                         if (tempStatus2Value.status2flags._CMD == tempValue2Value.status2flags._CMD)    //no difference between received and stored value
                             break;                        
-                        
+
                         if(tempValue2Value.status2flags._CMD)
                         {
                             tempValue2Value.status2flags._CMD=0;                 //clear this bit on exit 
                             CMD_LINE();
                         }
-                        
+
                         break;
-		
+
                     case 3:
                         if (tempStatus2Value.status2flags._LD == tempValue2Value.status2flags._LD)    //no difference between received and stored value
                             break;                        
-                        
+
                         if(tempValue2Value.status2flags._LD)
                             loadDefaults();                                     //load default settings
-                        
+
                         tempValue2Value.status2flags._LD=0;                      //clear this bit on exit                        
                         break;
-		
+
                     case 4:                                                     //REV CK
                         if (tempStatus2Value.status2flags._CCV == tempValue2Value.status2flags._CCV)    //no difference between received and stored value
                             break;                        
-                        
+
                         if(tempValue2Value.status2flags._CCV)                   //Read the coin cell voltage
                         {
                             lithBatreading = take_analog_reading(95);           //get the lithium coin cell voltage
@@ -13896,11 +13908,11 @@ void MODBUScomm(void)                                                           
 
                         tempValue2Value.status2flags._CCV=0;                      //clear this bit on exit   
                         break;
-		
+
                     case 5:                                                     //REV CK
                         if (tempStatus2Value.status2flags._BV3 == tempValue2Value.status2flags._BV3)    //no difference between received and stored value
                             break;                        
-                        
+
                         if(tempValue2Value.status2flags._BV3)                    //Read the battery voltage
                         {
                             mainBatreading = take_analog_reading(97);           //get the 3V Battery Voltage
@@ -13909,11 +13921,11 @@ void MODBUScomm(void)                                                           
 
                         tempValue2Value.status2flags._BV3=0;                      //clear this bit on exit                           
                         break;
-		
+
                     case 6:                                                     //REV CK
                         if (tempStatus2Value.status2flags._BV12 == tempValue2Value.status2flags._BV12)    //no difference between received and stored value
                             break;                        
-                        
+
                         if(tempValue2Value.status2flags._BV12)                    //Read the battery voltage
                         {
                             mainBatreading = take_analog_reading(87);           //get the 12V Battery Voltage
@@ -13925,22 +13937,22 @@ void MODBUScomm(void)                                                           
 
                     case 7:                                                     
                         break;
-                        
+
                     case 8:                                                     
                         break;
-                        
+
                     case 9:
                         break;
-                        
+
                     case 10: 
                         break;
-                        
+
                     case 11:  
                         break;   
-                        
+
                     case 12:
                         break;         
-                        
+
                     case 13:
                         break;           
 
@@ -13949,19 +13961,14 @@ void MODBUScomm(void)                                                           
 
                     case 15:
                         break;                                   
-		
+
                     default:
                         break;
                 }
             }
-            
-
-        
         }
-        
     }
-    
-    
+
     //IFS3bits.T9IF=1;                                                            //exit if not an address match    REM REV CP
     return;
 }
@@ -14091,7 +14098,7 @@ unsigned char MODBUS_RX(void)                                                   
                 {
                     PMD1bits.T2MD=1;                                            //Disable TMR2 module
                     PMD3bits.T6MD=1;                                            //Disable TMR6 module
-                    IFS3bits.T9IF=1;                                            //Set the T9IF go to sleep
+                    IFS3bits.T9IF=1;                                            //Set the T9IF go to sleep    REM REV CP
                     if(T2counts!=2)                                             //2 1.5 character timeouts occur before  end of packet   
                         return 0;
                     else

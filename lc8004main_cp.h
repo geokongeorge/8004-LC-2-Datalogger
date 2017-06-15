@@ -540,6 +540,8 @@ unsigned long LoggingStopHours=0;
 unsigned long LoggingStopMinutes=0;
 unsigned long LoggingStopSeconds=0;
 
+const unsigned long Password=0x4da1e184;                                        //REV CP
+
 unsigned char PortOffHours=0;				
 unsigned char PortOffMinutes=0;				
 unsigned char PortOnHours=0;				

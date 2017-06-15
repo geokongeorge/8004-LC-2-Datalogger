@@ -102,9 +102,9 @@
 //MODBUS:
 #define passwordaddressHIGH         0x7fb22                                     //4 bytes   REV E
 #define passwordaddressLOW          0x7fb24                                     
-#define baudrateaddress             0x7fb26                                     //2 bytes
-#define MODBUSaddress               0x7fb28                                     //2 bytes  
-#define MODBUS_PAGEaddress          0x7fb2a                                     //2 bytes
+#define baudrateaddress             0x7fb26                                     //2 bytes   PASSWORD PROTECTED
+#define MODBUSaddress               0x7fb28                                     //2 bytes   PASSWORD PROTECTED
+#define MODBUS_PAGEaddress          0x7fb2a                                     //2 bytes   
 #define MODBUS_STATUS1address       0x7fb2c                                     //MODBUS STATUS1 flags  2 bytes
 #define MODBUS_STATUS2address       0x7fb2e                                     //MODBUS STATUS2 flags  2 bytes   REV D
 #define RTCYearsaddress             0x7fb30                                     //2 bytes   REV D
@@ -113,10 +113,10 @@
 #define RTCHoursaddress             0x7fb36                                     //2 bytes   REV D
 #define RTCMinutesaddress           0x7fb38                                     //2 bytes   REV D
 #define RTCSecondsaddress           0x7fb3a                                     //2 bytes   REV D
-#define RESERVED1                   0x7fb3c
-#define RESERVED2                   0x7fb3e
-#define RESERVED3                   0x7fb40
-#define RESERVED4                   0x7fb42
+#define HardwareRevision            0x7fb3c                                     //2 bytes   REV E   PASSWORD PROTECTED
+#define FirmwareRevision            0x7fb3e                                     //2 bytes   REV E   PASSWORD PROTECTED
+#define SerialNumberHIGH            0x7fb40                                     //4 bytes   REV E   PASSWORD PROTECTED
+#define SerialNumberLOW             0x7fb42                                     //                  PASSWORD PROTECTED
 #define RESERVED5                   0x7fb44
 #define RESERVED6                   0x7fb46
 #define RESERVED7                   0x7fb48
