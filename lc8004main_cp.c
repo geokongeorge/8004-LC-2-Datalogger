@@ -13,12 +13,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		6/15/2017
+//	DATE:		6/16/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   cp
-//	CHECKSUM:	0x9ea0 (MPLABX ver 3.15 and XC16 ver 1.26)
-//	DATA(RAM)MEM:	8494/30720   28%
-//	PGM(FLASH)MEM:  148089/261888 57%
+//	CHECKSUM:	0x4bb3 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	DATA(RAM)MEM:	8480/30720   28%
+//	PGM(FLASH)MEM:  148056/261888 57%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -183,6 +183,8 @@
 //      co      6/9/17              include FRAM_ADDRESSe.h
 //      cp      6/14/17             Add 15S timeout timer to MODBUS comms
 //                                  (MODBUS) Password protect the baud rate,address,Hardware Rev,Firmware Rev and Serial ## registers
+//                                  Remove R1-R0 or R0-R1 selection. Set fixed at R1-R0
+//                                  Include FRAM_ADDRESSf.h
 //
 //
 //
@@ -236,7 +238,7 @@
 //#include "LC8004main_cp.h"
 //#include "LC8004delay_b.h"
 //#include "AD5241a.h"
-//#include "FRAM_ADDRESSe.h                                                     REV CO
+//#include "FRAM_ADDRESSf.h                                                     REV CO
 //#include <outcompare.h>
 //#include <ports.h>
 //#include <timer.h>
@@ -263,7 +265,7 @@
 #include "LC8004delay_b.h"                                                      //REV Z
 #include "AD5241a.h"
 //#include "MODBUSh.h"                                                            //REM REV CK
-#include "FRAM_ADDRESSe.h"
+#include "FRAM_ADDRESSf.h"                                                      //REV CP
 #include <outcompare.h>
 #include <ports.h>
 #include <timer.h>
@@ -4671,7 +4673,7 @@ void CMDcomm(void)
 
                     break;
                     */
-
+                /*REM REV CP:    
                 case tilde: //select R1-R0 or R0-R1 format
 
                     if (buffer[1] == tilde && buffer[2] == cr) //~~<CR> received
@@ -4708,7 +4710,7 @@ void CMDcomm(void)
                     }
 
                     break;
-
+                  */
             } //end of switch
 
             prompt();                                                       
@@ -13189,7 +13191,7 @@ void loadDefaults(void)
 
     //	Clear the SetStopTime flag:
     LC2CONTROL2.flags2.SetStopTime = 0; //clear the set stop time flag
-    LC2CONTROL2.flags2.R = 1; //set the R flag
+    //LC2CONTROL2.flags2.R = 1; //set the R flag                                REM REV CP
     LC2CONTROL2.flags2.scheduled=0;                                             //REV W
     S_1.status1flags._SP=0;                                                     //clear the MODBUS Stop Time flag
     S_1.status1flags._ST=0;                                                     //clear the MODBUS Start Time flag  REV CO
@@ -13485,6 +13487,9 @@ void loadDefaults(void)
     
     //clear the stop time flag                                                  //REV CI
     LC2CONTROL.flags.LoggingStopTime=0;
+    
+    //Lock the MODBUS protected registers                                       //REV CP
+    LC2CONTROL.flags.Unlock=0;                                  
 
     //save the flags
     write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);                     //store flags in FRAM  
@@ -13580,8 +13585,10 @@ void MODBUScomm(void)                                                           
             }
 
             MODBUS_TXbuf[BYTE_COUNT]=2*(registers.c);                           //REV C
+            LC2CONTROL.flags.Unlock=0;                                          //lock the password protected registers REV CP
             break;
 
+        /*REM REV CP:
         case WRITE_HOLDING:
             if((memaddressStart>=0x7FA6C) && (memaddressStart<=0x7FFFF))        //Registers are not write protected
             {
@@ -13600,29 +13607,78 @@ void MODBUScomm(void)                                                           
                 return;                
             }
             break;
+            */
 
-        case WRITE_MULTIPLE:
-            if((memaddressStart>=0x7FA6C) && (memaddressStart<=0x7FFFF))        //Registers are not write protected
+        case WRITE_HOLDING:                                                     //REV CP
+            //if((memaddressStart>=0x7FA6C) && (memaddressStart<=0x7FFFF))        //Registers are not write protected   REM REV CP
+            if((memaddressStart>=LC2CONTROLflagsaddress) && (memaddressStart<=LastMemoryaddress))   //Registers are not write protected REV CP
             {
-                if(memaddressStart==0x7FB22)                                    //Password being written?
+                tempStatusValue.status1=read_Int_FRAM(MODBUS_STATUS1address);   //REV CB    NEED TO READ STATUS1 REGISTER? WHY?
+                MODBUS_TXbuf[REGISTER_MSB]=MODBUS_RXbuf[REGISTER_MSB];          //Load the TXbuf[] with Register address MSB
+                MODBUS_TXbuf[REGISTER_LSB]=MODBUS_RXbuf[REGISTER_LSB];          //Load the TXbuf[] with Register address LSB
+                value.z[1]=MODBUS_RXbuf[WRITE_DATA_MSB];                        //get the write data MSB
+                MODBUS_TXbuf[WRITE_DATA_MSB]=MODBUS_RXbuf[WRITE_DATA_MSB];      //Load the TXbuf[] with data MSB
+                value.z[0]=MODBUS_RXbuf[WRITE_DATA_LSB];                        //get the write data LSB
+                MODBUS_TXbuf[WRITE_DATA_LSB]=MODBUS_RXbuf[WRITE_DATA_LSB];      //Load the TXbuf[] with data LSB
+                
+                if(memaddressStart>=baudrateaddress && memaddressStart<=ProtectedRESERVED2 && LC2CONTROL.flags.Unlock)  //REV CP
                 {
-                    Nop();
+                    write_Int_FRAM(memaddressStart, value.c);                   //Write to password protected FRAM Registers   REV CP
+                    LC2CONTROL.flags.Unlock=0;                                  //lock the password protected registers REV CP
                 }
-                //tempStatusValue.status1=read_Int_FRAM(MODBUS_STATUS1address);   //REV CB
-                //MODBUS_TXbuf[REGISTER_MSB]=MODBUS_RXbuf[REGISTER_MSB];          //Load the TXbuf[] with Register address MSB
-                //MODBUS_TXbuf[REGISTER_LSB]=MODBUS_RXbuf[REGISTER_LSB];          //Load the TXbuf[] with Register address LSB
-                //value.z[1]=MODBUS_RXbuf[WRITE_DATA_MSB];                        //get the write data MSB
-                //MODBUS_TXbuf[WRITE_DATA_MSB]=MODBUS_RXbuf[WRITE_DATA_MSB];      //Load the TXbuf[] with data MSB
-                //value.z[0]=MODBUS_RXbuf[WRITE_DATA_LSB];                        //get the write data LSB
-                //MODBUS_TXbuf[WRITE_DATA_LSB]=MODBUS_RXbuf[WRITE_DATA_LSB];      //Load the TXbuf[] with data LSB
-                //write_Int_FRAM(memaddressStart, value.c);                       //Write to FRAM Register             
+                else
+                {
+                    if(memaddressStart<baudrateaddress && memaddressStart>ProtectedRESERVED2)   //REV CP
+                        write_Int_FRAM(memaddressStart, value.c);                   //Write to unprotected FRAM Registers   REV CP
+                }
             }
             else
             {
-                IFS3bits.T9IF=1;                                                //exit if write protected REM REV CP
+                //IFS3bits.T9IF=1;                                                //exit if write protected REM REV CP 
+                return;                
+            }
+            break;
+            
+            
+        case WRITE_MULTIPLE:                                                    //REV CP
+            //if((memaddressStart>=0x7FA6C) && (memaddressStart<=0x7FFFF))        //Registers are not write protected   REM REV CP
+            if((memaddressStart>=LC2CONTROLflagsaddress) && (memaddressStart<=LastMemoryaddress))        //Registers are not write protected    REV CP
+            {
+                if(memaddressStart==passwordaddressHIGH && MODBUS_RXbuf[7]==passwordbyte3 && MODBUS_RXbuf[8]==passwordbyte2
+                        && MODBUS_RXbuf[9]==passwordbyte1 && MODBUS_RXbuf[10]==passwordbyte0)                        //Password being written?
+                {                                                               //yes
+                    LC2CONTROL.flags.Unlock=1;                                  //set the unlock flag
+                    MODBUS_TXbuf[REGISTER_MSB]=MODBUS_RXbuf[REGISTER_MSB];      //Load the TXbuf[] with Register address MSB
+                    MODBUS_TXbuf[REGISTER_LSB]=MODBUS_RXbuf[REGISTER_LSB];      //Load the TXbuf[] with Register address LSB
+                    MODBUS_TXbuf[4]=MODBUS_RXbuf[4];                            //Load the TXbuf[] with # of Registers MSB
+                    MODBUS_TXbuf[5]=MODBUS_RXbuf[5];                            //Load the TXbuf[] with # of Registers LSB                    
+                }
+                else
+                if(memaddressStart==SerialNumberHIGH && LC2CONTROL.flags.Unlock)    //REV CP
+                {
+                    registers.z[1]=MODBUS_RXbuf[7];                             //Get the Serial Number MSW
+                    registers.z[0]=MODBUS_RXbuf[8];
+                    write_Int_FRAM(SerialNumberHIGH,registers.c);               //Write to FRAM
+                    registers.z[1]=MODBUS_RXbuf[9];                             //Get the Serial Number LSW
+                    registers.z[0]=MODBUS_RXbuf[10];
+                    write_Int_FRAM(SerialNumberLOW,registers.c);                //Write to FRAM                    
+                    MODBUS_TXbuf[REGISTER_MSB]=MODBUS_RXbuf[REGISTER_MSB];      //Load the TXbuf[] with Register address MSB
+                    MODBUS_TXbuf[REGISTER_LSB]=MODBUS_RXbuf[REGISTER_LSB];      //Load the TXbuf[] with Register address LSB
+                    MODBUS_TXbuf[4]=MODBUS_RXbuf[4];                            //Load the TXbuf[] with # of Registers MSB
+                    MODBUS_TXbuf[5]=MODBUS_RXbuf[5];                            //Load the TXbuf[] with # of Registers LSB                    
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                //IFS3bits.T9IF=1;                                                //exit if write protected REM REV CP
                 return;                
             }            
-            if(memaddressStart==passwordaddressHIGH)
+
+            
             break;
 
         default:
@@ -14698,15 +14754,15 @@ void processReading(float VWreading, int channel) {
         return;
     }
 
-    if (LC2CONTROL2.flags2.R) {
-        VWreadingProcessed = ((VWreading - zeroReading) * gageFactor) + gageOffset;
-        return;
-    }
+    //if (LC2CONTROL2.flags2.R) {                                               REM REV CP
+    VWreadingProcessed = ((VWreading - zeroReading) * gageFactor) + gageOffset;
+    return;
+    //}                                                                         REM REV CP
 
-    if (!LC2CONTROL2.flags2.R) {
-        VWreadingProcessed = ((zeroReading - VWreading) * gageFactor) + gageOffset;
-        return;
-    }
+    //if (!LC2CONTROL2.flags2.R) {                                              REM REV CP
+    //    VWreadingProcessed = ((zeroReading - VWreading) * gageFactor) + gageOffset;   REM REV CP
+    //    return;                                                               REM REV CP
+    //}                                                                         REM REV CP
 }
 
 void prompt(void) //transmit <CR><LF>
@@ -16023,7 +16079,8 @@ void shutdown(void)
 
     IFS1bits.INT1IF=0;                                                          //Make sure INT1 flag is clear  REV O
     if(LC2CONTROL2.flags2.Modbus)                                               //REV CH
-        IFS0bits.U1RXIF=0;                                                          //Clear the UART1 interrupt flag if set REV CH
+        IFS0bits.U1RXIF=0;                                                      //Clear the UART1 interrupt flag if set REV CH
+    LC2CONTROL.flags.Unlock=0;                                                  //Write protect MODBUS registers    REV CP
     Sleep();                                                                    //SLEEP & continue with next command after wakeup - no vector TEST REM REV AE
         
     SLEEP12V = 0; //set regulator into switchmode when wake from sleep

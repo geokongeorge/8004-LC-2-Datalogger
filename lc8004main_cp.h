@@ -89,14 +89,17 @@ typedef struct{
 	unsigned 	newPointer:1;                   //0=pointer has not been updated by user, 1=pointer has been updated by user
 	unsigned 	BPD:1;                          //0=not working with pointer(B,P,D) commands, 1=working with pointer commands
 	unsigned	Backup:1;                       //0=B command not yet issued, 1=B command already issued
+    
 	unsigned	Scan:1;                         //0=all readings have been read, 1=readings still to be read
 	unsigned	Display:1;                      //0=first set of displayed readings after B or P command, 1=subsequent displayed readings
 	unsigned	PS12V:1;                        //0=3V battery connected, 1=12V battery connected
 	unsigned	Shutdown:1;                     //0=is powered up, 1=is shutdown
+    
 	unsigned	Shutup:1;                       //0=Allow message display, 1=Don't allow message display		
 	unsigned 	WrapMemory:1;                   //0=memory won't wrap,1=memory will wrap (default)
 	unsigned	Synch:1;                        //0=Readings will not be synchronized to top of hour,1=Readings synchronized (default)
 	unsigned	TakingReading:1;                //Set when in process of taking a reading
+    
     unsigned    bail:1;                         //0=don't bail out of data download,1=bail out of data download VER 6.0.2
     unsigned    TH:1;                           //0=VW Configuration,1=Thermistor Configuration VER 6.0.5
     unsigned    firstTime:1;                    //0=subsequent times, 1=1st time    REV W
@@ -129,6 +132,7 @@ typedef struct{
 	unsigned TimeFormat:1;                          //0=hhmm, 1=hh,mm
 	//unsigned NetEnabled:1;          		//0=Network disabled, 1=Network enabled REM REV CH
 	unsigned Reset:1;				//0="RESET" wasn't issued, 1="RESET" was issued	
+    unsigned Unlock:1;              //0=MODBUS write lock, 1=MODBUS write unlocked
 }LoggingFlagBits;
 typedef union{ unsigned int full;
 LoggingFlagBits flags;
@@ -146,13 +150,14 @@ typedef struct{
 	unsigned GageDisplay:1;                 	//used to tell toBCD() that gage display is calling
 	unsigned InputSelection:2;                      //00=VW,01=EXTERNAL,10=PLUCK,11=GROUND
 	unsigned ON:1;					//0=LC-2X shutdown,1=LC-2X powered
-	unsigned FirstReading:1;                        //0=subsequent reading,1=first reading
     
-	unsigned Interrupt:1;                           //0=no INT2 interrupt occurred,1=INT2 interrupt occurred
+	unsigned FirstReading:1;                        //0=subsequent reading,1=first reading
+    unsigned Interrupt:1;                           //0=no INT2 interrupt occurred,1=INT2 interrupt occurred
 	unsigned X:1;					//0='X' command not in process,1='X' command in process
 	unsigned Waiting:1;				//0=Scheduled Logging started,1=Waiting for 1st reading of scheduled logging	
+    
 	//unsigned FU:1;					//0=firmware not being updated,1=firmware being updated     REM VER 6.0.5
-	unsigned R:1;					//0=R0-R1, 1=R1-R0
+	//unsigned R:1;					//0=R0-R1, 1=R1-R0                          REM REV CP
     
     //unsigned d:1;                                   //0=ASCII data download, 1=Binary data download     REM VER BA
     unsigned Modbus:1;                              //0=Command line communications, 1=MODBUS communications    VER BA
@@ -285,17 +290,21 @@ typedef struct{
 	unsigned	PortTimerEN:1;                                                  //0=Control Port Timer Disabled, 1=Control Port Timer Enabled
 	unsigned	SetAlarm2Time:1;                                                //0=Control Port Time on not being set, 1=Control Port Time on being set
 	unsigned	SetAlarm2StopTime:1;                                            //0=Control Port Time off not being set,1=Control Port Time off being set
+    
 	unsigned	Alarm1Enabled:1;                                                //0=RTC Alarm 1 disabled,1=enabled
 	unsigned	Alarm2Enabled:1;                                                //0=RTC Alarm 2 disabled,1=enabled
 	unsigned	O1issued:1;                                                     //0=O1 was not issued,1=O1 was issued
 	unsigned	O0issued:1;                                                     //0=O0 was not issued,1=O0 was issued
+    
 	unsigned	CPTime:1;                                                       //0=Not in Port Timer ON time,1=In Port Timer ON time
     unsigned    brgh:1;                                                         //REV AE  
     unsigned    BTTime:1;                                                       //REV AG
     unsigned    BluetoothON:1;                                                  //REV AG
+    
     unsigned    B1issued:1;                                                     //REV AG
     unsigned    B0issued:1;                                                     //REV AG
     unsigned    BluetoothTimerEN:1;                                             //REV AG
+    unsigned    notused1:1;                                                     //REV CP
 }ControlPortBits;
 typedef union{ unsigned int control;
 ControlPortBits flags;
@@ -540,7 +549,12 @@ unsigned long LoggingStopHours=0;
 unsigned long LoggingStopMinutes=0;
 unsigned long LoggingStopSeconds=0;
 
-const unsigned long Password=0x4da1e184;                                        //REV CP
+//MODBUS Password = 0x4da1e184;                                                 //REV CP
+const unsigned char passwordbyte3=0x4D;                                         //REV CP
+const unsigned char passwordbyte2=0xA1;                                         //REV CP
+const unsigned char passwordbyte1=0xE1;                                         //REV CP
+const unsigned char passwordbyte0=0x84;                                         //REV CP    
+
 
 unsigned char PortOffHours=0;				
 unsigned char PortOffMinutes=0;				
@@ -824,7 +838,7 @@ unsigned int decimalRTC;
 #define capX			0x58			//ASCII "X" - capital X
 #define capY			0x59			//ASCII "Y" - capital Y
 #define capZ			0x5A            //ASCII "Z" - capital Z
-#define tilde			0x7E			//ASCII "~" - tilde (last ASCII char)
+//#define tilde			0x7E			//ASCII "~" - tilde (last ASCII char)   REM REV CP
 
 // Test Points:
 #define MUXRST			0x01			//MUX_RESET Test Point
@@ -1047,8 +1061,8 @@ char ResetComplete[]={"RESET COMPLETE"};
 char Rev[]={"cp"};
 char RnotAllowed[]={"RESET Not Allowed While Logging"};			
 char RUsure[]={"Are you sure(Y/N)?"};
-char R0[]={"R0-R1"};				
-char R1[]={"R1-R0"};
+//char R0[]={"R0-R1"};                                                          REM REV CP
+//char R1[]={"R1-R0"};                                                          REM REV CP
 char RTC32KHZON[]={"RTC 32KHz output on."};
 char RTC32KHZOFF[]={"RTC 32KHz output off."};
 
