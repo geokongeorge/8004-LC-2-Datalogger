@@ -13,12 +13,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		6/16/2017
+//	DATE:		6/20/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   cp
-//	CHECKSUM:	0x4bb3 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0xe552 (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8480/30720   28%
-//	PGM(FLASH)MEM:  148056/261888 57%
+//	PGM(FLASH)MEM:  148140/261888 57%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -181,10 +181,11 @@
 //      cn      6/9/17              Debug inadvertent cast from float to int32 when writing to/reading from FRAM of Zero Readings, Gage Factors, Gage Offsets & 
 //                                  polynomial coefficients
 //      co      6/9/17              include FRAM_ADDRESSe.h
-//      cp      6/14/17             Add 15S timeout timer to MODBUS comms
+//      cp      6/20/17             Add 15S timeout timer to MODBUS comms
 //                                  (MODBUS) Password protect the baud rate,address,Hardware Rev,Firmware Rev and Serial ## registers
 //                                  Remove R1-R0 or R0-R1 selection. Set fixed at R1-R0
 //                                  Include FRAM_ADDRESSf.h
+//                                  Add MODBUS Preset Multiple Registers (0x10) functionality
 //
 //
 //
@@ -312,7 +313,7 @@ int main(void)
     
     LC2CONTROL2.flags2.scheduled=0;                                             //REV W
     write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);                  //store flag in FRAM REV W
-    //stopLogging();                                                              //TEST REV K
+    stopLogging();                                                              //TEST REV K
     
     SLEEP12V = 0; //Set 12V regulator into switchmode
     wait2S(); //provide a 2S delay to allow DS3231 to stabilize
@@ -981,9 +982,7 @@ void Buf2DateTime(char buffer[]) {
 
                         if (!LC2CONTROL2.flags2.SetStopTime && !PORT_CONTROL.flags.SetAlarm2Time && !PORT_CONTROL.flags.SetAlarm2StopTime) //if logging stop time is not being extracted from buffer						
                         {
-                            //testPoint(1,1);
                             setClock(RTCAlarm1HoursAddress, RTChours);          //load the Start Time Hours into the RTC
-                            //testPoint(1,1);
                             if(DISPLAY_CONTROL.flags.firstTime)                 //REV W
                                 write_Int_FRAM(startHoursaddress,RTChours);     //store first time in FRAM REV W
                         }
@@ -1021,9 +1020,7 @@ void Buf2DateTime(char buffer[]) {
 
                         if (!LC2CONTROL2.flags2.SetStopTime && !PORT_CONTROL.flags.SetAlarm2Time)//if logging stop time is not being extracted from buffer
                         {
-                            //testPoint(1,2);
                             setClock(RTCAlarm1MinutesAddress, RTCminutes); //load the Start Time Minutes into the RTC
-                            //testPoint(1,2);
                             RTCseconds = 0;
                             setClock(RTCAlarm1SecondsAddress, RTCseconds);
                             if(DISPLAY_CONTROL.flags.firstTime)                 //REV W
@@ -1064,9 +1061,7 @@ void Buf2DateTime(char buffer[]) {
 
                         if (!LC2CONTROL2.flags2.SetStopTime) //if logging stop time is not being extracted from buffer
                         {
-                            //testPoint(1,3);
                             setClock(RTCAlarm1SecondsAddress, RTCseconds);      //load the Start Time Seconds into the RTC
-                            //testPoint(1,3);
                             if(DISPLAY_CONTROL.flags.firstTime)                 //REV W
                                 write_Int_FRAM(startSecondsaddress,RTCseconds);     //store in FRAM REV W
                         }
@@ -1577,13 +1572,9 @@ void checkSynch(unsigned long ReadingTimeSeconds) {
     unsigned long ScanInterval = 0;
     unsigned long NextTimeSeconds = 0;
 
-    //testPoint(1,1);
     CurrentTimeSeconds = RTChms2s(1); //get the current time from the RTC
-    //testPoint(1,2);
     NextTimeSeconds = RTChms2s(0); //get the next time to read from the RTC
-    //testPoint(1,3);
     ScanInterval = hms2s(); //get the scan interval
-    //testPoint(1,4);
     CurrentDay = readClock(RTCDaysAddress); //get the current day
 
     if ((((CurrentTimeSeconds >= NextTimeSeconds) && NextTimeSeconds != 0) |
@@ -1593,7 +1584,6 @@ void checkSynch(unsigned long ReadingTimeSeconds) {
         if (LC2CONTROL2.flags2.FirstReading) //is it the first reading?
         {
             NextTimeSeconds += ScanInterval; //adjust the next time to read by +1 ScanInterval unit
-            //testPoint(1,5);
             hms(NextTimeSeconds, 1); //update the RTC Alarm1 register accordingly
         }
     }
@@ -3493,7 +3483,8 @@ void CMDcomm(void)
                         displayScanInterval(ScanInterval, 1); //display scan interval in seconds
 
 
-                        if (LC2CONTROL.flags.Logging && !LC2CONTROL.flags.LoggingStartTime && !LC2CONTROL2.flags2.Waiting) {
+                        if (LC2CONTROL.flags.Logging && !LC2CONTROL.flags.LoggingStartTime && !LC2CONTROL2.flags2.Waiting) 
+                        {
                             crlf(); //display logging status
                             putsUART1(Loggingstarted); //Logging Started
                         }
@@ -3948,9 +3939,7 @@ void CMDcomm(void)
                         LC2CONTROL2.flags2.scheduled=1;                         //REV W
                         write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);	//store flags in FRAM   
                         
-                        testPoint(1,2);
                         enableAlarm(Alarm1);                                    //  REV W    
-                        testPoint(1,2);
                         enableINT1();                                           //enable INT1 (take a reading on interrupt) REV W
                         //configUARTnormal();   REM REV D
                         INTCON1bits.NSTDIS = 0;                                 //reset nesting of interrupts   REV W	                        
@@ -7043,8 +7032,6 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
     if (!_232) //VER 6.0.1
         _232SHDN=1;                                                             
 
-    //testPoint(1,1);                                                             //TEST REV AA
-    
     //if ((LC2CONTROL.flags.ID && !LC2CONTROL2.flags2.d) | (LC2CONTROL2.flags2.d && LC2CONTROL2.flags2.ID)) //Display ID if flag is set or if Binary download (1X)  REM REV AA
     //if (LC2CONTROL.flags.ID && !LC2CONTROL2.flags2.d)                      //Only display ID if ascii transmission REM VER BA
     if (LC2CONTROL.flags.ID)                                                    //display ID    VER BA
@@ -7073,7 +7060,6 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
 
     }
     
-    //testPoint(1,1);
     
     /*REM VER BA
     if(LC2CONTROL2.flags2.d)                                                    //if data is in binary format   REV AA
@@ -12993,10 +12979,12 @@ float getFrequency(void)
 			T4CONbits.TON=1;                                                    //start 256mS timer	
             
             //MONITOR V_AGC AND CONTROL GAIN OF AGC AMP DURING F CAPTURE
-			while(!IFS0bits.T1IF && CaptureFlag==0);                            //wait for 256mS gate to terminate or 300mS time out to occur
-            //{
+			//while(!IFS0bits.T1IF && CaptureFlag==0);                            //wait for 256mS gate to terminate or 300mS time out to occur REM REV CP
+            while(!IFS0bits.T1IF && CaptureFlag==0)                            //wait for 256mS gate to terminate or 300mS time out to occur    REV CP
+            {
             //  CONTROL AGC AMP LOOP
-            //}
+                testPoint(1,1);
+            }
             
 			if(IFS0bits.T1IF)
                 return 0;                                                       //timeout waiting for VW_100
@@ -13501,17 +13489,21 @@ void loadDefaults(void)
 
 void MODBUScomm(void)                                                           //REV CK
 {
-    unsigned char a=0;                                                          //loop index
+    //unsigned char a=0;                                                          //loop index
     unsigned char arraysize=0;
     unsigned long memaddressStart=0;  
     unsigned long pageadd=0;                                                    //REV CL
+    unsigned int a=0;                                                           //REV CP
+    unsigned long b=0;                                                          //REV CP
     unsigned int modbusaddressvalue;
     unsigned int testvalue=0;                                                   //REV H
     unsigned int i=0;                                                           //REV CK
+    unsigned int bytecount=0;                                                   //REV CP
     unsigned int ECHO=0;
     csum       csumdata;                                                        //csumdata[1] is MSB, csumdata[0] is LSB
     csum       value;                                                           //value[1] is MSB, value[0] is LSB]
     csum       registers;                                                       //registers[1] is MSB, registers [0] is LSB
+    csum       startingRegister;                                                //Starting register for write multiple registers    REV CP
     s1flags   tempStatusValue;                                                  //temporary register for comparison REV CJ
     s1flags   tempValueValue;                                                   //convert value into bitfield register   REV CJ
     s2flags   tempStatus2Value;                                                 //temporary register for comparison REV CJ
@@ -13628,7 +13620,7 @@ void MODBUScomm(void)                                                           
                 }
                 else
                 {
-                    if(memaddressStart<baudrateaddress && memaddressStart>ProtectedRESERVED2)   //REV CP
+                    if(memaddressStart<baudrateaddress | memaddressStart>ProtectedRESERVED2)   //REV CP
                         write_Int_FRAM(memaddressStart, value.c);                   //Write to unprotected FRAM Registers   REV CP
                 }
             }
@@ -13648,10 +13640,10 @@ void MODBUScomm(void)                                                           
                         && MODBUS_RXbuf[9]==passwordbyte1 && MODBUS_RXbuf[10]==passwordbyte0)                        //Password being written?
                 {                                                               //yes
                     LC2CONTROL.flags.Unlock=1;                                  //set the unlock flag
-                    MODBUS_TXbuf[REGISTER_MSB]=MODBUS_RXbuf[REGISTER_MSB];      //Load the TXbuf[] with Register address MSB
-                    MODBUS_TXbuf[REGISTER_LSB]=MODBUS_RXbuf[REGISTER_LSB];      //Load the TXbuf[] with Register address LSB
-                    MODBUS_TXbuf[4]=MODBUS_RXbuf[4];                            //Load the TXbuf[] with # of Registers MSB
-                    MODBUS_TXbuf[5]=MODBUS_RXbuf[5];                            //Load the TXbuf[] with # of Registers LSB                    
+                    MODBUS_TXbuf[REGISTER_MSB]=MODBUS_RXbuf[REGISTER_MSB];      //Load the TXbuf[] with Register address MSB  REM REV CP
+                    MODBUS_TXbuf[REGISTER_LSB]=MODBUS_RXbuf[REGISTER_LSB];      //Load the TXbuf[] with Register address LSB  REM REV CP
+                    MODBUS_TXbuf[4]=MODBUS_RXbuf[4];                            //Load the TXbuf[] with # of Registers MSB    REM REV CP
+                    MODBUS_TXbuf[5]=MODBUS_RXbuf[5];                            //Load the TXbuf[] with # of Registers LSB    REM REV CP                
                 }
                 else
                 if(memaddressStart==SerialNumberHIGH && LC2CONTROL.flags.Unlock)    //REV CP
@@ -13661,16 +13653,32 @@ void MODBUScomm(void)                                                           
                     write_Int_FRAM(SerialNumberHIGH,registers.c);               //Write to FRAM
                     registers.z[1]=MODBUS_RXbuf[9];                             //Get the Serial Number LSW
                     registers.z[0]=MODBUS_RXbuf[10];
-                    write_Int_FRAM(SerialNumberLOW,registers.c);                //Write to FRAM                    
-                    MODBUS_TXbuf[REGISTER_MSB]=MODBUS_RXbuf[REGISTER_MSB];      //Load the TXbuf[] with Register address MSB
-                    MODBUS_TXbuf[REGISTER_LSB]=MODBUS_RXbuf[REGISTER_LSB];      //Load the TXbuf[] with Register address LSB
-                    MODBUS_TXbuf[4]=MODBUS_RXbuf[4];                            //Load the TXbuf[] with # of Registers MSB
-                    MODBUS_TXbuf[5]=MODBUS_RXbuf[5];                            //Load the TXbuf[] with # of Registers LSB                    
+                    write_Int_FRAM(SerialNumberLOW,registers.c);                //Write to FRAM    
+                    LC2CONTROL.flags.Unlock=0;                                  //clear the unlock flag REV CP
+                    MODBUS_TXbuf[REGISTER_MSB]=MODBUS_RXbuf[REGISTER_MSB];      //Load the TXbuf[] with Register address MSB  REM REV CP
+                    MODBUS_TXbuf[REGISTER_LSB]=MODBUS_RXbuf[REGISTER_LSB];      //Load the TXbuf[] with Register address LSB  REM REV CP
+                    MODBUS_TXbuf[4]=MODBUS_RXbuf[4];                            //Load the TXbuf[] with # of Registers MSB    REM REV CP
+                    MODBUS_TXbuf[5]=MODBUS_RXbuf[5];                            //Load the TXbuf[] with # of Registers LSB    REM REV CP                
                 }
-                else
+                else                                                            //everything else   REV CP
                 {
-                    break;
+                    //get the number of bytes to be written:
+                    a=7;                                                        //load the start index for values to be written
+                    b=memaddressStart;
+                    
+                    for(a,b;a<MODBUS_RXbuf[6]+1;a++,b+=2)
+                    {
+                        write_Int_FRAM(memaddressStart,MODBUS_RXbuf[a]);
+                    }
+                    
+                    LC2CONTROL.flags.Unlock=0;                                  //clear the unlock flag REV CP
+                    MODBUS_TXbuf[REGISTER_MSB]=MODBUS_RXbuf[REGISTER_MSB];      //Load the TXbuf[] with Register address MSB    REV CP
+                    MODBUS_TXbuf[REGISTER_LSB]=MODBUS_RXbuf[REGISTER_LSB];      //Load the TXbuf[] with Register address LSB    REV CP
+                    MODBUS_TXbuf[4]=MODBUS_RXbuf[4];                            //Load the TXbuf[] with # of Registers MSB      REV CP
+                    MODBUS_TXbuf[5]=MODBUS_RXbuf[5];                            //Load the TXbuf[] with # of Registers LSB      REV CP     
+                    //break;                                                    REM REV CP
                 }
+                break;                                                          //REV CP
             }
             else
             {
@@ -13688,6 +13696,10 @@ void MODBUScomm(void)                                                           
     //Fill in remaining registers:
     MODBUS_TXbuf[ADDRESS]=MODBUS_RXbuf[ADDRESS];
     MODBUS_TXbuf[COMMAND]=MODBUS_RXbuf[COMMAND];
+    //MODBUS_TXbuf[REGISTER_MSB]=MODBUS_RXbuf[REGISTER_MSB];      //Load the TXbuf[] with Register address MSB    REV CP
+    //MODBUS_TXbuf[REGISTER_LSB]=MODBUS_RXbuf[REGISTER_LSB];      //Load the TXbuf[] with Register address LSB    REV CP
+    //MODBUS_TXbuf[4]=MODBUS_RXbuf[4];                            //Load the TXbuf[] with # of Registers MSB      REV CP
+    //MODBUS_TXbuf[5]=MODBUS_RXbuf[5];                            //Load the TXbuf[] with # of Registers LSB      REV CP                  
 
     //calculate and append the crc value to the end of the array (little endian)
     if(MODBUS_RXbuf[COMMAND]==READ_HOLDING)
@@ -14048,21 +14060,15 @@ void MODBUS_EnableStartTime(void)                                               
     
     value=read_Int_FRAM(startHoursaddress);                                     //get the start hours from FRAM
     RTChours=value;
-    //testPoint(1,4);
     setClock(RTCAlarm1HoursAddress, RTChours);                                  //load the Start Time Hours into the RTC
-    //testPoint(1,4);
 
     value=read_Int_FRAM(startMinutesaddress);                                   //get the start minutes from FRAM
     RTCminutes=value;
-    //testPoint(1,5);
     setClock(RTCAlarm1MinutesAddress, RTCminutes);                              //load the Start Time Minutes into the RTC
-    //testPoint(1,5);
     
     value=read_Int_FRAM(startSecondsaddress);                                   //get the start seconds from FRAM
     RTCseconds=value;
-    //testPoint(1,6);
     setClock(RTCAlarm1SecondsAddress, RTCseconds);                              //load the Start Time Seconds into the RTC   
-    //testPoint(1,7);
     
     LC2CONTROL.flags.Logging = 1;                                               //set the Logging flag    
     LC2CONTROL.flags.LoggingStartTime=0;                                        //clear the logging start time flag
@@ -14146,6 +14152,7 @@ unsigned char MODBUS_RX(void)                                                   
                     IFS0bits.T2IF=0;                                            //clear the interrupt flag
                     T2counts+=1;                                                //increment the intercharacter timeout register
                     TMR2=0;                                                     //Clear the TMR2 register            
+                    testPoint(1,1);
                     T2CONbits.TON=1;                                            //Restart TMR2
                     continue;
                 }
@@ -14156,7 +14163,10 @@ unsigned char MODBUS_RX(void)                                                   
                     PMD3bits.T6MD=1;                                            //Disable TMR6 module
                     IFS3bits.T9IF=1;                                            //Set the T9IF go to sleep    REM REV CP
                     if(T2counts!=2)                                             //2 1.5 character timeouts occur before  end of packet   
+                    {
+                        testPoint(1,2); 
                         return 0;
+                    }
                     else
                         return i;                                               //RETURN # OF CHARS IN ARRAY
                 }
@@ -19867,7 +19877,6 @@ void __attribute__((__interrupt__)) _INT1Interrupt(void)                        
         //if (PORT_CONTROL.flags.Alarm1Enabled && (intSource == 0x01 | intSource == 0x03)) //Alarm 1 (NO NEED TO TEST Alarm1Enabled flag)   REM REV AH
         if(intSource == 0x01 | intSource == 0x03)                               //Alarm 1 REV AH
         {
-            //testPoint(1,1);
             tempRTC=readClock(0x0f);                                            //clear the RTC A1F REV AH
             tempRTC&=0xfe;                                                      //REV AH
             setClock(0x0f,tempRTC);                                             //REV AH
@@ -19897,7 +19906,6 @@ void __attribute__((__interrupt__)) _INT1Interrupt(void)                        
         //if (PORT_CONTROL.flags.Alarm2Enabled && (intSource == 0x02 | intSource == 0x03)) //Alarm 2   (NO NEED TO TEST Alarm2Enabled flag) REM REV AH
         if(intSource == 0x02 | intSource == 0x03)                               //Alarm 2 REV AH
         {
-            //testPoint(1,2);
             tempRTC=readClock(0x0f);                                            //clear the RTC A2F REV AH
             tempRTC&=0xfd;                                                      //REV AH
             setClock(0x0f,tempRTC);                                             //REV AH

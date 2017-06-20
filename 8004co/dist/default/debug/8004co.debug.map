@@ -25,11 +25,11 @@ Command:
   build/default/debug/_ext/1472/LC8004delay_b.o \
   build/default/debug/_ext/1472/LC8004extFRAM_i.o \
   build/default/debug/_ext/1472/lc8004main_co.o \
-  -TC:\\Users\\gmoore\\AppData\\Local\\Temp\\tmp000017f0.00 \
-  -TC:\\Users\\gmoore\\AppData\\Local\\Temp\\tmp000017f0.01 \
-  -TC:\\Users\\gmoore\\AppData\\Local\\Temp\\tmp000017f0.02 \
-  -TC:\\Users\\gmoore\\AppData\\Local\\Temp\\tmp000017f0.03 \
-  -TC:\\Users\\gmoore\\AppData\\Local\\Temp\\tmp000017f0.04 \
+  -TC:\\Users\\gmoore\\AppData\\Local\\Temp\\tmp00000dac.00 \
+  -TC:\\Users\\gmoore\\AppData\\Local\\Temp\\tmp00000dac.01 \
+  -TC:\\Users\\gmoore\\AppData\\Local\\Temp\\tmp00000dac.02 \
+  -TC:\\Users\\gmoore\\AppData\\Local\\Temp\\tmp00000dac.03 \
+  -TC:\\Users\\gmoore\\AppData\\Local\\Temp\\tmp00000dac.04 \
   --defsym=__MPLAB_BUILD=1 \
   --defsym=__MPLAB_DEBUG=1 \
   --defsym=__DEBUG=1 \
@@ -4562,33 +4562,33 @@ __c30_signature
 .data               0x2978          0x2
  .data              0x2978          0x2 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(xgenld_cdfFnopuxX.XXeo)
 
-_03FB7900_at_address_00F80006
+_03EE7900_at_address_00F80006
                   0xf80006          0x2
- _03FB7900_at_address_00F80006
+ _03EE7900_at_address_00F80006
                   0xf80006          0x2 build/default/debug/_ext/1472/lc8004main_co.o
                   0xf80006                  _FOSCSEL
 
-_03FB7960_at_address_00F80008
+_03EE7960_at_address_00F80008
                   0xf80008          0x2
- _03FB7960_at_address_00F80008
+ _03EE7960_at_address_00F80008
                   0xf80008          0x2 build/default/debug/_ext/1472/lc8004main_co.o
                   0xf80008                  _FOSC
 
-_03FB79C0_at_address_00F8000A
+_03EE79C0_at_address_00F8000A
                   0xf8000a          0x2
- _03FB79C0_at_address_00F8000A
+ _03EE79C0_at_address_00F8000A
                   0xf8000a          0x2 build/default/debug/_ext/1472/lc8004main_co.o
                   0xf8000a                  _FWDT
 
-_03FB7A20_at_address_00F8000C
+_03EE7A20_at_address_00F8000C
                   0xf8000c          0x2
- _03FB7A20_at_address_00F8000C
+ _03EE7A20_at_address_00F8000C
                   0xf8000c          0x2 build/default/debug/_ext/1472/lc8004main_co.o
                   0xf8000c                  _FPOR
 
-_03FB7A80_at_address_00F8000E
+_03EE7A80_at_address_00F8000E
                   0xf8000e          0x2
- _03FB7A80_at_address_00F8000E
+ _03EE7A80_at_address_00F8000E
                   0xf8000e          0x2 build/default/debug/_ext/1472/lc8004main_co.o
                   0xf8000e                  _FICD
 
