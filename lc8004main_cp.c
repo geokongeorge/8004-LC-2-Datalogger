@@ -16,9 +16,9 @@
 //	DATE:		6/20/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   cp
-//	CHECKSUM:	0xe552 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x36eb (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8480/30720   28%
-//	PGM(FLASH)MEM:  148140/261888 57%
+//	PGM(FLASH)MEM:  148257/261888 57%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -13666,11 +13666,23 @@ void MODBUScomm(void)                                                           
                     a=7;                                                        //load the start index for values to be written
                     b=memaddressStart;
                     
-                    for(a,b;a<MODBUS_RXbuf[6]+1;a++,b+=2)
+                    //2 Byte single register writes:
+                    if(MODBUS_RXbuf[6]==0x20)
                     {
-                        write_Int_FRAM(memaddressStart,MODBUS_RXbuf[a]);
+                        for(a,b;a<MODBUS_RXbuf[6]+7;a++,b+=2)
+                        {
+                            write_Int_FRAM(b,MODBUS_RXbuf[a]);
+                        }
                     }
                     
+                    //4 Byte 2 register writes:
+                    if(MODBUS_RXbuf[6]==0x80)
+                    {
+                        for(a,b;a<MODBUS_RXbuf[6]+7;a++,b+=1)
+                        {
+                            write_Int_FRAM(b,MODBUS_RXbuf[a]);
+                        }
+                    }                        
                     LC2CONTROL.flags.Unlock=0;                                  //clear the unlock flag REV CP
                     MODBUS_TXbuf[REGISTER_MSB]=MODBUS_RXbuf[REGISTER_MSB];      //Load the TXbuf[] with Register address MSB    REV CP
                     MODBUS_TXbuf[REGISTER_LSB]=MODBUS_RXbuf[REGISTER_LSB];      //Load the TXbuf[] with Register address LSB    REV CP
