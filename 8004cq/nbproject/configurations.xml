@@ -9,8 +9,8 @@
       <itemPath>../AD5241a.h</itemPath>
       <itemPath>../LC8004delay_b.h</itemPath>
       <itemPath>../LC8004extFRAM_i.h</itemPath>
-      <itemPath>../lc8004main_cp.h</itemPath>
-      <itemPath>../FRAM_ADDRESSf.h</itemPath>
+      <itemPath>../FRAM_ADDRESSg.h</itemPath>
+      <itemPath>../lc8004main_cq.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -22,7 +22,7 @@
       <itemPath>../AD5241a.c</itemPath>
       <itemPath>../LC8004delay_b.c</itemPath>
       <itemPath>../LC8004extFRAM_i.c</itemPath>
-      <itemPath>../lc8004main_cp.c</itemPath>
+      <itemPath>../lc8004main_cq.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
