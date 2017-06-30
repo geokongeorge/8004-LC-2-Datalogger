@@ -13,12 +13,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		6/26/2017
+//	DATE:		6/30/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   cq
-//	CHECKSUM:	0x701a (MPLABX ver 3.15 and XC16 ver 1.26)
-//	DATA(RAM)MEM:	8480/30720   28%
-//	PGM(FLASH)MEM:  148563/261888 57%
+//	CHECKSUM:	0xbba5  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	DATA(RAM)MEM:	8484/30720   28%
+//	PGM(FLASH)MEM:  149187/261888 57%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -315,7 +315,7 @@ int main(void)
     
     LC2CONTROL2.flags2.scheduled=0;                                             //REV W
     write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);                  //store flag in FRAM REV W
-    stopLogging();                                                              //TEST REV K
+    //stopLogging();                                                              //TEST REV K
     
     SLEEP12V = 0; //Set 12V regulator into switchmode
     wait2S(); //provide a 2S delay to allow DS3231 to stabilize
@@ -5409,13 +5409,21 @@ void displayClock(unsigned char data)
     BCDthirty=0;
     BCDforty=0;
     BCDfifty=0;
+    BCDsixty=0;                                                                 //REV CQ
+    BCDseventy=0;                                                               //REV CQ
+    BCDeighty=0;                                                                //REV CQ
+    BCDninety=0;                                                                //REV CQ
 
+    if(data>=0x90) BCDninety=1;     //extract BCDninety                         REV CQ
+    if(data>=0x80) BCDeighty=1;     //extract BCDeighty                         REV CQ
+    if(data>=0x70) BCDseventy=1;    //extract BCDseventy                        REV CQ
+    if(data>=0x60) BCDsixty=1;      //extract BCDsixty                          REV CQ
     if(data>=0x50) BCDfifty=1;		//extract BCDfifty
     if(data>=0x40) BCDforty=1;		//extract BCDforty
     if(data>=0x30) BCDthirty=1;		//extract BCDthirty
     if(data>=0x20) BCDtwenty=1;		//extract BCDtwenty
     if(data>=0x10) BCDten=1;		//extract BCDten
-    BCDten=BCDten+BCDtwenty+BCDthirty+BCDforty+BCDfifty;	//sum them in BCDten
+    BCDten=BCDten+BCDtwenty+BCDthirty+BCDforty+BCDfifty+BCDsixty+BCDseventy+BCDeighty+BCDninety;	//sum them in BCDten    REV CQ
 
     BCDten+=0x30;					//convert BCDten to ascii
     putcUART1(BCDten);				//display tens
@@ -13508,12 +13516,19 @@ void MODBUScomm(void)                                                           
     csum       startingRegister;                                                //Starting register for write multiple registers    REV CP
     xFRAMul    ulregister;                                                      //32 bit register for unsigned ints REV CQ
     xFRAMflt   fltregister;                                                     //32 bit register for floats    REV CQ 
-    s1flags   tempStatusValue;                                                  //temporary register for comparison REV CJ
-    s1flags   tempValueValue;                                                   //convert value into bitfield register   REV CJ
-    s2flags   tempStatus2Value;                                                 //temporary register for comparison REV CJ
-    s2flags   tempValue2Value;                                                  //convert value into bitfield register REV CJ
+    s1flags   tempStatusValue;                                                  //temporary register for comparison REV CQ
+    s1flags   tempValueValue;                                                   //convert value into bitfield register   REV CQ
+    s2flags   tempStatus2Value;                                                 //temporary register for comparison REV CQ
+    s2flags   tempValue2Value;                                                  //convert value into bitfield register REV CQ
     
-
+    
+    //tempStatusValue.status1=0;                                                  //initialize    REM REV CQ    
+    //tempValueValue.status1=0;                                                   //initialize    REM REV CQ
+    //tempStatus2Value.status2=0;                                                 //initialize    REM REV CQ
+    //tempValue2Value.status2=0;                                                  //initialize    REM REV CQ
+    
+    tempStatusValue.status1=read_Int_FRAM(MODBUS_STATUS1address);               //REV CQ
+    
     for(a=0;a<125;a++)                                                        
     {
         MODBUS_TXbuf[a]=0;                                                      //Clear the MODBUS_TXbuf[]                 
@@ -13526,9 +13541,9 @@ void MODBUScomm(void)                                                           
         
     csumdata.c=CRC(TEST,arraysize);                                             //compute the crc checksum
     if((MODBUS_RXbuf[(arraysize-1)] != csumdata.z[1]) | (MODBUS_RXbuf[(arraysize-2)] != csumdata.z[0]))  //received crc does not agree with computed crc
-    {
+    {                                                                         
         IFS3bits.T9IF=1;                                                        //exit if crc error   
-        return;
+        return;                                                               
     }
     
     //crc value is correct so test if address is correct:
@@ -13575,7 +13590,9 @@ void MODBUScomm(void)                                                           
 
             for(a=0;a<((registers.c)*2);a+=2)
             {
+                testPoint(1,1);
                 value.c=read_Int_FRAM((memaddressStart)+a);
+                testPoint(1,1);
                 MODBUS_TXbuf[a+3]=value.z[1];                                   //load the MSB of the value into MODBUS_TXbuf[] odd registers starting at 0x03
                 MODBUS_TXbuf[a+4]=value.z[0];                                   //load the LSB of the value into MODBUX_TXbuf[] even registers starting at 0x04
             }
@@ -13618,25 +13635,20 @@ void MODBUScomm(void)                                                           
                 
                 if(memaddressStart>=baudrateaddress && memaddressStart<=ProtectedRESERVED2 && LC2CONTROL.flags.Unlock)  //PASSWORD PROTECTED REV CQ
                 {
-                    if(LC2CONTROL.flags.Unlock)
-                    {
-                        write_Int_FRAM(memaddressStart, value.c);               //Write to password protected FRAM Registers (single)   REV CP
-                        LC2CONTROL.flags.Unlock=0;                              //lock the password protected registers REV CP
-                    }
+                    write_Int_FRAM(memaddressStart, value.c);                   //Write to password protected FRAM Registers (single)   REV CP
+                    LC2CONTROL.flags.Unlock=0;                                  //lock the password protected registers REV CP
+                    break;
+                }
+                
+            
+                if((memaddressStart>=passwordaddressHIGH) && (memaddressStart<=RESERVED2))   //MODBUS R/W Registers REV CQ
+                {
+                    write_Int_FRAM(memaddressStart, value.c);                       //Write to FRAM Registers (single)   REV CP                
                 }
                 else
                 {
-                    return;
+                    return;                
                 }
-            }
-            
-            if((memaddressStart>=passwordaddressHIGH) && (memaddressStart<=RESERVED2))   //MODBUS R/W Registers REV CQ
-            {
-                write_Int_FRAM(memaddressStart, value.c);                       //Write to FRAM Registers (single)   REV CP                
-            }
-            else
-            {
-                return;                
             }
             break;
             
@@ -13677,10 +13689,18 @@ void MODBUScomm(void)                                                           
                     
                     //2 Byte single register writes:
                     
-                    for(a,b;a<MODBUS_RXbuf[6]+7;a++,b+=2)
+                    for(a,b;a<MODBUS_RXbuf[6]+7;a++,b+=2)                       //REV CQ
                     {
-                        write_Int_FRAM(b,MODBUS_RXbuf[a]);
+                        value.z[1]=MODBUS_RXbuf[a];
+                        a++;
+                        value.z[0]=MODBUS_RXbuf[a];
+                        write_Int_FRAM(b,value.c);
                     }
+                    LC2CONTROL.flags.Unlock=0;                                  //clear the unlock flag REV CP
+                    MODBUS_TXbuf[REGISTER_MSB]=MODBUS_RXbuf[REGISTER_MSB];      //Load the TXbuf[] with Register address MSB    REV CQ
+                    MODBUS_TXbuf[REGISTER_LSB]=MODBUS_RXbuf[REGISTER_LSB];      //Load the TXbuf[] with Register address LSB    REV CQ
+                    MODBUS_TXbuf[4]=MODBUS_RXbuf[4];                            //Load the TXbuf[] with # of Registers MSB      REV CQ
+                    MODBUS_TXbuf[5]=MODBUS_RXbuf[5];                            //Load the TXbuf[] with # of Registers LSB      REV CQ                        
                 }
                 break;
             }
@@ -13828,12 +13848,23 @@ void MODBUScomm(void)                                                           
 
                     case 3:                                                     //unused
                         if (tempStatusValue.status1flags._Setrtc == tempValueValue.status1flags._Setrtc)    //no difference between received and stored value
+                        {
+                            tempValueValue.status1flags._Setrtc=0;              //REV CQ
+                            tempStatusValue.status1flags._Setrtc=0;             //REV CQ
                             break;                        
+                        }
 
                         if(tempValueValue.status1flags._Setrtc)                 //load the RTC current time registers from FRAM
+                        {                                                       //REV CQ
+                            testPoint(1,3);
                             WRITE_TIME();
+                            testPoint(1,3);
                             tempValueValue.status1flags._Setrtc=0;              //clear this bit on exit
+                            tempStatusValue.status1flags._Setrtc=0;             //REV CQ
+                            S_1.status1flags._Setrtc=0;                         //clear the MODBUS status flag  REV CQ    
+                            write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);  //REV CQ    
                             break;
+                        }                                                       //REV CQ
 
                     case 4:
                         if (tempStatusValue.status1flags._Logint == tempValueValue.status1flags._Logint)    //no difference between received and stored value
@@ -13930,7 +13961,11 @@ void MODBUScomm(void)                                                           
                             break;      
 
                         if(tempValueValue.status1flags._Readrtc)
+                        {
+                            testPoint(1,4);
                             READ_TIME();                                        //get the RTC current time registers & store in FRAM    //REV H
+                            testPoint(1,4);
+                        }
                         tempValueValue.status1flags._Readrtc=0;                  //clear this bit on exit                            
                         break;
 
@@ -14189,8 +14224,8 @@ unsigned char MODBUS_RX(void)                                                   
         {
             while (!IFS3bits.T9IF)
             {
-
                 while (!DataRdyUART1() && !U1STAbits.FERR && !U1STAbits.PERR && !U1STAbits.OERR && !IFS3bits.T9IF  && !IFS0bits.T2IF && !IFS2bits.T6IF); //read the MODBUS transmission
+                //testPoint(1,1);
                 if(U1STAbits.FERR | U1STAbits.PERR | U1STAbits.OERR) 
                     handleCOMError();                                           //if communications error
 
@@ -14203,7 +14238,7 @@ unsigned char MODBUS_RX(void)                                                   
                     IFS0bits.T2IF=0;                                            //clear the interrupt flag
                     T2counts+=1;                                                //increment the intercharacter timeout register
                     TMR2=0;                                                     //Clear the TMR2 register            
-                    testPoint(1,1);
+                    //testPoint(1,1);
                     T2CONbits.TON=1;                                            //Restart TMR2
                     continue;
                 }
@@ -14215,11 +14250,14 @@ unsigned char MODBUS_RX(void)                                                   
                     IFS3bits.T9IF=1;                                            //Set the T9IF go to sleep    REM REV CP
                     if(T2counts!=2)                                             //2 1.5 character timeouts occur before  end of packet   
                     {
-                        testPoint(1,2); 
+                        //testPoint(1,2); 
                         return 0;
                     }
                     else
+                    {
+                        //testPoint(1,10);
                         return i;                                               //RETURN # OF CHARS IN ARRAY
+                    }
                 }
                 
 
@@ -14254,6 +14292,7 @@ void MODBUS_TX(unsigned int echo)                                               
     
     _RS485RX_EN=1;                                                              //Disable the RS485 Rx  REV H
     RS485TX_EN=1;                                                               //Enable the RS485 Tx   REV H
+    U1STAbits.UTXEN=1;                                                          //Enable TX if disabled REV CQ
     
     if(!echo)
     {
@@ -15091,6 +15130,10 @@ void READ_TIME(void)                                                            
         putsUART1(Date);                                                        //Date:
         while (BusyUART1());
     }
+    else
+    {
+        __delay32(uS300);                                                        //300uS delay for RTC   REV CQ
+    }    
 
     clockdata = readClock(RTCMonthsAddress);                                    //get the month from the RTC
     decimalValue=bcd2d(clockdata);                                              //convert BCD to decimal for MODBUS REV CL
@@ -15101,24 +15144,25 @@ void READ_TIME(void)                                                            
         putcUART1(slash);                                                       // '/'
         while (BusyUART1());
     }
-    //else
-    //{
-    //    delay(1050);                                                            //400uS delay for RTC
-    //}
+    else
+    {
+        __delay32(uS300);                                                        //300uS delay for RTC   REV CQ
+    }
 
     clockdata = readClock(RTCDaysAddress);                                      //get the day from the RTC
-    decimalValue=bcd2d(clockdata);                                              //convert BCD to decimal for MODBUS REV CL    
+    decimalValue=bcd2d(clockdata);                                              //convert BCD to decimal for MODBUS REV CL 
     RTCDAY=decimalValue;    
+    
     if(!LC2CONTROL2.flags2.Modbus)
     {
         displayClock(clockdata);                                                  //display it
         putcUART1(slash);                                                       // '/'
         while (BusyUART1());
     }
-    //else
-    //{
-    //    delay(1050);                                                            //400uS delay for RTC
-    //}
+    else
+    {
+        __delay32(uS300);                                                        //300uS delay for RTC   REV CQ
+    }
 
 
     clockdata = readClock(RTCYearsAddress);                                     //get the year from the RTC
@@ -15131,67 +15175,73 @@ void READ_TIME(void)                                                            
         putcUART1(tab);
         while(BusyUART1());
     }
-    //else
-    //{
-    //    delay(1050);                                                            //400uS delay for RTC
-    //}    
+    else
+    {
+        __delay32(uS300);                                                        //300uS delay for RTC   REV CQ
+    }    
 
     if(!LC2CONTROL2.flags2.Modbus)                          
     {
         putsUART1(Time); //Time:
         while (BusyUART1());
     }
-    //else
-    //{
-    //    delay(2100);
-    //}
+    else
+    {
+        __delay32(uS300);                                                        //300uS delay for RTC   REV CQ
+    }
 
     clockdata = readClock(RTCHoursAddress);                                     //get the hours from the RTC
     decimalValue=bcd2d(clockdata);                                              //convert BCD to decimal for MODBUS REV CL    
     RTCHOUR=decimalValue;    
+ 
     if(!LC2CONTROL2.flags2.Modbus)
     {
         displayClock(clockdata);                                                  //display it
         putcUART1(colon);                                                       // ':'
         while (BusyUART1());
     }
-    //else
-    //{
-    //    delay(1050);                                                            //400uS delay for RTC
-    //}    
+    else
+    {
+        __delay32(uS300);                                                        //300uS delay for RTC   REV CQ
+    }    
 
     clockdata = readClock(RTCMinutesAddress);                                   //get the minutes from the RTC
     decimalValue=bcd2d(clockdata);                                              //convert BCD to decimal for MODBUS REV CL    
     RTCMINUTE=decimalValue;    
+    
     if(!LC2CONTROL2.flags2.Modbus)
     {
         displayClock(clockdata);                                                  //display it
         putcUART1(colon);                                                       // ':'
         while (BusyUART1());
     }
-    //else
-    //{
-    //    delay(1050);                                                            //400uS delay for RTC
-    //}    
+    else
+    {
+        __delay32(uS300);                                                        //300uS delay for RTC   REV CQ
+    }    
 
+    testPoint(1,1);
     clockdata = readClock(RTCSecondsAddress);                                   //get the seconds from the RTC
+    testPoint(1,1);
     decimalValue=bcd2d(clockdata);                                              //convert BCD to decimal for MODBUS REV CL    
     RTCSECOND=decimalValue;    
+ 
     if(!LC2CONTROL2.flags2.Modbus)
     {
         displayClock(clockdata);                                                  //display it   
     }
-    //else
-    //{
-    //    delay(1050);                                                            //400uS delay for RTC
-    //}    
+    else
+    {
+        __delay32(uS300);                                                        //300uS delay for RTC   REV CQ
+    }    
     
     write_Int_FRAM(RTCYearsaddress,RTCYEAR);
     write_Int_FRAM(RTCMonthsaddress,RTCMONTH);
     write_Int_FRAM(RTCDaysaddress,RTCDAY);
     write_Int_FRAM(RTCHoursaddress,RTCHOUR);
     write_Int_FRAM(RTCMinutesaddress,RTCMINUTE);
-    write_Int_FRAM(RTCSecondsaddress,RTCSECOND);    
+    write_Int_FRAM(RTCSecondsaddress,RTCSECOND);  
+    
 }
 
 
@@ -15878,6 +15928,18 @@ void setClock(unsigned char address,unsigned char data)                         
 
         switch(BCDtens)								//setup DS3231 register bits
         {
+            case 9:                                                             //REV CQ
+                data=0x90;
+                break;  
+            case 8:                                                             //REV CQ
+                data=0x80;
+                break;  
+            case 7:                                                             //REV CQ
+                data=0x70;
+                break;  
+            case 6:                                                             //REV CQ
+                data=0x60;
+                break;                  
             case 5:
                 data=0x50;
                 break;
@@ -16149,6 +16211,15 @@ void shutdown(void)
     setADCwake();
     PMD1=0x7F5F;                                                                //re-enable TMR5
     PMD3=0x3FFF;                                                                //re-enable TMR8 & TMR9
+    //testPoint(1,3);
+    if(LC2CONTROL2.flags2.Modbus)                                               //15mS delay if MODBUS comms    REV CQ
+    {
+        //__delay32(442368);                                                      //15mS delay
+        __delay32(mS15);                                                        //15mS delay
+        if(U1STAbits.FERR | U1STAbits.PERR | U1STAbits.OERR) 
+            handleCOMError();                                                   //if communications error
+    }
+    //testPoint(1,3);
 }
 
 //void shutdownNetworked(void) {                                                REM REV CH
