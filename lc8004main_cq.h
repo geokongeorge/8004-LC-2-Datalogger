@@ -596,6 +596,10 @@ unsigned char BCDtwenty;
 unsigned char BCDthirty;
 unsigned char BCDforty;
 unsigned char BCDfifty;
+unsigned char BCDsixty;                                                         //REV CQ
+unsigned char BCDseventy;                                                       //REV CQ
+unsigned char BCDeighty;                                                        //REV CQ    
+unsigned char BCDninety;                                                        //REV CQ
 unsigned int decimalRTC;
 
 
@@ -714,6 +718,15 @@ unsigned int decimalRTC;
 //              FCY
 //----------------------------------------------------------------------------
 #define FCY 29491200UL                                                          //Fcy = 29.4912MHz  REV AE
+
+//----------------------------------------------------------------------------
+//          15mS delay value for MODBUS wakeup
+#define mS15        0x6c000                                                     //REV CQ
+
+
+//----------------------------------------------------------------------------
+//          300uS delay value for RTC
+#define uS300      0x228f                                                      //REV CQ
 
 
 //----------------------------------------------------------------------------
