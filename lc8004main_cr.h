@@ -1251,6 +1251,7 @@ unsigned long hms2s(void);
 float INT16tof32(void);                                                          //REV J
 void loadDefaults(void);
 int main(void);
+int MODBUScheckScanInterval(unsigned int);                                      //REV CR
 void MODBUScomm(void);                                                          //REV CK
 void MODBUS_DisableStartTime(void);                                             //REV CM
 void MODBUS_DisableStopTime(void);                                              //REV CM 
