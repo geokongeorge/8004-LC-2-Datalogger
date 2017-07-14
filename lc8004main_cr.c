@@ -13,12 +13,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		7/11/2017
+//	DATE:		7/13/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   cr
-//	CHECKSUM:	0xeaff  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0xe08f  (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8484/30720   28%
-//	PGM(FLASH)MEM:  149850/261888 57%
+//	PGM(FLASH)MEM:  150108/261888 57%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -188,7 +188,7 @@
 //                                  Add MODBUS Preset Multiple Registers (0x10) functionality
 //      cq      6/26/17             Include FRAM_ADDRESSg.h
 //                                  Provide for MODBUS write multiple 32 bit u.i. and floats
-//      cr      7/11/17             Debug scan intervals in MODBUS
+//      cr      7/13/17             Debug scan intervals in MODBUS  NOTE - READINGS ARE IN HZ!
 //
 //
 //
@@ -315,7 +315,7 @@ int main(void)
     
     LC2CONTROL2.flags2.scheduled=0;                                             //REV W
     write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);                  //store flag in FRAM REV W
-    //stopLogging();                                                              //TEST REV K
+    stopLogging();                                                              //TEST REV K
     
     SLEEP12V = 0; //Set 12V regulator into switchmode
     wait2S(); //provide a 2S delay to allow DS3231 to stabilize
@@ -10848,7 +10848,7 @@ void enableVWchannel(unsigned char gageType)                                    
     //unsigned char gainGT6=0x00;
     
     
-    unsigned char gainGT1=0x40;
+    unsigned char gainGT1=0x80;
     unsigned char gainGT2=0x40;
     //unsigned char gainGT3=0x40;
     unsigned char gainGT3=0x20;                                                 //TEST REV CO
@@ -12990,12 +12990,13 @@ float getFrequency(void)
             
             //MONITOR V_AGC AND CONTROL GAIN OF AGC AMP DURING F CAPTURE
 			//while(!IFS0bits.T1IF && CaptureFlag==0);                            //wait for 256mS gate to terminate or 300mS time out to occur REM REV CP
+
             while(!IFS0bits.T1IF && CaptureFlag==0)                            //wait for 256mS gate to terminate or 300mS time out to occur    REV CP
             {
             //  CONTROL AGC AMP LOOP
                 testPoint(1,1);
             }
-            
+
 			if(IFS0bits.T1IF)
                 return 0;                                                       //timeout waiting for VW_100
 
@@ -13582,9 +13583,9 @@ void MODBUScomm(void)                                                           
     s2flags   tempValue2Value;                                                  //convert value into bitfield register REV CQ
     
     
-    //tempStatusValue.status1=0;                                                  //initialize    REM REV CQ    
+    tempStatusValue.status1=0;                                                  //initialize    REV CR    
     //tempValueValue.status1=0;                                                   //initialize    REM REV CQ
-    //tempStatus2Value.status2=0;                                                 //initialize    REM REV CQ
+    tempStatus2Value.status2=0;                                                 //initialize    REV CR
     //tempValue2Value.status2=0;                                                  //initialize    REM REV CQ
     
     tempStatusValue.status1=read_Int_FRAM(MODBUS_STATUS1address);               //REV CQ
@@ -14042,7 +14043,9 @@ void MODBUScomm(void)                                                           
                         if(tempValueValue.status1flags._Readrtc)
                             READ_TIME();                                        //get the RTC current time registers & store in FRAM    //REV H
 
-                        tempValueValue.status1flags._Readrtc=0;                  //clear this bit on exit                            
+                        tempValueValue.status1flags._Readrtc=0;                  //clear this bit on exit       
+                        S_1.status1flags._Setrtc=0;                             //clear the MODBUS status flag  REV CQ    
+                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);      //REV CQ    
                         break;
 
                     case 14:                                                    //REV G
@@ -14055,6 +14058,8 @@ void MODBUScomm(void)                                                           
 
                         X();                                                    //take 'X' Reading  
                         tempValueValue.status1flags._X=0;                        //clear this bit on exit
+                        S_1.status1flags._X=0;                                  //clear the MODBUS status flag  REV CQ    
+                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);      //REV CQ    
                         break;   
 
                     case 15:    
@@ -14080,7 +14085,12 @@ void MODBUScomm(void)                                                           
         }
     }
 
-
+    //TEMP FOR DEBUG:
+    //S_2.status2flags._R=0;                                  //clear the MODBUS status flag  REV CR    
+    //write_Int_FRAM(MODBUS_STATUS2address,S_2.status2);      //REV CR    
+    //tempStatus2Value.status2=0;
+    //****************
+    
     
     if(memaddressStart==MODBUS_STATUS2address && MODBUS_RXbuf[COMMAND]==WRITE_HOLDING)        //write to STATUS2 Register  REV H
     {
@@ -14106,6 +14116,8 @@ void MODBUScomm(void)                                                           
                             R();
 
                         tempValue2Value.status2flags._R=0;                       //clear this bit on exit
+                        S_2.status2flags._R=0;                                  //clear the MODBUS status flag  REV CR    
+                        write_Int_FRAM(MODBUS_STATUS2address,S_2.status2);      //REV CR    
                         break;
 
                     case 1:
@@ -14119,7 +14131,9 @@ void MODBUScomm(void)                                                           
                         if(tempValue2Value.status2flags._RST)
                             RST();                                              //Reset uC  REV H
 
-                        tempValue2Value.status2flags._RST=0;                     //clear this bit on exit
+                        tempValue2Value.status2flags._RST=0;                    //clear this bit on exit
+                        S_2.status2flags._RST=0;                                //clear the MODBUS status flag  REV CR    
+                        write_Int_FRAM(MODBUS_STATUS2address,S_2.status2);      //REV CR                            
                         break;
 
                     case 2:
@@ -14132,7 +14146,9 @@ void MODBUScomm(void)                                                           
 
                         if(tempValue2Value.status2flags._CMD)
                         {
-                            tempValue2Value.status2flags._CMD=0;                 //clear this bit on exit 
+                            tempValue2Value.status2flags._CMD=0;                //clear this bit on exit 
+                            S_2.status2flags._CMD=0;                            //clear the MODBUS status flag  REV CR    
+                            write_Int_FRAM(MODBUS_STATUS2address,S_2.status2);  //REV CR    
                             CMD_LINE();
                         }
 
@@ -14149,7 +14165,9 @@ void MODBUScomm(void)                                                           
                         if(tempValue2Value.status2flags._LD)
                             loadDefaults();                                     //load default settings
 
-                        tempValue2Value.status2flags._LD=0;                      //clear this bit on exit                        
+                        tempValue2Value.status2flags._LD=0;                      //clear this bit on exit   
+                        S_2.status2flags._LD=0;                                  //clear the MODBUS status flag  REV CR    
+                        write_Int_FRAM(MODBUS_STATUS2address,S_2.status2);      //REV CR    
                         break;
 
                     case 4:                                                     //REV CK
@@ -14167,6 +14185,8 @@ void MODBUScomm(void)                                                           
                         }                            
 
                         tempValue2Value.status2flags._CCV=0;                      //clear this bit on exit   
+                        S_2.status2flags._CCV=0;                                //clear the MODBUS status flag  REV CR    
+                        write_Int_FRAM(MODBUS_STATUS2address,S_2.status2);      //REV CR                            
                         break;
 
                     case 5:                                                     //REV CK
@@ -14183,7 +14203,9 @@ void MODBUScomm(void)                                                           
                             write_Int_FRAM(BatteryReading,mainBatreading);      
                         }                            
 
-                        tempValue2Value.status2flags._BV3=0;                      //clear this bit on exit                           
+                        tempValue2Value.status2flags._BV3=0;                      //clear this bit on exit   
+                        S_2.status2flags._BV3=0;                                  //clear the MODBUS status flag  REV CR    
+                        write_Int_FRAM(MODBUS_STATUS2address,S_2.status2);      //REV CR                            
                         break;
 
                     case 6:                                                     //REV CK
@@ -14200,7 +14222,9 @@ void MODBUScomm(void)                                                           
                             write_Int_FRAM(BatteryReading,mainBatreading);      
                         }                            
 
-                        tempValue2Value.status2flags._BV12=0;                      //clear this bit on exit                           
+                        tempValue2Value.status2flags._BV12=0;                      //clear this bit on exit  
+                        S_2.status2flags._BV12=0;                                  //clear the MODBUS status flag  REV CR    
+                        write_Int_FRAM(MODBUS_STATUS2address,S_2.status2);      //REV CR                            
                         break;                        
 
                     case 7:                                                     
@@ -14967,7 +14991,7 @@ void processReading(float VWreading, int channel) {
     }
 
     //if (LC2CONTROL2.flags2.R) {                                               REM REV CP
-    VWreadingProcessed = ((VWreading - zeroReading) * gageFactor) + gageOffset;
+    VWreadingProcessed = ((VWreading - zeroReading) * gageFactor) + gageOffset;   
     return;
     //}                                                                         REM REV CP
 
@@ -17259,7 +17283,7 @@ unsigned int take_analog_reading(unsigned char gt)                              
            analog=analog+*ADC16Ptr;                                           
         }
         AD1CON1bits.ADON = 0;                                                   //turn ADC off      REV Q
-        PMD1bits.AD1MD=1;                                                       //Disable the ADC1 module    REV J
+        PMD1bits.AD1MD=1;                                                       //Disable the ADC1 module (NOTE:AD1PCFGH/L ALL SET TO DIGITAL INPUTS HERE)
         SAMPLE_LITHIUM = 0;                                                     //turn off lithium battery sampling if on
         _3VX_off();                                                             //power-down analog circuitry   
 
