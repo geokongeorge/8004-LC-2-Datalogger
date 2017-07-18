@@ -16,9 +16,9 @@
 //	DATE:		7/14/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   da
-//	CHECKSUM:	0x2b33  (MPLABX ver 3.15 and XC16 ver 1.26)
-//	DATA(RAM)MEM:	8484/30720   28%
-//	PGM(FLASH)MEM:  150144/261888 57%
+//	CHECKSUM:	0xf0ce  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	DATA(RAM)MEM:	8504/30720   28%
+//	PGM(FLASH)MEM:  150372/261888 57%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -1729,7 +1729,8 @@ void CMDcomm(void)
                 shutdownTimer(TimeOut);                                         //start 15S shutdown timer	(network not enabled)   REV Z
 
                 while (!DataRdyUART1() && !U1STAbits.FERR && !U1STAbits.PERR && !U1STAbits.OERR && !IFS3bits.T9IF); //read the keyboard input - timeout if 15 seconds of inactivity
-                    //handleCOMError(); //if communications error
+                if(U1STAbits.FERR | U1STAbits.PERR | U1STAbits.OERR)            //REV DA
+                    handleCOMError();                                           //if communications error   REV DA
 
                 if (IFS3bits.T9IF) //break out of loop if time to shutdown	
                 {
@@ -10841,23 +10842,12 @@ unsigned int f32toINT16(float value)                                            
 void enableVWchannel(unsigned char gageType)                                    //REV H
 {
     unsigned int timeHigh=0;
-    //REM REV CB
-    //unsigned char gainGT1=0xFF;
-    //unsigned char gainGT2=0x80;
-    //unsigned char gainGT3=0x40;
-    //unsigned char gainGT4=0x30;
-    //unsigned char gainGT5=0x10;
-    //unsigned char gainGT6=0x00;
-    
-    
     unsigned char gainGT1=0x80;
-    unsigned char gainGT2=0x40;
-    //unsigned char gainGT3=0x40;
-    unsigned char gainGT3=0x20;                                                 //TEST REV CO
-    unsigned char gainGT4=0x40;
-    //unsigned char gainGT5=0x20;
-    unsigned char gainGT5=0x08;                                                 //TEST REV CO
-    unsigned char gainGT6=0x40;
+    unsigned char gainGT2=0x80;
+    unsigned char gainGT3=0x80;                                                 
+    unsigned char gainGT4=0x80;
+    unsigned char gainGT5=0x80;                                                 
+    unsigned char gainGT6=0x80;
     
     _AMP_SHDN=1;                                                                //Enable the AGC amp    REV CF
     switch(gageType)
@@ -12954,12 +12944,27 @@ float getFrequency(void)
 	float frequencyTotal=0.0;                                                   //VER 5.8.1.3
 	unsigned int i=0;                                                           //VER 5.8.1.3
 	unsigned int loopsTotal=1;                                                  //REV O
+    //unsigned int loopsTotal=8;                                                 //REV DA
     unsigned int AGC=0;                                                         //REV DA
 	
     clockSwitch(0);                                                             //Switch to HS oscillator (Fcy=7.3728MHz)   REV AF
     enableVWchannel(gageType);                                                  //configure the PLL and LPF TEST REV CF
     configTimers(); 
-    delay(50000);  
+    
+    TRISB=0x033D;                                                               //Configure PORTB   REV DA
+    LATB=0;                                                                     //REV DA
+
+    __delay32(mS100);                                                           //100mS delay for Signal Level Measurement   REV DA
+    testPoint(1,2);                                                             //TEST REV DA
+    AGC=take_analog_reading(98);                                                //Check the VW signal level   REV DA   
+    testPoint(1,3);                                                             //TEST REV DA
+    
+    if(AGC<V2_25)                                                               //if less than 2.25V threshold  REV DA
+    {
+        disableTimers();
+        clockSwitch(1);                                                         //Return to HSPLL oscillator (Fcy=29.4912MHz)   
+        return 0.0;                                                             //REV DA
+    }
    
 	for(i=0;i<loopsTotal;i++)
 	{
@@ -12968,11 +12973,15 @@ float getFrequency(void)
 		IFS1bits.T5IF=0;
         IFS3bits.T7IF=0;
         
+        TMR7=0;                                                                 //REV DA
+        VWcount=0;                                                              //REV DA
 		VWcountMSW=0;                                                           //clear the counter MSW register  REV O
 		VWcountLSW=0;                                                           //clear the counter LSW register	
         PR7=0xFFFF;                                                             //load PR7 with max count    
-		PR4=mS256LSW;                                                           //load PR4 with LSW	REM VER 5.8.1.3
-		PR5=mS256MSW;                                                           //load PR5 with MSW	REM VER 5.8.1.3
+		PR4=mS256LSW;                                                           //load PR4 with LSW	REM VER 5.8.1.3 REM REV DA
+		PR5=mS256MSW;                                                           //load PR5 with MSW	REM VER 5.8.1.3 REM REV DA
+        //PR4=mS32LSW;                                                            //load PR4 with LSW	REV DA
+		//PR5=mS32MSW;                                                            //load PR5 with MSW	REV DA
         T7CONbits.TCS=1;                                                        //set to count external T7CKI clocks
 		IEC1bits.T5IE=1;                                                        //enable 512mS interrupt
 
@@ -12994,31 +13003,48 @@ float getFrequency(void)
             //MONITOR V_AGC AND CONTROL GAIN OF AGC AMP DURING F CAPTURE
 			//while(!IFS0bits.T1IF && CaptureFlag==0);                            //wait for 256mS gate to terminate or 300mS time out to occur REM REV CP
 
-            while(!IFS0bits.T1IF && CaptureFlag==0)                            //wait for 256mS gate to terminate or 300mS time out to occur    REV CP
-            {
+            while(!IFS0bits.T1IF && CaptureFlag==0);                            //wait for 256mS gate to terminate or 300mS time out to occur    REV CP
+            //{
             //  CONTROL AGC AMP LOOP
-                testPoint(1,1);
-                AGC=take_analog_reading(98);                                    //Get the AGC voltage   REV DA    
-                Nop();
-            }
+            //    testPoint(1,1);
+                //AGC=take_analog_reading(98);                                    //Get the AGC voltage   REV DA    
+            //    Nop();
+            //}
 
 			if(IFS0bits.T1IF)
+            {
+                disableTimers();                                                //REV DA
+                clockSwitch(1);                                                 //Return to HSPLL oscillator (Fcy=29.4912MHz)   REV DA                
                 return 0;                                                       //timeout waiting for VW_100
+            }
 
             T7CONbits.TON=0;                                                    //shut off counter
 			T4CONbits.TON=0;                                                    //shut off timer
 			CaptureFlag=0;                                                      //Reset captureFlag		
 			VWcount=(VWcountMSW*65536)+VWcountLSW;                              //Totalize counter  REV O
-            frequency=(VWcount/mS256)*10.0;                                     //convert to frequency	REV M
+            frequency=(VWcount/mS256)*10.0;                                     //convert to frequency	REM REV DA
+            //frequency=(VWcount/mS32)*10.0;                                      //convert to frequency	REV DA
 			frequencyTotal=frequencyTotal+frequency;                            //VER 5.8.1.3
+            Nop();
 		}
 	}
+    
+    testPoint(1,4);                                                             //TEST REV DA
+    AGC=take_analog_reading(98);                                                //Check the VW signal level again  REV DA   
+    testPoint(1,5);                                                             //TEST REV DA
+    
+    if(AGC<V2_25)                                                               //if less than 2.25V threshold  REV DA
+    {
+        disableTimers();
+        clockSwitch(1);                                                         //Return to HSPLL oscillator (Fcy=29.4912MHz)   
+        return 0.0;                                                             //REV DA
+    }
 
 	frequency=frequencyTotal/(loopsTotal*1.0);                                  //VER 5.8.1.3
 	//shutdownTimer(TimeOut);                                                     //Reset 15S timer	REM REV Z
     disableTimers();
     clockSwitch(1);                                                             //Return to HSPLL oscillator (Fcy=29.4912MHz)   REV AF
-
+    testPoint(1,6);                                                             //TEST REV DA
 	return frequency;
 }
 
@@ -15472,7 +15498,6 @@ float read_vw(void)
 	float frequency=0.0;
 	float digits=0.0;
 
-
 	frequency=getFrequency();
 
 	if(frequency==0.0)
@@ -17241,7 +17266,8 @@ unsigned int take_analog_reading(unsigned char gt)                              
         IFS1bits.INT1IF=0;                                                      //REV Z
         PMD1bits.AD1MD=0;                                                       //Enable the ADC1 module    REV J
 
-        _3VX_on();                                                              //power-up analog circuitry 
+        if(gt!=98)                                                              //3VX already on    REV DA
+            _3VX_on();                                                          //power-up analog circuitry 
 
         //Setup 12 bit DAC:
         AD1PCFGH = 0xFFFF;                                                      //AN31..AN16 configured as digital I/O
@@ -17272,7 +17298,7 @@ unsigned int take_analog_reading(unsigned char gt)                              
         }
         if (gt == 97)                                                           //read the main 3V battery REV K
             AD1CHS0 = 0x0002;                                                   //connect AN2 as CH0 input
-        if(gt==98)                                                              //read V_AGC    REV DA
+        if (gt==98)                                                              //read V_AGC    REV DA
             AD1CHS0=0x0009;                                                     //connect AN9 as CH0 input
 
         analog = 0;                                                             //clear the value
@@ -17281,7 +17307,8 @@ unsigned int take_analog_reading(unsigned char gt)                              
 
         AD1CON1bits.ADON = 1;                                                   //turn ADC on     TEST REV Q
         //delay(2000);                                                            //delay 136uS for settling  REM REV AE
-        delay(8000);                                                            //REV AE
+        //if(gt!=98)                                                              //REM REV DA
+            delay(8000);                                                            //REV AE
 
         //REV J:
         for(count=0;count<16;count++)
@@ -17294,9 +17321,11 @@ unsigned int take_analog_reading(unsigned char gt)                              
            analog=analog+*ADC16Ptr;                                           
         }
         AD1CON1bits.ADON = 0;                                                   //turn ADC off      REV Q
-        PMD1bits.AD1MD=1;                                                       //Disable the ADC1 module (NOTE:AD1PCFGH/L ALL SET TO DIGITAL INPUTS HERE)
+        //PMD1bits.AD1MD=1;                                                       //Disable the ADC1 module (NOTE:AD1PCFGH/L ALL SET TO DIGITAL INPUTS HERE)    REM REV DA
         SAMPLE_LITHIUM = 0;                                                     //turn off lithium battery sampling if on
-        _3VX_off();                                                             //power-down analog circuitry   
+        
+        if(gt!=98)                                                              //REV DA
+            _3VX_off();                                                             //power-down analog circuitry   
 
         analog = analog >> 4;                                                 //average the result TEST REM REV J   
         if(gt==85)
@@ -18387,7 +18416,7 @@ float take_reading(unsigned char gageType)                                      
 		pluck(400,4500,384);                                                    //400-4500 Hz Sweep
 
     if (gageType == 1)
-        pluck(1400, 3500, 384);                                                 //1400-3500 Hz Sweep
+        pluck(1400, 3500, 384);                                                 //1400-3500 Hz Sweep  
 
     if (gageType == 2)
         pluck(2800, 4500, 384);                                                 //2800-4500 Hz Sweep
