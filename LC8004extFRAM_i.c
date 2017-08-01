@@ -11,9 +11,10 @@
 //REV F  12/29/16   Debug SleepFRAM()
 //REV G  01/04/17   Poll for FRAM ACK after each write to base address
 //REV H  01/26/17   Adjust I2C baud rate generator value for Fcy=29.4912MHz (8004 rev ae)   
-//REV I  04/19/17   Swap byte addresses in read_longFRAM() and write_longFRAM() so byte order in FRAM
+//REV I  07/28/17   Swap byte addresses in read_longFRAM() and write_longFRAM() so byte order in FRAM
 //                  will be MSB - LSB instead of LSB - MSB
 //                  Change all instances of long int to unsigned long int
+//                  Change Reference designators in FRAM TEST to correspond with PCB-238 rev A board layout
 
 
 #include "LC8004extFRAM_i.h"                                                    //external FRAM function prototypes
@@ -853,10 +854,10 @@ unsigned int testFRAM(unsigned int fram)
     //char ExtFRAMtest2[]={"EXTERNAL FRAM U4 TEST:"};                           REM REV D
     //char ExtFRAMtest3[]={"EXTERNAL FRAM U5 TEST:"};                           REM REV D
     //char ExtFRAMtest4[]={"EXTERNAL FRAM U6 TEST:"};                           REM REV D
-    char ExtFRAMtest1[]={"U2:"};                                                //REV D
-    char ExtFRAMtest2[]={"U4:"};                                                //REV D
-    char ExtFRAMtest3[]={"U5:"};                                                //REV D
-    char ExtFRAMtest4[]={"U6:"};                                                //REV D
+    char ExtFRAMtest1[]={"U3:"};                                                //REV I
+    char ExtFRAMtest2[]={"U5:"};                                                //REV I
+    char ExtFRAMtest3[]={"U6:"};                                                //REV I
+    char ExtFRAMtest4[]={"U7:"};                                                //REV I
     char RxDataTemp=0;
     unsigned int originalFRAM=0;			//temporary location of original FRAM value
     unsigned int tempExtFRAM=0;			//temporary test value
