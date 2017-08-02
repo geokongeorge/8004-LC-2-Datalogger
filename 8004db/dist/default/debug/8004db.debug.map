@@ -25,11 +25,11 @@ Command:
   build/default/debug/_ext/1472/LC8004delay_b.o \
   build/default/debug/_ext/1472/LC8004extFRAM_i.o \
   build/default/debug/_ext/1472/lc8004main_db.o \
-  -TC:\\Users\\gmoore\\AppData\\Local\\Temp\\tmp00000c78.00 \
-  -TC:\\Users\\gmoore\\AppData\\Local\\Temp\\tmp00000c78.01 \
-  -TC:\\Users\\gmoore\\AppData\\Local\\Temp\\tmp00000c78.02 \
-  -TC:\\Users\\gmoore\\AppData\\Local\\Temp\\tmp00000c78.03 \
-  -TC:\\Users\\gmoore\\AppData\\Local\\Temp\\tmp00000c78.04 \
+  -TC:\\Users\\gmoore\\AppData\\Local\\Temp\\tmp000006a8.00 \
+  -TC:\\Users\\gmoore\\AppData\\Local\\Temp\\tmp000006a8.01 \
+  -TC:\\Users\\gmoore\\AppData\\Local\\Temp\\tmp000006a8.02 \
+  -TC:\\Users\\gmoore\\AppData\\Local\\Temp\\tmp000006a8.03 \
+  -TC:\\Users\\gmoore\\AppData\\Local\\Temp\\tmp000006a8.04 \
   --defsym=__MPLAB_BUILD=1 \
   --defsym=__MPLAB_DEBUG=1 \
   --defsym=__DEBUG=1 \
