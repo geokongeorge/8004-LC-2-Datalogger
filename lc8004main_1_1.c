@@ -13,12 +13,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		8/21/2017
+//	DATE:		8/24/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   1.1
-//	CHECKSUM:	0xfd51  (MPLABX ver 3.15 and XC16 ver 1.26)
-//	DATA(RAM)MEM:	8688/30720   28%
-//	PGM(FLASH)MEM:  150801/261888 58%
+//	CHECKSUM:	0x010f  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	DATA(RAM)MEM:	8692/30720   28%
+//	PGM(FLASH)MEM:  151665/261888 58%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -198,7 +198,7 @@
 //      1.0     8/18/17             Add MS command to enable testing with LogView
 //                                  debug start/stop logging time issue if memory was not reset
 //                                  Change VW Reading gate from 256mS to 128mS
-//      1.1     8/21/17             Store whole # portion of 1st VW reading in FRAM. Use narrow-band pluck (+/- 20% of reading) for subsequent plucks
+//      1.1     8/24/17             Store whole # portion of 1st VW reading in FRAM. Use narrow-band pluck (+/- 10% of reading) for subsequent plucks
 //                                  Store whole # portion of each subsequent pluck.
 //                                  If -99999 occurs start again with full spectrum pluck
 //                                  Incorporate FRAM_ADDRESSh.h
@@ -4012,6 +4012,7 @@ void CMDcomm(void)
                         LC2CONTROL.flags.LoggingStartTime = 0; //clear the Logging Start Time flag	
                         write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flags in FRAM     
 
+                        VWflagsbits.firstReading=1;                             //REV 1.1
                         LC2CONTROL2.flags2.Waiting = 1; //Set the Waiting flag	
                         LC2CONTROL2.flags2.scheduled=1;                         //REV W
                         write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);	//store flags in FRAM   
@@ -10887,25 +10888,27 @@ void enableOP(void)
 unsigned int f32toINT16(float value)                                            //REV J
 {
 	int chars=0;
-	char decBUF[6];
+	char decBUF[6];                                                           
 	unsigned char ones=0;
 	unsigned char tens=0;
 	unsigned char hundreds=0;
+
 	DEC_TEMP.temp.sign=0;
 	DEC_TEMP.temp.whole=0;
 	DEC_TEMP.temp.tenths=0;
 
-	chars=sprintf(decBUF,"%.1f",value);				//convert float value to ascii string	
-	if(decBUF[0]==minus)							//if negative
-		DEC_TEMP.temp.sign=1;						//set the sign bit and store in DEC_TEMP.temp.sign
-	DEC_TEMP.temp.tenths=(decBUF[chars-1]-0x30);	//extract the tenths value & store in DEC_TEMP.temp.tenths
+	chars=sprintf(decBUF,"%.1f",value);                                         //convert float value to ascii string	
+	if(decBUF[0]==minus)                                                        //if negative
+		DEC_TEMP.temp.sign=1;                                                   //set the sign bit and store in DEC_TEMP.temp.sign
+	DEC_TEMP.temp.tenths=(decBUF[chars-1]-0x30);                                //extract the tenths value & store in DEC_TEMP.temp.tenths
 	if(chars-3>=0 && decBUF[chars-3]!=minus)
-		ones=decBUF[chars-3]-0x30;					//extract ones
+		ones=decBUF[chars-3]-0x30;                                              //extract ones
 	if(chars-4>=0 && decBUF[chars-4]!=minus)
-		tens=decBUF[chars-4]-0x30;					//extract tens
+		tens=decBUF[chars-4]-0x30;                                              //extract tens
 	if(chars-5>=0 && decBUF[chars-5]!=minus)
-		hundreds=decBUF[chars-5]-0x30;				//extract hundreds
-	DEC_TEMP.temp.whole=100*hundreds+10*tens+ones;	//store whole number value in DEC_TEMP
+		hundreds=decBUF[chars-5]-0x30;                                          //extract hundreds
+    
+	DEC_TEMP.temp.whole=100*hundreds+10*tens+ones;                              //store whole number value in DEC_TEMP  
 
 	return DEC_TEMP.decimaltemp;					//return the 16 bit value
 }
@@ -10915,8 +10918,9 @@ unsigned int f32toINT16(float value)                                            
 void enableVWchannel(unsigned char gageType)                                    //REV H
 {
     unsigned int timeHigh=0;
-    unsigned char gainGT1=0x80;
-    unsigned char gainGT2=0x80;
+    //REV 1.1:
+    unsigned char gainGT1=0x80;                                               
+    unsigned char gainGT2=0x80;                                               
     unsigned char gainGT3=0x80;                                                 
     unsigned char gainGT4=0x80;
     unsigned char gainGT5=0x80;                                                 
@@ -13016,8 +13020,8 @@ float getFrequency(void)
 	float frequency=0.0;
 	float frequencyTotal=0.0;                                                   //VER 5.8.1.3
 	unsigned int i=0;                                                           //VER 5.8.1.3
-	unsigned int loopsTotal=1;                                                  //REM REV DB
-    //unsigned int loopsTotal=16;                                                 //REV DB
+	unsigned int loopsTotal=1;                                                  
+    //unsigned int loopsTotal=4;                                                 //TEST REV 1.1
     unsigned int AGC=0;                                                         //REV DA 
 	
     clockSwitch(0);                                                             //Switch to HS oscillator (Fcy=7.3728MHz)   REV AF
@@ -13048,11 +13052,18 @@ float getFrequency(void)
         VWcount=0;                                                              //REV DA
 		VWcountMSW=0;                                                           //clear the counter MSW register  REV O
 		VWcountLSW=0;                                                           //clear the counter LSW register	
-        PR7=0xFFFF;                                                             //load PR7 with max count    
-		//PR4=mS8LSW;                                                            //load PR4 with LSW	REM VER 5.8.1.3 REM REV DB
-		//PR5=mS8MSW;                                                            //load PR5 with MSW	REM VER 5.8.1.3 REM REV DB	
-        PR4=mS128LSW;                                                           //TEST REV 1.0
-        PR5=mS128MSW;                                                           //TEST REV 1.0
+        PR7=0xFFFF;                                                             //load PR7 with max count  
+        //if(VWflagsbits.firstReading | VWflagsbits.retry)                        //REM REV 1.1
+        if(VWflagsbits.retry)                                                   //REV 1.1
+        {
+            PR4=mS64LSW;                                                           
+            PR5=mS64MSW;                                                                       
+        }
+        else
+        {
+            PR4=mS256LSW;                                                           
+            PR5=mS256MSW;                                                           
+        }
         //PR4=mS256LSW;                                                           //load PR4 with LSW	REM VER 5.8.1.3 REM REV DB
 		//PR5=mS256MSW;                                                           //load PR5 with MSW	REM VER 5.8.1.3 REM REV DB
         //PR4=mS512LSW;                                                            //load PR4 with LSW	REV DB
@@ -13064,17 +13075,11 @@ float getFrequency(void)
         IPC12bits.T7IP=7;                                                       //Set TMR7 interrupt priority to 7  REV DBO
         IEC3bits.T7IE=1;                                                        //Enable TMR7 interrupt REV DB        
 
-        testPoint(1,2);
-		//OpenTimer1(T1_ON & T1_GATE_OFF & T1_PS_1_64 & T1_SOURCE_INT, 0x7900);	//setup Timer 1	 for 300mS timeout TEST REM REV DB
-
 		//Synchronize to VW:
-		while(!VW100 && !IFS0bits.T1IF);                                        //wait while VW(100) is low
+		//while(!VW100 && !IFS0bits.T1IF);                                        //wait while VW(100) is low   REV REV 1.1
 		while(VW100 && !IFS0bits.T1IF);                                         //wait while VW(100) is high
 		while(!VW100 && !IFS0bits.T1IF);                                        //wait while VW(100) is low
-        //INTCON1bits.NSTDIS=0;                                                   //enable interrupt nesting REM REV DB 
-        //IPC7bits.T5IP=6;                                                        //set INT5 priority to 6  REM REV DB
-        //IPC12bits.T7IP=7;                                                       //Set TMR7 interrupt priority to 7  REM REV DB
-        //IEC3bits.T7IE=1;                                                        //Enable TMR7 interrupt REM REV DB
+
 		T7CONbits.TON=1;                                                        //start VW100 counter	
 		if(!IFS0bits.T1IF)                                                      //Capture frequency				
 		{
@@ -13096,10 +13101,14 @@ float getFrequency(void)
 			T4CONbits.TON=0;                                                    //shut off timer
 			CaptureFlag=0;                                                      //Reset captureFlag		
 			VWcount=(VWcountMSW*65536)+VWcountLSW;                              //Totalize counter  REV O
-            //frequency=(VWcount/mS256)*10.0;                                     //convert to frequency	REM REV DB
-            frequency=(VWcount/mS128)*10.0;                                      //convert to frequency	TEST REV 1.0
+
+            //if(VWflagsbits.firstReading | VWflagsbits.retry)                    //REM REV 1.1
+            if(VWflagsbits.retry)                                               //REV 1.1
+                frequency=(VWcount/mS64)*10.0;                                  //convert to frequency	TEST REV 1.0
+            else
+                frequency=(VWcount/mS256)*10.0;                                 //convert to frequency	TEST REV 1.0
 			frequencyTotal=frequencyTotal+frequency;                            //VER 5.8.1.3
-            testPoint(1,3);
+
 		}
 	}
     
@@ -13112,12 +13121,10 @@ float getFrequency(void)
         return 0.0;                                                             //REV DA
     }
 
-    testPoint(1,4);
 	frequency=frequencyTotal/(loopsTotal*1.0);                                  //VER 5.8.1.3
 	//shutdownTimer(TimeOut);                                                     //Reset 15S timer	REM REV Z
     disableTimers();
     clockSwitch(1);                                                             //Return to HSPLL oscillator (Fcy=29.4912MHz)   REV AF
-    testPoint(1,5);                                                             //TEST REV DA
 	return frequency;
 }
 
@@ -15572,6 +15579,11 @@ float read_vw(void)
 	float digits=0.0;
 
 	frequency=getFrequency();
+    
+    //REV 1.1:******************************************************************
+    F=vwf32toINT16(frequency);
+    
+    //**************************************************************************
 
 	if(frequency==0.0)
 		VWflagsbits.VWerror=1;						//set reading error flag if timeout occurs
@@ -16534,7 +16546,9 @@ void startLogging(void) {
 
     //ConfigIntCapture8(IC_INT_ON & IC_INT_PRIOR_6); //Configure input capture interrupt    REM REV M
 
+    VWflagsbits.firstReading=1;                                                 //REV 1.1
     take_One_Complete_Reading(STORE); //take a reading    VER 6.0.13
+    VWflagsbits.firstReading=0;                                                 //REV 1.1
 
     enableAlarm(Alarm1);
     enableINT1(); //enable INT1 (take a reading on interrupt)
@@ -18203,7 +18217,14 @@ void take_One_Complete_Reading(unsigned char store)
                 if (!store)
                     IEC1bits.INT1IE = 0; //temporarily disable the INT2 interrupt
                 //WDTSWEnable;                                                  //Start WDT TEST REM REV CF                          
-                VWreading = take_reading(gageType); //take VW reading (or other gage type) 
+                //VWreading = take_reading(gageType);                             //take VW reading (or other gage type) REM REV 1.1
+                VWreading = take_reading(gageType,ch);                          //take VW reading (or other gage type) ADD ch AS ARGUEMENT  REV 1.1
+                if(!VWreading)                                                  //retry if no response  REV 1.1
+                {
+                    VWflagsbits.retry=1;                                        //REV 1.1
+                    VWreading=take_reading(gageType,ch);                        //REV 1.1
+                    VWflagsbits.retry=0;                                        //REV 1.1
+                }
                 disableVWchannel();                                             //REV X
 
                 //ClrWdt();                                                     //clear the WDT TEST REM REV CF
@@ -18220,9 +18241,12 @@ void take_One_Complete_Reading(unsigned char store)
                     }
                 }
                 if (VWreading == 0.0)
-                    VWreadingProcessed = -999999; //error message
+                    VWreadingProcessed = -999999;                               //error message
                 else
-                    processReading(VWreading, ch); //apply linear or polynomial conversion
+                {                                                               //REV 1.1
+                    processReading(VWreading, ch);                              //apply linear or polynomial conversion
+                    write_Int_FRAM(CH1Reading+(2*(ch-1)),F);                    //store the whole # portion of VWreading in FRAM  REV 1.1   
+                }
 
                 if (!store)
                     IEC1bits.INT1IE = 0; //temporarily disable the INT2 interrupt
@@ -18236,7 +18260,6 @@ void take_One_Complete_Reading(unsigned char store)
                     extThermreading = take_analog_reading(85); //take external thermistor reading
                     if(extThermreading>5000)
                     {
-                        //extThermreading=-99.9;
                         extThermProcessed=-99.0;
                     }
                     else
@@ -18434,8 +18457,8 @@ void take_One_Complete_Reading(unsigned char store)
     }
 
     DISPLAY_CONTROL.flags.TakingReading = 0; //clear the TakingReading flag
-    write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//store flags in FRAM 
-
+    write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);        //store flags in FRAM 
+    VWflagsbits.firstReading=0;                                                 //REV 1.1
     //TEST REM REV 0 11/30:
     //if ((LC2CONTROL.flags.LoggingStopTime && (TotalStopSeconds == seconds_since_midnight)) | //logging scheduled to stop?
       //      (memoryStatus >= maxSingleVW && outputPosition == 1 && !DISPLAY_CONTROL.flags.WrapMemory)) //stop logging when memory full?
@@ -18448,11 +18471,14 @@ void take_One_Complete_Reading(unsigned char store)
         IFS3bits.T9IF=1;
 }
 
-float take_reading(unsigned char gageType)                                      //take a reading, x is gage type    REV M
+//float take_reading(unsigned char gageType)                                      //take a reading, x is gage type    REM REV 1.1
+float take_reading(unsigned char gageType,int ch)                               //take a reading,ch is channel    REV 1.1
 {
     unsigned int *ADC16Ptr;
     unsigned int count=0;                                                       //REV M
     unsigned int lithtemp=0;                                                    //REV M
+    unsigned int F_start=0;                                                     //REV 1.1
+    unsigned int F_stop=0;                                                      //REV 1.1
 
     float digits = 0.0;
     float lithium = 0.0;
@@ -18481,24 +18507,39 @@ float take_reading(unsigned char gageType)                                      
 	//if(gageType==0 | (gageType>=7 && gageType<=8))                              //VER 5.6.1   REM REV 1.1
 	//	pluck(400,4500,384);                                                    //400-4500 Hz Sweep REM REV 1.1
 
-    if (gageType == 1)
-        pluck(1400, 3500, 384);                                                 //1400-3500 Hz Sweep  
+    //if(VWflagsbits.firstReading | VWflagsbits.retry)                            //REM REV 1.1
+    if(VWflagsbits.retry)                                                       //REV 1.1
+    {
+        if (gageType == 1)
+            pluck(1400, 3500, 384);                                                 //1400-3500 Hz Sweep  
 
-    if (gageType == 2)
-        pluck(2800, 4500, 384);                                                 //2800-4500 Hz Sweep
+        if (gageType == 2)
+            pluck(2800, 4500, 384);                                                 //2800-4500 Hz Sweep
 
-    if (gageType == 3)
-        pluck(400, 1200, 384);                                                  //400-1200 Hz Sweep
+        if (gageType == 3)
+            pluck(400, 1200, 384);                                                  //400-1200 Hz Sweep
 
-    if (gageType == 4)
-        pluck(1200, 2800, 384);                                                 //1200-2800 Hz Sweep
+        if (gageType == 4)
+            pluck(1200, 2800, 384);                                                 //1200-2800 Hz Sweep
 
-    if (gageType == 5)
-        pluck(2500, 4500, 384);                                                 //2500-4500 Hz Sweep
+        if (gageType == 5)
+            pluck(2500, 4500, 384);                                                 //2500-4500 Hz Sweep
     
-    if (gageType == 6)                                                          
-        pluck(800, 1600, 384);                                                  //800-1600 Hz Sweep    
+        if (gageType == 6)                                                          
+            pluck(800, 1600, 384);                                                  //800-1600 Hz Sweep    
+    }
+    else
+    {
+        F=read_Int_FRAM(CH1Reading+(2*(ch-1)));                                 //get the previous whole # reading from FRAM  REV 1.1  
+        F_start=0.9*F;                                                        //TEST REM REV 1.1
+        F_stop=1.1*F;                                                         //TEST REM REV 1.1
+        //F_start=0.8*F;                                                         //TEST REV 1.1
+        //F_stop=1.2*F;                                                          //TEST REV 1.1
+        pluck(F_start,F_stop,384);                                              //+/- 10% TEST ONLY
+    }
      
+    //VWflagsbits.firstReading=0;                                                 //REV 1.1
+    
     delay(80000);                                                               //30mS delay for PLL settling REV AE
     digits = read_vw();                                                         //get the VW digits
     _3VX_off();                                                                 //power-down analog circuitry   VER 6.0.0
@@ -19453,6 +19494,49 @@ float V_HT2C(float V, unsigned int ch)                                          
 		return T32bit;
 }
 
+unsigned int vwf32toINT16(float value)                                          //REV 1.1
+{
+	int chars=0;
+	char decBUF[8];
+	unsigned char ones=0;
+	unsigned char tens=0;
+	unsigned char hundreds=0;
+    unsigned char thousands=0;
+    unsigned char tenthousands=0;
+	DEC_VWF.vwf.whole=0;
+
+    for(chars=0;chars<8;chars++)
+    {
+        decBUF[chars]=0;                                                        //initialize buffer
+    }
+    
+	chars=sprintf(decBUF,"%.0f",value);                                          //convert float value to ascii string	
+
+    if(chars==3)
+    {
+        ones=decBUF[chars-1]-0x30;                                              //extract ones
+		tens=decBUF[chars-2]-0x30;                                              //extract tens
+		hundreds=decBUF[chars-3]-0x30;                                          //extract hundreds
+    }
+    if(chars==4)
+    {
+        ones=decBUF[chars-1]-0x30;                                              //extract ones
+		tens=decBUF[chars-2]-0x30;                                              //extract tens
+		hundreds=decBUF[chars-3]-0x30;                                          //extract hundreds    
+		thousands=decBUF[chars-4]-0x30;                                         //extract thousands
+    }
+    if(chars==5)
+    {
+        ones=decBUF[chars-1]-0x30;                                              //extract ones
+		tens=decBUF[chars-2]-0x30;                                              //extract tens
+		hundreds=decBUF[chars-3]-0x30;                                          //extract hundreds    
+		thousands=decBUF[chars-4]-0x30;                                         //extract thousands
+        tenthousands=decBUF[chars-5]-0x30;                                      //extract tenthousands
+    }    
+
+	DEC_VWF.vwf.whole=10000*tenthousands+1000*thousands+100*hundreds+10*tens+ones;	//store whole number value in DEC_TEMP
+	return DEC_VWF.decimalvw;					//return the 16 bit value
+}
 
 void wait(void) //VER 6.0.2
 {
@@ -19546,7 +19630,9 @@ void X(void)                                                                    
 {
     LC2CONTROL2.flags2.X = 1; //set the 'X' flag
     LC2CONTROL2.flags2.Interrupt = 0; //clear the INT2 interrupt flag	
+    VWflagsbits.firstReading=1;                                                 //REV 1.1
     take_One_Complete_Reading(NOSTORE); //take a reading    VER 6.0.13
+    VWflagsbits.firstReading=0;                                                 //REV 1.1
     LC2CONTROL2.flags2.X = 0; //clear the 'X' flag	
 
     INTCON1bits.NSTDIS = 0; //Reset nesting of interrupts 
