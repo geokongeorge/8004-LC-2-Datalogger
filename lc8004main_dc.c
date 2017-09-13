@@ -13,10 +13,10 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		8/02/2017
+//	DATE:		8/11/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   dc
-//	CHECKSUM:	0x09db  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x1146  (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8504/30720   28%
 //	PGM(FLASH)MEM:  150351/261888 57%
 
@@ -193,7 +193,8 @@
 //                                  Add gage type 98 for V_AGC
 //      db      7/28/17             Improve accuracy of VW measurement
 //                                  Change FRAM reference designators during FRAM TEST to correspond with PCB-238 rev A layout
-//      dc      8/2/17              Adjust ENABLE & CLOCK timings to work properly with 8004-17 & 8004-18 muxes
+//      dc      8/1117              Adjust ENABLE & CLOCK timings to work properly with 8004-17 & 8004-18 muxes
+//                                  Change Software Revision response from dc to 1.0 to enable testing with LogView
 //
 //
 //

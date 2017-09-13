@@ -72,6 +72,8 @@ struct
 	unsigned VWerror:1;                         //reading error flag
 	unsigned pluckflag:1;                       //pluck computation flag
 	unsigned synch:1;                           //0=reading time synchronized, 1=reading time to be synchronized
+    unsigned firstReading:1;                    //0=subsequent readings, 1=first reading    REV 1.1
+    unsigned retry:1;                           //0=normal operation, 1=reading needs to be re-tried
 }VWflagsbits;
 
 
@@ -325,6 +327,16 @@ DecimalTempBits temp;
 tempflags	DEC_TEMP;
 
 
+//REV 1.1:
+typedef struct{
+	unsigned	whole:16;                                                       //16 bit whole # (0-65535)
+}DecimalVWFBits;
+typedef union{ unsigned int decimalvw;
+DecimalVWFBits vwf;
+}vwfflags;
+vwfflags	DEC_VWF;
+
+
 typedef union                                                                   //REV CK
 {                                              
     unsigned int c;                                                             //16 bit crc data
@@ -443,7 +455,7 @@ unsigned char who=0;                                                            
                                                                                 //2=USB
                                                                                 //3=RS-485
                                                                                 //0=Error
-
+unsigned int F=0;                                                               //REV 1.1
 unsigned int cap_high=0;                                                        //32 bit VW period capture working register - high word
 unsigned int *VW_period_buffer;                                                 //16 bit VW period capture working register - low word
 unsigned int data;
@@ -470,10 +482,10 @@ const unsigned int  maxEightTH=18640;                                           
 const unsigned int  maxThirtytwoTH=6870;                                        //522132/76 = 6870
 
 const unsigned char minScanSingleVW=3;                                          //TEST REV DB
-const unsigned char minScanFourVW=6;                                            //REV DB
-const unsigned char minScanEightVW=10;                                           //REV BH
-const unsigned char minScanSixteenVW=20;
-const unsigned char minScanThirtytwoVW=30;
+const unsigned char minScanFourVW=8;                                            //REV 1.1
+const unsigned char minScanEightVW=12;                                          //REV 1.1
+const unsigned char minScanSixteenVW=30;                                        //REV 1.1
+const unsigned char minScanThirtytwoVW=60;                                      //REV 1.1
 const unsigned char minScanEightTH=4;                                           //REV DC                                           
 const unsigned char minScanThirtytwoTH=10;                                       //REV BH  
 
@@ -1380,7 +1392,8 @@ void synch_one(void);                                                           
 void synch_zero(void);                                                          //REV CC
 unsigned int take_analog_reading(unsigned char);                                //REV K
 void take_One_Complete_Reading(unsigned char);                                  
-float take_reading(unsigned char);
+//float take_reading(unsigned char);                                            //REM REV 1.1
+float take_reading(unsigned char,int);                                          //REV 1.1
 void testReset(void);
 void testRx(void);              
 int testStopTime(void);
@@ -1392,6 +1405,7 @@ unsigned char toMonthDay(unsigned int, unsigned int, unsigned char);
 void unpack(unsigned int);
 void upD8RTCAlarm1(void);
 float V_HT2C(float, unsigned int);                                              //REV J
+unsigned int vwf32toINT16(float);                                               //REV 1.1
 void wait(void);
 void wait2S(void);                                                              //REV A
 void wrap_one(void);                                                            //REV CC

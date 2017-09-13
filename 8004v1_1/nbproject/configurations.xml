@@ -9,8 +9,8 @@
       <itemPath>../AD5241a.h</itemPath>
       <itemPath>../LC8004delay_b.h</itemPath>
       <itemPath>../LC8004extFRAM_i.h</itemPath>
-      <itemPath>../FRAM_ADDRESSg.h</itemPath>
-      <itemPath>../lc8004main_1_0.h</itemPath>
+      <itemPath>../lc8004main_1_1.h</itemPath>
+      <itemPath>../FRAM_ADDRESSh.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -22,7 +22,7 @@
       <itemPath>../AD5241a.c</itemPath>
       <itemPath>../LC8004delay_b.c</itemPath>
       <itemPath>../LC8004extFRAM_i.c</itemPath>
-      <itemPath>../lc8004main_1_0.c</itemPath>
+      <itemPath>../lc8004main_1_1.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -272,6 +272,7 @@
         <property key="UART 1" value="true"/>
         <property key="UART 2" value="true"/>
         <property key="debugoptions.useswbreakpoints" value="true"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="hwtoolclock.instructionspeed" value="4"/>
         <property key="hwtoolclock.units" value="mips"/>

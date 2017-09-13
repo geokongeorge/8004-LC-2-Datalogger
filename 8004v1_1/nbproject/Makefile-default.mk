@@ -45,17 +45,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=../AD5241a.c ../LC8004delay_b.c ../LC8004extFRAM_i.c ../lc8004main_1_0.c
+SOURCEFILES_QUOTED_IF_SPACED=../AD5241a.c ../LC8004delay_b.c ../LC8004extFRAM_i.c ../lc8004main_1_1.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/1472/AD5241a.o ${OBJECTDIR}/_ext/1472/LC8004delay_b.o ${OBJECTDIR}/_ext/1472/LC8004extFRAM_i.o ${OBJECTDIR}/_ext/1472/lc8004main_1_0.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/1472/AD5241a.o.d ${OBJECTDIR}/_ext/1472/LC8004delay_b.o.d ${OBJECTDIR}/_ext/1472/LC8004extFRAM_i.o.d ${OBJECTDIR}/_ext/1472/lc8004main_1_0.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/1472/AD5241a.o ${OBJECTDIR}/_ext/1472/LC8004delay_b.o ${OBJECTDIR}/_ext/1472/LC8004extFRAM_i.o ${OBJECTDIR}/_ext/1472/lc8004main_1_1.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/1472/AD5241a.o.d ${OBJECTDIR}/_ext/1472/LC8004delay_b.o.d ${OBJECTDIR}/_ext/1472/LC8004extFRAM_i.o.d ${OBJECTDIR}/_ext/1472/lc8004main_1_1.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/_ext/1472/AD5241a.o ${OBJECTDIR}/_ext/1472/LC8004delay_b.o ${OBJECTDIR}/_ext/1472/LC8004extFRAM_i.o ${OBJECTDIR}/_ext/1472/lc8004main_1_0.o
+OBJECTFILES=${OBJECTDIR}/_ext/1472/AD5241a.o ${OBJECTDIR}/_ext/1472/LC8004delay_b.o ${OBJECTDIR}/_ext/1472/LC8004extFRAM_i.o ${OBJECTDIR}/_ext/1472/lc8004main_1_1.o
 
 # Source Files
-SOURCEFILES=../AD5241a.c ../LC8004delay_b.c ../LC8004extFRAM_i.c ../lc8004main_1_0.c
+SOURCEFILES=../AD5241a.c ../LC8004delay_b.c ../LC8004extFRAM_i.c ../lc8004main_1_1.c
 
 
 CFLAGS=
@@ -103,12 +103,12 @@ ${OBJECTDIR}/_ext/1472/LC8004extFRAM_i.o: ../LC8004extFRAM_i.c  nbproject/Makefi
 	${MP_CC} $(MP_EXTRA_CC_PRE)  ../LC8004extFRAM_i.c  -o ${OBJECTDIR}/_ext/1472/LC8004extFRAM_i.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/1472/LC8004extFRAM_i.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_REAL_ICE=1    -omf=elf -legacy-libc  -mlarge-code -mlarge-data -mlarge-scalar -mconst-in-data -O0 -msmart-io=1 -Wall -msfr-warn=off  
 	@${FIXDEPS} "${OBJECTDIR}/_ext/1472/LC8004extFRAM_i.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
-${OBJECTDIR}/_ext/1472/lc8004main_1_0.o: ../lc8004main_1_0.c  nbproject/Makefile-${CND_CONF}.mk
+${OBJECTDIR}/_ext/1472/lc8004main_1_1.o: ../lc8004main_1_1.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/_ext/1472" 
-	@${RM} ${OBJECTDIR}/_ext/1472/lc8004main_1_0.o.d 
-	@${RM} ${OBJECTDIR}/_ext/1472/lc8004main_1_0.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../lc8004main_1_0.c  -o ${OBJECTDIR}/_ext/1472/lc8004main_1_0.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/1472/lc8004main_1_0.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_REAL_ICE=1    -omf=elf -legacy-libc  -mlarge-code -mlarge-data -mlarge-scalar -mconst-in-data -O0 -msmart-io=1 -Wall -msfr-warn=off  
-	@${FIXDEPS} "${OBJECTDIR}/_ext/1472/lc8004main_1_0.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	@${RM} ${OBJECTDIR}/_ext/1472/lc8004main_1_1.o.d 
+	@${RM} ${OBJECTDIR}/_ext/1472/lc8004main_1_1.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../lc8004main_1_1.c  -o ${OBJECTDIR}/_ext/1472/lc8004main_1_1.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/1472/lc8004main_1_1.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_REAL_ICE=1    -omf=elf -legacy-libc  -mlarge-code -mlarge-data -mlarge-scalar -mconst-in-data -O0 -msmart-io=1 -Wall -msfr-warn=off  
+	@${FIXDEPS} "${OBJECTDIR}/_ext/1472/lc8004main_1_1.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 else
 ${OBJECTDIR}/_ext/1472/AD5241a.o: ../AD5241a.c  nbproject/Makefile-${CND_CONF}.mk
@@ -132,12 +132,12 @@ ${OBJECTDIR}/_ext/1472/LC8004extFRAM_i.o: ../LC8004extFRAM_i.c  nbproject/Makefi
 	${MP_CC} $(MP_EXTRA_CC_PRE)  ../LC8004extFRAM_i.c  -o ${OBJECTDIR}/_ext/1472/LC8004extFRAM_i.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/1472/LC8004extFRAM_i.o.d"        -g -omf=elf -legacy-libc  -mlarge-code -mlarge-data -mlarge-scalar -mconst-in-data -O0 -msmart-io=1 -Wall -msfr-warn=off  
 	@${FIXDEPS} "${OBJECTDIR}/_ext/1472/LC8004extFRAM_i.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
-${OBJECTDIR}/_ext/1472/lc8004main_1_0.o: ../lc8004main_1_0.c  nbproject/Makefile-${CND_CONF}.mk
+${OBJECTDIR}/_ext/1472/lc8004main_1_1.o: ../lc8004main_1_1.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/_ext/1472" 
-	@${RM} ${OBJECTDIR}/_ext/1472/lc8004main_1_0.o.d 
-	@${RM} ${OBJECTDIR}/_ext/1472/lc8004main_1_0.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../lc8004main_1_0.c  -o ${OBJECTDIR}/_ext/1472/lc8004main_1_0.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/1472/lc8004main_1_0.o.d"        -g -omf=elf -legacy-libc  -mlarge-code -mlarge-data -mlarge-scalar -mconst-in-data -O0 -msmart-io=1 -Wall -msfr-warn=off  
-	@${FIXDEPS} "${OBJECTDIR}/_ext/1472/lc8004main_1_0.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	@${RM} ${OBJECTDIR}/_ext/1472/lc8004main_1_1.o.d 
+	@${RM} ${OBJECTDIR}/_ext/1472/lc8004main_1_1.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../lc8004main_1_1.c  -o ${OBJECTDIR}/_ext/1472/lc8004main_1_1.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/1472/lc8004main_1_1.o.d"        -g -omf=elf -legacy-libc  -mlarge-code -mlarge-data -mlarge-scalar -mconst-in-data -O0 -msmart-io=1 -Wall -msfr-warn=off  
+	@${FIXDEPS} "${OBJECTDIR}/_ext/1472/lc8004main_1_1.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 endif
 

@@ -315,14 +315,16 @@ cflags  PORT_CONTROL;
 
 //REV J:
 typedef struct{
-	unsigned	sign:1;					//0=positive,1=negative
-	unsigned	whole:11;				//9 bit whole # (0-2047)
-	unsigned	tenths:4;				//4 bit tenths (0-9)
+	unsigned	sign:1;                                                         //1 bit 0=positive,1=negative
+	unsigned	whole:11;                                                       //11 bit whole # (0-2047)
+	unsigned	tenths:4;                                                       //4 bit tenths (0-9)
 }DecimalTempBits;
 typedef union{ unsigned int decimaltemp;
 DecimalTempBits temp;
 }tempflags;
 tempflags	DEC_TEMP;
+
+
 
 
 typedef union                                                                   //REV CK
