@@ -17338,7 +17338,6 @@ unsigned int take_analog_reading(unsigned char gt)                              
     TRISB=0x033D;                                                               //Configure PORTB   REV DA
     LATB=0;
 
-    //if (gt >= 85 && gt <= 97)                                                   //REM REV DA
     if (gt >= 85 && gt <= 98)                                                   //REV DA        
     {
         if (gt == 86)                                                           //read the internal temperature REV K
@@ -17358,7 +17357,6 @@ unsigned int take_analog_reading(unsigned char gt)                              
 
         //Setup 12 bit DAC:
         AD1PCFGH = 0xFFFF;                                                      //AN31..AN16 configured as digital I/O
-        //AD1PCFGL = 0xFEC2;                                                      //AN8,5,4,3,2,0 configured as analog inputs   REM REC DA
         AD1PCFGL = 0xFCC2;                                                      //AN9,8,5,4,3,2,0 configured as analog inputs REV DA
 
         //REV K:
@@ -17393,9 +17391,7 @@ unsigned int take_analog_reading(unsigned char gt)                              
         IFS0bits.AD1IF = 0;                                                     //clear ADC interrupt flag
 
         AD1CON1bits.ADON = 1;                                                   //turn ADC on     TEST REV Q
-        //delay(2000);                                                            //delay 136uS for settling  REM REV AE
-        //if(gt!=98)                                                              //REM REV DA
-            delay(8000);                                                            //REV AE
+        delay(8000);                                                            //REV AE
 
         //REV J:
         for(count=0;count<16;count++)
@@ -17408,7 +17404,6 @@ unsigned int take_analog_reading(unsigned char gt)                              
            analog=analog+*ADC16Ptr;                                           
         }
         AD1CON1bits.ADON = 0;                                                   //turn ADC off      REV Q
-        //PMD1bits.AD1MD=1;                                                       //Disable the ADC1 module (NOTE:AD1PCFGH/L ALL SET TO DIGITAL INPUTS HERE)    REM REV DA
         SAMPLE_LITHIUM = 0;                                                     //turn off lithium battery sampling if on
         
         if(gt!=98)                                                              //REV DA
@@ -20284,9 +20279,9 @@ void __attribute__((__interrupt__)) _AltU1RXInterrupt(void)                     
 void __attribute__((__interrupt__)) _INT1Interrupt(void)                        //This is the RTC ISR when time to read occurs  REV B
 {
     unsigned char   tempRTC;                                                    //REV AH
-    //WDTSWEnable; //TEST VER 6.0.10                                            //TEST REM REV CF
+
     IFS1bits.INT1IF = 0; //clear the interrupt flag                             //REV B
-    //TEST REV O:
+
     INTCON1bits.NSTDIS = 0;
     if(SRbits.IPL==7)
         SRbits.IPL=5;
@@ -20294,33 +20289,12 @@ void __attribute__((__interrupt__)) _INT1Interrupt(void)                        
     SLEEP12V = 0;
     validRTC = debounce();
     
-    //*********************TEST REV W:**************************************
-    //crlf();
-    //RTCdata = readClock(RTCAlarm1HoursAddress); //get the hour from the RTC
-    //displayClock(RTCdata); //display it
-
-    //putcUART1(colon); // ':'
-    //while (BusyUART1());
-
-    //RTCdata = readClock(RTCAlarm1MinutesAddress); //get the minutes from the RTC
-    //displayClock(RTCdata); //display it
-    
-    //putcUART1(colon); // ':'
-    //while (BusyUART1());
-
-    //RTCdata = readClock(RTCAlarm1SecondsAddress); //get the seconds from the RTC
-    //displayClock(RTCdata); //display it    
-    //crlf();
-    //*********************************************************************
-
-
     if (validRTC) //if valid interrupt
     {
         PORT_CONTROL.control=read_Int_FRAM(CONTROL_PORTflagsaddress);          //get the PORT_CONTROL flags  
         intSource = readClock(0x0F); //get the RTC Alarm flags		
         intSource &= 0x03; //strip off bits 7-2    VER 6.0.13
         
-        //if (PORT_CONTROL.flags.Alarm1Enabled && (intSource == 0x01 | intSource == 0x03)) //Alarm 1 (NO NEED TO TEST Alarm1Enabled flag)   REM REV AH
         if(intSource == 0x01 | intSource == 0x03)                               //Alarm 1 REV AH
         {
             tempRTC=readClock(0x0f);                                            //clear the RTC A1F REV AH
@@ -20339,17 +20313,13 @@ void __attribute__((__interrupt__)) _INT1Interrupt(void)                        
             take_One_Complete_Reading(STORE);
             TMR5HLD = tempTMR5; //restore TMR4/5 registers
             TMR4 = tempTMR4;
-            //if (!LC2CONTROL.flags.NetEnabled && LC2CONTROL.flags.USBpower)    REM REV CH
             if (LC2CONTROL.flags.USBpower)                                      //REV CH
                 T4CONbits.TON = 1; //turn Timer4/5 back on
-            //ClrWdt();                                                         //TEST REM REV CF
-            //WDTSWDisable;                                                     //TEST REM REV CF
             U1STAbits.OERR = 0; //clear flag if overrun error
             PMD3bits.T9MD=0;                                                    //Make sure TMR9 module is enabled  REV Z
             IFS3bits.T9IF = 1;
         }        
 
-        //if (PORT_CONTROL.flags.Alarm2Enabled && (intSource == 0x02 | intSource == 0x03)) //Alarm 2   (NO NEED TO TEST Alarm2Enabled flag) REM REV AH
         if(intSource == 0x02 | intSource == 0x03)                               //Alarm 2 REV AH
         {
             tempRTC=readClock(0x0f);                                            //clear the RTC A2F REV AH
@@ -20357,7 +20327,6 @@ void __attribute__((__interrupt__)) _INT1Interrupt(void)                        
             setClock(0x0f,tempRTC);                                             //REV AH
             disableAlarm(Alarm2);
 
-            //if (!PORT_CONTROL.flags.ControlPortON | !PORT_CONTROL.flags.CPTime) //PORT was OFF or O1 was previously issued    REM REV AG
             if (PORT_CONTROL.flags.PortTimerEN && (!PORT_CONTROL.flags.ControlPortON | !PORT_CONTROL.flags.CPTime)) //PORT was OFF or O1 was previously issued    REV AG
             {
                 CONTROL = 1; //Turn PORT ON
@@ -20374,7 +20343,6 @@ void __attribute__((__interrupt__)) _INT1Interrupt(void)                        
                 PortOffMinutes=read_Int_FRAM(PortOffMinutesaddress);            //write Port OFF minutes to RTC   
                 setClock(RTCAlarm2MinutesAddress, PortOffMinutes);
             } else
-            //if (PORT_CONTROL.flags.ControlPortON | PORT_CONTROL.flags.O0issued | PORT_CONTROL.flags.CPTime) //PORT was ON,O0 was previously issued or CPTime in process   REM REV AG
             if (PORT_CONTROL.flags.PortTimerEN &&(PORT_CONTROL.flags.ControlPortON | PORT_CONTROL.flags.O0issued | PORT_CONTROL.flags.CPTime)) //PORT was ON,O0 was previously issued or CPTime in process REV AG
             {
                 CONTROL = 0;                                                    //Turn PORT OFF
@@ -20422,16 +20390,14 @@ void __attribute__((__interrupt__)) _INT1Interrupt(void)                        
 
     }
 
-    //ClrWdt(); //TEST VER 6.0.10                                               TEST REM REV CF    
-    //WDTSWDisable; //TEST VER 6.0.10                                           TEST REM REV CF
 }
 
 void __attribute__((__interrupt__)) _AltINT1Interrupt(void)                     //This is the RTC ALTERNATE ISR when time to read occurs
 {
     unsigned char   tempRTC;                                                    //REV AH
-    //WDTSWEnable; //TEST VER 6.0.10                                            //TEST REM REV CF
+
     IFS1bits.INT1IF = 0; //clear the interrupt flag                             //REV B
-    //TEST REV O:
+
     INTCON1bits.NSTDIS = 0;
     if(SRbits.IPL==7)
         SRbits.IPL=5;
@@ -20439,33 +20405,12 @@ void __attribute__((__interrupt__)) _AltINT1Interrupt(void)                     
     SLEEP12V = 0;
     validRTC = debounce();
     
-    //*********************TEST REV W:**************************************
-    //crlf();
-    //RTCdata = readClock(RTCAlarm1HoursAddress); //get the hour from the RTC
-    //displayClock(RTCdata); //display it
-
-    //putcUART1(colon); // ':'
-    //while (BusyUART1());
-
-    //RTCdata = readClock(RTCAlarm1MinutesAddress); //get the minutes from the RTC
-    //displayClock(RTCdata); //display it
-    
-    //putcUART1(colon); // ':'
-    //while (BusyUART1());
-
-    //RTCdata = readClock(RTCAlarm1SecondsAddress); //get the seconds from the RTC
-    //displayClock(RTCdata); //display it    
-    //crlf();
-    //*********************************************************************
-
-
     if (validRTC) //if valid interrupt
     {
         PORT_CONTROL.control=read_Int_FRAM(CONTROL_PORTflagsaddress);          //get the PORT_CONTROL flags  
         intSource = readClock(0x0F); //get the RTC Alarm flags		
         intSource &= 0x03; //strip off bits 7-2    VER 6.0.13
         
-        //if (PORT_CONTROL.flags.Alarm1Enabled && (intSource == 0x01 | intSource == 0x03)) //Alarm 1 (NO NEED TO TEST Alarm1Enabled flag)   REM REV AH
         if(intSource == 0x01 | intSource == 0x03)                               //Alarm 1 REV AH
         {
             tempRTC=readClock(0x0f);                                            //clear the RTC A1F REV AH
@@ -20484,17 +20429,13 @@ void __attribute__((__interrupt__)) _AltINT1Interrupt(void)                     
             take_One_Complete_Reading(STORE);
             TMR5HLD = tempTMR5; //restore TMR4/5 registers
             TMR4 = tempTMR4;
-            //if (!LC2CONTROL.flags.NetEnabled && LC2CONTROL.flags.USBpower)    REM REV CH
             if (LC2CONTROL.flags.USBpower)                                      //REV CH
                 T4CONbits.TON = 1; //turn Timer4/5 back on
-            //ClrWdt();                                                         //TEST REM REV CF
-            //WDTSWDisable;                                                     //TEST REM REV CF
             U1STAbits.OERR = 0; //clear flag if overrun error
             PMD3bits.T9MD=0;                                                    //Make sure TMR9 module is enabled  REV Z
             IFS3bits.T9IF = 1;
         }        
 
-        //if (PORT_CONTROL.flags.Alarm2Enabled && (intSource == 0x02 | intSource == 0x03)) //Alarm 2   (NO NEED TO TEST Alarm2Enabled flag) REM REV AH
         if(intSource == 0x02 | intSource == 0x03)                               //Alarm 2 REV AH
         {
             tempRTC=readClock(0x0f);                                            //clear the RTC A2F REV AH
@@ -20502,7 +20443,6 @@ void __attribute__((__interrupt__)) _AltINT1Interrupt(void)                     
             setClock(0x0f,tempRTC);                                             //REV AH
             disableAlarm(Alarm2);
 
-            //if (!PORT_CONTROL.flags.ControlPortON | !PORT_CONTROL.flags.CPTime) //PORT was OFF or O1 was previously issued    REM REV AG
             if (PORT_CONTROL.flags.PortTimerEN && (!PORT_CONTROL.flags.ControlPortON | !PORT_CONTROL.flags.CPTime)) //PORT was OFF or O1 was previously issued    REV AG
             {
                 CONTROL = 1; //Turn PORT ON
@@ -20516,7 +20456,6 @@ void __attribute__((__interrupt__)) _AltINT1Interrupt(void)                     
                 PortOffMinutes=read_Int_FRAM(PortOffMinutesaddress);            //write Port OFF minutes to RTC   
                 setClock(RTCAlarm2MinutesAddress, PortOffMinutes);
             } else
-            //if (PORT_CONTROL.flags.ControlPortON | PORT_CONTROL.flags.O0issued | PORT_CONTROL.flags.CPTime) //PORT was ON,O0 was previously issued or CPTime in process   REM REV AG
             if (PORT_CONTROL.flags.PortTimerEN &&(PORT_CONTROL.flags.ControlPortON | PORT_CONTROL.flags.O0issued | PORT_CONTROL.flags.CPTime)) //PORT was ON,O0 was previously issued or CPTime in process REV AG
             {
                 CONTROL = 0;                                                    //Turn PORT OFF
@@ -20560,8 +20499,6 @@ void __attribute__((__interrupt__)) _AltINT1Interrupt(void)                     
 
     }
 
-    //ClrWdt(); //TEST VER 6.0.10                                               TEST REM REV CF
-    //WDTSWDisable; //TEST VER 6.0.10                                           TEST REM REV CF
 }
 
 //REV AE:
@@ -20578,10 +20515,8 @@ void __attribute__((__interrupt__)) _AltOscillatorFail(void)
 //REV M:
 void __attribute__((__interrupt__)) _T5Interrupt(void)                          //This is the Timer 5 256mS interrupt
 {
-	//VWcountLSW=TMR7;                                                            //read the counter value (/8)   REM REV DB
     VWcountLSW=TMR7+1;                                                          //read the counter value (/8)   REV DB
     IFS1bits.T5IF=0;                                                            //clear the interrupt flag
-	//VWcountLSW=TMR7;                                                            //read the counter value (/8) REM REV DB
     CaptureFlag=1;                                                              //set the capture flag	
 }
 

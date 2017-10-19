@@ -2616,12 +2616,12 @@ __FUID3
  .debug_abbrev    0x000146        0x1bd build/default/production/_ext/1472/LC8004extFRAM_i.o
  .debug_abbrev    0x000303        0x2ed build/default/production/_ext/1472/lc8004main_1_1.o
 
-.debug_line       0x000000       0x3469
+.debug_line       0x000000       0x3465
  *(.debug_line)
  .debug_line      0x000000         0xc4 build/default/production/_ext/1472/AD5241a.o
  .debug_line      0x0000c4         0x56 build/default/production/_ext/1472/LC8004delay_b.o
  .debug_line      0x00011a        0x32d build/default/production/_ext/1472/LC8004extFRAM_i.o
- .debug_line      0x000447       0x3022 build/default/production/_ext/1472/lc8004main_1_1.o
+ .debug_line      0x000447       0x301e build/default/production/_ext/1472/lc8004main_1_1.o
 
 .debug_frame      0x000000       0x26a4
  *(.debug_frame)
@@ -4598,33 +4598,33 @@ __c30_signature
 .data               0x29f2          0x2
  .data              0x29f2          0x2 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(xgenld_cdfFnopuxX.XXeo)
 
-_03F89900_at_address_00F80006
+_03F79900_at_address_00F80006
                   0xf80006          0x2
- _03F89900_at_address_00F80006
+ _03F79900_at_address_00F80006
                   0xf80006          0x2 build/default/production/_ext/1472/lc8004main_1_1.o
                   0xf80006                  _FOSCSEL
 
-_03F89960_at_address_00F80008
+_03F79960_at_address_00F80008
                   0xf80008          0x2
- _03F89960_at_address_00F80008
+ _03F79960_at_address_00F80008
                   0xf80008          0x2 build/default/production/_ext/1472/lc8004main_1_1.o
                   0xf80008                  _FOSC
 
-_03F899C0_at_address_00F8000A
+_03F799C0_at_address_00F8000A
                   0xf8000a          0x2
- _03F899C0_at_address_00F8000A
+ _03F799C0_at_address_00F8000A
                   0xf8000a          0x2 build/default/production/_ext/1472/lc8004main_1_1.o
                   0xf8000a                  _FWDT
 
-_03F89A20_at_address_00F8000C
+_03F79A20_at_address_00F8000C
                   0xf8000c          0x2
- _03F89A20_at_address_00F8000C
+ _03F79A20_at_address_00F8000C
                   0xf8000c          0x2 build/default/production/_ext/1472/lc8004main_1_1.o
                   0xf8000c                  _FPOR
 
-_03F89A80_at_address_00F8000E
+_03F79A80_at_address_00F8000E
                   0xf8000e          0x2
- _03F89A80_at_address_00F8000E
+ _03F79A80_at_address_00F8000E
                   0xf8000e          0x2 build/default/production/_ext/1472/lc8004main_1_1.o
                   0xf8000e                  _FICD
 
