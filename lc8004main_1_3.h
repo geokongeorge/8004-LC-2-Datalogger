@@ -744,7 +744,7 @@ unsigned int decimalRTC;
 #define	MUX_RESET               LATFbits.LATF13		//Multiplexer Reset	(default 0) 	(OUTPUT)
 
 //PortG Defines
-#define IN2                     LATGbits.LATG6      //H-Bridge drive OUT2 control   (OUTPUT)    REV CA
+#define IN2                     LATGbits.LATG6      //H-Bridge drive OUT2 control   (OUTPUT)    
 #define A                       LATGbits.LATG12     //PLL Fco Select control                (OUTPUT)
 #define B                       LATGbits.LATG13     //PLL Fco Select control                (OUTPUT)
 #define C                       LATGbits.LATG14     //PLL Fco Select control                (OUTPUT)
@@ -753,33 +753,27 @@ unsigned int decimalRTC;
 //----------------------------------------------------------------------------
 //              FCY
 //----------------------------------------------------------------------------
-#define FCY 29491200UL                                                          //Fcy = 29.4912MHz  REV AE
+#define FCY 29491200UL                                                          //Fcy = 29.4912MHz  
 
 
 //------------------------------------------------------------------------------
 //          100mS delay value for VW signal measurement          
-#define mS100   0xb4000                                                         //Fcy is 7.3728MHz here   REV DA     
+#define mS100   0xb4000                                                         //Fcy is 7.3728MHz here        
 
 
 //------------------------------------------------------------------------------
 //          50mS delay value for VW signal measurement          
-#define mS50   0x5a000                                                          //Fcy is 7.3728MHz here   REV DA     
+#define mS50   0x5a000                                                          //Fcy is 7.3728MHz here        
 
 
 //----------------------------------------------------------------------------
 //          15mS delay value for MODBUS wakeup
-#define mS15        0x6c000                                                     //REV CQ
-
-
-//------------------------------------------------------------------------------
-//                  VW signal good threshold
-//#define   V2_25   0xe66                                                         //12bit 2.25V   REV DA   REM REV DB                            
-
+#define mS15        0x6c000                                                     
 
 
 //----------------------------------------------------------------------------
 //          300uS delay value for RTC
-#define uS300      0x228f                                                      //REV CQ
+#define uS300      0x228f                                                      
 
 
 //----------------------------------------------------------------------------

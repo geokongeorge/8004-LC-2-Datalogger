@@ -9,16 +9,16 @@
 //
 //-------------------------------------------------------------
 
-
+//!!!!!!!!!!!!!RETURNS FREQUENCY INSTEAD OF DIGITS!!!!!!!!!!!!
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		10/17/2017
+//	DATE:		10/24/2017
 //	DESIGNER: 	GEORGE MOORE
-//	REVISION:   1.3
-//	CHECKSUM:	0x5079  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	REVISION:   1.4
+//	CHECKSUM:	0x07d9  (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8786/30720   29%
-//	PGM(FLASH)MEM:  153600/261888 59%
+//	PGM(FLASH)MEM:  154053/261888 59%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -206,6 +206,11 @@
 //                                  Add BTR (Bluetooth Reset) command
 //      1.3     10/17/17            Continue work on RSN functionality
 //                                  Add function u.i. take_fast_analog_reading(u.c.)
+//      1.4     10/24/17            Debug ID
+//                                  Restore register values when exiting Read Serial Number
+//                                  Return frequency (Hz) instead of digits for testing
+//                                  Add digital 5-point moving average filter in take_fast_analog_reading()
+//                                  
 //
 //
 //
@@ -256,7 +261,7 @@
 //	Header Files:
 //#include "p33FJ256GP710A.h"
 //#include "LC8004extFRAM_i.h"                              
-//#include "LC8004main_1_3.h"
+//#include "LC8004main_1_4.h"
 //#include "LC8004delay_b.h"
 //#include "AD5241a.h"
 //#include "FRAM_ADDRESSh.h                                                     
@@ -282,7 +287,7 @@
 //--------------------------------------------------------------
 #include "p33FJ256GP710A.h"
 #include "LC8004extFRAM_i.h"                                                    //REV BH
-#include "LC8004main_1_3.h"
+#include "LC8004main_1_4.h"
 #include "LC8004delay_b.h"                                                      //REV Z
 #include "AD5241a.h"
 #include "FRAM_ADDRESSh.h"                                                      //REV 1.1
@@ -2766,7 +2771,7 @@ void CMDcomm(void)
                         putsUART1(DataloggerID); //Datalogger ID:
                         while (BusyUART1());
 
-                        for (i = IDaddress; i < FRAM_MEMORYflagsaddress; i += 2) //parse the buffer and extract the ID character
+                        for (i = IDaddress; i < CH1GTaddress; i += 2) //parse the buffer and extract the ID character   REV 1.4
                         {
                             data=read_Int_FRAM(i);				//read the ID starting FRAM location  
                             unpack(data); //unpack into (2) bytes
@@ -2796,7 +2801,7 @@ void CMDcomm(void)
                         putsUART1(DataloggerID); //Datalogger ID:
                         while (BusyUART1());
 
-                        for (i = IDaddress; i < FRAM_MEMORYflagsaddress; i++) //load the ID buffer with <cr>   VER 6.0.2
+                        for (i = IDaddress; i < CH1GTaddress; i++) //load the ID buffer with <cr>   REV 1.4
                         {
                             write_Int_FRAM(IDaddress,cr);  //VER 6.0.2 VER 6.0.13    
                         }
@@ -2808,8 +2813,8 @@ void CMDcomm(void)
 
                     if (buffer[1] == capD && buffer[2] != cr && buffer[2] != space) //Enter Datalogger ID and store in FRAM
                     {
-                        tempID = IDaddress; //VER 6.0.12
-                        LC2CONTROL.flags.ID = 1; //set the ID flag
+                        tempID = IDaddress; 
+                        LC2CONTROL.flags.ID = 1;                                //set the ID flag
                         write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM	
                         putsUART1(DataloggerID); //Datalogger ID:
                         while (BusyUART1());
@@ -2817,7 +2822,7 @@ void CMDcomm(void)
                         for (i = 2; i < 17; i++) {
                             if (!isdigit(buffer[i]) && !isalpha(buffer[i]) && buffer[i] != cr && !isgraph(buffer[i]) && buffer[i] != space)//invalid
                             { //so display the stored ID
-                                for (i = tempID; i < FRAM_MEMORYflagsaddress; i += 2) //parse the buffer and extract the ID character
+                                for (i = tempID; i < CH1GTaddress; i += 2)      //parse the buffer and extract the ID character REV 1.4
                                 {
                                     data=read_Int_FRAM(i);				//read the ID starting FRAM location  
                                     unpack(data); //unpack into (2) bytes
@@ -3596,10 +3601,26 @@ void CMDcomm(void)
                         }
                         
                     }
+                    
                     if(PORT_CONTROL.flags.temp)
                     {
                         IEC1bits.INT1IE=1;
                     }
+                    
+                    //Restore Register values:                                  REV 1.4
+                    T6CONbits.T32=0;                                            //Reset TMR6/7 for 16bit mode   
+                    PR6=0;                                                      //Reset PR6/7/8   
+                    PR7=0;  
+                    PR8=0;
+                    IEC3bits.T7IE=0;                                            //Disable TMR7 interrupt    
+                    IPC12bits.T7IP=4;                                           //Reset TMR7 interrupt priority to back to 4     
+                    TMR6=0;                                                     //clear the TMR6 register   
+                    TMR7=0;                                                     //clear the TMR7 register  
+                    TMR8=0;                                                                 //clear the TMR8 register                    
+                    INTCON2bits.ALTIVT=0;                                       //restore to primary interrupt vectors
+                    PMD3bits.T6MD=1;                                            //Disable TMR6  
+                    PMD3bits.T7MD=1;                                            //Disable TMR7 
+                    PMD3bits.T8MD=1;                                            //Enable TMR8
                     break;
 
                 case capS:
@@ -7224,7 +7245,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
     if (LC2CONTROL.flags.ID)                                                    //display ID    VER BA
     {
 
-        for (i = IDaddress; i < FRAM_MEMORYflagsaddress; i += 2)            //parse the buffer and extract the ID character
+        for (i = IDaddress; i < CH1GTaddress; i += 2)            //parse the buffer and extract the ID character    REV 1.4
         {
             data=read_Int_FRAM(i);                                          //read the ID starting FRAM location    
             unpack(data); //unpack into (2) bytes
@@ -9650,7 +9671,7 @@ void displayTempReading(void) {
     {
         //IDaddress=0xF030;                                                       //reset ID FRAM pointer
 
-        for (i = IDaddress; i < FRAM_MEMORYflagsaddress; i += 2) //parse the buffer and extract the ID character
+        for (i = IDaddress; i < CH1GTaddress; i += 2) //parse the buffer and extract the ID character   REV 1.4
         {
             data=read_Int_FRAM(i);                                             //read the ID starting FRAM location    
             unpack(data); //unpack into (2) bytes
@@ -11144,6 +11165,27 @@ void enableVWchannel(unsigned char gageType)                                    
 }
 
 
+unsigned int filterArray(unsigned int unfiltered[])                             //REV 1.4
+{
+    unsigned int filtered[16];                                                  //filtered array
+    unsigned int result=0;                                                      //final filtered value
+    unsigned char i=0;                                                          //index
+    
+    for(i=0;i<16;i++)                                                           //perform 5 point moving average  
+    {
+        filtered[i]=(unfiltered[i]+unfiltered[i+1]+unfiltered[i+2]+unfiltered[i+3]+unfiltered[i+4])/5;
+        //filtered[i]=(unfiltered[i]+unfiltered[i+1]+unfiltered[i+2]+unfiltered[i+3]+unfiltered[i+4]+unfiltered[i+5]+unfiltered[i+6])/7;  //7 POINT
+    }
+    
+    for(i=0;i<16;i++)                                                           //totalize the results
+    {
+        result+=filtered[i];
+    }
+    
+    result = result >> 4;
+    return result;                                                              //return the final filtered value
+}
+
 
 void formatandDisplayGageInfo(float TEMPVAL) {
     char BUF[8]; //temporary storage for gage info
@@ -11260,40 +11302,31 @@ unsigned char getSNbytes(unsigned int logicthreshold)                           
     T6CONbits.TCS=0;                                                            //set to count internal (Fosc/2) clocks
     T7CONbits.TCS=0;                                                            //set to count internal (Fosc/2) clocks 
     T6CONbits.TGATE=0;                                                          //Disable gated time accumulation
-    T6CONbits.TGATE=0;                                                          //Disable gated time accumulation 
     
     for(b=0;b<6;b++)                                                            //will be receiving 6 bytes
     {
-        PR6=mS1_65LSW;                                                          //Load TMR6 period register with 1.65mS least significant word
-        PR7=mS1_65MSW;                                                          //Load TMR7 period register with 1.65mS most significant word    
+        PR6=mS1_5LSW;                                                           //Load TMR6 period register with 1.5mS least significant word   REV 1.4
+        PR7=mS1_5MSW;                                                           //Load TMR7 period register with 1.5mS most significant word    REV 1.4
         IFS3bits.T7IF=0;                                                        //clear the TMR7 interrupt flag
         IEC3bits.T7IE=1;                                                        //Enable TMR7 interrupt  
         IPC12bits.T7IP=6;                                                       //Set TMR7 interrupt priority to 6    
         TMR6=0;                                                                 //clear the TMR6 register
         TMR7=0;                                                                 //clear the TMR7 register   
+        
 
-        //Turn on the ADC:
-        //AD1CON1bits.ADON=1;                                                   REM REV 1.3
-        //ADC16Ptr = &ADC1BUF0;                                                   //point to the ADC buffer0 address    REM REV 1.3
-    
+        
         //wait for start bit:    
-        while(databit<logicthreshold)                                           //wait for the start bit
+        //while(databit<logicthreshold)                                           //wait for the start bit  REM REV 1.4
+        while((databit<logicthreshold) && !IFS3bits.T8IF)                       //wait for the start bit    REV 1.4
         {
-            //databit=0;                                                          //reset databit value REM REV 1.3
             databit=take_fast_analog_reading();                                 //REV 1.3
-            //IFS0bits.AD1IF=0;                                                   //clear the interrupt flag    REM REV 1.3
-            //for(i=0;i<16;i++)                                                 REM REV 1.3
-            //{                                                                 REM REV 1.3
-            //    AD1CON1bits.DONE=0;                                           REM REV 1.3       
-            //    AD1CON1bits.SAMP=1;                                             //begin sampling   REM REV 1.3
-            //    testPoint(1,1);                                               REM REV 1.3    
-            //    while(!IFS0bits.AD1IF);                                       REM REV 1.3       
-            //    AD1CON1bits.SAMP=0;                                             //stop sampling   REM REV 1.3
-            //    IFS0bits.AD1IF=0;                                             REM REV 1.3       
-            //    databit=databit+*ADC16Ptr;                                    REM REV 1.3
-            //}                                                                 REM REV 1.3    
-            //databit=databit>>4;                                                 //Average of 16 samples   REM REV 1.3
-        }  
+        } 
+        
+        if(IFS3bits.T8IF)                                                       //0.5S timeout?
+        {
+            IFS3bits.T8IF=0;    
+            return 0;
+        }
     
         VWflagsbits.timeout=0;                                                  //make sure timeout flag is clear
         T6CONbits.TON=1;                                                        //Start TMR 6/7
@@ -11304,31 +11337,15 @@ unsigned char getSNbytes(unsigned int logicthreshold)                           
         
         //Sample start bit:
         databit=take_fast_analog_reading();                                     //REV 1.3
-        //databit=0;                                                              //reset databit value REM REV 1.3
-        //IFS0bits.AD1IF=0;                                                       //clear the interrupt flag    REM REV 1.3
-        //for(i=0;i<16;i++)                                                     REM REV 1.3    
-        //{                                                                     REM REV 1.3
-        //    AD1CON1bits.DONE=0;                                               REM REV 1.3   
-        //    AD1CON1bits.SAMP=1;                                                 //begin sampling  REM REV 1.3
-        //    testPoint(1,1);                                                   REM REV 1.3
-        //    while(!IFS0bits.AD1IF);                                           REM REV 1.3   
-        //    AD1CON1bits.SAMP=0;                                                 //stop sampling   REM REV 1.3
-        //    IFS0bits.AD1IF=0;                                                 REM REV 1.3   
-        //    databit=databit+*ADC16Ptr;                                        REM REV 1.3
-        //}                                                                     REM REV 1.3
-        //databit=databit>>4;                                                     //Average of 16 samples   REM REV 1.3
         
         if(databit<logicthreshold)
-        {
-            INTCON2bits.ALTIVT=0;                                               //restore to primary interrupt vectors
             return 0;                                                           //Error - return 0
-        }
     
         for(s=0;s<9;s++)                                                        //get the bits of the byte
         {
             databit=0;
-            PR6=mS3_33LSW;                                                      //Load TMR6 period register with 3.33mS least significant word
-            PR7=mS3_33MSW;                                                      //Load TMR7 period register with 3.33mS most significant word   
+            PR6=mS3_15LSW;                                                      //Load TMR6 period register with 3.15mS least significant word  REV 1.4
+            PR7=mS3_15MSW;                                                      //Load TMR7 period register with 3.15mS most significant word   REV 1.4
             TMR6=0;                                                             //clear the TMR6 register
             TMR7=0;                                                             //clear the TMR7 register       
             T6CONbits.TON=1;                                                    //Start the 3.33mS timer        
@@ -11336,25 +11353,11 @@ unsigned char getSNbytes(unsigned int logicthreshold)                           
             T6CONbits.TON=0;                                                    //Turn off timer
             VWflagsbits.timeout=0;                                              //reset the timeout flag 
 
-            //IFS0bits.AD1IF=0;                                                   //clear the interrupt flag    REM REV 1.3
             databit=take_fast_analog_reading();                                 //REV 1.3
-            //for(i=0;i<16;i++)                                                 REM REV 1.3
-            //{                                                                 REM REV 1.3
-            //    AD1CON1bits.DONE=0;                                           REM REV 1.3       
-            //    AD1CON1bits.SAMP=1;                                             //begin sampling      REM REV 1.3
-            //    testPoint(1,1);                                               REM REV 1.3
-            //    while(!IFS0bits.AD1IF);                                       REM REV 1.3       
-            //    AD1CON1bits.SAMP=0;                                             //stop sampling   REM REV 1.3
-            //    IFS0bits.AD1IF=0;                                             REM REV 1.3       
-            //    databit=databit+*ADC16Ptr;                                    REM REV 1.3    
-            //}                                                                 REM REV 1.3
-            //databit=databit>>4;                                                 //Average of 16 samples   REM REV 1.3
             
             if(s==8 && (databit>logicthreshold))                                //stop bit not detected
-            {
-                INTCON2bits.ALTIVT=0;                                           //restore to primary interrupt vectors
                 return 0;                                                       //Error - return 0
-            }                                                                   //error
+
             
             if(s==8 && (databit<logicthreshold))
                 break;                                                          //byte received so exit
@@ -11416,15 +11419,13 @@ unsigned char getSNbytes(unsigned int logicthreshold)                           
                 else
                     SN_BITS.temp.bit7=1;                                        //databit<threshold so logic 1
                 break;                
-                
             }
         }
     
         MODBUS_RXbuf[b]=SN_BITS.sn;                                             //store the received byte
 
     }
-    
-    INTCON2bits.ALTIVT=0;                                                       //restore to primary interrupt vectors
+
     return 1;                                                                   //6 bytes received ok - return 1
 }
 
@@ -13431,7 +13432,7 @@ unsigned char getSerialNumber(void)
     unsigned char result=0;
     unsigned int logicthreshold=0;
     unsigned int therm=0;
-    unsigned int Vmax=3413;                                                     //2.083V
+    unsigned int Vmax=3413;                                                     //2.083V: max V at TH (Rth = 0)
     unsigned int *ADC16Ptr;                                                     //pointer to ADC result buffer
     
 
@@ -13440,7 +13441,21 @@ unsigned char getSerialNumber(void)
     TRISB=0x033D;                                                               //Configure PORTB
     LATB=0;                                                                     //Set PORTB outputs low
     
+    //Setup TMR8 as 0.5S background timer                                       //REV 1.4
+    PMD3bits.T8MD=0;                                                            //Enable TMR8
+    T8CONbits.TON=0;                                                            //Make sure timer is off
+    T8CONbits.T32=0;                                                            //set to 16bit
+    T8CONbits.TCS=0;                                                            //Internal Tcy
+    T8CONbits.TGATE=0;                                                          //Disable gated timer mode
+    T8CONbits.TCKPS=3;                                                          //1:256 prescaler 
+    TMR8=0;                                                                     //clear the TMR8 register
+    PR8=mS500;                                                                  //load the period register with 0.5S timeout value
+    IPC12bits.T8IP=1;                                                           //set TMR8 interrupt priority to 1 (lowest)
+    IFS3bits.T8IF=0;                                                            //Clear the interrupt flag
+    IEC3bits.T8IE=0;                                                            //Disable TMR8 interrupt
 
+    //Start the 0.5S background timer                                           //REV 1.4
+    T8CONbits.TON=1;
     
     //Turn on +3VX:
     _3VX_on();
@@ -15445,15 +15460,9 @@ void processReading(float VWreading, int channel) {
         return;
     }
 
-    //if (LC2CONTROL2.flags2.R) {                                               REM REV CP
-    VWreadingProcessed = ((VWreading - zeroReading) * gageFactor) + gageOffset;   
+    //VWreadingProcessed = ((VWreading - zeroReading) * gageFactor) + gageOffset;   TEST REM REV 1.4
+    VWreadingProcessed=VWreading;                                               //TEST REV 1.4
     return;
-    //}                                                                         REM REV CP
-
-    //if (!LC2CONTROL2.flags2.R) {                                              REM REV CP
-    //    VWreadingProcessed = ((zeroReading - VWreading) * gageFactor) + gageOffset;   REM REV CP
-    //    return;                                                               REM REV CP
-    //}                                                                         REM REV CP
 }
 
 void prompt(void) //transmit <CR><LF>
@@ -15943,8 +15952,8 @@ float read_vw(void)
 		digits=(frequency*frequency)*.001;			//digits = F^2x10E-3 if linear conversion
 	}
 
-	return digits;							 		//return the digits	TEST REM VER 5.8.1.3
-	//return frequency;								//TEST VER 5.8.1.3
+	//return digits;							 		//return the digits	TEST REM REV 1.4
+	return frequency;								//TEST REV 1.4
 }
 
 
@@ -17760,8 +17769,10 @@ unsigned int take_analog_reading(unsigned char gt)                              
 
 unsigned int take_fast_analog_reading(void)                                     //REV 1.3
 {
+    volatile unsigned int dataBUF[16];                                                   //REV 1.4
+    //volatile unsigned int dataBUF[20];                                                   //REV 1.4
     unsigned char i=0;
-    unsigned int data=0;
+    volatile unsigned int data=0;
     unsigned int *ADC16Ptr;
     
     //Configure ADC:
@@ -17779,6 +17790,12 @@ unsigned int take_fast_analog_reading(void)                                     
     AD1CHS0=0x0004;                                                             //AN4 is positive input
     IFS0bits.AD1IF=0;                                                           //Clear the ADC interrupt flag
     
+    //for(i=0;i<20;i++)                                                           //REV 1.4
+    //{
+    //    dataBUF[i]=0x0800;                                                      //Initialize dataBUF[] to 2048
+    //}      
+    //*ADC16Ptr=0;                                                                //REV 1.4
+    
     //Turn on the ADC:
     AD1CON1bits.ADON=1;      
     ADC16Ptr = &ADC1BUF0;                                                       //point to the ADC buffer0 address
@@ -17789,15 +17806,26 @@ unsigned int take_fast_analog_reading(void)                                     
         AD1CON1bits.DONE=0;                                                  
         AD1CON1bits.SAMP=1;                                                     //begin sampling   
         testPoint(1,1);
-        while(!IFS0bits.AD1IF);                                              
+        //while(!IFS0bits.AD1IF);                                               REM REV 1.4
+        while(!IFS0bits.AD1IF && !IFS3bits.T8IF);                               //REV 1.4                                      
         AD1CON1bits.SAMP=0;                                                     //stop sampling 
         IFS0bits.AD1IF=0;                                                    
-        data=data+*ADC16Ptr;              
+        //data=data+*ADC16Ptr;                                                  //REM REV 1.4                                                 
+        dataBUF[i]=*ADC16Ptr;                                                   //store value in array  REV 1.4
     }
     //Turn off the ADC:
     AD1CON1bits.ADON=0;                                                         
     PMD1bits.AD1MD=1;                                                           //Disable the ADC
-    data=data>>4;                                                               //Average of 16 samples    
+    
+    //5 point Moving average filter the readings                                //REV 1.4
+    data=filterArray(dataBUF);                                                  //REV 1.4
+
+    //for(i=0;i<16;i++)                                                           //REM REV 1.4
+    //{                                                                         //REM REV 1.4
+    //    data=data+dataBUF[i];                                                       //sum the results    REM REV 1.4
+    //}                                                                         //REM REV 1.4
+    
+    //data=data>>4;                                                               //Average of 16 samples    REM REV 1.4
     return data;                                                                //return the data
 }
 

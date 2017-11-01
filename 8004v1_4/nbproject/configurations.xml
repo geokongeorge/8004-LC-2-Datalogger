@@ -10,7 +10,6 @@
       <itemPath>../LC8004delay_b.h</itemPath>
       <itemPath>../LC8004extFRAM_i.h</itemPath>
       <itemPath>../FRAM_ADDRESSh.h</itemPath>
-      <itemPath>../lc8004main_1_3.h</itemPath>
       <itemPath>../lc8004main_1_4.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
@@ -46,7 +45,7 @@
         <targetDevice>dsPIC33FJ256GP710A</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>PM3PlatformTool</platformTool>
+        <platformTool>RealICEPlatformTool</platformTool>
         <languageToolchain>XC16</languageToolchain>
         <languageToolchainVersion>1.26</languageToolchainVersion>
         <platform>3</platform>

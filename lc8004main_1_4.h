@@ -1,6 +1,6 @@
 
-#ifndef LC8004main_1_3_H
-#define LC8004main_1_3_H
+#ifndef LC8004main_1_4_H
+#define LC8004main_1_4_H
 
 // DSPIC33FJ256GP710A Configuration Bit Settings
 
@@ -757,6 +757,10 @@ unsigned int decimalRTC;
 
 
 //------------------------------------------------------------------------------
+//   500mS delay value for 0.5S background timer (TMR8 with 1:256 prescaler)          
+#define mS500   0xe100                                                          //Fcy is 29.4912MHz here   REV 1.4     
+
+//------------------------------------------------------------------------------
 //          100mS delay value for VW signal measurement          
 #define mS100   0xb4000                                                         //Fcy is 7.3728MHz here   REV DA     
 
@@ -825,16 +829,28 @@ unsigned int decimalRTC;
 #define mS8LSW      0xe666                                                      //REV DA  
 
 //----------------------------------------------------------------------------
+//              Timer 6/7 values (3.15mS DELAY)
+//----------------------------------------------------------------------------
+#define mS3_15MSW   0x0001                                                      //REV 1.4
+#define mS3_15LSW   0x6ae1                                                      //REV 1.4  
+
+//----------------------------------------------------------------------------
 //              Timer 6/7 values (3.33mS DELAY)
 //----------------------------------------------------------------------------
-#define mS3_33MSW   0x0001                                                      //REV 1.2
-#define mS3_33LSW   0x7c29                                                      //REV 1.2  
+//#define mS3_33MSW   0x0001                                                      //REM REV 1.4
+//#define mS3_33LSW   0x7c29                                                      //REM REV 1.4
 
 //----------------------------------------------------------------------------
 //              Timer 6/7 values (1.65mS DELAY)
 //----------------------------------------------------------------------------
-#define mS1_65MSW   0x0000                                                      //REV 1.2
-#define mS1_65LSW   0xbe14                                                      //REV 1.2  
+//#define mS1_65MSW   0x0000                                                      //REM REV 1.4
+//#define mS1_65LSW   0xbe14                                                      //REM REV 1.4  
+
+//----------------------------------------------------------------------------
+//              Timer 6/7 values (1.5mS DELAY)
+//----------------------------------------------------------------------------
+#define mS1_5MSW    0x0000                                                      //REV 1.4
+#define mS1_5LSW    0xaccd                                                      //REV 1.4  
 
 
 //----------------------------------------------------------------------------
@@ -1186,7 +1202,7 @@ char Reset[]={"R                      Reset memory"};
 char RESET[]={"RESET                  RESET processor"};		
 char Resetting[]={"Resetting..."};								
 char ResetComplete[]={"RESET COMPLETE"};						
-char Rev[]={"1.3"};                                                             
+char Rev[]={"1.4"};                                                             
 char RnotAllowed[]={"RESET Not Allowed While Logging"};			
 char RUsure[]={"Are you sure(Y/N)?"};
 char RSN[]={"RSN                    Read transducer Serial Number"};            //REV 1.2
@@ -1345,6 +1361,7 @@ void enableOP(void);                                                            
 void enableINT1(void);                                                          //REV B
 void enableVWchannel(unsigned char gageType);                                         //REV H
 unsigned int f32toINT16(float);                                                 //REV T
+unsigned int filterArray(unsigned int []);                                      //REV 1.4
 void formatandDisplayGageInfo(float TEMPVAL);
 unsigned char getSNbytes(unsigned int);                                         //REV 1.3
 int getConversion(void);
