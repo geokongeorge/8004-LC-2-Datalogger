@@ -13,12 +13,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		10/31/2017
+//	DATE:		11/02/2017
 //	DESIGNER: 	GEORGE MOORE
-//	REVISION:   1.6
-//	CHECKSUM:	0x4A59  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	REVISION:   1.7
+//	CHECKSUM:	0xb163  (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8786/30720   29%
-//	PGM(FLASH)MEM:  153987/261888 59%
+//	PGM(FLASH)MEM:  153810/261888 59%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -213,6 +213,7 @@
 //      1.5     10/25/17            Read Vth(max) at beginning of probe serial number read to more accurately set the data threshold value, instead of hard coding it
 //      1.6     10/31/17            Sample 20 times instead of 16 times in take_fast_analog_reading so that the unfiltered[] inputs to y[] are all accounted for
 //                                  Improve accuracy of VW reading
+//      1.7     11/02/17            Experiment with Fcy = 29.4912MHz during VW read and various gate times
 //                                  
 //
 //
@@ -264,9 +265,9 @@
 //	Header Files:
 //#include "p33FJ256GP710A.h"
 //#include "LC8004extFRAM_i.h"                              
-//#include "LC8004main_1_6.h"
+//#include "LC8004main_1_7.h"
 //#include "LC8004delay_b.h"
-//#include "AD5241a.h"
+//#include "AD5241b.h"
 //#include "FRAM_ADDRESSh.h                                                     
 //#include <outcompare.h>
 //#include <ports.h>
@@ -290,9 +291,9 @@
 //--------------------------------------------------------------
 #include "p33FJ256GP710A.h"
 #include "LC8004extFRAM_i.h"                                                    //REV BH
-#include "LC8004main_1_6.h"
+#include "LC8004main_1_7.h"
 #include "LC8004delay_b.h"                                                      //REV Z
-#include "AD5241a.h"
+#include "AD5241b.h"                                                            //REV 1.7
 #include "FRAM_ADDRESSh.h"                                                      //REV 1.1
 #include <outcompare.h>
 #include <ports.h>
@@ -1664,7 +1665,8 @@ void clockMux(unsigned int delayValue) {
     MUX_CLOCK = 0; //set MUX_CLOCK low
 }
 
-void clockSwitch(unsigned char targetclock)                                     //REV AF
+/*
+void clockSwitch(unsigned char targetclock)                                     //REM REV 1.7
 {
         ClrWdt();
         WDTSWEnable;                                                            //Start WDT   
@@ -1688,6 +1690,8 @@ void clockSwitch(unsigned char targetclock)                                     
         
         __builtin_disi(0x0000);                                                 //Re-enable interrupts and return
 }
+*/
+
 
 void clockThMux(unsigned int delayValue) {
     MUX_RESET = 1; //set MUX_RESET high
@@ -6620,9 +6624,6 @@ void displayMemoryStatus(void) {
 
 void displayMUX(int displayChannel) 
 {
-    //unsigned int faggot=0;
-    
-    
     MUX_ENABLE1_16.MUXen1_16=read_Int_FRAM(MUX_ENABLE1_16flagsaddress);       
     MUX_ENABLE17_32.MUXen17_32=read_Int_FRAM(MUX_ENABLE17_32flagsaddress);          
     
@@ -13317,11 +13318,11 @@ float getFrequency(void)
 	float frequency=0.0;
 	float frequencyTotal=0.0;                                                   //VER 5.8.1.3
 	unsigned int i=0;                                                           //VER 5.8.1.3
-	//unsigned int loopsTotal=1;                                                  TEST REM REV 1.6
-    unsigned int loopsTotal=2;                                                 //TEST REV 1.6
+	unsigned int loopsTotal=1;                                                  //TEST REM REV 1.6
+    //unsigned int loopsTotal=2;                                                 //REM REV 1.7
     unsigned int AGC=0;                                                         //REV DA 
 	
-    clockSwitch(0);                                                             //Switch to HS oscillator (Fcy=7.3728MHz)   REV AF
+    //clockSwitch(0);                                                             //Switch to HS oscillator (Fcy=7.3728MHz)   REM REV 1.7
     enableVWchannel(gageType);                                                  //configure the PLL and LPF TEST REV CF
     configTimers(); 
     
@@ -13334,7 +13335,7 @@ float getFrequency(void)
     if(AGC<VAGC_MIN)                                                            //if less than 2.25V threshold  REV DB
     {
         disableTimers();
-        clockSwitch(1);                                                         //Return to HSPLL oscillator (Fcy=29.4912MHz)   
+        //clockSwitch(1);                                                         //Return to HSPLL oscillator (Fcy=29.4912MHz)   REM REV 1.7
         return 0.0;                                                             //REV DA
     }
    
@@ -13358,8 +13359,10 @@ float getFrequency(void)
         }
         else
         {
-            PR4=mS256LSW;                                                           
-            PR5=mS256MSW;                                                           
+            //PR4=mS256LSW;                                                     //REM REV 1.7                                                           
+            //PR5=mS256MSW;                                                     //REM REV 1.7
+            PR4=mS512LSW;                                                       //REV 1.7                                                           
+            PR5=mS512MSW;                                                       //REV 1.7
         }
         //PR4=mS256LSW;                                                           //load PR4 with LSW	REM VER 5.8.1.3 REM REV DB
 		//PR5=mS256MSW;                                                           //load PR5 with MSW	REM VER 5.8.1.3 REM REV DB
@@ -13390,7 +13393,7 @@ float getFrequency(void)
 			if(IFS0bits.T1IF)
             {
                 disableTimers();                                                //REV DA
-                clockSwitch(1);                                                 //Return to HSPLL oscillator (Fcy=29.4912MHz)   REV DA                
+                //clockSwitch(1);                                                 //Return to HSPLL oscillator (Fcy=29.4912MHz)   REM REV 1.7
                 return 0;                                                       //timeout waiting for VW_100
             }
 
@@ -13398,13 +13401,14 @@ float getFrequency(void)
 			T4CONbits.TON=0;                                                    //shut off timer
 			CaptureFlag=0;                                                      //Reset captureFlag		
 			VWcount=(VWcountMSW*65536)+VWcountLSW;                              //Totalize counter  REV O
-            VWcount-=1;                                                         //TEST REV 1.6
+            VWcount-=1;                                                         //TEST REM REV 1.7
 
             //if(VWflagsbits.firstReading | VWflagsbits.retry)                    //REM REV 1.1
             if(VWflagsbits.retry)                                               //REV 1.1
                 frequency=(VWcount/mS64)*10.0;                                  //convert to frequency	TEST REV 1.0
             else
-                frequency=(VWcount/mS256)*10.0;                                 //convert to frequency	TEST REV 1.0
+                //frequency=(VWcount/mS256)*10.0;                                 //convert to frequency	REM REV 1.7
+                frequency=(VWcount/mS512)*10.0;                                 //convert to frequency	REV 1.7
 			frequencyTotal=frequencyTotal+frequency;                            //VER 5.8.1.3
 
 		}
@@ -13415,14 +13419,14 @@ float getFrequency(void)
     if(AGC<VAGC_MIN)                                                            //if less than 2.25V threshold  REV DB
     {
         disableTimers();
-        clockSwitch(1);                                                         //Return to HSPLL oscillator (Fcy=29.4912MHz)   
+        //clockSwitch(1);                                                         //Return to HSPLL oscillator (Fcy=29.4912MHz)   REM REV 1.7
         return 0.0;                                                             //REV DA
     }
     
 	frequency=frequencyTotal/(loopsTotal*1.0);                                  //VER 5.8.1.3
 	//shutdownTimer(TimeOut);                                                     //Reset 15S timer	REM REV Z
     disableTimers();
-    clockSwitch(1);                                                             //Return to HSPLL oscillator (Fcy=29.4912MHz)   REV AF
+    //clockSwitch(1);                                                             //Return to HSPLL oscillator (Fcy=29.4912MHz)   REM REV 1.7
 	return frequency;
 }
 
@@ -16591,6 +16595,8 @@ void setClock(unsigned char address,unsigned char data)                         
 
 void setup(void)                                                                //REV CA
 {
+    //Indicate uC clock set for HSPLL:                                          //REV 1.7
+    LC2CONTROL2.flags2.uCclock=1;                                               //REV 1.7
     
     //Configure ADC for Digital I/O & Analog inputs:
     AD2PCFGLbits.PCFG15=1;                                                      //AN15 cfg as digital pin   
@@ -17748,7 +17754,8 @@ unsigned int take_analog_reading(unsigned char gt)                              
         IFS0bits.AD1IF = 0;                                                     //clear ADC interrupt flag
 
         AD1CON1bits.ADON = 1;                                                   //turn ADC on     TEST REV Q
-        delay(8000);                                                            //REV AE
+        //delay(8000);                                                            //REM REV 1.7
+        delay(32000);                                                           //REV 1.7
 
         //REV J:
         for(count=0;count<16;count++)

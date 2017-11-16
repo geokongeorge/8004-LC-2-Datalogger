@@ -1,6 +1,6 @@
 
-#ifndef LC8004main_1_6_H
-#define LC8004main_1_6_H
+#ifndef LC8004main_1_7_H
+#define LC8004main_1_7_H
 
 // DSPIC33FJ256GP710A Configuration Bit Settings
 
@@ -762,8 +762,8 @@ unsigned int decimalRTC;
 
 //------------------------------------------------------------------------------
 //          100mS delay value for VW signal measurement          
-#define mS100   0xb4000                                                         //Fcy is 7.3728MHz here   REV DA     
-
+//#define mS100   0xb4000                                                         //Fcy is 7.3728MHz here   REM REV 1.7
+#define mS100   0x2d0000                                                        //Fcy is 29.4912MHz here   REV 1.7  
 
 //------------------------------------------------------------------------------
 //          50mS delay value for VW signal measurement          
@@ -794,46 +794,88 @@ unsigned int decimalRTC;
 
 
 //----------------------------------------------------------------------------
-//              Timer 4/5 values (512mS GATE)
+//              Timer 4/5 values (512mS GATE)   Fcy = 7.3728MHz
 //----------------------------------------------------------------------------
-#define mS512MSW    0x0039                                                      //REV DB
-#define mS512LSW    0x999a                                                      //REV DB  
+//#define mS512MSW    0x0039                                                    //REM REV 1.7
+//#define mS512LSW    0x999a                                                    //REM REV 1.7
 
 //----------------------------------------------------------------------------
-//              Timer 4/5 values (256mS GATE)
+//              Timer 4/5 values (512mS GATE)   Fcy = 29.4912MHz
 //----------------------------------------------------------------------------
-#define mS256MSW    0x001c                                                      //REV AF
-#define mS256LSW    0xcccd                                                      //REV AF  
+#define mS512MSW    0x00e6                                                      //REV 1.7
+#define mS512LSW    0x6666                                                      //REV 1.7  
 
 //----------------------------------------------------------------------------
-//              Timer 4/5 values (128mS GATE)
+//              Timer 4/5 values (256mS GATE)   Fcy = 7.3728MHz
 //----------------------------------------------------------------------------
-#define mS128MSW    0x000e                                                      //REV DA
-#define mS128LSW    0x6666                                                      //REV DA  
+//#define mS256MSW    0x001c                                                    //REM REV 1.7
+//#define mS256LSW    0xcccd                                                    //REM REV 1.7
 
 //----------------------------------------------------------------------------
-//              Timer 4/5 values (64mS GATE)
+//              Timer 4/5 values (256mS GATE)   Fcy = 29.4912MHz
 //----------------------------------------------------------------------------
-#define mS64MSW     0x0007                                                      //REV DA
-#define mS64LSW     0x3333                                                      //REV DA  
+#define mS256MSW    0x0073                                                      //REV 1.7
+#define mS256LSW    0x3334                                                      //REV 1.7  
 
 //----------------------------------------------------------------------------
-//              Timer 4/5 values (32mS GATE)
+//              Timer 4/5 values (128mS GATE)   Fcy = 7.3728MHz
 //----------------------------------------------------------------------------
-#define mS32MSW     0x0003                                                      //REV DA
-#define mS32LSW     0x9999                                                      //REV DA  
+//#define mS128MSW    0x000e                                                    //REM REV 1.7
+//#define mS128LSW    0x6666                                                    //REM REV 1.7  
 
 //----------------------------------------------------------------------------
-//              Timer 4/5 values (16mS GATE)
+//              Timer 4/5 values (128mS GATE)   Fcy = 29.4912MHz
 //----------------------------------------------------------------------------
-#define mS16MSW     0x0001                                                      //REV DA
-#define mS16LSW     0xcccc                                                      //REV DA  
+#define mS128MSW    0x0039                                                      //REV 1.7
+#define mS128LSW    0x9998                                                      //REV 1.7  
 
 //----------------------------------------------------------------------------
-//              Timer 4/5 values (8mS GATE)
+//              Timer 4/5 values (64mS GATE)    Fcy = 7.3728MHz
 //----------------------------------------------------------------------------
-#define mS8MSW      0x0000                                                      //REV DA
-#define mS8LSW      0xe666                                                      //REV DA  
+//#define mS64MSW     0x0007                                                    //REM REV 1.7
+//#define mS64LSW     0x3333                                                    //REM REV 1.7  
+
+//----------------------------------------------------------------------------
+//              Timer 4/5 values (64mS GATE)    Fcy = 29.4912MHz
+//----------------------------------------------------------------------------
+#define mS64MSW     0x001c                                                      //REV 1.7
+#define mS64LSW     0xcccc                                                      //REV 1.7  
+
+//----------------------------------------------------------------------------
+//              Timer 4/5 values (32mS GATE)    Fcy = 7.3728MHz
+//----------------------------------------------------------------------------
+//#define mS32MSW     0x0003                                                    //REM REV 1.7
+//#define mS32LSW     0x9999                                                    //REM REV 1.7  
+
+//----------------------------------------------------------------------------
+//              Timer 4/5 values (32mS GATE)    Fcy = 29.4912MHz
+//----------------------------------------------------------------------------
+#define mS32MSW     0x000e                                                      //REV 1.7
+#define mS32LSW     0x6664                                                      //REV 1.7  
+
+//----------------------------------------------------------------------------
+//              Timer 4/5 values (16mS GATE)    Fcy = 7.3728MHz
+//----------------------------------------------------------------------------
+//#define mS16MSW     0x0001                                                    //REM REV 1.7
+//#define mS16LSW     0xcccc                                                    //REM REV 1.7  
+
+//----------------------------------------------------------------------------
+//              Timer 4/5 values (16mS GATE)    Fcy = 29.4912MHz
+//----------------------------------------------------------------------------
+#define mS16MSW     0x0007                                                      //REV 1.7
+#define mS16LSW     0x3330                                                      //REV 1.7  
+
+//----------------------------------------------------------------------------
+//              Timer 4/5 values (8mS GATE)     Fcy = 7.3728MHz
+//----------------------------------------------------------------------------
+//#define mS8MSW      0x0000                                                    //REM REV 1.7
+//#define mS8LSW      0xe666                                                    //REM REV 1.7  
+
+//----------------------------------------------------------------------------
+//              Timer 4/5 values (8mS GATE)     Fcy = 29.4912MHz
+//----------------------------------------------------------------------------
+#define mS8MSW      0x0003                                                      //REV 1.7
+#define mS8LSW      0x9998                                                      //REV 1.7  
 
 //----------------------------------------------------------------------------
 //              Timer 6/7 values (3.15mS DELAY)
@@ -1209,7 +1251,7 @@ char Reset[]={"R                      Reset memory"};
 char RESET[]={"RESET                  RESET processor"};		
 char Resetting[]={"Resetting..."};								
 char ResetComplete[]={"RESET COMPLETE"};						
-char Rev[]={"1.6"};                                                             
+char Rev[]={"1.7"};                                                             
 char RnotAllowed[]={"RESET Not Allowed While Logging"};			
 char RUsure[]={"Are you sure(Y/N)?"};
 char RSN[]={"RSN                    Read transducer Serial Number"};            //REV 1.2
@@ -1326,7 +1368,7 @@ unsigned long Buffer2Decimal(char[], unsigned int, unsigned int);
 int checkScanInterval(void);
 void checkSynch(unsigned long);			
 void clockMux(unsigned int);
-void clockSwitch(unsigned char);                                                //REV AF
+//void clockSwitch(unsigned char);                                              //REM REV 1.7
 void clockThMux(unsigned int);                                                  
 void CMDcomm(void);                                                             //REV BA
 void CMD_LINE(void);                                                            //REV CH

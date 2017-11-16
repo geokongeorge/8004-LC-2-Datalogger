@@ -6,11 +6,11 @@
                    projectFiles="true">
       <itemPath>C:/Program Files (x86)/Microchip/xc16/v1.26/support/dsPIC33F/h/p33Fxxxx.h</itemPath>
       <itemPath>C:/Program Files (x86)/Microchip/xc16/v1.26/support/generic/h/xc.h</itemPath>
-      <itemPath>../AD5241a.h</itemPath>
       <itemPath>../LC8004delay_b.h</itemPath>
       <itemPath>../LC8004extFRAM_i.h</itemPath>
       <itemPath>../FRAM_ADDRESSh.h</itemPath>
-      <itemPath>../lc8004main_1_6.h</itemPath>
+      <itemPath>../lc8004main_1_7.h</itemPath>
+      <itemPath>../AD5241b.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -19,10 +19,10 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>../AD5241a.c</itemPath>
       <itemPath>../LC8004delay_b.c</itemPath>
       <itemPath>../LC8004extFRAM_i.c</itemPath>
-      <itemPath>../lc8004main_1_6.c</itemPath>
+      <itemPath>../lc8004main_1_7.c</itemPath>
+      <itemPath>../AD5241b.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -45,7 +45,7 @@
         <targetDevice>dsPIC33FJ256GP710A</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>PM3PlatformTool</platformTool>
+        <platformTool>RealICEPlatformTool</platformTool>
         <languageToolchain>XC16</languageToolchain>
         <languageToolchainVersion>1.26</languageToolchainVersion>
         <platform>3</platform>

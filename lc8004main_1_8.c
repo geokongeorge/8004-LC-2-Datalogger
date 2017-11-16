@@ -16,9 +16,9 @@
 //	DATE:		11/13/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   1.8
-//	CHECKSUM:	0xb163  (MPLABX ver 3.15 and XC16 ver 1.26)
-//	DATA(RAM)MEM:	8786/30720   29%
-//	PGM(FLASH)MEM:  153810/261888 59%
+//	CHECKSUM:	0xda6f  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	DATA(RAM)MEM:	8790/30720   29%
+//	PGM(FLASH)MEM:  183933/261888 70%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -4561,32 +4561,9 @@ void CMDcomm(void)
                         break;
                     } //end of if(buffer[1]==capE && buffer[2]==capS && buffer[3]==capT)
                     
-					//REV J:	Channel/Thermistor                              REM REV T
-					//for(i=1;buffer[i]!=cr && !LC2CONTROL.flags.ERROR;i++)       //parse buffer for illegal characters REM REV T
-					//{                                                           //exit if one is encountered  REM REV T
-					//	if(buffer[i]!=slash && !isdigit(buffer[i]))             //REM REV T
-					//		LC2CONTROL.flags.ERROR=1;                           //set the error flag    REM REV T
-					//}                                                         //REM REV T
-
-					//if(LC2CONTROL.flags.ERROR)                                  //Test for error  REM REV T
-					//{                                                         //REM REV T
-					//	LC2CONTROL.flags.ERROR=0;                               //reset the error flag  REM REV T
-					//	break;                                                  //return to '*' prompt  REM REV T
-					//}                                                         //REM REV T
-
 					if((isdigit(buffer[1]) && buffer[2]==slash) | (isdigit(buffer[1]) && isdigit(buffer[2]) && 	buffer[3]==slash))
 							channel=getChannel();                               //get the current channel #		
 
-					//TEST MUX CONFIGURATION FOR INVALID CHANNELS:
-                    //REM REV U:
-                    /*
-					if((channel>=5&&!MUX4_ENABLE.mflags.mux16_4) |
-						(channel>=17&&MUX4_ENABLE.mflags.mux16_4) |
-						(channel<1))
-						break;                                                  //return to '*' prompt
-                    */
-                    
-                    //REV U:
                     if((channel>1&&MUX4_ENABLE.mflags.mux16_4==Single) |
                             (channel>4&&MUX4_ENABLE.mflags.mux16_4==VW4) |
                             (channel>8&&MUX4_ENABLE.mflags.mux16_4==VW8) |
@@ -4597,11 +4574,10 @@ void CMDcomm(void)
                         break;                                                  //return to '*' prompt
                     
 					Thermtype=getThermtype();                                   //Get the thermistor type
-					//if(Thermtype==-1)                                           //Invalid Thermtype   REM REV T
-					//	break;                                                  //REM REV T
 
-                    if(Thermtype==0 | Thermtype==1 | Thermtype==2)              //REV T
-                        setChannelThermtype(channel,Thermtype);                     //Assign the Thermistor type to the channel		
+                    //if(Thermtype==0 | Thermtype==1 | Thermtype==2)            REM REV 1.8
+                    if(Thermtype==0 | Thermtype==1 | Thermtype==2 | Thermtype==3)   //REV 1.8     
+                        setChannelThermtype(channel,Thermtype);                 //Assign the Thermistor type to the channel		
 
 					displayMUX(channel);
 
@@ -5517,13 +5493,147 @@ void disableChannel(int channel) {
     write_Int_FRAM(MUX_ENABLE17_32flagsaddress,MUX_ENABLE17_32.MUXen17_32);             //store flag in FRAM  
 }
 
-//REM REV B:
-//void disableINT2(void) {
-//    IFS1bits.INT2IF = 0; //clear the interrupt flag
-//    IEC1bits.INT2IE = 0; //enable the interrupt
-//}
 
-//REV B:
+void disableTHChannel(int channel)                                              //REV 1.8
+{
+    THMUX_ENABLE1_16.THMUXen1_16=read_Int_FRAM(THMUX_ENABLE1_16flagsaddress);            
+    THMUX_ENABLE17_32.THMUXen17_32=read_Int_FRAM(THMUX_ENABLE17_32flagsaddress);          
+
+    switch (channel) {
+        case 1:
+            THMUX_ENABLE1_16.t1flags.CH1 = 0;
+            break;
+
+        case 2:
+            THMUX_ENABLE1_16.t1flags.CH2 = 0;
+            break;
+
+        case 3:
+            THMUX_ENABLE1_16.t1flags.CH3 = 0;
+            break;
+
+        case 4:
+            THMUX_ENABLE1_16.t1flags.CH4 = 0;
+            break;
+
+        case 5:
+            THMUX_ENABLE1_16.t1flags.CH5 = 0;
+            break;
+
+        case 6:
+            THMUX_ENABLE1_16.t1flags.CH6 = 0;
+            break;
+
+        case 7:
+            THMUX_ENABLE1_16.t1flags.CH7 = 0;
+            break;
+
+        case 8:
+            THMUX_ENABLE1_16.t1flags.CH8 = 0;
+            break;
+
+        case 9:
+            THMUX_ENABLE1_16.t1flags.CH9 = 0;
+            break;
+
+        case 10:
+            THMUX_ENABLE1_16.t1flags.CH10 = 0;
+            break;
+
+        case 11:
+            THMUX_ENABLE1_16.t1flags.CH11 = 0;
+            break;
+
+        case 12:
+            THMUX_ENABLE1_16.t1flags.CH12 = 0;
+            break;
+
+        case 13:
+            THMUX_ENABLE1_16.t1flags.CH13 = 0;
+            break;
+
+        case 14:
+            THMUX_ENABLE1_16.t1flags.CH14 = 0;
+            break;
+
+        case 15:
+            THMUX_ENABLE1_16.t1flags.CH15 = 0;
+            break;
+
+        case 16:
+            THMUX_ENABLE1_16.t1flags.CH16 = 0;
+            break;
+
+        case 17:
+            THMUX_ENABLE17_32.t2flags.CH17 = 0;
+            break;
+
+        case 18:
+            THMUX_ENABLE17_32.t2flags.CH18 = 0;
+            break;
+
+        case 19:
+            THMUX_ENABLE17_32.t2flags.CH19 = 0;
+            break;
+
+        case 20:
+            THMUX_ENABLE17_32.t2flags.CH20 = 0;
+            break;
+
+        case 21:
+            THMUX_ENABLE17_32.t2flags.CH21 = 0;
+            break;
+
+        case 22:
+            THMUX_ENABLE17_32.t2flags.CH22 = 0;
+            break;
+
+        case 23:
+            THMUX_ENABLE17_32.t2flags.CH23 = 0;
+            break;
+
+        case 24:
+            THMUX_ENABLE17_32.t2flags.CH24 = 0;
+            break;
+
+        case 25:
+            THMUX_ENABLE17_32.t2flags.CH25 = 0;
+            break;
+
+        case 26:
+            THMUX_ENABLE17_32.t2flags.CH26 = 0;
+            break;
+
+        case 27:
+            THMUX_ENABLE17_32.t2flags.CH27 = 0;
+            break;
+
+        case 28:
+            THMUX_ENABLE17_32.t2flags.CH28 = 0;
+            break;
+
+        case 29:
+            THMUX_ENABLE17_32.t2flags.CH29 = 0;
+            break;
+
+        case 30:
+            THMUX_ENABLE17_32.t2flags.CH30 = 0;
+            break;
+
+        case 31:
+            THMUX_ENABLE17_32.t2flags.CH31 = 0;
+            break;
+
+        case 32:
+            THMUX_ENABLE17_32.t2flags.CH32 = 0;
+            break;
+    }
+
+    write_Int_FRAM(THMUX_ENABLE1_16flagsaddress,THMUX_ENABLE1_16.THMUXen1_16);              //store flag in FRAM  
+    write_Int_FRAM(THMUX_ENABLE17_32flagsaddress,THMUX_ENABLE17_32.THMUXen17_32);             //store flag in FRAM  
+}
+
+
 void disableINT1(void) 
 {
     IFS1bits.INT1IF = 0;                                                        //clear the interrupt flag
@@ -5673,102 +5783,80 @@ void displayExternalAddress(unsigned int x)	//FOR DEBUG
 }
  */
 
-void displayGageInfo(int channel) //display the gage information
+void displayGageInfo(int channel)                                               //display the gage information
 {
-    unsigned long address;                                                      //REV J
-    unsigned long ZeroReadingaddress;                                           //REV J
-    unsigned long GageFactoraddress;                                            //REV J
-    unsigned long GageOffsetaddress;                                            //REV J
-    unsigned long PolyCoAaddress;                                               //REV J
-    unsigned long PolyCoBaddress;                                               //REV J
-    unsigned long PolyCoCaddress;                                               //REV J
-	unsigned long Thermaddress;                                                 //REV J
-	unsigned int TEMPTHERM;                                                     //REV J
-	char BUF[10];                                                               //REV J    
+    unsigned long address;                                                      
+    unsigned long ZeroReadingaddress;                                           
+    unsigned long GageFactoraddress;                                            
+    unsigned long GageOffsetaddress;                                            
+    unsigned long PolyCoAaddress;                                               
+    unsigned long PolyCoBaddress;                                               
+    unsigned long PolyCoCaddress;                                               
+	unsigned long Thermaddress;                                                 
+	unsigned int TEMPTHERM;                                                     
+	char BUF[10];                                                                  
     float TEMPVAL;
 
-    //crlf();                                                                   //REM REV T
-    if(MUX4_ENABLE.mflags.mux16_4!=TH8 && MUX4_ENABLE.mflags.mux16_4!=TH32)     //REV T
+    if(MUX4_ENABLE.mflags.mux16_4!=TH8 && MUX4_ENABLE.mflags.mux16_4!=TH32)     
     {
-        crlf();                                                                 //REV T
-        putsUART1(GT); //GT:
-        while (BusyUART1()); //Display gage info from FRAM here
+        crlf();                                                                 
+        putsUART1(GT);                                                          //GT:
+        while (BusyUART1());                                                    //Display gage info from FRAM here
     }
 
-	//calculate indexed address for gage type                                   //REV K
+	//calculate indexed address for gage type                                   
     if(MUX4_ENABLE.mflags.mux16_4==Single)                                      //if Single Channel                                      
     {
         address=CH1GTaddress;
-        //Thermaddress=_4CHMuxCH1THaddress;                                     //REM REV T
-        Thermaddress=CH1THaddress;                                              //REV T
+        Thermaddress=CH1THaddress;                                              
     }
     
-    /*  REM REV S
-	if(MUX4_ENABLE.mflags.mux16_4==VW4)                                         //if 4 channel MUX
-	{
-		address=CH1GTaddress+(0x1A*(channel-1));
-		Thermaddress=_4CHMuxCH1THaddress+(0x02*(channel-1));                                 
-	}
-
-	if(MUX4_ENABLE.mflags.mux16_4==VW16)                                        //if 16 channel MUX
-	{
-		address=CH1GTaddress+(0x1A*(channel-1));
-		Thermaddress=_4CHMuxCH1THaddress+(0x02*(channel-1));		
-	}
-    */
+    address=CH1GTaddress+(2*(channel-1));                                   
+    Thermaddress=CH1THaddress+(2*(channel-1));                              
     
-    //if(MUX4_ENABLE.mflags.mux16_4!=TH8 && MUX4_ENABLE.mflags.mux16_4!=TH32)     //if VW MUX REV S REM REV T
-	//{                                                                         //REM REV T
-		//address=CH1GTaddress+(0x1A*(channel-1));                              //REM REV BE
-        address=CH1GTaddress+(2*(channel-1));                                   //REV BE
-		//Thermaddress=_4CHMuxCH1THaddress+(0x02*(channel-1));                  //REM REV T
-        Thermaddress=CH1THaddress+(2*(channel-1));                              //REV T
-	//}                                                                         //REM REV T
-    
-    if(MUX4_ENABLE.mflags.mux16_4!=TH8 && MUX4_ENABLE.mflags.mux16_4!=TH32)     //REV T
+    if(MUX4_ENABLE.mflags.mux16_4!=TH8 && MUX4_ENABLE.mflags.mux16_4!=TH32)     
     {
-        LC2CONTROL2.flags2.GageDisplay = 1; //set the gage display flag
+        LC2CONTROL2.flags2.GageDisplay = 1;                                     //set the gage display flag
         toBCD(read_Int_FRAM(address));                                           
         displayBCD();
-        LC2CONTROL2.flags2.GageDisplay = 0; //clear the gage display flag
-        LC2CONTROL.flags.Conversion = 0; //clear the conversion flag
+        LC2CONTROL2.flags2.GageDisplay = 0;                                     //clear the gage display flag
+        LC2CONTROL.flags.Conversion = 0;                                        //clear the conversion flag
     }
 
-    //THIS WILL NEED SOME WORK FOR THE DIFFERENT CONFIGURATIONS:
-    switch (channel) //get the gage information
+    switch (channel)                                                            //get the gage information
     {
         case 1:
-			if(MUX4_ENABLE.mflags.mux16_4==Single | MUX4_ENABLE.mflags.mux16_4==VW4)//Single channel or 4 channel MUX?    REV T
+			if(MUX4_ENABLE.mflags.mux16_4==Single | MUX4_ENABLE.mflags.mux16_4==VW4)//Single channel or 4 channel MUX?    
 			{            
-                if (MUX_CONVERSION1_16.c1flags.CH1) //Polynomial Conversion?
+                if (MUX_CONVERSION1_16.c1flags.CH1)                             //Polynomial Conversion?
                 {
-					PolyCoAaddress=CH1PolyCoAaddress;                    //set the PolyCoAaddress
-					PolyCoBaddress=CH1PolyCoBaddress;                    //set the PolyCoBaddress
-					PolyCoCaddress=CH1PolyCoCaddress;                    //set the PolyCoCaddress
+					PolyCoAaddress=CH1PolyCoAaddress;                           //set the PolyCoAaddress
+					PolyCoBaddress=CH1PolyCoBaddress;                           //set the PolyCoBaddress
+					PolyCoCaddress=CH1PolyCoCaddress;                           //set the PolyCoCaddress
 					LC2CONTROL.flags.Conversion=1;                              //set the conversion flag
                 } else 
                 {
-					ZeroReadingaddress=CH1ZRaddress;                     //set the ZeroReadingaddress
-					GageFactoraddress=CH1GFaddress;                      //set the GageFactoraddress
-					GageOffsetaddress=CH1GOaddress;                      //set the GageOffsetaddress
+					ZeroReadingaddress=CH1ZRaddress;                            //set the ZeroReadingaddress
+					GageFactoraddress=CH1GFaddress;                             //set the GageFactoraddress
+					GageOffsetaddress=CH1GOaddress;                             //set the GageOffsetaddress
                 }
             }
             else
 			{
-                if(MUX4_ENABLE.mflags.mux16_4==VW8 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)   //REV T
+                if(MUX4_ENABLE.mflags.mux16_4==VW8 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)   
                 {
-                    if(MUX_CONVERSION1_16.c1flags.CH1)                              //Ch 1 of 16 Polynomial Conversion?
+                    if(MUX_CONVERSION1_16.c1flags.CH1)                          //Ch 1 of 16 Polynomial Conversion?
                     {
-                        PolyCoAaddress=CH1PolyCoAaddress;                   //set the PolyCoAaddress
-                        PolyCoBaddress=CH1PolyCoBaddress;                   //set the PolyCoBaddress
-                        PolyCoCaddress=CH1PolyCoCaddress;                   //set the PolyCoCaddress
-                        LC2CONTROL.flags.Conversion=1;                              //set the conversion flag
+                        PolyCoAaddress=CH1PolyCoAaddress;                       //set the PolyCoAaddress
+                        PolyCoBaddress=CH1PolyCoBaddress;                       //set the PolyCoBaddress
+                        PolyCoCaddress=CH1PolyCoCaddress;                       //set the PolyCoCaddress
+                        LC2CONTROL.flags.Conversion=1;                          //set the conversion flag
                     }
                     else
                     {
-                        ZeroReadingaddress=CH1ZRaddress;                    //set the ZeroReadingaddress
-                        GageFactoraddress=CH1GFaddress;                     //set the GageFactoraddress
-                        GageOffsetaddress=CH1GOaddress;                     //set the GageOffsetaddress
+                        ZeroReadingaddress=CH1ZRaddress;                        //set the ZeroReadingaddress
+                        GageFactoraddress=CH1GFaddress;                         //set the GageFactoraddress
+                        GageOffsetaddress=CH1GOaddress;                         //set the GageOffsetaddress
                     }
                 }
 			}
@@ -5777,37 +5865,37 @@ void displayGageInfo(int channel) //display the gage information
 
 
         case 2:
-			if(!MUX4_ENABLE.mflags.mux16_4)			//4 channel MUX?
+			if(!MUX4_ENABLE.mflags.mux16_4)                                     //4 channel MUX?
 			{
-				if(MUX_CONVERSION1_16.c1flags.CH2) //Polynomial Conversion?)	//Ch 2 of 4 Polynomial Conversion?
+				if(MUX_CONVERSION1_16.c1flags.CH2)                              //Ch 2 of 4 Polynomial Conversion?
 				{
-					PolyCoAaddress=CH2PolyCoAaddress;                    //set the PolyCoAaddress
-					PolyCoBaddress=CH2PolyCoBaddress;                    //set the PolyCoBaddress
-					PolyCoCaddress=CH2PolyCoCaddress;                    //set the PolyCoCaddress
+					PolyCoAaddress=CH2PolyCoAaddress;                           //set the PolyCoAaddress
+					PolyCoBaddress=CH2PolyCoBaddress;                           //set the PolyCoBaddress
+					PolyCoCaddress=CH2PolyCoCaddress;                           //set the PolyCoCaddress
 					LC2CONTROL.flags.Conversion=1;                              //set the conversion flag
 					
 				}
 				else
 				{
-					ZeroReadingaddress=CH2ZRaddress;                     //set the ZeroReadingaddress
-					GageFactoraddress=CH2GFaddress;                      //set the GageFactoraddress
-					GageOffsetaddress=CH2GOaddress;                      //set the GageOffsetaddress
+					ZeroReadingaddress=CH2ZRaddress;                            //set the ZeroReadingaddress
+					GageFactoraddress=CH2GFaddress;                             //set the GageFactoraddress
+					GageOffsetaddress=CH2GOaddress;                             //set the GageOffsetaddress
 				}
 			}
 			else
 			{
 				if(MUX_CONVERSION1_16.c1flags.CH2)                              //Ch 2 of 16 Polynomial Conversion?
 				{
-					PolyCoAaddress=CH2PolyCoAaddress;                   //set the PolyCoAaddress
-					PolyCoBaddress=CH2PolyCoBaddress;                   //set the PolyCoBaddress
-					PolyCoCaddress=CH2PolyCoCaddress;                   //set the PolyCoCaddress
+					PolyCoAaddress=CH2PolyCoAaddress;                           //set the PolyCoAaddress
+					PolyCoBaddress=CH2PolyCoBaddress;                           //set the PolyCoBaddress
+					PolyCoCaddress=CH2PolyCoCaddress;                           //set the PolyCoCaddress
 					LC2CONTROL.flags.Conversion=1;                              //set the conversion flag
 				}
 				else
 				{
-					ZeroReadingaddress=CH2ZRaddress;                    //set the ZeroReadingaddress
-					GageFactoraddress=CH2GFaddress;                     //set the GageFactoraddress
-					GageOffsetaddress=CH2GOaddress;                     //set the GageOffsetaddress
+					ZeroReadingaddress=CH2ZRaddress;                            //set the ZeroReadingaddress
+					GageFactoraddress=CH2GFaddress;                             //set the GageFactoraddress
+					GageOffsetaddress=CH2GOaddress;                             //set the GageOffsetaddress
 				}
 			}
 
@@ -5818,33 +5906,33 @@ void displayGageInfo(int channel) //display the gage information
 			{
 				if(MUX_CONVERSION1_16.c1flags.CH3)                              //Ch 3 of 4 Polynomial Conversion?
 				{
-					PolyCoAaddress=CH3PolyCoAaddress;                    //set the PolyCoAaddress
-					PolyCoBaddress=CH3PolyCoBaddress;                    //set the PolyCoBaddress
-					PolyCoCaddress=CH3PolyCoCaddress;                    //set the PolyCoCaddress
+					PolyCoAaddress=CH3PolyCoAaddress;                           //set the PolyCoAaddress
+					PolyCoBaddress=CH3PolyCoBaddress;                           //set the PolyCoBaddress
+					PolyCoCaddress=CH3PolyCoCaddress;                           //set the PolyCoCaddress
 					LC2CONTROL.flags.Conversion=1;                              //set the conversion flag
 					
 				}
 				else
 				{
-					ZeroReadingaddress=CH3ZRaddress;                     //set the ZeroReadingaddress
-					GageFactoraddress=CH3GFaddress;                      //set the GageFactoraddress
-					GageOffsetaddress=CH3GOaddress;                      //set the GageOffsetaddress
+					ZeroReadingaddress=CH3ZRaddress;                            //set the ZeroReadingaddress
+					GageFactoraddress=CH3GFaddress;                             //set the GageFactoraddress
+					GageOffsetaddress=CH3GOaddress;                             //set the GageOffsetaddress
 				}
 			}
 			else
 			{
 				if(MUX_CONVERSION1_16.c1flags.CH3)                              //Ch 3 of 16 Polynomial Conversion?
 				{
-					PolyCoAaddress=CH3PolyCoAaddress;                   //set the PolyCoAaddress
-					PolyCoBaddress=CH3PolyCoBaddress;                   //set the PolyCoBaddress
-					PolyCoCaddress=CH3PolyCoCaddress;                   //set the PolyCoCaddress
+					PolyCoAaddress=CH3PolyCoAaddress;                           //set the PolyCoAaddress
+					PolyCoBaddress=CH3PolyCoBaddress;                           //set the PolyCoBaddress
+					PolyCoCaddress=CH3PolyCoCaddress;                           //set the PolyCoCaddress
 					LC2CONTROL.flags.Conversion=1;                              //set the conversion flag
 				}
 				else
 				{
-					ZeroReadingaddress=CH3ZRaddress;                    //set the ZeroReadingaddress
-					GageFactoraddress=CH3GFaddress;                     //set the GageFactoraddress
-					GageOffsetaddress=CH3GOaddress;                     //set the GageOffsetaddress
+					ZeroReadingaddress=CH3ZRaddress;                            //set the ZeroReadingaddress
+					GageFactoraddress=CH3GFaddress;                             //set the GageFactoraddress
+					GageOffsetaddress=CH3GOaddress;                             //set the GageOffsetaddress
 				}
 			}
 
@@ -5856,33 +5944,33 @@ void displayGageInfo(int channel) //display the gage information
 			{
 				if(MUX_CONVERSION1_16.c1flags.CH4)                              //Ch 4 of 4 Polynomial Conversion?
 				{
-					PolyCoAaddress=CH4PolyCoAaddress;                    //set the PolyCoAaddress
-					PolyCoBaddress=CH4PolyCoBaddress;                    //set the PolyCoBaddress
-					PolyCoCaddress=CH4PolyCoCaddress;                    //set the PolyCoCaddress
+					PolyCoAaddress=CH4PolyCoAaddress;                           //set the PolyCoAaddress
+					PolyCoBaddress=CH4PolyCoBaddress;                           //set the PolyCoBaddress
+					PolyCoCaddress=CH4PolyCoCaddress;                           //set the PolyCoCaddress
 					LC2CONTROL.flags.Conversion=1;                              //set the conversion flag
 					
 				}
 				else
 				{
-					ZeroReadingaddress=CH4ZRaddress;                     //set the ZeroReadingaddress
-					GageFactoraddress=CH4GFaddress;                      //set the GageFactoraddress
-					GageOffsetaddress=CH4GOaddress;                      //set the GageOffsetaddress
+					ZeroReadingaddress=CH4ZRaddress;                            //set the ZeroReadingaddress
+					GageFactoraddress=CH4GFaddress;                             //set the GageFactoraddress
+					GageOffsetaddress=CH4GOaddress;                             //set the GageOffsetaddress
 				}
 			}
 			else
 			{
 				if(MUX_CONVERSION1_16.c1flags.CH4)                              //Ch 4 of 16 Polynomial Conversion?
 				{
-					PolyCoAaddress=CH4PolyCoAaddress;                   //set the PolyCoAaddress
-					PolyCoBaddress=CH4PolyCoBaddress;                   //set the PolyCoBaddress
-					PolyCoCaddress=CH4PolyCoCaddress;                   //set the PolyCoCaddress
+					PolyCoAaddress=CH4PolyCoAaddress;                           //set the PolyCoAaddress
+					PolyCoBaddress=CH4PolyCoBaddress;                           //set the PolyCoBaddress
+					PolyCoCaddress=CH4PolyCoCaddress;                           //set the PolyCoCaddress
 					LC2CONTROL.flags.Conversion=1;                              //set the conversion flag
 				}
 				else
 				{
-					ZeroReadingaddress=CH4ZRaddress;                    //set the ZeroReadingaddress
-					GageFactoraddress=CH4GFaddress;                     //set the GageFactoraddress
-					GageOffsetaddress=CH4GOaddress;                     //set the GageOffsetaddress
+					ZeroReadingaddress=CH4ZRaddress;                            //set the ZeroReadingaddress
+					GageFactoraddress=CH4GFaddress;                             //set the GageFactoraddress
+					GageOffsetaddress=CH4GOaddress;                             //set the GageOffsetaddress
 				}
 			}
 
@@ -5891,16 +5979,16 @@ void displayGageInfo(int channel) //display the gage information
         case 5:
 			if(MUX_CONVERSION1_16.c1flags.CH5)                                  //Ch 5 of 16 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH5PolyCoAaddress;                       //set the PolyCoAaddress
-				PolyCoBaddress=CH5PolyCoBaddress;                       //set the PolyCoBaddress
-				PolyCoCaddress=CH5PolyCoCaddress;                       //set the PolyCoCaddress
+				PolyCoAaddress=CH5PolyCoAaddress;                               //set the PolyCoAaddress
+				PolyCoBaddress=CH5PolyCoBaddress;                               //set the PolyCoBaddress
+				PolyCoCaddress=CH5PolyCoCaddress;                               //set the PolyCoCaddress
 				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH5ZRaddress;                        //set the ZeroReadingaddress
-				GageFactoraddress=CH5GFaddress;                         //set the GageFactoraddress
-				GageOffsetaddress=CH5GOaddress;                         //set the GageOffsetaddress
+				ZeroReadingaddress=CH5ZRaddress;                                //set the ZeroReadingaddress
+				GageFactoraddress=CH5GFaddress;                                 //set the GageFactoraddress
+				GageOffsetaddress=CH5GOaddress;                                 //set the GageOffsetaddress
 			}			
 			
 			break;
@@ -5909,16 +5997,16 @@ void displayGageInfo(int channel) //display the gage information
         case 6:
 			if(MUX_CONVERSION1_16.c1flags.CH6)                                  //Ch 6 of 16 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH6PolyCoAaddress;                       //set the PolyCoAaddress
-				PolyCoBaddress=CH6PolyCoBaddress;                       //set the PolyCoBaddress
-				PolyCoCaddress=CH6PolyCoCaddress;                       //set the PolyCoCaddress
+				PolyCoAaddress=CH6PolyCoAaddress;                               //set the PolyCoAaddress
+				PolyCoBaddress=CH6PolyCoBaddress;                               //set the PolyCoBaddress
+				PolyCoCaddress=CH6PolyCoCaddress;                               //set the PolyCoCaddress
 				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH6ZRaddress;                        //set the ZeroReadingaddress
-				GageFactoraddress=CH6GFaddress;                         //set the GageFactoraddress
-				GageOffsetaddress=CH6GOaddress;                         //set the GageOffsetaddress
+				ZeroReadingaddress=CH6ZRaddress;                                //set the ZeroReadingaddress
+				GageFactoraddress=CH6GFaddress;                                 //set the GageFactoraddress
+				GageOffsetaddress=CH6GOaddress;                                 //set the GageOffsetaddress
 			}			
 			
 			break;
@@ -5927,16 +6015,16 @@ void displayGageInfo(int channel) //display the gage information
         case 7:
                 if(MUX_CONVERSION1_16.c1flags.CH7)                              //Ch 7 of 16 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH7PolyCoAaddress;                       //set the PolyCoAaddress
-				PolyCoBaddress=CH7PolyCoBaddress;                       //set the PolyCoBaddress
-				PolyCoCaddress=CH7PolyCoCaddress;                       //set the PolyCoCaddress
+				PolyCoAaddress=CH7PolyCoAaddress;                               //set the PolyCoAaddress
+				PolyCoBaddress=CH7PolyCoBaddress;                               //set the PolyCoBaddress
+				PolyCoCaddress=CH7PolyCoCaddress;                               //set the PolyCoCaddress
 				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH7ZRaddress;                        //set the ZeroReadingaddress
-				GageFactoraddress=CH7GFaddress;                         //set the GageFactoraddress
-				GageOffsetaddress=CH7GOaddress;                         //set the GageOffsetaddress
+				ZeroReadingaddress=CH7ZRaddress;                                //set the ZeroReadingaddress
+				GageFactoraddress=CH7GFaddress;                                 //set the GageFactoraddress
+				GageOffsetaddress=CH7GOaddress;                                 //set the GageOffsetaddress
 			}			
 			
 			break;
@@ -5945,16 +6033,16 @@ void displayGageInfo(int channel) //display the gage information
         case 8:
 			if(MUX_CONVERSION1_16.c1flags.CH8)                                  //Ch 8 of 16 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH8PolyCoAaddress;                       //set the PolyCoAaddress
-				PolyCoBaddress=CH8PolyCoBaddress;                       //set the PolyCoBaddress
-				PolyCoCaddress=CH8PolyCoCaddress;                       //set the PolyCoCaddress
+				PolyCoAaddress=CH8PolyCoAaddress;                               //set the PolyCoAaddress
+				PolyCoBaddress=CH8PolyCoBaddress;                               //set the PolyCoBaddress
+				PolyCoCaddress=CH8PolyCoCaddress;                               //set the PolyCoCaddress
 				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH8ZRaddress;                        //set the ZeroReadingaddress
-				GageFactoraddress=CH8GFaddress;                         //set the GageFactoraddress
-				GageOffsetaddress=CH8GOaddress;                         //set the GageOffsetaddress
+				ZeroReadingaddress=CH8ZRaddress;                                //set the ZeroReadingaddress
+				GageFactoraddress=CH8GFaddress;                                 //set the GageFactoraddress
+				GageOffsetaddress=CH8GOaddress;                                 //set the GageOffsetaddress
 			}			
 			
 			break;
@@ -5964,16 +6052,16 @@ void displayGageInfo(int channel) //display the gage information
 
 			if(MUX_CONVERSION1_16.c1flags.CH9)                                  //Ch 9 of 16 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH9PolyCoAaddress;                       //set the PolyCoAaddress
-				PolyCoBaddress=CH9PolyCoBaddress;                       //set the PolyCoBaddress
-				PolyCoCaddress=CH9PolyCoCaddress;                       //set the PolyCoCaddress
+				PolyCoAaddress=CH9PolyCoAaddress;                               //set the PolyCoAaddress
+				PolyCoBaddress=CH9PolyCoBaddress;                               //set the PolyCoBaddress
+				PolyCoCaddress=CH9PolyCoCaddress;                               //set the PolyCoCaddress
 				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH9ZRaddress;                        //set the ZeroReadingaddress
-				GageFactoraddress=CH9GFaddress;                         //set the GageFactoraddress
-				GageOffsetaddress=CH9GOaddress;                         //set the GageOffsetaddress
+				ZeroReadingaddress=CH9ZRaddress;                                //set the ZeroReadingaddress
+				GageFactoraddress=CH9GFaddress;                                 //set the GageFactoraddress
+				GageOffsetaddress=CH9GOaddress;                                 //set the GageOffsetaddress
 			}			
 			
 			break;
@@ -5983,16 +6071,16 @@ void displayGageInfo(int channel) //display the gage information
 
 			if(MUX_CONVERSION1_16.c1flags.CH10)                                 //Ch 10 of 16 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH10PolyCoAaddress;                      //set the PolyCoAaddress
-				PolyCoBaddress=CH10PolyCoBaddress;                      //set the PolyCoBaddress
-				PolyCoCaddress=CH10PolyCoCaddress;                      //set the PolyCoCaddress
+				PolyCoAaddress=CH10PolyCoAaddress;                              //set the PolyCoAaddress
+				PolyCoBaddress=CH10PolyCoBaddress;                              //set the PolyCoBaddress
+				PolyCoCaddress=CH10PolyCoCaddress;                              //set the PolyCoCaddress
 				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH10ZRaddress;                       //set the ZeroReadingaddress
-				GageFactoraddress=CH10GFaddress;                        //set the GageFactoraddress
-				GageOffsetaddress=CH10GOaddress;                        //set the GageOffsetaddress
+				ZeroReadingaddress=CH10ZRaddress;                               //set the ZeroReadingaddress
+				GageFactoraddress=CH10GFaddress;                                //set the GageFactoraddress
+				GageOffsetaddress=CH10GOaddress;                                //set the GageOffsetaddress
 			}			
 			
 			break;
@@ -6001,16 +6089,16 @@ void displayGageInfo(int channel) //display the gage information
 
 			if(MUX_CONVERSION1_16.c1flags.CH11)                                 //Ch 11 of 16 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH11PolyCoAaddress;                      //set the PolyCoAaddress
-				PolyCoBaddress=CH11PolyCoBaddress;                      //set the PolyCoBaddress
-				PolyCoCaddress=CH11PolyCoCaddress;                      //set the PolyCoCaddress
+				PolyCoAaddress=CH11PolyCoAaddress;                              //set the PolyCoAaddress
+				PolyCoBaddress=CH11PolyCoBaddress;                              //set the PolyCoBaddress
+				PolyCoCaddress=CH11PolyCoCaddress;                              //set the PolyCoCaddress
 				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH11ZRaddress;                       //set the ZeroReadingaddress
-				GageFactoraddress=CH11GFaddress;                        //set the GageFactoraddress
-				GageOffsetaddress=CH11GOaddress;                        //set the GageOffsetaddress
+				ZeroReadingaddress=CH11ZRaddress;                               //set the ZeroReadingaddress
+				GageFactoraddress=CH11GFaddress;                                //set the GageFactoraddress
+				GageOffsetaddress=CH11GOaddress;                                //set the GageOffsetaddress
 			}			
 			
 			break;
@@ -6020,16 +6108,16 @@ void displayGageInfo(int channel) //display the gage information
 
 			if(MUX_CONVERSION1_16.c1flags.CH12)                                 //Ch 12 of 16 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH12PolyCoAaddress;                      //set the PolyCoAaddress
-				PolyCoBaddress=CH12PolyCoBaddress;                      //set the PolyCoBaddress
-				PolyCoCaddress=CH12PolyCoCaddress;                      //set the PolyCoCaddress
+				PolyCoAaddress=CH12PolyCoAaddress;                              //set the PolyCoAaddress
+				PolyCoBaddress=CH12PolyCoBaddress;                              //set the PolyCoBaddress
+				PolyCoCaddress=CH12PolyCoCaddress;                              //set the PolyCoCaddress
 				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH12ZRaddress;                       //set the ZeroReadingaddress
-				GageFactoraddress=CH12GFaddress;                        //set the GageFactoraddress
-				GageOffsetaddress=CH12GOaddress;                        //set the GageOffsetaddress
+				ZeroReadingaddress=CH12ZRaddress;                               //set the ZeroReadingaddress
+				GageFactoraddress=CH12GFaddress;                                //set the GageFactoraddress
+				GageOffsetaddress=CH12GOaddress;                                //set the GageOffsetaddress
 			}			
 			
 			break;
@@ -6038,16 +6126,16 @@ void displayGageInfo(int channel) //display the gage information
 
 			if(MUX_CONVERSION1_16.c1flags.CH13)                                 //Ch 13 of 16 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH13PolyCoAaddress;                      //set the PolyCoAaddress
-				PolyCoBaddress=CH13PolyCoBaddress;                      //set the PolyCoBaddress
-				PolyCoCaddress=CH13PolyCoCaddress;                      //set the PolyCoCaddress
+				PolyCoAaddress=CH13PolyCoAaddress;                              //set the PolyCoAaddress
+				PolyCoBaddress=CH13PolyCoBaddress;                              //set the PolyCoBaddress
+				PolyCoCaddress=CH13PolyCoCaddress;                              //set the PolyCoCaddress
 				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH13ZRaddress;                       //set the ZeroReadingaddress
-				GageFactoraddress=CH13GFaddress;                        //set the GageFactoraddress
-				GageOffsetaddress=CH13GOaddress;                        //set the GageOffsetaddress
+				ZeroReadingaddress=CH13ZRaddress;                               //set the ZeroReadingaddress
+				GageFactoraddress=CH13GFaddress;                                //set the GageFactoraddress
+				GageOffsetaddress=CH13GOaddress;                                //set the GageOffsetaddress
 			}			
 			
 			break;
@@ -6058,16 +6146,16 @@ void displayGageInfo(int channel) //display the gage information
 
 			if(MUX_CONVERSION1_16.c1flags.CH14)                                 //Ch 14 of 16 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH14PolyCoAaddress;                      //set the PolyCoAaddress
-				PolyCoBaddress=CH14PolyCoBaddress;                      //set the PolyCoBaddress
-				PolyCoCaddress=CH14PolyCoCaddress;                      //set the PolyCoCaddress
+				PolyCoAaddress=CH14PolyCoAaddress;                              //set the PolyCoAaddress
+				PolyCoBaddress=CH14PolyCoBaddress;                              //set the PolyCoBaddress
+				PolyCoCaddress=CH14PolyCoCaddress;                              //set the PolyCoCaddress
 				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH14ZRaddress;                       //set the ZeroReadingaddress
-				GageFactoraddress=CH14GFaddress;                        //set the GageFactoraddress
-				GageOffsetaddress=CH14GOaddress;                        //set the GageOffsetaddress
+				ZeroReadingaddress=CH14ZRaddress;                               //set the ZeroReadingaddress
+				GageFactoraddress=CH14GFaddress;                                //set the GageFactoraddress
+				GageOffsetaddress=CH14GOaddress;                                //set the GageOffsetaddress
 			}			
 			
 			break;
@@ -6076,16 +6164,16 @@ void displayGageInfo(int channel) //display the gage information
 
 			if(MUX_CONVERSION1_16.c1flags.CH15)                                 //Ch 15 of 16 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH15PolyCoAaddress;                      //set the PolyCoAaddress
-				PolyCoBaddress=CH15PolyCoBaddress;                      //set the PolyCoBaddress
-				PolyCoCaddress=CH15PolyCoCaddress;                      //set the PolyCoCaddress
+				PolyCoAaddress=CH15PolyCoAaddress;                              //set the PolyCoAaddress
+				PolyCoBaddress=CH15PolyCoBaddress;                              //set the PolyCoBaddress
+				PolyCoCaddress=CH15PolyCoCaddress;                              //set the PolyCoCaddress
 				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH15ZRaddress;                       //set the ZeroReadingaddress
-				GageFactoraddress=CH15GFaddress;                        //set the GageFactoraddress
-				GageOffsetaddress=CH15GOaddress;                        //set the GageOffsetaddress
+				ZeroReadingaddress=CH15ZRaddress;                               //set the ZeroReadingaddress
+				GageFactoraddress=CH15GFaddress;                                //set the GageFactoraddress
+				GageOffsetaddress=CH15GOaddress;                                //set the GageOffsetaddress
 			}			
 			
 			break;
@@ -6095,16 +6183,16 @@ void displayGageInfo(int channel) //display the gage information
 
 			if(MUX_CONVERSION1_16.c1flags.CH16)                                 //Ch 16 of 16 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH16PolyCoAaddress;                      //set the PolyCoAaddress
-				PolyCoBaddress=CH16PolyCoBaddress;                      //set the PolyCoBaddress
-				PolyCoCaddress=CH16PolyCoCaddress;                      //set the PolyCoCaddress
+				PolyCoAaddress=CH16PolyCoAaddress;                              //set the PolyCoAaddress
+				PolyCoBaddress=CH16PolyCoBaddress;                              //set the PolyCoBaddress
+				PolyCoCaddress=CH16PolyCoCaddress;                              //set the PolyCoCaddress
 				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH16ZRaddress;                       //set the ZeroReadingaddress
-				GageFactoraddress=CH16GFaddress;                        //set the GageFactoraddress
-				GageOffsetaddress=CH16GOaddress;                        //set the GageOffsetaddress
+				ZeroReadingaddress=CH16ZRaddress;                               //set the ZeroReadingaddress
+				GageFactoraddress=CH16GFaddress;                                //set the GageFactoraddress
+				GageOffsetaddress=CH16GOaddress;                                //set the GageOffsetaddress
 			}			
 			
 			break;
@@ -6114,16 +6202,16 @@ void displayGageInfo(int channel) //display the gage information
 
 			if(MUX_CONVERSION17_32.c2flags.CH17)                                //Ch 17 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH17PolyCoAaddress;                      //set the PolyCoAaddress
-				PolyCoBaddress=CH17PolyCoBaddress;                      //set the PolyCoBaddress
-				PolyCoCaddress=CH17PolyCoCaddress;                      //set the PolyCoCaddress
+				PolyCoAaddress=CH17PolyCoAaddress;                              //set the PolyCoAaddress
+				PolyCoBaddress=CH17PolyCoBaddress;                              //set the PolyCoBaddress
+				PolyCoCaddress=CH17PolyCoCaddress;                              //set the PolyCoCaddress
 				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH17ZRaddress;                       //set the ZeroReadingaddress
-				GageFactoraddress=CH17GFaddress;                        //set the GageFactoraddress
-				GageOffsetaddress=CH17GOaddress;                        //set the GageOffsetaddress
+				ZeroReadingaddress=CH17ZRaddress;                               //set the ZeroReadingaddress
+				GageFactoraddress=CH17GFaddress;                                //set the GageFactoraddress
+				GageOffsetaddress=CH17GOaddress;                                //set the GageOffsetaddress
 			}			
 			
 			break;
@@ -6132,209 +6220,209 @@ void displayGageInfo(int channel) //display the gage information
         case 18:
 			if(MUX_CONVERSION17_32.c2flags.CH18)                                //Ch 18 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH18PolyCoAaddress;			//set the PolyCoAaddress
-				PolyCoBaddress=CH18PolyCoBaddress;			//set the PolyCoBaddress
-				PolyCoCaddress=CH18PolyCoCaddress;			//set the PolyCoCaddress
-				LC2CONTROL.flags.Conversion=1;	//set the conversion flag
+				PolyCoAaddress=CH18PolyCoAaddress;                              //set the PolyCoAaddress
+				PolyCoBaddress=CH18PolyCoBaddress;                              //set the PolyCoBaddress
+				PolyCoCaddress=CH18PolyCoCaddress;                              //set the PolyCoCaddress
+				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH18ZRaddress;		//set the ZeroReadingaddress
-				GageFactoraddress=CH18GFaddress;		//set the GageFactoraddress
-				GageOffsetaddress=CH18GOaddress; 	//set the GageOffsetaddress
+				ZeroReadingaddress=CH18ZRaddress;                               //set the ZeroReadingaddress
+				GageFactoraddress=CH18GFaddress;                                //set the GageFactoraddress
+				GageOffsetaddress=CH18GOaddress;                                //set the GageOffsetaddress
 			}			
 			
 			break;
             
         case 19:
-			if(MUX_CONVERSION17_32.c2flags.CH19)		//Ch 19 Polynomial Conversion?
+			if(MUX_CONVERSION17_32.c2flags.CH19)                                //Ch 19 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH19PolyCoAaddress;			//set the PolyCoAaddress
-				PolyCoBaddress=CH19PolyCoBaddress;			//set the PolyCoBaddress
-				PolyCoCaddress=CH19PolyCoCaddress;			//set the PolyCoCaddress
-				LC2CONTROL.flags.Conversion=1;	//set the conversion flag
+				PolyCoAaddress=CH19PolyCoAaddress;                              //set the PolyCoAaddress
+				PolyCoBaddress=CH19PolyCoBaddress;                              //set the PolyCoBaddress
+				PolyCoCaddress=CH19PolyCoCaddress;                              //set the PolyCoCaddress
+				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH19ZRaddress;		//set the ZeroReadingaddress
-				GageFactoraddress=CH19GFaddress;		//set the GageFactoraddress
-				GageOffsetaddress=CH19GOaddress; 	//set the GageOffsetaddress
+				ZeroReadingaddress=CH19ZRaddress;                               //set the ZeroReadingaddress
+				GageFactoraddress=CH19GFaddress;                                //set the GageFactoraddress
+				GageOffsetaddress=CH19GOaddress;                                //set the GageOffsetaddress
 			}			
 			
 			break;
 
         case 20:
-			if(MUX_CONVERSION17_32.c2flags.CH20)		//Ch 20 Polynomial Conversion?
+			if(MUX_CONVERSION17_32.c2flags.CH20)                                //Ch 20 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH20PolyCoAaddress;			//set the PolyCoAaddress
-				PolyCoBaddress=CH20PolyCoBaddress;			//set the PolyCoBaddress
-				PolyCoCaddress=CH20PolyCoCaddress;			//set the PolyCoCaddress
-				LC2CONTROL.flags.Conversion=1;	//set the conversion flag
+				PolyCoAaddress=CH20PolyCoAaddress;                              //set the PolyCoAaddress
+				PolyCoBaddress=CH20PolyCoBaddress;                              //set the PolyCoBaddress
+				PolyCoCaddress=CH20PolyCoCaddress;                              //set the PolyCoCaddress
+				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH20ZRaddress;		//set the ZeroReadingaddress
-				GageFactoraddress=CH20GFaddress;		//set the GageFactoraddress
-				GageOffsetaddress=CH20GOaddress; 	//set the GageOffsetaddress
+				ZeroReadingaddress=CH20ZRaddress;                               //set the ZeroReadingaddress
+				GageFactoraddress=CH20GFaddress;                                //set the GageFactoraddress
+				GageOffsetaddress=CH20GOaddress;                                //set the GageOffsetaddress
 			}			
 			
 			break;
 
         case 21:
-			if(MUX_CONVERSION17_32.c2flags.CH21)		//Ch 21 Polynomial Conversion?
+			if(MUX_CONVERSION17_32.c2flags.CH21)                                //Ch 21 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH21PolyCoAaddress;			//set the PolyCoAaddress
-				PolyCoBaddress=CH21PolyCoBaddress;			//set the PolyCoBaddress
-				PolyCoCaddress=CH21PolyCoCaddress;			//set the PolyCoCaddress
-				LC2CONTROL.flags.Conversion=1;	//set the conversion flag
+				PolyCoAaddress=CH21PolyCoAaddress;                              //set the PolyCoAaddress
+				PolyCoBaddress=CH21PolyCoBaddress;                              //set the PolyCoBaddress
+				PolyCoCaddress=CH21PolyCoCaddress;                              //set the PolyCoCaddress
+				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH21ZRaddress;		//set the ZeroReadingaddress
-				GageFactoraddress=CH21GFaddress;		//set the GageFactoraddress
-				GageOffsetaddress=CH21GOaddress; 	//set the GageOffsetaddress
+				ZeroReadingaddress=CH21ZRaddress;                               //set the ZeroReadingaddress
+				GageFactoraddress=CH21GFaddress;                                //set the GageFactoraddress
+				GageOffsetaddress=CH21GOaddress;                                //set the GageOffsetaddress
 			}			
 			
 			break;
 
 
         case 22:
-			if(MUX_CONVERSION17_32.c2flags.CH22)		//Ch 22 Polynomial Conversion?
+			if(MUX_CONVERSION17_32.c2flags.CH22)                                //Ch 22 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH22PolyCoAaddress;			//set the PolyCoAaddress
-				PolyCoBaddress=CH22PolyCoBaddress;			//set the PolyCoBaddress
-				PolyCoCaddress=CH22PolyCoCaddress;			//set the PolyCoCaddress
-				LC2CONTROL.flags.Conversion=1;	//set the conversion flag
+				PolyCoAaddress=CH22PolyCoAaddress;                              //set the PolyCoAaddress
+				PolyCoBaddress=CH22PolyCoBaddress;                              //set the PolyCoBaddress
+				PolyCoCaddress=CH22PolyCoCaddress;                              //set the PolyCoCaddress
+				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH22ZRaddress;		//set the ZeroReadingaddress
-				GageFactoraddress=CH22GFaddress;		//set the GageFactoraddress
-				GageOffsetaddress=CH22GOaddress; 	//set the GageOffsetaddress
+				ZeroReadingaddress=CH22ZRaddress;                               //set the ZeroReadingaddress
+				GageFactoraddress=CH22GFaddress;                                //set the GageFactoraddress
+				GageOffsetaddress=CH22GOaddress;                                //set the GageOffsetaddress
 			}			
 			
 			break;
 
         case 23:
-			if(MUX_CONVERSION17_32.c2flags.CH23)		//Ch 23 Polynomial Conversion?
+			if(MUX_CONVERSION17_32.c2flags.CH23)                                //Ch 23 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH23PolyCoAaddress;			//set the PolyCoAaddress
-				PolyCoBaddress=CH23PolyCoBaddress;			//set the PolyCoBaddress
-				PolyCoCaddress=CH23PolyCoCaddress;			//set the PolyCoCaddress
-				LC2CONTROL.flags.Conversion=1;	//set the conversion flag
+				PolyCoAaddress=CH23PolyCoAaddress;                              //set the PolyCoAaddress
+				PolyCoBaddress=CH23PolyCoBaddress;                              //set the PolyCoBaddress
+				PolyCoCaddress=CH23PolyCoCaddress;                              //set the PolyCoCaddress
+				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH23ZRaddress;		//set the ZeroReadingaddress
-				GageFactoraddress=CH23GFaddress;		//set the GageFactoraddress
-				GageOffsetaddress=CH23GOaddress; 	//set the GageOffsetaddress
+				ZeroReadingaddress=CH23ZRaddress;                               //set the ZeroReadingaddress
+				GageFactoraddress=CH23GFaddress;                                //set the GageFactoraddress
+				GageOffsetaddress=CH23GOaddress;                                //set the GageOffsetaddress
 			}			
 			
 			break;
 
         case 24:
-			if(MUX_CONVERSION17_32.c2flags.CH24)		//Ch 24 Polynomial Conversion?
+			if(MUX_CONVERSION17_32.c2flags.CH24)                                //Ch 24 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH24PolyCoAaddress;			//set the PolyCoAaddress
-				PolyCoBaddress=CH24PolyCoBaddress;			//set the PolyCoBaddress
-				PolyCoCaddress=CH24PolyCoCaddress;			//set the PolyCoCaddress
-				LC2CONTROL.flags.Conversion=1;	//set the conversion flag
+				PolyCoAaddress=CH24PolyCoAaddress;                              //set the PolyCoAaddress
+				PolyCoBaddress=CH24PolyCoBaddress;                              //set the PolyCoBaddress
+				PolyCoCaddress=CH24PolyCoCaddress;                              //set the PolyCoCaddress
+				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH24ZRaddress;		//set the ZeroReadingaddress
-				GageFactoraddress=CH24GFaddress;		//set the GageFactoraddress
-				GageOffsetaddress=CH24GOaddress; 	//set the GageOffsetaddress
+				ZeroReadingaddress=CH24ZRaddress;                               //set the ZeroReadingaddress
+				GageFactoraddress=CH24GFaddress;                                //set the GageFactoraddress
+				GageOffsetaddress=CH24GOaddress;                                //set the GageOffsetaddress
 			}			
 			
 			break;
 
         case 25:
 
-			if(MUX_CONVERSION17_32.c2flags.CH25)		//Ch 25 Polynomial Conversion?
+			if(MUX_CONVERSION17_32.c2flags.CH25)                                //Ch 25 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH25PolyCoAaddress;			//set the PolyCoAaddress
-				PolyCoBaddress=CH25PolyCoBaddress;			//set the PolyCoBaddress
-				PolyCoCaddress=CH25PolyCoCaddress;			//set the PolyCoCaddress
-				LC2CONTROL.flags.Conversion=1;	//set the conversion flag
+				PolyCoAaddress=CH25PolyCoAaddress;                              //set the PolyCoAaddress
+				PolyCoBaddress=CH25PolyCoBaddress;                              //set the PolyCoBaddress
+				PolyCoCaddress=CH25PolyCoCaddress;                              //set the PolyCoCaddress
+				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH25ZRaddress;		//set the ZeroReadingaddress
-				GageFactoraddress=CH25GFaddress;		//set the GageFactoraddress
-				GageOffsetaddress=CH25GOaddress; 	//set the GageOffsetaddress
+				ZeroReadingaddress=CH25ZRaddress;                               //set the ZeroReadingaddress
+				GageFactoraddress=CH25GFaddress;                                //set the GageFactoraddress
+				GageOffsetaddress=CH25GOaddress;                                //set the GageOffsetaddress
 			}			
 			
 			break;
 
         case 26:
 
-			if(MUX_CONVERSION17_32.c2flags.CH26)		//Ch 26 Polynomial Conversion?
+			if(MUX_CONVERSION17_32.c2flags.CH26)                                //Ch 26 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH26PolyCoAaddress;			//set the PolyCoAaddress
-				PolyCoBaddress=CH26PolyCoBaddress;			//set the PolyCoBaddress
-				PolyCoCaddress=CH26PolyCoCaddress;			//set the PolyCoCaddress
-				LC2CONTROL.flags.Conversion=1;	//set the conversion flag
+				PolyCoAaddress=CH26PolyCoAaddress;                              //set the PolyCoAaddress
+				PolyCoBaddress=CH26PolyCoBaddress;                              //set the PolyCoBaddress
+				PolyCoCaddress=CH26PolyCoCaddress;                              //set the PolyCoCaddress
+				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH26ZRaddress;		//set the ZeroReadingaddress
-				GageFactoraddress=CH26GFaddress;		//set the GageFactoraddress
-				GageOffsetaddress=CH26GOaddress; 	//set the GageOffsetaddress
+				ZeroReadingaddress=CH26ZRaddress;                               //set the ZeroReadingaddress
+				GageFactoraddress=CH26GFaddress;                                //set the GageFactoraddress
+				GageOffsetaddress=CH26GOaddress;                                //set the GageOffsetaddress
 			}			
 			
 			break;
 
         case 27:
 
-			if(MUX_CONVERSION17_32.c2flags.CH27)		//Ch 27 Polynomial Conversion?
+			if(MUX_CONVERSION17_32.c2flags.CH27)                                //Ch 27 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH27PolyCoAaddress;			//set the PolyCoAaddress
-				PolyCoBaddress=CH27PolyCoBaddress;			//set the PolyCoBaddress
-				PolyCoCaddress=CH27PolyCoCaddress;			//set the PolyCoCaddress
-				LC2CONTROL.flags.Conversion=1;	//set the conversion flag
+				PolyCoAaddress=CH27PolyCoAaddress;                              //set the PolyCoAaddress
+				PolyCoBaddress=CH27PolyCoBaddress;                              //set the PolyCoBaddress
+				PolyCoCaddress=CH27PolyCoCaddress;                              //set the PolyCoCaddress
+				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH27ZRaddress;		//set the ZeroReadingaddress
-				GageFactoraddress=CH27GFaddress;		//set the GageFactoraddress
-				GageOffsetaddress=CH27GOaddress; 	//set the GageOffsetaddress
+				ZeroReadingaddress=CH27ZRaddress;                               //set the ZeroReadingaddress
+				GageFactoraddress=CH27GFaddress;                                //set the GageFactoraddress
+				GageOffsetaddress=CH27GOaddress;                                //set the GageOffsetaddress
 			}			
 			
 			break;
 
         case 28:
 
-			if(MUX_CONVERSION17_32.c2flags.CH28)		//Ch 28 Polynomial Conversion?
+			if(MUX_CONVERSION17_32.c2flags.CH28)                                //Ch 28 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH28PolyCoAaddress;			//set the PolyCoAaddress
-				PolyCoBaddress=CH28PolyCoBaddress;			//set the PolyCoBaddress
-				PolyCoCaddress=CH28PolyCoCaddress;			//set the PolyCoCaddress
-				LC2CONTROL.flags.Conversion=1;	//set the conversion flag
+				PolyCoAaddress=CH28PolyCoAaddress;                              //set the PolyCoAaddress
+				PolyCoBaddress=CH28PolyCoBaddress;                              //set the PolyCoBaddress
+				PolyCoCaddress=CH28PolyCoCaddress;                              //set the PolyCoCaddress
+				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH28ZRaddress;		//set the ZeroReadingaddress
-				GageFactoraddress=CH28GFaddress;		//set the GageFactoraddress
-				GageOffsetaddress=CH28GOaddress; 	//set the GageOffsetaddress
+				ZeroReadingaddress=CH28ZRaddress;                               //set the ZeroReadingaddress
+				GageFactoraddress=CH28GFaddress;                                //set the GageFactoraddress
+				GageOffsetaddress=CH28GOaddress;                                //set the GageOffsetaddress
 			}			
 			
 			break;
 
         case 29:
 
-			if(MUX_CONVERSION17_32.c2flags.CH29)		//Ch 29 Polynomial Conversion?
+			if(MUX_CONVERSION17_32.c2flags.CH29)                                //Ch 29 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH29PolyCoAaddress;			//set the PolyCoAaddress
-				PolyCoBaddress=CH29PolyCoBaddress;			//set the PolyCoBaddress
-				PolyCoCaddress=CH29PolyCoCaddress;			//set the PolyCoCaddress
-				LC2CONTROL.flags.Conversion=1;	//set the conversion flag
+				PolyCoAaddress=CH29PolyCoAaddress;                              //set the PolyCoAaddress
+				PolyCoBaddress=CH29PolyCoBaddress;                              //set the PolyCoBaddress
+				PolyCoCaddress=CH29PolyCoCaddress;                              //set the PolyCoCaddress
+				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH29ZRaddress;		//set the ZeroReadingaddress
-				GageFactoraddress=CH29GFaddress;		//set the GageFactoraddress
-				GageOffsetaddress=CH29GOaddress; 	//set the GageOffsetaddress
+				ZeroReadingaddress=CH29ZRaddress;                               //set the ZeroReadingaddress
+				GageFactoraddress=CH29GFaddress;                                //set the GageFactoraddress
+				GageOffsetaddress=CH29GOaddress;                                //set the GageOffsetaddress
 			}			
 			
 			break;
@@ -6342,54 +6430,54 @@ void displayGageInfo(int channel) //display the gage information
 
         case 30:
 
-			if(MUX_CONVERSION17_32.c2flags.CH30)		//Ch 30 Polynomial Conversion?
+			if(MUX_CONVERSION17_32.c2flags.CH30)                                //Ch 30 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH30PolyCoAaddress;			//set the PolyCoAaddress
-				PolyCoBaddress=CH30PolyCoBaddress;			//set the PolyCoBaddress
-				PolyCoCaddress=CH30PolyCoCaddress;			//set the PolyCoCaddress
-				LC2CONTROL.flags.Conversion=1;	//set the conversion flag
+				PolyCoAaddress=CH30PolyCoAaddress;                              //set the PolyCoAaddress
+				PolyCoBaddress=CH30PolyCoBaddress;                              //set the PolyCoBaddress
+				PolyCoCaddress=CH30PolyCoCaddress;                              //set the PolyCoCaddress
+				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH30ZRaddress;		//set the ZeroReadingaddress
-				GageFactoraddress=CH30GFaddress;		//set the GageFactoraddress
-				GageOffsetaddress=CH30GOaddress; 	//set the GageOffsetaddress
+				ZeroReadingaddress=CH30ZRaddress;                               //set the ZeroReadingaddress
+				GageFactoraddress=CH30GFaddress;                                //set the GageFactoraddress
+				GageOffsetaddress=CH30GOaddress;                                //set the GageOffsetaddress
 			}			
 			
 			break;
 
         case 31:
 
-			if(MUX_CONVERSION17_32.c2flags.CH31)		//Ch 31 Polynomial Conversion?
+			if(MUX_CONVERSION17_32.c2flags.CH31)                                //Ch 31 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH31PolyCoAaddress;			//set the PolyCoAaddress
-				PolyCoBaddress=CH31PolyCoBaddress;			//set the PolyCoBaddress
-				PolyCoCaddress=CH31PolyCoCaddress;			//set the PolyCoCaddress
-				LC2CONTROL.flags.Conversion=1;	//set the conversion flag
+				PolyCoAaddress=CH31PolyCoAaddress;                              //set the PolyCoAaddress
+				PolyCoBaddress=CH31PolyCoBaddress;                              //set the PolyCoBaddress
+				PolyCoCaddress=CH31PolyCoCaddress;                              //set the PolyCoCaddress
+				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH31ZRaddress;		//set the ZeroReadingaddress
-				GageFactoraddress=CH31GFaddress;		//set the GageFactoraddress
-				GageOffsetaddress=CH31GOaddress; 	//set the GageOffsetaddress
+				ZeroReadingaddress=CH31ZRaddress;                               //set the ZeroReadingaddress
+				GageFactoraddress=CH31GFaddress;                                //set the GageFactoraddress
+				GageOffsetaddress=CH31GOaddress;                                //set the GageOffsetaddress
 			}			
 			
 			break;
             
         case 32:
 
-			if(MUX_CONVERSION17_32.c2flags.CH32)		//Ch 32 Polynomial Conversion?
+			if(MUX_CONVERSION17_32.c2flags.CH32)                                //Ch 32 Polynomial Conversion?
 			{
-				PolyCoAaddress=CH32PolyCoAaddress;			//set the PolyCoAaddress
-				PolyCoBaddress=CH32PolyCoBaddress;			//set the PolyCoBaddress
-				PolyCoCaddress=CH32PolyCoCaddress;			//set the PolyCoCaddress
-				LC2CONTROL.flags.Conversion=1;	//set the conversion flag
+				PolyCoAaddress=CH32PolyCoAaddress;                              //set the PolyCoAaddress
+				PolyCoBaddress=CH32PolyCoBaddress;                              //set the PolyCoBaddress
+				PolyCoCaddress=CH32PolyCoCaddress;                              //set the PolyCoCaddress
+				LC2CONTROL.flags.Conversion=1;                                  //set the conversion flag
 			}
 			else
 			{
-				ZeroReadingaddress=CH32ZRaddress;		//set the ZeroReadingaddress
-				GageFactoraddress=CH32GFaddress;		//set the GageFactoraddress
-				GageOffsetaddress=CH32GOaddress; 	//set the GageOffsetaddress
+				ZeroReadingaddress=CH32ZRaddress;                               //set the ZeroReadingaddress
+				GageFactoraddress=CH32GFaddress;                                //set the GageFactoraddress
+				GageOffsetaddress=CH32GOaddress;                                //set the GageOffsetaddress
 			}			
 			
 			break;
@@ -6398,43 +6486,43 @@ void displayGageInfo(int channel) //display the gage information
             break;
     }
 
-    if(MUX4_ENABLE.mflags.mux16_4!=TH8 && MUX4_ENABLE.mflags.mux16_4!=TH32)     //REV T
+    if(MUX4_ENABLE.mflags.mux16_4!=TH8 && MUX4_ENABLE.mflags.mux16_4!=TH32)     
     {
-        if (LC2CONTROL.flags.Conversion) //Display polynomial coefficients
+        if (LC2CONTROL.flags.Conversion)                                        //Display polynomial coefficients
         {
             putsUART1(PA);
             while (BusyUART1());
-            TEMPVAL=read_float(PolyCoAaddress);                               //extract coefficient A from FRAM   
+            TEMPVAL=read_float(PolyCoAaddress);                                 //extract coefficient A from FRAM   
             formatandDisplayGageInfo(TEMPVAL);
 
             putsUART1(PB);
             while (BusyUART1());
             //TEMPVAL=read_longFRAM(PolyCoAaddress+0x0004);                        //extract coefficient B from FRAM   REM REV BE
-            TEMPVAL=read_float(PolyCoAaddress+0x0080);                       //extract coefficient B from FRAM   REV BE
+            TEMPVAL=read_float(PolyCoAaddress+0x0080);                          //extract coefficient B from FRAM   REV BE
             formatandDisplayGageInfo(TEMPVAL);
 
             putsUART1(PC);
             while (BusyUART1());
             //TEMPVAL=read_longFRAM(PolyCoAaddress+0x0008);                        //extract coefficient C from FRAM   REM REV BE
-            TEMPVAL=read_float(PolyCoAaddress+0x0100);                        //extract coefficient C from FRAM  REV BE
+            TEMPVAL=read_float(PolyCoAaddress+0x0100);                          //extract coefficient C from FRAM  REV BE
             formatandDisplayGageInfo(TEMPVAL);
         } else 
         {
             putsUART1(ZR);
             while (BusyUART1());
-            TEMPVAL=read_float(ZeroReadingaddress);                           //extract Zero Reading from FRAM    
-            formatandDisplayGageInfo(TEMPVAL);
+            TEMPVAL=read_float(ZeroReadingaddress);                             //extract Zero Reading from FRAM    
+            formatandDisplayGageInfo(TEMPVAL);  
 
             putsUART1(GF);
             while (BusyUART1());
             //TEMPVAL=read_longFRAM(ZeroReadingaddress+0x0004);                    //extract Gage Factor from FRAM  REM REV BE
-            TEMPVAL=read_float(ZeroReadingaddress+0x0080);                    //extract Gage Factor from FRAM REV BE
+            TEMPVAL=read_float(ZeroReadingaddress+0x0080);                      //extract Gage Factor from FRAM REV BE
             formatandDisplayGageInfo(TEMPVAL);
 
             putsUART1(GO);
             while (BusyUART1());
             //TEMPVAL=read_longFRAM(ZeroReadingaddress+0x0008);                    //extract Gage Offset from FRAM  REM REV BE
-            TEMPVAL=read_float(ZeroReadingaddress+0x0100);                    //extract Gage Offset from FRAM REV BE
+            TEMPVAL=read_float(ZeroReadingaddress+0x0100);                      //extract Gage Offset from FRAM REV BE
             formatandDisplayGageInfo(TEMPVAL);
         }
     }
@@ -6629,7 +6717,8 @@ void displayMUX(int displayChannel)
 {
     MUX_ENABLE1_16.MUXen1_16=read_Int_FRAM(MUX_ENABLE1_16flagsaddress);       
     MUX_ENABLE17_32.MUXen17_32=read_Int_FRAM(MUX_ENABLE17_32flagsaddress);          
-    
+    THMUX_ENABLE1_16.THMUXen1_16=read_Int_FRAM(THMUX_ENABLE1_16flagsaddress);       //REV 1.8
+    THMUX_ENABLE17_32.THMUXen17_32=read_Int_FRAM(THMUX_ENABLE17_32flagsaddress);    //REV 1.8      
     //DISPLAY MUX SETUP TABLE:
     crlf();
 
@@ -6662,57 +6751,113 @@ void displayMUX(int displayChannel)
     crlf();
 
 
-    if (displayChannel == 1 | displayChannel == 0) {
+    if (displayChannel == 1 | displayChannel == 0) 
+    {
         putsUART1(CH1); //CH1 setup
         while (BusyUART1());
-        if (MUX_ENABLE1_16.e1flags.CH1) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW8 |      
+                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE1_16.e1flags.CH1) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE1_16.t1flags.CH1) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }        
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32)  REM REV T
+
         displayGageInfo(1); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 2 | displayChannel == 0) {
+    if (displayChannel == 2 | displayChannel == 0) 
+    {
         putsUART1(CH2); //CH2 setup
         while (BusyUART1());
-        if (MUX_ENABLE1_16.e1flags.CH2) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+
+        if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW8 |      
+                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE1_16.e1flags.CH2) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE1_16.t1flags.CH2) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32)  REM REV T
+
         displayGageInfo(2); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 3 | displayChannel == 0) {
+    if (displayChannel == 3 | displayChannel == 0) 
+    {
         putsUART1(CH3); //CH3 setup
         while (BusyUART1());
-        if (MUX_ENABLE1_16.e1flags.CH3) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW8 |      
+                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE1_16.e1flags.CH3) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE1_16.t1flags.CH3) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32)  REM REV T
+
         displayGageInfo(3); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 4 | displayChannel == 0) {
+    if (displayChannel == 4 | displayChannel == 0) 
+    {
         putsUART1(CH4); //CH4 setup
         while (BusyUART1());
-        if (MUX_ENABLE1_16.e1flags.CH4) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW8 |      
+                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE1_16.e1flags.CH4) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE1_16.t1flags.CH4) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32)  REM REV T
+
         displayGageInfo(4); //Display gage information
         crlf();
         crlf();
@@ -6722,57 +6867,113 @@ void displayMUX(int displayChannel)
     if (MUX4_ENABLE.mflags.mux16_4 == VW4)
         return;
 
-    if (displayChannel == 5 | displayChannel == 0) {
+    if (displayChannel == 5 | displayChannel == 0) 
+    {
         putsUART1(CH5); //CH5 setup
         while (BusyUART1());
-        if (MUX_ENABLE1_16.e1flags.CH5) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW8 |      
+                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE1_16.e1flags.CH5) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE1_16.t1flags.CH5) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32)  REM REV T
+
         displayGageInfo(5); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 6 | displayChannel == 0) {
+    if (displayChannel == 6 | displayChannel == 0) 
+    {
         putsUART1(CH6); //CH6 setup
         while (BusyUART1());
-        if (MUX_ENABLE1_16.e1flags.CH6) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW8 |      
+                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE1_16.e1flags.CH6) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE1_16.t1flags.CH6) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32)  REM REV T
+
         displayGageInfo(6); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 7 | displayChannel == 0) {
+    if (displayChannel == 7 | displayChannel == 0) 
+    {
         putsUART1(CH7); //CH7 setup
         while (BusyUART1());
-        if (MUX_ENABLE1_16.e1flags.CH7) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW8 |      
+                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE1_16.e1flags.CH7) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE1_16.t1flags.CH7) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32)  REM REV T
+
         displayGageInfo(7); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 8 | displayChannel == 0) {
+    if (displayChannel == 8 | displayChannel == 0) 
+    {
         putsUART1(CH8); //CH8 setup
         while (BusyUART1());
-        if (MUX_ENABLE1_16.e1flags.CH8) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW8 |      
+                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE1_16.e1flags.CH8) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE1_16.t1flags.CH8) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32)  REM REV T
+
         displayGageInfo(8); //Display gage information
         crlf();
         crlf();
@@ -6782,113 +6983,217 @@ void displayMUX(int displayChannel)
         return;
 
 
-    if (displayChannel == 9 | displayChannel == 0) {
+    if (displayChannel == 9 | displayChannel == 0) 
+    {
         putsUART1(CH9); //CH9 setup
         while (BusyUART1());
-        if (MUX_ENABLE1_16.e1flags.CH9) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE1_16.e1flags.CH9) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE1_16.t1flags.CH9) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH32)                               REM REV T
+
         displayGageInfo(9); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 10 | displayChannel == 0) {
+    if (displayChannel == 10 | displayChannel == 0) 
+    {
         putsUART1(CH10); //CH10 setup
         while (BusyUART1());
-        if (MUX_ENABLE1_16.e1flags.CH10) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE1_16.e1flags.CH10) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE1_16.t1flags.CH10) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH32)                               REM REV T
+
         displayGageInfo(10); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 11 | displayChannel == 0) {
+    if (displayChannel == 11 | displayChannel == 0) 
+    {
         putsUART1(CH11); //CH11 setup
         while (BusyUART1());
-        if (MUX_ENABLE1_16.e1flags.CH11) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE1_16.e1flags.CH11) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE1_16.t1flags.CH11) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH32)                               REM REV T
+
         displayGageInfo(11); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 12 | displayChannel == 0) {
+    if (displayChannel == 12 | displayChannel == 0) 
+    {
         putsUART1(CH12); //CH12 setup
         while (BusyUART1());
-        if (MUX_ENABLE1_16.e1flags.CH12) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE1_16.e1flags.CH12) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE1_16.t1flags.CH12) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH32)                               REM REV T
+
         displayGageInfo(12); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 13 | displayChannel == 0) {
+    if (displayChannel == 13 | displayChannel == 0) 
+    {
         putsUART1(CH13); //CH13 setup
         while (BusyUART1());
-        if (MUX_ENABLE1_16.e1flags.CH13) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE1_16.e1flags.CH13) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE1_16.t1flags.CH13) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH32)                               REM REV T
+
         displayGageInfo(13); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 14 | displayChannel == 0) {
+    if (displayChannel == 14 | displayChannel == 0) 
+    {
         putsUART1(CH14); //CH14 setup
         while (BusyUART1());
-        if (MUX_ENABLE1_16.e1flags.CH14) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE1_16.e1flags.CH14) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE1_16.t1flags.CH14) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH32)                               REM REV T
+
         displayGageInfo(14); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 15 | displayChannel == 0) {
+    if (displayChannel == 15 | displayChannel == 0) 
+    {
         putsUART1(CH15); //CH15 setup
         while (BusyUART1());
-        if (MUX_ENABLE1_16.e1flags.CH15) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE1_16.e1flags.CH15) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE1_16.t1flags.CH15) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH32)                               REM REV T    
+
         displayGageInfo(15); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 16 | displayChannel == 0) {
+    if (displayChannel == 16 | displayChannel == 0) 
+    {
         putsUART1(CH16); //CH16 setup
         while (BusyUART1());
-        if (MUX_ENABLE1_16.e1flags.CH16) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE1_16.e1flags.CH16) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE1_16.t1flags.CH16) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH32)                               REM REV T
+
         displayGageInfo(16); //Display gage information
         crlf();
         crlf();
@@ -6897,237 +7202,442 @@ void displayMUX(int displayChannel)
     if (MUX4_ENABLE.mflags.mux16_4 == VW16)
         return;
 
-    if (displayChannel == 17 | displayChannel == 0) {
+    if (displayChannel == 17 | displayChannel == 0) 
+    {
         putsUART1(CH17); //CH17 setup
         while (BusyUART1());
-        if (MUX_ENABLE17_32.e2flags.CH17) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+    
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE17_32.e2flags.CH17) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE17_32.t2flags.CH17) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH32)                               REM REV T
+
         displayGageInfo(17); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 18 | displayChannel == 0) {
+    if (displayChannel == 18 | displayChannel == 0) 
+    {
         putsUART1(CH18); //CH18 setup
         while (BusyUART1());
-        if (MUX_ENABLE17_32.e2flags.CH18) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE17_32.e2flags.CH18) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE17_32.t2flags.CH18) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH32)                               REM REV T
+
         displayGageInfo(18); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 19 | displayChannel == 0) {
+    if (displayChannel == 19 | displayChannel == 0) 
+    {
         putsUART1(CH19); //CH19 setup
         while (BusyUART1());
-        if (MUX_ENABLE17_32.e2flags.CH19) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE17_32.e2flags.CH19) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE17_32.t2flags.CH19) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH32)                               REM REV T
+
         displayGageInfo(19); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 20 | displayChannel == 0) {
+    if (displayChannel == 20 | displayChannel == 0) 
+    {
         putsUART1(CH20); //CH20 setup
         while (BusyUART1());
-        if (MUX_ENABLE17_32.e2flags.CH20) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE17_32.e2flags.CH20) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE17_32.t2flags.CH20) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH32)                               REM REV T
+
         displayGageInfo(20); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 21 | displayChannel == 0) {
+    if (displayChannel == 21 | displayChannel == 0) 
+    {
         putsUART1(CH21); //CH21 setup
         while (BusyUART1());
-        if (MUX_ENABLE17_32.e2flags.CH21) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE17_32.e2flags.CH21) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE17_32.t2flags.CH21) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH32)                               REM REV T
+
         displayGageInfo(21); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 22 | displayChannel == 0) {
+    if (displayChannel == 22 | displayChannel == 0) 
+    {
         putsUART1(CH22); //CH22 setup
         while (BusyUART1());
-        if (MUX_ENABLE17_32.e2flags.CH22) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE17_32.e2flags.CH22) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE17_32.t2flags.CH22) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH32)                               REM REV T
+
         displayGageInfo(22); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 23 | displayChannel == 0) {
+    if (displayChannel == 23 | displayChannel == 0) 
+    {
         putsUART1(CH23); //CH23 setup
         while (BusyUART1());
-        if (MUX_ENABLE17_32.e2flags.CH23) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE17_32.e2flags.CH23) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE17_32.t2flags.CH23) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH32)                               REM REV T
+
         displayGageInfo(23); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 24 | displayChannel == 0) {
+    if (displayChannel == 24 | displayChannel == 0) 
+    {
         putsUART1(CH24); //CH24 setup
         while (BusyUART1());
-        if (MUX_ENABLE17_32.e2flags.CH24) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE17_32.e2flags.CH24) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE17_32.t2flags.CH24) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH32)                               REM REV T
+
         displayGageInfo(24); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 25 | displayChannel == 0) {
+    if (displayChannel == 25 | displayChannel == 0) 
+    {
         putsUART1(CH25); //CH25 setup
         while (BusyUART1());
-        if (MUX_ENABLE17_32.e2flags.CH25) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE17_32.e2flags.CH25) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE17_32.t2flags.CH25) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH32)                               //REM REV T
+
         displayGageInfo(25); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 26 | displayChannel == 0) {
+    if (displayChannel == 26 | displayChannel == 0) 
+    {
         putsUART1(CH26); //CH26 setup
         while (BusyUART1());
-        if (MUX_ENABLE17_32.e2flags.CH26) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE17_32.e2flags.CH26) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE17_32.t2flags.CH26) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH32)                               REM REV T
+
         displayGageInfo(26); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 27 | displayChannel == 0) {
+    if (displayChannel == 27 | displayChannel == 0) 
+    {
         putsUART1(CH27); //CH27 setup
         while (BusyUART1());
-        if (MUX_ENABLE17_32.e2flags.CH27) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+    
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE17_32.e2flags.CH27) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE17_32.t2flags.CH27) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH32)                               REM REV T
+
         displayGageInfo(27); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 28 | displayChannel == 0) {
+    if (displayChannel == 28 | displayChannel == 0) 
+    {
         putsUART1(CH28); //CH28 setup
         while (BusyUART1());
-        if (MUX_ENABLE17_32.e2flags.CH28) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+        
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE17_32.e2flags.CH28) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE17_32.t2flags.CH28) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH32)                               REM REV T
+
         displayGageInfo(28); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 29 | displayChannel == 0) {
+    if (displayChannel == 29 | displayChannel == 0) 
+    {
         putsUART1(CH29); //CH29 setup
         while (BusyUART1());
-        if (MUX_ENABLE17_32.e2flags.CH29) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+    
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE17_32.e2flags.CH29) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE17_32.t2flags.CH29) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH32)                               REM REV T
+
         displayGageInfo(29); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 30 | displayChannel == 0) {
+    if (displayChannel == 30 | displayChannel == 0) 
+    {
         putsUART1(CH30); //CH30 setup
         while (BusyUART1());
-        if (MUX_ENABLE17_32.e2flags.CH30) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+    
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE17_32.e2flags.CH30) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE17_32.t2flags.CH30) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH32)                               REM REV T
+
         displayGageInfo(30); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 31 | displayChannel == 0) {
+    if (displayChannel == 31 | displayChannel == 0) 
+    {
         putsUART1(CH31); //CH31 setup
         while (BusyUART1());
-        if (MUX_ENABLE17_32.e2flags.CH31) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+    
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE17_32.e2flags.CH31) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE17_32.t2flags.CH31) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH32)                               REM REV T
+
         displayGageInfo(31); //Display gage information
         crlf();
         crlf();
     }
 
-    if (displayChannel == 32 | displayChannel == 0) {
+    if (displayChannel == 32 | displayChannel == 0) 
+    {
         putsUART1(CH32); //CH32 setup
         while (BusyUART1());
-        if (MUX_ENABLE17_32.e2flags.CH32) //Display ENABLED or DISABLED
-            putsUART1(Enabled);
-        else
-            putsUART1(Disabled);
+    
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        {
+            if (MUX_ENABLE17_32.e2flags.CH32) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        {
+            if (THMUX_ENABLE17_32.t2flags.CH32) //Display ENABLED or DISABLED
+                putsUART1(Enabled);
+            else
+                putsUART1(Disabled);
+        }                
         while (BusyUART1());
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH32)                               REM REV T
+
         displayGageInfo(32); //Display gage information
         crlf();
         crlf();
     }
-    //crlf();
-    //crlf();
-
 }
 
 void displayReading(int ch, unsigned long outputPosition) //display readings stored in external FRAM at FRAMaddress
 {
-    typedef struct                                                              //REV AB
+    typedef struct                                                              
     {
 	unsigned char lsb;                                                          //array LSB for binary Tx
     unsigned char msb;                                                          //array MSB for binary Tx
@@ -7137,55 +7647,30 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
     }uarrays;
     uarrays TXARRAY;                                                            //TXARRAY.ArrayBytes.msb, TXARRAY.array.lsb
     
-    /*REM REV BH:
-    typedef struct                                                              //REV AB
-    {
-	unsigned char BINARY_LSB;                                                            //Checksum LSB for binary Tx
-    unsigned char BINARY_B;                                                            
-    unsigned char BINARY_C;                                                            
-    unsigned char BINARY_MSB;                                                            //Checksum MSB for binary Tx
-    }CHKSUMBytes;
-    typedef union{unsigned long chksum;
-    CHKSUMBytes arrays;
-    }xarrays;
-    xarrays CHECKSUM;                                                           //CHECKSUM.CHKSUMBytes.D,C,B,A
-    */
-    
-    
-    char BUF[10]; //temporary storage for display data                          //REV J
-    unsigned char NOB;                                                          //Number Of Bytes REV AA
-    volatile unsigned int arrayIDX;                                                      //REV AB
+    char BUF[10];                                                               //temporary storage for display data                          
+    unsigned char NOB;                                                          //Number Of Bytes 
+    volatile unsigned int arrayIDX;                                                      
     unsigned char month;
     unsigned char day;
     unsigned int julian;
     unsigned int year;
-    //unsigned int extThermreading = 0;                                         //REM REV BH
-    //unsigned int intThermreading = 0;                                         //REM REV K
-    int intThermreading=0;                                                      //REV K
+    int intThermreading=0;                                                      
     int mainBatreading = 0;
-    //int displayArray;                                                         //REM REV AB
-    //int tempdisplayArray = 0; //VER 6.0.2
     unsigned int displayChannel = 0;
-    //unsigned BUFidx = 0;                                                        //REV AB REM REV BH
-    unsigned long i;                                                            //REV B
+    unsigned long i;                                                            
     unsigned int maxchannelplusone;
-    //unsigned int pointer = 0;
     unsigned long FRAMaddress;
-    unsigned long tempoutputPosition = 0; //for DEBUG
+    unsigned long tempoutputPosition = 0;                                       //for DEBUG
     float mainBat = 0.0;
-    //float intThermRaw = 0.0;                                                  REM REV BH
-    //float intThermProcessed = 0.0;                                            REM REV BH
-    //float extThermRaw = 0.0;                                                  REM REV BH
     float extThermProcessed = 0.0;
-    //float percent = 0.0;
 
     for(arrayIDX=0;arrayIDX<152;arrayIDX++)
     {
-        TxBinaryBUF[arrayIDX]=0;                                                //clear the buffer  REV AB
+        TxBinaryBUF[arrayIDX]=0;                                                //clear the buffer  
     }
-    arrayIDX=0;                                                                 //reset the index   REV AB
+    arrayIDX=0;                                                                 //reset the index   
 
-    year = read_Int_FRAM(0);                                                    //Read the year from the external FRAM to initialize I2C    REV V
+    year = read_Int_FRAM(0);                                                    //Read the year from the external FRAM to initialize I2C    
         
     if ((outputPosition > maxSingleVW && (MUX4_ENABLE.mflags.mux16_4 == Single)) |
             (outputPosition > maxFourVW && (MUX4_ENABLE.mflags.mux16_4 == VW4)) |
@@ -7195,104 +7680,75 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
             (outputPosition > maxEightTH && (MUX4_ENABLE.mflags.mux16_4 == TH8)) |
             (outputPosition > maxThirtytwoTH && (MUX4_ENABLE.mflags.mux16_4 == TH32))) {
         outputPosition = 1;
-        write_Int_FRAM(OutputPositionaddress,outputPosition);	//store outputPosition pointer in internal FRAM   
+        write_Int_FRAM(OutputPositionaddress,outputPosition);                   //store outputPosition pointer in internal FRAM   
     }
 
-    //displayArray = outputPosition;                                            REM REV AB
-    TXARRAY.array=outputPosition;                                               //REV AB
+    TXARRAY.array=outputPosition;                                               
 
     //calculate the external FRAM base address:
-    if (MUX4_ENABLE.mflags.mux16_4 == Single) //Single Channel VW
+    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //Single Channel VW
     {
         FRAMaddress = SingleVWPosition;
-        NOB=28;                                                                 //28 bytes for binary download  REV AB  
+        NOB=28;                                                                 //28 bytes for binary download  
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4) //4 Channel VW
+    if (MUX4_ENABLE.mflags.mux16_4 == VW4)                                      //4 Channel VW
     {
         FRAMaddress = VW4Position;
-        NOB=52;                                                                 //REV AC
+        NOB=52;                                                                 
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW8) //8 Channel VW
+    if (MUX4_ENABLE.mflags.mux16_4 == VW8)                                      //8 Channel VW
     {
         FRAMaddress = VW8Position;
-        NOB=52;                                                                 //REV AC
+        NOB=52;                                                                 
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16) //16 Channel VW
+    if (MUX4_ENABLE.mflags.mux16_4 == VW16)                                     //16 Channel VW
     {
         FRAMaddress = VW16Position;
-        NOB=148;                                                                //REV AC          
+        NOB=148;                                                                          
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW32) //32 Channel VW
+    if (MUX4_ENABLE.mflags.mux16_4 == VW32)                                     //32 Channel VW
     {
         FRAMaddress = VW32Position;
-        NOB=148;                                                                //REV AC
+        NOB=148;                                                                
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == TH8) //8 Channel thermistor
+    if (MUX4_ENABLE.mflags.mux16_4 == TH8)                                      //8 Channel thermistor
     {
         FRAMaddress = TH8Position;
-        NOB=52;                                                                 //REV AC
+        NOB=52;                                                                 
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == TH32) //32 Channel thermistor
+    if (MUX4_ENABLE.mflags.mux16_4 == TH32)                                     //32 Channel thermistor
     {
         FRAMaddress = TH32Position;
-        NOB=148;                                                                //REV AC
+        NOB=148;                                                                
     }
 
-    if (!_232) //VER 6.0.1
+    if (!_232) 
         _232SHDN=1;                                                             
 
-    //if ((LC2CONTROL.flags.ID && !LC2CONTROL2.flags2.d) | (LC2CONTROL2.flags2.d && LC2CONTROL2.flags2.ID)) //Display ID if flag is set or if Binary download (1X)  REM REV AA
-    //if (LC2CONTROL.flags.ID && !LC2CONTROL2.flags2.d)                      //Only display ID if ascii transmission REM VER BA
-    if (LC2CONTROL.flags.ID)                                                    //display ID    VER BA
+    if (LC2CONTROL.flags.ID)                                                    //display ID    
     {
 
-        for (i = IDaddress; i < CH1GTaddress; i += 2)            //parse the buffer and extract the ID character    REV 1.4
+        for (i = IDaddress; i < CH1GTaddress; i += 2)                           //parse the buffer and extract the ID character    
         {
-            data=read_Int_FRAM(i);                                          //read the ID starting FRAM location    
-            unpack(data); //unpack into (2) bytes
+            data=read_Int_FRAM(i);                                              //read the ID starting FRAM location    
+            unpack(data);                                                       //unpack into (2) bytes
 
-            //if (Hbyte == cr && !LC2CONTROL2.flags2.d) //exit if MSB = <CR>    REM VER BA
             if (Hbyte == cr)                                                    //VER BA
                 break;
             putcUART1(Hbyte);
 
-            //if (Lbyte == cr && !LC2CONTROL2.flags2.d) //exit if LSB = <CR>    REM VER BA
-            if (Lbyte == cr)                                                       //exit if LSB = <CR>    VER BA
+            if (Lbyte == cr)                                                    //exit if LSB = <CR>    
                 break;
             putcUART1(Lbyte);
         }
-
-        //if (!LC2CONTROL2.flags2.d) //VER 6.0.2                                  //REM REV AA
-            putcUART1(comma); // , DELIMITER
-        //else                                                                    //REM REV AA
-        //    LC2CONTROL2.flags2.ID = 0; //clear the ID flag                      //REM REV AA
-
+        putcUART1(comma);                                                       // , DELIMITER
     }
-    
-    
-    /*REM VER BA
-    if(LC2CONTROL2.flags2.d)                                                    //if data is in binary format   REV AA
-    {
-        //putcUART1(stx);                                                         //TX the STX char REV AA
-        //while(BusyUART1());
-        //putcUART1(NOB);                                                         //TX the number of bytes    REV AA
-        //while(BusyUART1());
-        TxBinaryBUF[arrayIDX]=stx;                                              //load STX into buffer[0]   REV AB
-        arrayIDX+=1;                                                             //increment the index       REV AB
-        TxBinaryBUF[arrayIDX]=NOB;                                              //load NOB into buffer[1]   REV AB
-        arrayIDX+=1;                                                             //increment the index       REV AB
-        TxBinaryBUF[arrayIDX]=TXARRAY.arrays.msb;                               //load the ARRAY MSB into buffer[2]        REV AB
-        arrayIDX+=1;                                                             //increment the index       REV AB
-        TxBinaryBUF[arrayIDX]=TXARRAY.arrays.lsb;                               //load the ARRAY LSB into buffer[3]        REV AB
-        arrayIDX+=1;                                                             //increment the index       REV AB
-    }
-    */
     
     //TIME STAMP
     //YEAR
@@ -7301,191 +7757,91 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
     IEC1bits.INT1IE = 1;                                                        //Enable INT1
 
 
-    //if (!LC2CONTROL2.flags2.d)                                                  //REM VER BA
-    //{                                                                         //REM VER BA
-        putcUART1(two);                                                         //year
-        while(BusyUART1());
-        putcUART1(zero);
-        while(BusyUART1());
+    putcUART1(two);                                                             //year
+    while(BusyUART1());
+    putcUART1(zero);
+    while(BusyUART1());
 
-        if (year < 10)
-        {
-            putcUART1(zero);                                                    //add leading zero if required
-            while(BusyUART1());
-        }
-
-        sprintf(BUF, "%d", year);                                               //format it
-        putsUART1(BUF);                                                         //display it
-        while (BusyUART1());
-        putcUART1(comma);                                                       // , DELIMITER
+    if (year < 10)
+    {
+        putcUART1(zero);                                                        //add leading zero if required
         while(BusyUART1());
-    //}                                                                         REM VER BA
-    //else                                                                      REM VER BA
-    //{                                                                         REM VER BA
-    //    TxBinaryBUF[arrayIDX]=year;                                             //load year into buffer[4]   REM VER BA
-    //    arrayIDX++;                                                             //increment the index       REM VER BA
-    //}                                                                         REM VER BA
+    }
+    sprintf(BUF, "%d", year);                                                   //format it
+    putsUART1(BUF);                                                             //display it
+    while (BusyUART1());
+    putcUART1(comma);                                                           // , DELIMITER
+    while(BusyUART1());
 
     //DAY OF YEAR
     IEC1bits.INT1IE = 0;                                                        //Disable INT1
     julian = read_Int_FRAM(FRAMaddress + 2);                                    //Read the decimal date from external FRAM
     IEC1bits.INT1IE = 1;                                                        //Enable INT1
 
-    /*REM REV AA:
-    if (LC2CONTROL.flags.DateFormat)                                            //month,day
+    if(LC2CONTROL.flags.DateFormat)                                             //month,day
     {
         month = toMonthDay(julian, year, 1);                                    //get the month from the julian date
         day = toMonthDay(julian, year, 0);                                      //get the day from the julian date
-
-        if (!LC2CONTROL2.flags2.d)                                              //VER 6.0.2
-        {
-            sprintf(BUF, "%d", month);                                          //format the month data ASCII
-            putsUART1(BUF);                                                     //display it
-            while (BusyUART1());
-            putcUART1(comma);                                                   // , DELIMITER
-            while(BusyUART1());
-        } else {
-            putcUART1(month);                                                   //Binary
-            while(BusyUART1());
-        }
-
-        if (!LC2CONTROL2.flags2.d)                                              //VER 6.0.2
-        {
-            sprintf(BUF, "%d", day);                                            //format the day data   ASCII
-            putsUART1(BUF);                                                     //display it
-            while (BusyUART1());
-            putcUART1(comma);                                                   // , DELIMITER
-            while(BusyUART1());
-        } 
-        else 
-        {
-            putcUART1(day);                                                     //Binary
-            while(BusyUART1());
-        }
-
+        sprintf(BUF, "%d", month);                                              //format the month data 
+        putsUART1(BUF);                                                         //display it
+        while (BusyUART1());
+        putcUART1(comma);                                                       // , DELIMITER
+        while(BusyUART1());
+        sprintf(BUF, "%d", day);                                                //format the day data   
+        putsUART1(BUF);                                                         //display it
+        while (BusyUART1());
+        putcUART1(comma);                                                       // , DELIMITER
+        while(BusyUART1());
     } 
     else                                                                        //decimal day
     {
-        if (!LC2CONTROL2.flags2.d)                                              //VER 6.0.2
-        {
-            sprintf(BUF, "%d", julian);                                         //ASCII
-            putsUART1(BUF);
-            while (BusyUART1());
-            putcUART1(comma);                                                   // , DELIMITER
-            while(BusyUART1());
-        } 
-        else 
-        {
-            putcUART1(MSB);                                                     //Binary 
-            while(BusyUART1());
-            putcUART1(LSB);
-            while(BusyUART1());
-        }
-    }
-*/
-    //REV AA:
-    //if (!LC2CONTROL2.flags2.d)                                                  //month,day   REM VER BA
-    //{                                                                         REM VER BA
-        if(LC2CONTROL.flags.DateFormat)                                         //month,day
-        {
-            month = toMonthDay(julian, year, 1);                                //get the month from the julian date
-            day = toMonthDay(julian, year, 0);                                  //get the day from the julian date
-            sprintf(BUF, "%d", month);                                          //format the month data 
-            putsUART1(BUF);                                                     //display it
-            while (BusyUART1());
-            putcUART1(comma);                                                   // , DELIMITER
-            while(BusyUART1());
-            sprintf(BUF, "%d", day);                                            //format the day data   
-            putsUART1(BUF);                                                     //display it
-            while (BusyUART1());
-            putcUART1(comma);                                                   // , DELIMITER
-            while(BusyUART1());
-        } 
-        else                                                                    //decimal day
-        {
-            sprintf(BUF, "%d", julian);                                         
-            putsUART1(BUF);
-            while (BusyUART1());
-            putcUART1(comma);                                                   // , DELIMITER
-            while(BusyUART1());
-        } 
-    //}                                                                         REM VER BA:
-    //else 
-    //{
-    //    TxBinaryBUF[arrayIDX]=MSB;                                              //load julian MSB into buffer[5]   REV AB
-    //    arrayIDX++;                                                             //increment the index       REV AB
-    //    TxBinaryBUF[arrayIDX]=LSB;                                              //load julian LSB into buffer[6]   REV AB
-    //    arrayIDX++;                                                             //increment the index       REV AB
-    //}
-
+        sprintf(BUF, "%d", julian);                                         
+        putsUART1(BUF);
+        while (BusyUART1());
+        putcUART1(comma);                                                       // , DELIMITER
+        while(BusyUART1());
+    } 
 
     IEC1bits.INT1IE = 0;                                                        //Disable INT1
-    //read_Flt_FRAM(FRAMaddress + 4, 1);                                        //REM REV BH
-    TESTSECONDS=read_longFRAM(FRAMaddress + 4);                                 //REV BH
+    TESTSECONDS=read_longFRAM(FRAMaddress + 4);                                 
     IEC1bits.INT1IE = 1;                                                        //Enable INT1
     seconds2hms(TESTSECONDS);
 
     //HOUR
-    //if (!LC2CONTROL2.flags2.d)                                                  //REV AA  REM VER BA
-    //{                                                                         REM VER BA
-        if (hour < 10)                                                              //add leading zero
-        {
-            putcUART1(zero);
-            while(BusyUART1());
-        }
+    if (hour < 10)                                                              //add leading zero
+    {
+        putcUART1(zero);
+        while(BusyUART1());
+    }
 
-        sprintf(BUF, "%d", hour);                                               //format the hour data  
-        putsUART1(BUF);                                                         //display it
-        while (BusyUART1());
-        if (LC2CONTROL.flags.TimeFormat)                                        //hh,mm format
-        {
-            putcUART1(comma); // , DELIMITER
-            while(BusyUART1());
-        }
-    //}                                                                         REM VER BA:
-    //else 
-    //{
-    //    TxBinaryBUF[arrayIDX]=hour;                                             //load hour into buffer[7]   REV AB
-    //    arrayIDX++;                                                             //increment the index       REV AB
-    //}
+    sprintf(BUF, "%d", hour);                                                   //format the hour data  
+    putsUART1(BUF);                                                             //display it
+    while (BusyUART1());
+    if (LC2CONTROL.flags.TimeFormat)                                            //hh,mm format
+    {
+        putcUART1(comma); // , DELIMITER
+        while(BusyUART1());
+    }
 
     //MINUTE
-    //if (!LC2CONTROL2.flags2.d)                                                  //REV AA REM VER BA
-    //{                                                                         REM VER BA
-        if (minute < 10)                                                            //add leading zero
-        {
-            putcUART1(zero);
-            while(BusyUART1());
-        }
-
-        sprintf(BUF, "%d", minute);                                             //format the minute data    
-        putsUART1(BUF);                                                         //display it
-        while (BusyUART1());
-        putcUART1(comma);                                                       // , DELIMITER
+    if (minute < 10)                                                            //add leading zero
+    {
+        putcUART1(zero);
         while(BusyUART1());
-    //}                                                                         REM VER BA:
-    //else 
-    //{
-    //    TxBinaryBUF[arrayIDX]=minute;                                           //load minute into buffer[8]   REV AB
-    //    arrayIDX++;                                                             //increment the index       REV AB        
-    //}
+    }
+
+    sprintf(BUF, "%d", minute);                                                 //format the minute data    
+    putsUART1(BUF);                                                             //display it
+    while (BusyUART1());
+    putcUART1(comma);                                                           // , DELIMITER
+    while(BusyUART1());
 
     //SECOND
-    //if (!LC2CONTROL2.flags2.d)                                                  //VER 6.0.2   REM VER BA
-    //{                                                                          REM VER BA
-        sprintf(BUF, "%d", second);                                             //format the second data    
-        putsUART1(BUF);                                                         //display it
-        while (BusyUART1());
-        putcUART1(comma);                                                       // , DELIMITER
-        while(BusyUART1());
-    //}                                                                         REM VER BA:
-    //else 
-    //{
-    //    TxBinaryBUF[arrayIDX]=second;                                           //load second into buffer[9]   REV AB
-    //    arrayIDX++;                                                             //increment the index       REV AB        
-    //}
-
-
+    sprintf(BUF, "%d", second);                                                 //format the second data    
+    putsUART1(BUF);                                                             //display it
+    while (BusyUART1());
+    putcUART1(comma);                                                           // , DELIMITER
+    while(BusyUART1());
 
     //****************Get and format the readings from FRAM****************************************************
     //MAIN BATTERY
@@ -7495,13 +7851,13 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
 
     if (mainBatreading >= 0) 
     {
-        mainBat = (((Vref * mainBatreading) / 4096) * mul3V);                   //format the 3V battery data    VER 6.0.2
+        mainBat = (((Vref * mainBatreading) / 4096) * mul3V);                   //format the 3V battery data    
         if (mainBat < 0.3)
             mainBat = 0.0;
     } 
     else 
     {
-        mainBat = (((Vref * mainBatreading) / 4096) * mul12V);                  //format the 12V battery data   VER 6.0.2
+        mainBat = (((Vref * mainBatreading) / 4096) * mul12V);                  //format the 12V battery data   
         mainBat *= -1.0;                                                        //convert to positive
         if (mainBat < 0.3)
             mainBat = 0.0;
@@ -7510,28 +7866,11 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
     //*************************************Display the readings**************************************************************
 
     //MAIN BATTERY
-    //if (!LC2CONTROL2.flags2.d)                                                  //VER 6.0.2   REM VER BA
-    //{                                                                         REM VER BA
-        sprintf(BUF, "%.2f", mainBat);
-        putsUART1(BUF);                                                         //display it
-        while (BusyUART1());
-        putcUART1(comma);                                                       // , DELIMITER
-        while(BusyUART1());
-    //}                                                                         REM VER BA:
-    //else                                                                        
-    //{
-    //    write_Flt_FRAM(scratchaddress,mainBat);                                 //write to scratch address  REV AA
-    //    read_Flt_FRAM(scratchaddress,3);                                        //read back to load MSB,MMSB,MMMSB & LSB    REV AA
-    //    TxBinaryBUF[arrayIDX]=MSB;                                             //load MSB into buffer[10]   REV AB
-    //    arrayIDX++;                                                             //increment the index       REV AB
-    //    TxBinaryBUF[arrayIDX]=MMSB;                                             //load MMSB into buffer[11]   REV AB
-    //    arrayIDX++;                                                             //increment the index       REV AB        
-    //    TxBinaryBUF[arrayIDX]=MMMSB;                                            //load MMMSB into buffer[12]   REV AB
-    //    arrayIDX++;                                                             //increment the index       REV AB        
-    //    TxBinaryBUF[arrayIDX]=LSB;                                              //load LSB into buffer[13]   REV AB
-    //    arrayIDX++;                                                             //increment the index       REV AB        
-    //}
-
+    sprintf(BUF, "%.2f", mainBat);
+    putsUART1(BUF);                                                             //display it
+    while (BusyUART1());
+    putcUART1(comma);                                                           // , DELIMITER
+    while(BusyUART1());
 
     //****************Get and format the readings from FRAM****************************************************
     //INTERNAL THERMISTOR
@@ -7539,40 +7878,22 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
     intThermreading = read_Int_FRAM(FRAMaddress + 10);                          //Read the 12bit internal thermistor reading from external FRAM
     IEC1bits.INT1IE = 1;                                                        //Enable INT1
 
-    //REV O:
     IEC1bits.INT1IE = 0;                                                        //Disable INT1
     intThermreading=read_Int_FRAM(FRAMaddress+10);                              //Read the 12bit internal thermistor reading from internal FRAM 
     IEC1bits.INT1IE = 1;                                                        //Enable INT1
     processDS3231Temperature(intThermreading);                                  
-    DS3231Fraction*=25;                                                     //Format the DS3231 fractional portion
+    DS3231Fraction*=25;                                                         //Format the DS3231 fractional portion
     
-    //if (!LC2CONTROL2.flags2.d)                                                  REM VER BA
-    //{                                                                         REM VER BA
-        sprintf(BUF, "%d", DS3231Integer);                                      //format the DS3231 Temperature Integer portion
-        putsUART1(BUF);                                                         //display it
-        while (BusyUART1());
-        putcUART1(decimal);                                                     //decimal point
-        while(BusyUART1());
-        sprintf(BUF, "%d", DS3231Fraction);                                     
-        putsUART1(BUF);                                                         //display it
-        while (BusyUART1());    
-        putcUART1(comma);                                                       // , DELIMITER
-        while (BusyUART1());
-    //}                                                                         REM VER BA:
-    //else                                                                      
-    //{
-    //    intThermProcessed=(DS3231Integer*1.0)+((DS3231Fraction*1.0)/100.0);     //convert to floating point REV AA
-    //    write_Flt_FRAM(scratchaddress,intThermProcessed);                       //write to scratch address  REV AA
-    //    read_Flt_FRAM(scratchaddress,3);                                        //read back to load MSB,MMSB,MMMSB & LSB    REV AA
-    //    TxBinaryBUF[arrayIDX]=MSB;                                             //load MSB into buffer[14]   REV AB
-    //    arrayIDX++;                                                             //increment the index       REV AB
-    //    TxBinaryBUF[arrayIDX]=MMSB;                                             //load MMSB into buffer[15]   REV AB
-    //    arrayIDX++;                                                             //increment the index       REV AB        
-    //    TxBinaryBUF[arrayIDX]=MMMSB;                                            //load MMMSB into buffer[16]   REV AB
-    //    arrayIDX++;                                                             //increment the index       REV AB        
-    //    TxBinaryBUF[arrayIDX]=LSB;                                              //load LSB into buffer[17]   REV AB
-    //    arrayIDX++;                                                             //increment the index       REV AB            
-    //}
+    sprintf(BUF, "%d", DS3231Integer);                                          //format the DS3231 Temperature Integer portion
+    putsUART1(BUF);                                                             //display it
+    while (BusyUART1());
+    putcUART1(decimal);                                                         //decimal point
+    while(BusyUART1());
+    sprintf(BUF, "%d", DS3231Fraction);                                     
+    putsUART1(BUF);                                                             //display it
+    while (BusyUART1());    
+    putcUART1(comma);                                                           // , DELIMITER
+    while (BusyUART1());
 
     tempoutputPosition = outputPosition;
 
@@ -7580,7 +7901,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
     if (MUX4_ENABLE.mflags.mux16_4 == Single) 
         maxchannelplusone = 2;                                                  //single channel VW
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4)                                      //VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == VW4)                                      
         maxchannelplusone = 5;                                                  //4 channel VW mux
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW8)
@@ -7627,15 +7948,13 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
 
         //GAGE READING
 
-        if (MUX4_ENABLE.mflags.mux16_4 == TH8 | MUX4_ENABLE.mflags.mux16_4 == TH32) //8 channel or 32 channel Thermistor mux VER 6.0.9
+        if (MUX4_ENABLE.mflags.mux16_4 == TH8 | MUX4_ENABLE.mflags.mux16_4 == TH32) //8 channel or 32 channel Thermistor mux 
         {
-            DEC_TEMP.decimaltemp=read_Int_FRAM(FRAMaddress);                    //Read the 16bit external thermistor reading from internal FRAM REV U
-            extThermProcessed=INT16tof32();                                     //convert 16 bit reading to 32 bit float	REV U
+            DEC_TEMP.decimaltemp=read_Int_FRAM(FRAMaddress);                    //Read the 16bit external thermistor reading from internal FRAM 
+            extThermProcessed=INT16tof32();                                     //convert 16 bit reading to 32 bit float	
 
             if (extThermProcessed <= -10.0 | extThermProcessed >= 10.0) 
             {
-                //if (extThermProcessed<-50.0) //no therm connected             REM REV AE
-                //    extThermProcessed = -99.0;                                REM REV AE
                 sprintf(BUF, "%.1f", extThermProcessed);                        //format the external thermistor reading 1 decimal place
             }
 
@@ -7644,24 +7963,20 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                 sprintf(BUF, "%.2f", extThermProcessed);                        //format the external thermistor reading 2 decimal places
             }
             
-            write_Flt_FRAM(scratchaddress,extThermProcessed);                   //write to scratch address  REV AA
-            read_Flt_FRAM(scratchaddress,3);                                    //read back to load MSB,MMSB,MMMSB & LSB    REV AA
+            write_Flt_FRAM(scratchaddress,extThermProcessed);                   //write to scratch address  
+            read_Flt_FRAM(scratchaddress,3);                                    //read back to load MSB,MMSB,MMMSB & LSB    
         } 
         else                                                                    //VW
         {
             read_Flt_FRAM(FRAMaddress, 0);                                      //Read the transducer reading from external FRAM
-            //if (!LC2CONTROL2.flags2.d)                                          //VER 6.0.12    Format for display    REM VER BA
-            //{                                                                 REM VER BA
-                IEC1bits.INT1IE = 1;                                            //Enable INT1
-                sprintf(BUF, "%.3f", gageReading);                              //format the transducer reading
+            IEC1bits.INT1IE = 1;                                                //Enable INT1
+            sprintf(BUF, "%.3f", gageReading);                                  //format the transducer reading
 
-                if (gageReading == -999999.0)
-                {
-                    sprintf(BUF, "%.1f", gageReading);                          //format the error message (-999999.0)
-                }
-                gageReading = 0;                                                //reset the gageReading
-            //}                                                                 REM VER BA
-
+            if (gageReading == -999999.0)
+            {
+                sprintf(BUF, "%.1f", gageReading);                              //format the error message (-999999.0)
+            }
+            gageReading = 0;                                                    //reset the gageReading
         }
 
 
@@ -7669,1013 +7984,823 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
         {
 
             case 1:
-                if (!MUX_ENABLE1_16.e1flags.CH1)                                //Channel 1 disabled?
+                //if (!MUX_ENABLE1_16.e1flags.CH1)                                //Channel 1 disabled? REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 1 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH1)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH1))
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
-                } else 
+                    //break;                                                    REM REV 1.8
+                } 
+                else 
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else 
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AB
-                    //    arrayIDX++;                                             //increment the index       REV AB
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AB
-                    //    arrayIDX++;                                             //increment the index       REV AB        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AB
-                    //    arrayIDX++;                                             //increment the index       REV AB        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AB
-                    //    arrayIDX++;                                             //increment the index       REV AB                
-                    //}
+                    putsUART1(BUF);                                             //Display reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                           // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
             case 2:
-                if (!MUX_ENABLE1_16.e1flags.CH2)                                //Channel 2 disabled?
+                //if (!MUX_ENABLE1_16.e1flags.CH2)                                //Channel 2 disabled? REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 2 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH2)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH2))                
+                
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                             //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                           // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
             case 3:
-                if (!MUX_ENABLE1_16.e1flags.CH3)                                //Channel 3 disabled?
+                //if (!MUX_ENABLE1_16.e1flags.CH3)                                //Channel 3 disabled? REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 3 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH3)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH3))                           
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 }
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA        
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
             case 4:
-                if (!MUX_ENABLE1_16.e1flags.CH4)                                //Channel 4 disabled?
+                //if (!MUX_ENABLE1_16.e1flags.CH4)                                //Channel 4 disabled? REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 4 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH4)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH4))                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
             case 5:
-                if (!MUX_ENABLE1_16.e1flags.CH5)                                //Channel 5 disabled?
+                //if (!MUX_ENABLE1_16.e1flags.CH5)                                //Channel 5 disabled? REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 5 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH5)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH5))                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:    
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
             case 6:
-                if (!MUX_ENABLE1_16.e1flags.CH6)                                //Channel 6 disabled?
+                //if (!MUX_ENABLE1_16.e1flags.CH6)                                //Channel 6 disabled? REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 6 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH6)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH6))                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 }
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
             case 7:
-                if (!MUX_ENABLE1_16.e1flags.CH7)                                //Channel 7 disabled?
+                //if (!MUX_ENABLE1_16.e1flags.CH7)                                //Channel 7 disabled? REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 7 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH7)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH7))                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8    
                 }
                 break;
 
             case 8:
-                if (!MUX_ENABLE1_16.e1flags.CH8)                                //Channel 8 disabled?
+                //if (!MUX_ENABLE1_16.e1flags.CH8)                                //Channel 8 disabled? REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 8 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH8)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH8))                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
             case 9:
-                if (!MUX_ENABLE1_16.e1flags.CH9)                                //Channel 9 disabled?
+                //if (!MUX_ENABLE1_16.e1flags.CH9)                                //Channel 9 disabled? REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 9 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH9)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH9))                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
             case 10:
-                if (!MUX_ENABLE1_16.e1flags.CH10)                               //Channel 10 disabled?
+                //if (!MUX_ENABLE1_16.e1flags.CH10)                               //Channel 10 disabled?    REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 10 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH10)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH10))                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
             case 11:
-                if (!MUX_ENABLE1_16.e1flags.CH11)                               //Channel 11 disabled?
+                //if (!MUX_ENABLE1_16.e1flags.CH11)                               //Channel 11 disabled?    REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 11 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH11)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH11))                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
             case 12:
-                if (!MUX_ENABLE1_16.e1flags.CH12)                               //Channel 12 disabled?
+                //if (!MUX_ENABLE1_16.e1flags.CH12)                               //Channel 12 disabled?    REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 12 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH12)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH12))                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
 
             case 13:
-                if (!MUX_ENABLE1_16.e1flags.CH13)                               //Channel 13 disabled?
+                //if (!MUX_ENABLE1_16.e1flags.CH13)                               //Channel 13 disabled?    REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 13 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH13)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH13))                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
 
             case 14:
-                if (!MUX_ENABLE1_16.e1flags.CH14)                               //Channel 14 disabled?
+                //if (!MUX_ENABLE1_16.e1flags.CH14)                               //Channel 14 disabled?    REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 14 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH14)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH14))                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
 
             case 15:
-                if (!MUX_ENABLE1_16.e1flags.CH15)                               //Channel 15 disabled?
+                //if (!MUX_ENABLE1_16.e1flags.CH15)                               //Channel 15 disabled?    REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 15 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH15)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH15))                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8            
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
 
             case 16:
-                if (!MUX_ENABLE1_16.e1flags.CH16)                               //Channel 16 disabled?
+                //if (!MUX_ENABLE1_16.e1flags.CH16)                               //Channel 16 disabled?    REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 16 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH16)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH16))                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
 
             case 17:
-                if (!MUX_ENABLE17_32.e2flags.CH17)                              //Channel 17 disabled?
+                //if (!MUX_ENABLE17_32.e2flags.CH17)                              //Channel 17 disabled?    REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 17 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH17)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH17))                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:    
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
 
             case 18:
-                if (!MUX_ENABLE17_32.e2flags.CH18)                              //Channel 18 disabled?
+                //if (!MUX_ENABLE17_32.e2flags.CH18)                              //Channel 18 disabled?    REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 18 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH18)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH18))                                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
 
             case 19:
-                if (!MUX_ENABLE17_32.e2flags.CH19)                              //Channel 19 disabled?
+                //if (!MUX_ENABLE17_32.e2flags.CH19)                              //Channel 19 disabled?    REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 4 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH19)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH19))                                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
 
             case 20:
-                if (!MUX_ENABLE17_32.e2flags.CH20)                              //Channel 20 disabled?
+                //if (!MUX_ENABLE17_32.e2flags.CH20)                              //Channel 20 disabled?    REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 20 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH20)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH20))                                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    break;
                 }
                 break;
 
 
             case 21:
-                if (!MUX_ENABLE17_32.e2flags.CH21)                              //Channel 21 disabled?
+                //if (!MUX_ENABLE17_32.e2flags.CH21)                              //Channel 21 disabled?    REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 21 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH21)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH21))                                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
 
             case 22:
-                if (!MUX_ENABLE17_32.e2flags.CH22)                              //Channel 22 disabled?
+                //if (!MUX_ENABLE17_32.e2flags.CH22)                              //Channel 22 disabled?    REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 22 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH22)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH22))                                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
 
             case 23:
-                if (!MUX_ENABLE17_32.e2flags.CH23)                              //Channel 23 disabled?
+                //if (!MUX_ENABLE17_32.e2flags.CH23)                              //Channel 23 disabled?    REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 23 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH23)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH23))                                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
 
             case 24:
-                if (!MUX_ENABLE17_32.e2flags.CH24)                              //Channel 24 disabled?
+                //if (!MUX_ENABLE17_32.e2flags.CH24)                              //Channel 24 disabled?    REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 24 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH24)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH24))                                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
 
             case 25:
-                if (!MUX_ENABLE17_32.e2flags.CH25)                              //Channel 25 disabled?
+                //if (!MUX_ENABLE17_32.e2flags.CH25)                              //Channel 25 disabled?    REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 25 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH25)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH25))                                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
 
             case 26:
-                if (!MUX_ENABLE17_32.e2flags.CH26)                              //Channel 26 disabled?
+                //if (!MUX_ENABLE17_32.e2flags.CH26)                              //Channel 26 disabled?    REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 26 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH26)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH26))                                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA    
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
 
             case 27:
-                if (!MUX_ENABLE17_32.e2flags.CH27)                              //Channel 27 disabled?
+                //if (!MUX_ENABLE17_32.e2flags.CH27)                              //Channel 27 disabled?    REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 27 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH27)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH27))                                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
 
             case 28:
-                if (!MUX_ENABLE17_32.e2flags.CH28)                              //Channel 28 disabled?
+                //if (!MUX_ENABLE17_32.e2flags.CH28)                              //Channel 28 disabled?    REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 28 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH28)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH28))                                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
 
             case 29:
-                if (!MUX_ENABLE17_32.e2flags.CH29)                              //Channel 29 disabled?
+                //if (!MUX_ENABLE17_32.e2flags.CH29)                              //Channel 29 disabled?    REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 29 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH29)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH29))                                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
 
             case 30:
-                if (!MUX_ENABLE17_32.e2flags.CH30)                              //Channel 30 disabled?
+                //if (!MUX_ENABLE17_32.e2flags.CH30)                              //Channel 30 disabled?    REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 30 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH30)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH30))                                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA        
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
 
             case 31:
-                if (!MUX_ENABLE17_32.e2flags.CH31)                              //Channel 31 disabled?
+                //if (!MUX_ENABLE17_32.e2flags.CH31)                              //Channel 31 disabled?    REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 31 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH31)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH31))                                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
 
             case 32:
-                if (!MUX_ENABLE17_32.e2flags.CH32)                              //Channel 32 disabled?
+                //if (!MUX_ENABLE17_32.e2flags.CH32)                              //Channel 32 disabled?    REM REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 32 disabled    REV 1.8
+                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                    MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH32)
+                |  
+                ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                  MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH32))                                                          
                 {
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    break;
+                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    //if (!LC2CONTROL2.flags2.d)                                  //VER 6.0.12  REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //Display VW reading
-                        while (BusyUART1());
-                        putcUART1(comma);                                       // , DELIMITER
-                        break;
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[18]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[19]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[20]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[21]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC    
-                    //}
+                    putsUART1(BUF);                                         //Display VW reading
+                    while (BusyUART1());
+                    putcUART1(comma);                                       // , DELIMITER
+                    //break;                                                    REM REV 1.8
                 }
                 break;
 
@@ -8755,21 +8880,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     } 
                     else
                     {
-                        //if (!LC2CONTROL2.flags2.d)                            REM VER BA    
-                        //{                                                     REM VER BA
-                            putsUART1(BUF);                                     //display reading
-                        //}                                                     REM VER BA:
-                        //else                                                    //THIS NEEDS TO BE 4 BYTES (32 BIT FLOATING POINT)
-                        //{
-                        //    TxBinaryBUF[arrayIDX]=MSB;                          //load MSB into buffer[22]   REV AB
-                        //    arrayIDX++;                                         //increment the index       REV AB
-                        //    TxBinaryBUF[arrayIDX]=MMSB;                         //load MMSB into buffer[23]   REV AB
-                        //    arrayIDX++;                                         //increment the index       REV AB        
-                        //    TxBinaryBUF[arrayIDX]=MMMSB;                        //load MMMSB into buffer[24]   REV AB
-                        //    arrayIDX++;                                         //increment the index       REV AB        
-                        //    TxBinaryBUF[arrayIDX]=LSB;                          //load LSB into buffer[25]   REV AB
-                        //    arrayIDX++;                                         //increment the index       REV AB                
-                        //}
+                        putsUART1(BUF);                                     //display reading
                     }
                     break;
 
@@ -8781,21 +8892,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     } 
                     else
                     {
-                        //if (!LC2CONTROL2.flags2.d)                            REM VER BA
-                        //{                                                     REM VER BA
-                            putsUART1(BUF);                                     //display reading
-                        //}                                                     REM VER BA:
-                        //else
-                        //{
-                        //    TxBinaryBUF[arrayIDX]=MSB;                          //load MSB into buffer[22]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC
-                        //    TxBinaryBUF[arrayIDX]=MMSB;                         //load MMSB into buffer[23]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=MMMSB;                        //load MMMSB into buffer[24]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=LSB;                          //load LSB into buffer[25]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC                
-                        //}
+                        putsUART1(BUF);                                     //display reading
                     }
                     break;
 
@@ -8807,21 +8904,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     } 
                     else
                     {
-                        //if (!LC2CONTROL2.flags2.d)                            REM VER BA
-                        //{                                                     REM VER BA
-                            putsUART1(BUF);                                     //display reading
-                        //}                                                     REM VER BA:
-                        //else
-                        //{
-                        //    TxBinaryBUF[arrayIDX]=MSB;                          //load MSB into buffer[22]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC
-                        //    TxBinaryBUF[arrayIDX]=MMSB;                         //load MMSB into buffer[23]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=MMMSB;                        //load MMMSB into buffer[24]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=LSB;                          //load LSB into buffer[25]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC                
-                        //}
+                        putsUART1(BUF);                                     //display reading
                     }
                     break;
 
@@ -8833,21 +8916,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     } 
                     else
                     {
-                        //if (!LC2CONTROL2.flags2.d)                            REM VER BA
-                        //{                                                     REM VER BA
-                            putsUART1(BUF);                                     //display reading
-                        //}                                                     REM VER BA:
-                        //else
-                        //{
-                        //    TxBinaryBUF[arrayIDX]=MSB;                          //load MSB into buffer[22]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC
-                        //    TxBinaryBUF[arrayIDX]=MMSB;                         //load MMSB into buffer[23]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=MMMSB;                        //load MMMSB into buffer[24]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=LSB;                          //load LSB into buffer[25]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC                
-                        //}
+                        putsUART1(BUF);                                     //display reading
                     }
                     break;
 
@@ -8859,21 +8928,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     } 
                     else
                     {
-                        //if (!LC2CONTROL2.flags2.d)                            REM VER BA
-                        //{                                                     REM VER BA
-                            putsUART1(BUF);                                     //display reading
-                        //}                                                     REM VER BA:
-                        //else
-                        //{
-                        //    TxBinaryBUF[arrayIDX]=MSB;                          //load MSB into buffer[22]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC
-                        //    TxBinaryBUF[arrayIDX]=MMSB;                         //load MMSB into buffer[23]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=MMMSB;                        //load MMMSB into buffer[24]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=LSB;                          //load LSB into buffer[25]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC                
-                        //}
+                        putsUART1(BUF);                                     //display reading
                     }
                     break;
 
@@ -8885,21 +8940,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     } 
                     else
                     {
-                        //if (!LC2CONTROL2.flags2.d)                            REM VER BA
-                        //{                                                     REM VER BA
-                            putsUART1(BUF);                                     //display reading
-                        //}                                                     REM VER BA:
-                        //else
-                        //{
-                        //    TxBinaryBUF[arrayIDX]=MSB;                          //load MSB into buffer[22]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC
-                        //    TxBinaryBUF[arrayIDX]=MMSB;                         //load MMSB into buffer[23]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=MMMSB;                        //load MMMSB into buffer[24]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=LSB;                          //load LSB into buffer[25]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC                
-                        //}
+                        putsUART1(BUF);                                     //display reading
                     }
                     break;
 
@@ -8911,20 +8952,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     } 
                     else
                     {
-                        //if (!LC2CONTROL2.flags2.d)                              //VER 6.0.2   REM VER BA
-                        //{                                                     REM VER BA
-                            putsUART1(BUF);                                     //display reading
-                        //} else                                                REM VER BA:
-                        //{
-                        //    TxBinaryBUF[arrayIDX]=MSB;                          //load MSB into buffer[22]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC
-                        //    TxBinaryBUF[arrayIDX]=MMSB;                         //load MMSB into buffer[23]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=MMMSB;                        //load MMMSB into buffer[24]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=LSB;                          //load LSB into buffer[25]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC                
-                        //}
+                        putsUART1(BUF);                                     //display reading
                     }
 
                     break;
@@ -8937,21 +8965,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     }
                     else
                     {
-                        //if (!LC2CONTROL2.flags2.d)                              //VER 6.0.2   REM VER BA
-                        //{                                                     REM VER BA
-                            putsUART1(BUF);                                     //display reading
-                        //}                                                     REM VER BA:
-                        //else
-                        //{
-                        //    TxBinaryBUF[arrayIDX]=MSB;                          //load MSB into buffer[22]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC
-                        //    TxBinaryBUF[arrayIDX]=MMSB;                         //load MMSB into buffer[23]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=MMMSB;                        //load MMMSB into buffer[24]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=LSB;                          //load LSB into buffer[25]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC                
-                        //}
+                        putsUART1(BUF);                                     //display reading
                     }
 
                     break;
@@ -8964,21 +8978,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     } 
                     else
                     {
-                        //if (!LC2CONTROL2.flags2.d)                              //VER 6.0.2   REM VER BA
-                        //{                                                     REM VER BA
-                            putsUART1(BUF);                                     //display reading
-                        //}                                                     REM VER BA:
-                        //else
-                        //{
-                        //    TxBinaryBUF[arrayIDX]=MSB;                          //load MSB into buffer[22]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC
-                        //    TxBinaryBUF[arrayIDX]=MMSB;                         //load MMSB into buffer[23]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=MMMSB;                        //load MMMSB into buffer[24]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=LSB;                          //load LSB into buffer[25]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC                
-                        //}
+                        putsUART1(BUF);                                     //display reading
                     }
 
                     break;
@@ -8991,21 +8991,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     } 
                     else
                     {
-                        //if (!LC2CONTROL2.flags2.d)                              //VER 6.0.2   REM VER BA
-                        //{                                                     REM VER BA
-                            putsUART1(BUF);                                     //display reading
-                        //}                                                     REM VER BA:
-                        //else
-                        //{
-                        //    TxBinaryBUF[arrayIDX]=MSB;                          //load MSB into buffer[22]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC
-                        //    TxBinaryBUF[arrayIDX]=MMSB;                         //load MMSB into buffer[23]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=MMMSB;                        //load MMMSB into buffer[24]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=LSB;                          //load LSB into buffer[25]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC                
-                        //}
+                        putsUART1(BUF);                                     //display reading
                     }
 
                     break;
@@ -9018,21 +9004,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     } 
                     else
                     {
-                        //if (!LC2CONTROL2.flags2.d)                              //VER 6.0.2   REM VER BA
-                        //{                                                     REM VER BA
-                            putsUART1(BUF);                                     //display reading
-                        //}                                                     REM VER BA:
-                        //else
-                        //{
-                        //    TxBinaryBUF[arrayIDX]=MSB;                          //load MSB into buffer[22]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC
-                        //    TxBinaryBUF[arrayIDX]=MMSB;                         //load MMSB into buffer[23]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=MMMSB;                        //load MMMSB into buffer[24]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=LSB;                          //load LSB into buffer[25]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC                
-                        //}
+                        putsUART1(BUF);                                     //display reading
                     }
 
                     break;
@@ -9045,21 +9017,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     } 
                     else
                     {
-                        //if (!LC2CONTROL2.flags2.d)                              //VER 6.0.2   REM VER BA
-                        //{                                                     REM VER BA
-                            putsUART1(BUF);                                     //display reading
-                        //}                                                     REM VER BA:    
-                        //else
-                        //{
-                        //    TxBinaryBUF[arrayIDX]=MSB;                          //load MSB into buffer[22]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC
-                        //    TxBinaryBUF[arrayIDX]=MMSB;                         //load MMSB into buffer[23]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=MMMSB;                        //load MMMSB into buffer[24]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=LSB;                          //load LSB into buffer[25]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC                
-                        //}
+                        putsUART1(BUF);                                     //display reading
                     }
 
                     break;
@@ -9072,21 +9030,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     } 
                     else
                     {
-                        //if (!LC2CONTROL2.flags2.d)                              //VER 6.0.2   REM VER BA
-                        //{                                                     REM VER BA
-                            putsUART1(BUF);                                     //display reading
-                        //}                                                     REM VER BA:
-                        //else
-                        //{
-                        //    TxBinaryBUF[arrayIDX]=MSB;                          //load MSB into buffer[22]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC
-                        //    TxBinaryBUF[arrayIDX]=MMSB;                         //load MMSB into buffer[23]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=MMMSB;                        //load MMMSB into buffer[24]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=LSB;                          //load LSB into buffer[25]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC                
-                        //}
+                        putsUART1(BUF);                                     //display reading
                     }
 
                     break;
@@ -9099,21 +9043,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     } 
                     else
                     {
-                        //if (!LC2CONTROL2.flags2.d)                              //VER 6.0.2   REM VER BA
-                        //{                                                     REM VER BA
-                            putsUART1(BUF);                                     //display reading
-                        //}                                                     REM VER BA:
-                        //else
-                        //{
-                        //    TxBinaryBUF[arrayIDX]=MSB;                          //load MSB into buffer[22]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC
-                        //    TxBinaryBUF[arrayIDX]=MMSB;                         //load MMSB into buffer[23]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=MMMSB;                        //load MMMSB into buffer[24]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=LSB;                          //load LSB into buffer[25]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC                
-                        //}
+                        putsUART1(BUF);                                     //display reading
                     }
 
                     break;
@@ -9126,21 +9056,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     } 
                     else
                     {
-                        //if (!LC2CONTROL2.flags2.d)                              //VER 6.0.2   REM VER BA
-                        //{                                                     REM VER BA
-                            putsUART1(BUF);                                     //display reading
-                        //}                                                     REM VER BA:
-                        //else
-                        //{
-                        //    TxBinaryBUF[arrayIDX]=MSB;                          //load MSB into buffer[22]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC
-                        //    TxBinaryBUF[arrayIDX]=MMSB;                         //load MMSB into buffer[23]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=MMMSB;                        //load MMMSB into buffer[24]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=LSB;                          //load LSB into buffer[25]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC                
-                        //}
+                        putsUART1(BUF);                                     //display reading
                     }
 
                     break;
@@ -9153,327 +9069,89 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     } 
                     else
                     {
-                        //if (!LC2CONTROL2.flags2.d)                              //VER 6.0.2   REM VER BA
-                        //{                                                     REM VER BA
-                            putsUART1(BUF);                                     //display reading
-                        //}                                                     REM VER BA:    
-                        //else
-                        //{
-                        //    TxBinaryBUF[arrayIDX]=MSB;                          //load MSB into buffer[22]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC
-                        //    TxBinaryBUF[arrayIDX]=MMSB;                         //load MMSB into buffer[23]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=MMMSB;                        //load MMMSB into buffer[24]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC        
-                        //    TxBinaryBUF[arrayIDX]=LSB;                          //load LSB into buffer[25]   REV AC
-                        //    arrayIDX++;                                         //increment the index       REV AC                
-                        //}
+                        putsUART1(BUF);                                     //display reading
                     }
 
                     break;
 
                 case 17:
-                    //if (!LC2CONTROL2.flags2.d)                                REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //display reading
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[22]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[23]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[24]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[25]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC                
-                    //}
-
+                    
+                    putsUART1(BUF);                                         //display reading
                     break;
 
                 case 18:
-                    //if (!LC2CONTROL2.flags2.d)                                REM VER BA    
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //display reading
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[22]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[23]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[24]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[25]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC                
-                    //}
 
+                    putsUART1(BUF);                                         //display reading
                     break;
 
                 case 19:
-                    //if (!LC2CONTROL2.flags2.d)                                REM VER BA    
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //display reading
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[22]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[23]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[24]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[25]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC                
-                    //}
 
+                    putsUART1(BUF);                                         //display reading
                     break;
 
                 case 20:
-                    //if (!LC2CONTROL2.flags2.d)                                REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //display reading
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[22]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[23]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[24]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[25]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC                
-                    //}
 
+                    putsUART1(BUF);                                         //display reading
                     break;
 
                 case 21:
-                    //if (!LC2CONTROL2.flags2.d)                                REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //display reading
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[22]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[23]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[24]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[25]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC                
-                    //}
 
+                    putsUART1(BUF);                                         //display reading
                     break;
 
                 case 22:
-                    //if (!LC2CONTROL2.flags2.d)                                REM VER BA    
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //display reading
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[22]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[23]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[24]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[25]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC                
-                    //}
 
+                    putsUART1(BUF);                                         //display reading
                     break;
 
                 case 23:
-                    //if (!LC2CONTROL2.flags2.d)                                REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //display reading
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[22]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[23]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[24]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[25]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC                
-                    //}
 
+                    putsUART1(BUF);                                         //display reading
                     break;
 
                 case 24:
-                    //if (!LC2CONTROL2.flags2.d)                                REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //display reading
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[22]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[23]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[24]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[25]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC                
-                    //}
 
+                    putsUART1(BUF);                                         //display reading
                     break;
 
                 case 25:
-                    //if (!LC2CONTROL2.flags2.d)                                REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //display reading
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[22]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[23]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[24]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[25]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC                
-                    //}
 
+                    putsUART1(BUF);                                         //display reading
                     break;
 
                 case 26:
-                    //if (!LC2CONTROL2.flags2.d)                                REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //display reading
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[22]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[23]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[24]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[25]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC                
-                    //}
 
+                    putsUART1(BUF);                                         //display reading
                     break;
 
                 case 27:
-                    //if (!LC2CONTROL2.flags2.d)                                REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //display reading
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[22]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[23]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[24]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[25]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC                
-                    //}
 
+                    putsUART1(BUF);                                         //display reading
                     break;
 
                 case 28:
-                    //if (!LC2CONTROL2.flags2.d)                                REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //display reading
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[22]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[23]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[24]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[25]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC                
-                    //}
 
+                    putsUART1(BUF);                                         //display reading
                     break;
 
                 case 29:
-                    //if (!LC2CONTROL2.flags2.d)                                REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //display reading
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[22]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[23]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[24]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[25]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC                
-                    //}
 
+                    putsUART1(BUF);                                         //display reading
                     break;
 
                 case 30:
-                    //if (!LC2CONTROL2.flags2.d)                                REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //display reading
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[22]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[23]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[24]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[25]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC                
-                    //}
 
+                    putsUART1(BUF);                                         //display reading
                     break;
 
                 case 31:
-                    //if (!LC2CONTROL2.flags2.d)                                REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //display reading
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[22]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[23]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[24]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[25]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC                
-                    //}
-
+    
+                    putsUART1(BUF);                                         //display reading
                     break;
 
                 case 32:
-                    //if (!LC2CONTROL2.flags2.d)                                REM VER BA
-                    //{                                                         REM VER BA
-                        putsUART1(BUF);                                         //display reading
-                    //}                                                         REM VER BA:
-                    //else
-                    //{
-                    //    TxBinaryBUF[arrayIDX]=MSB;                              //load MSB into buffer[22]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC
-                    //    TxBinaryBUF[arrayIDX]=MMSB;                             //load MMSB into buffer[23]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=MMMSB;                            //load MMMSB into buffer[24]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC        
-                    //    TxBinaryBUF[arrayIDX]=LSB;                              //load LSB into buffer[25]   REV AC
-                    //    arrayIDX++;                                             //increment the index       REV AC                
-                    //}
 
+                    putsUART1(BUF);                                         //display reading
                     break;
 
 
@@ -9492,33 +9170,14 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
 
     } // end of if(MUX4_ENABLE.mflags.mux16_4!=TH8 && MUX4_ENABLE.mflags.mux16_4!=TH32)   VER 6.0.9
 
-    //if (!LC2CONTROL2.flags2.d)                                                  //VER 6.0.2   REM VER BA
-    //{                                                                         REM VER BA
-        if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32 &&
-                MUX4_ENABLE.mflags.mux16_4 != VW8 && MUX4_ENABLE.mflags.mux16_4 != VW32)
-            putcUART1(comma);                                                   // , DELIMITER
-        sprintf(BUF, "%d", TXARRAY.array);                                       //REV AB
-        putsUART1(BUF);
-        while (BusyUART1());
-        crlf();
-    //}                                                                         REM VER BA:
-    //else
-    //{
-    //    CHECKSUM.chksum=getTxChecksum(NOB-1);                                   //REV AB
-    //    TxBinaryBUF[NOB-2]=CHECKSUM.arrays.BINARY_MSB;                          //load the checksum MSB
-    //    TxBinaryBUF[NOB-1]=CHECKSUM.arrays.BINARY_C;                            //load the next checksum byte
-    //    TxBinaryBUF[NOB]=CHECKSUM.arrays.BINARY_B;                              //load the next checksum byte
-    //    TxBinaryBUF[NOB+1]=CHECKSUM.arrays.BINARY_LSB;                          //load the checksum LSB
-    //    TxBinaryBUF[NOB+2]=etx;                                                 //load the End of Text char
-        //TRANSMIT THE TxBinaryBUF HERE:
-    //    for(BUFidx=0;BUFidx<(NOB+3);BUFidx++)
-    //    {
-    //        putcUART1(TxBinaryBUF[BUFidx]);
-    //        while(BusyUART1());
-    //    }
-    //    Nop();
-    //}
 
+    if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32 &&
+           MUX4_ENABLE.mflags.mux16_4 != VW8 && MUX4_ENABLE.mflags.mux16_4 != VW32)
+        putcUART1(comma);                                                   // , DELIMITER
+    sprintf(BUF, "%d", TXARRAY.array);                                       //REV AB
+    putsUART1(BUF);
+    while (BusyUART1());
+    crlf();
 }
 
 /*REM REV CI:
@@ -9646,171 +9305,158 @@ void displayScanInterval(unsigned long ScanInterval, unsigned int text)
 
 
 void displayTempReading(void) {
-    char BUF[8]; //temporary storage for display data
+    char BUF[8];                                                                //temporary storage for display data
     unsigned char month;
     unsigned char day;
     unsigned int julian;
     unsigned int year;
-    //unsigned int extTherm = 0;                                                  //REV T   REM REV BH
-    //unsigned int intThermreading = 0;                                         //REM REV K
-    int intThermreading=0;                                                      //REV K
-    //unsigned int tempTherm = 0; //VER 6.0.6   REM REV BH
+    int intThermreading=0;                                                      
     int mainBatreading = 0;
-    unsigned long i;                                                            //REV B
-    //unsigned int pointer = 0;
+    unsigned long i;                                                            
     unsigned int displayChannel = 0;
     unsigned int maxchannelplusone;
-    unsigned long TempFRAMaddress = XmemStart; //internal FRAM address for beginning of data    REV K
+    unsigned long TempFRAMaddress = XmemStart;                                  //internal FRAM address for beginning of data    
     float mainBat = 0.0;
-    //float intThermRaw = 0.0;
-    //float intThermProcessed = 0.0;
-    //float extThermRaw = 0.0;                                                  REM REV BH
     float extThermProcessed = 0.0;
-    //float percent = 0.0;
-    //float tempGage = 0.0;
-    //long TESTSECONDS = 0;                                                     REM REV CI
-    unsigned long TESTSECONDS = 0;                                              //REV CI
+    unsigned long TESTSECONDS = 0;                                              
 
-    restoreSettings(); //load the flags from internal FRAM
-    _232SHDN=1;                                                                //VER 6.0.0
+    restoreSettings();                                                          //load the flags from internal FRAM
+    _232SHDN=1;                                                                
 
     if (LC2CONTROL.flags.ID) //Display ID if flag is set
     {
-        //IDaddress=0xF030;                                                       //reset ID FRAM pointer
 
-        for (i = IDaddress; i < CH1GTaddress; i += 2) //parse the buffer and extract the ID character   REV 1.4
+        for (i = IDaddress; i < CH1GTaddress; i += 2)                           //parse the buffer and extract the ID character   
         {
-            data=read_Int_FRAM(i);                                             //read the ID starting FRAM location    
-            unpack(data); //unpack into (2) bytes
-            if (Hbyte == cr) //exit if MSB = <CR>
+            data=read_Int_FRAM(i);                                              //read the ID starting FRAM location    
+            unpack(data);                                                       //unpack into (2) bytes
+            if (Hbyte == cr)                                                    //exit if MSB = <CR>
                 break;
             putcUART1(Hbyte);
             while (BusyUART1());
-            if (Lbyte == cr) //exit if LSB = <CR>
+            if (Lbyte == cr)                                                    //exit if LSB = <CR>
                 break;
             putcUART1(Lbyte);
             while (BusyUART1());
         }
-        putcUART1(comma); // , DELIMITER
+        putcUART1(comma);                                                       // , DELIMITER
         while (BusyUART1());
     }
 
     //TIME STAMP
     //YEAR
-    IEC1bits.INT1IE = 0; //Disable INT2
-    year=read_Int_FRAM(XmemStart);                                     //Read the year from the internal FRAM  
-    IEC1bits.INT1IE = 1; //Enable INT2
-    putcUART1(two); //year
+    IEC1bits.INT1IE = 0;                                                        //Disable INT2
+    year=read_Int_FRAM(XmemStart);                                              //Read the year from the internal FRAM  
+    IEC1bits.INT1IE = 1;                                                        //Enable INT2
+    putcUART1(two);                                                             //year
     while (BusyUART1());
     putcUART1(zero);
     while (BusyUART1());
-    if (year < 10) { //add leading zero if required
+    if (year < 10) {                                                            //add leading zero if required
         putcUART1(zero);
         while (BusyUART1());
     }
-    sprintf(BUF, "%d", year); //format it
-    putsUART1(BUF); //display it
+    sprintf(BUF, "%d", year);                                                   //format it
+    putsUART1(BUF);                                                             //display it
     while (BusyUART1());
 
-    putcUART1(comma); // , DELIMITER
+    putcUART1(comma);                                                           // , DELIMITER
     while (BusyUART1());
 
     //DAY OF YEAR
-    IEC1bits.INT1IE = 0; //Disable INT2
-    julian=read_Int_FRAM(XmemStart+2);                                 //Read the decimal date from internal FRAM  
-    IEC1bits.INT1IE = 1; //Enable INT2
-    if (LC2CONTROL.flags.DateFormat) //month,day
+    IEC1bits.INT1IE = 0;                                                        //Disable INT2
+    julian=read_Int_FRAM(XmemStart+2);                                          //Read the decimal date from internal FRAM  
+    IEC1bits.INT1IE = 1;                                                        //Enable INT2
+    if (LC2CONTROL.flags.DateFormat)                                            //month,day
     {
-        month = toMonthDay(julian, year, 1); //get the month from the julian date
-        day = toMonthDay(julian, year, 0); //get the day from the julian date
+        month = toMonthDay(julian, year, 1);                                    //get the month from the julian date
+        day = toMonthDay(julian, year, 0);                                      //get the day from the julian date
 
-        sprintf(BUF, "%d", month); //format the month data
-        putsUART1(BUF); //display it
+        sprintf(BUF, "%d", month);                                              //format the month data
+        putsUART1(BUF);                                                         //display it
         while (BusyUART1());
 
-        putcUART1(comma); // , DELIMITER
+        putcUART1(comma);                                                       // , DELIMITER
         while (BusyUART1());
 
-        sprintf(BUF, "%d", day); //format the day data
-        putsUART1(BUF); //display it
+        sprintf(BUF, "%d", day);                                                //format the day data
+        putsUART1(BUF);                                                         //display it
         while (BusyUART1());
-    } else //decimal day
+    } else                                                                      //decimal day
     {
         sprintf(BUF, "%d", julian);
         putsUART1(BUF);
         while (BusyUART1());
     }
 
-    putcUART1(comma); // , DELIMITER
+    putcUART1(comma);                                                           // , DELIMITER
     while (BusyUART1());
 
-    IEC1bits.INT1IE = 0; //Disable INT2
+    IEC1bits.INT1IE = 0;                                                        //Disable INT2
     TESTSECONDS=read_longFRAM(XmemStart+4); 
-    IEC1bits.INT1IE = 1; //Enable INT2
+    IEC1bits.INT1IE = 1;                                                        //Enable INT2
     seconds2hms(TESTSECONDS);
 
     //HOUR
-    if (hour < 10) //add leading zero
+    if (hour < 10)                                                              //add leading zero
     {
         putcUART1(zero);
         while (BusyUART1());
     }
 
-    sprintf(BUF, "%d", hour); //format the hour data
-    putsUART1(BUF); //display it
+    sprintf(BUF, "%d", hour);                                                   //format the hour data
+    putsUART1(BUF);                                                             //display it
     while (BusyUART1());
 
-    if (LC2CONTROL.flags.TimeFormat) //hh,mm format
+    if (LC2CONTROL.flags.TimeFormat)                                            //hh,mm format
     {
-        putcUART1(comma); // , DELIMITER
+        putcUART1(comma);                                                       // , DELIMITER
         while (BusyUART1());
     }
 
     //MINUTE
-    if (minute < 10) //add leading zero
+    if (minute < 10)                                                            //add leading zero
     {
         putcUART1(zero);
         while (BusyUART1());
     }
-    sprintf(BUF, "%d", minute); //format the minute data
-    putsUART1(BUF); //display it
+    sprintf(BUF, "%d", minute);                                                 //format the minute data
+    putsUART1(BUF);                                                             //display it
     while (BusyUART1());
 
-    putcUART1(comma); // , DELIMITER
+    putcUART1(comma);                                                           // , DELIMITER
     while (BusyUART1());
 
     //SECOND
-    sprintf(BUF, "%d", second); //format the second data
-    putsUART1(BUF); //display it
+    sprintf(BUF, "%d", second);                                                 //format the second data
+    putsUART1(BUF);                                                             //display it
     while (BusyUART1());
 
-    putcUART1(comma); // , DELIMITER
+    putcUART1(comma);                                                           // , DELIMITER
     while (BusyUART1());
 
     //****************Get and format the readings from FRAM****************************************************
     //MAIN BATTERY
-    IEC1bits.INT1IE = 0; //Disable INT2
-    mainBatreading=read_Int_FRAM(XmemStart+8);                         //Read the 12bit main Bat reading from internal FRAM    
-    IEC1bits.INT1IE = 1; //Enable INT2
+    IEC1bits.INT1IE = 0;                                                        //Disable INT2
+    mainBatreading=read_Int_FRAM(XmemStart+8);                                  //Read the 12bit main Bat reading from internal FRAM    
+    IEC1bits.INT1IE = 1;                                                        //Enable INT2
 
     if (mainBatreading >= 0) {
-        mainBat = (((Vref * mainBatreading) / 4096) * mul3V); //format the 3V battery data VER 6.0.2
+        mainBat = (((Vref * mainBatreading) / 4096) * mul3V);                   //format the 3V battery data 
         if (mainBat < 0.3)
             mainBat = 0.0;
     } else {
-        mainBat = (((Vref * mainBatreading) / 4096) * mul12V); //format the 12V battery data 	VER 6.0.2
-        mainBat *= -1.0; //convert to positive
+        mainBat = (((Vref * mainBatreading) / 4096) * mul12V);                  //format the 12V battery data 	
+        mainBat *= -1.0;                                                        //convert to positive
         if (mainBat < 0.3)
             mainBat = 0.0;
     }
 
     //INTERNAL THERMISTOR
-    IEC1bits.INT1IE = 0; //Disable INT2
-    intThermreading=read_Int_FRAM(XmemStart+10);                       //Read the 12bit internal thermistor reading from internal FRAM 
+    IEC1bits.INT1IE = 0;                                                        //Disable INT2
+    intThermreading=read_Int_FRAM(XmemStart+10);                                //Read the 12bit internal thermistor reading from internal FRAM 
     IEC1bits.INT1IE = 1; //Enable INT2
-    //intThermRaw = ((Vref * intThermreading) / 4096); //convert to voltage    VER 6.0.0    REM REV K
-    //intThermProcessed = V_HT2C(intThermRaw,0); //convert to degrees C           REV J     REM REV K
-    processDS3231Temperature(intThermreading);                                  //REV K
+    processDS3231Temperature(intThermreading);                                  
 
 
 
@@ -9819,849 +9465,1471 @@ void displayTempReading(void) {
 
     //MAIN BATTERY
     sprintf(BUF, "%.2f", mainBat);
-    putsUART1(BUF); //display it
+    putsUART1(BUF);                                                             //display it
     while (BusyUART1());
 
-    putcUART1(comma); // , DELIMITER
+    putcUART1(comma);                                                           // , DELIMITER
     while (BusyUART1());
 
-    //REM REV K:****************************************************************
-    //INTERNAL THERMISTOR
-    //if (intThermProcessed <= -10.0 | intThermProcessed >= 10.0) {
-    //    if (intThermProcessed<-40.0) //no therm connected
-    //        intThermProcessed = -99.0;
-    //    sprintf(BUF, "%.1f", intThermProcessed); //format the internal thermistor reading 1 decimal place
-    //}
-
-    //if (intThermProcessed>-10.0 && intThermProcessed < 10.0)
-    //    sprintf(BUF, "%.2f", intThermProcessed); //format the internal thermistor reading 2 decimal places
-
-    //sprintf(BUF, "%.2f", intThermProcessed); //format the internal thermistor data
-    //putsUART1(BUF); //display it
-    //while (BusyUART1());
-    //**************************************************************************
-
-    //REV K:
     //INTERNAL TEMPERATURE:
     sprintf(BUF, "%d", DS3231Integer);                                          //format the DS3231 Temperature Integer portion
-    putsUART1(BUF); //display it
+    putsUART1(BUF);                                                             //display it
     while (BusyUART1());
-    putcUART1(decimal);                                                          //decimal point
+    putcUART1(decimal);                                                         //decimal point
     while(BusyUART1());
     DS3231Fraction*=25;                                                         //Format the DS3231 fractional portion
-    sprintf(BUF, "%d", DS3231Fraction);                                         //
-    putsUART1(BUF); //display it
+    sprintf(BUF, "%d", DS3231Fraction);                                         
+    putsUART1(BUF);                                                             //display it
     while (BusyUART1());    
        
     //GAGE READING & THERMISTOR READINGS
 
     if (MUX4_ENABLE.mflags.mux16_4 == Single) {
-        maxchannelplusone = 2; //Single Channel
+        maxchannelplusone = 2;                                                  //Single Channel
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4) //determine # of channels in MUX    VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == VW4)                                      //determine # of channels in MUX    
     {
-        maxchannelplusone = 5; //4 CHANNEL
+        maxchannelplusone = 5;                                                  //4 CHANNEL
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW8) //determine # of channels in MUX    VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == VW8)                                      //determine # of channels in MUX    
     {
-        maxchannelplusone = 9; //8 CHANNEL
+        maxchannelplusone = 9;                                                  //8 CHANNEL
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16) //VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == VW16) 
     {
-        maxchannelplusone = 17; //16 CHANNEL
+        maxchannelplusone = 17;                                                 //16 CHANNEL
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW32) //VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == VW32) 
     {
-        maxchannelplusone = 33; //32 CHANNEL
+        maxchannelplusone = 33;                                                 //32 CHANNEL
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == TH8) //VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == TH8) 
     {
-        maxchannelplusone = 9; //8 CHANNEL
+        maxchannelplusone = 9;                                                  //8 CHANNEL
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == TH32) //VER 6.0.9
+    if (MUX4_ENABLE.mflags.mux16_4 == TH32) 
     {
-        maxchannelplusone = 33; //8 CHANNEL
+        maxchannelplusone = 33;                                                 //8 CHANNEL
     }
 
-    if(MUX4_ENABLE.mflags.mux16_4!=TH8 && MUX4_ENABLE.mflags.mux16_4!=TH32)     //REV U
+    if(MUX4_ENABLE.mflags.mux16_4!=TH8 && MUX4_ENABLE.mflags.mux16_4!=TH32)     
     {
         for (displayChannel = 1; displayChannel < maxchannelplusone; displayChannel++) 
         {
-            putcUART1(comma); // , DELIMITER
+            putcUART1(comma);                                                   // , DELIMITER
             while (BusyUART1());
 
             //GAGE READING
-            IEC1bits.INT1IE = 0; //Disable INT2
+            IEC1bits.INT1IE = 0;                                                //Disable INT2
 
-            if(MUX4_ENABLE.mflags.mux16_4==Single)                              //REV M
-                TempFRAMaddress=XmemStart+0xE;                                  //REV M
-            else                                                                //REV M
+            if(MUX4_ENABLE.mflags.mux16_4==Single)                              
+                TempFRAMaddress=XmemStart+0xE;                                  
+            else                                                                
             if(MUX4_ENABLE.mflags.mux16_4 == VW4 | MUX4_ENABLE.mflags.mux16_4 == VW16)
-                //TempFRAMaddress = XmemStart + (6 * (displayChannel - 1)); //compute the reading address    REM REV S
-                TempFRAMaddress = (XmemStart+0xE) + (6 * (displayChannel - 1)); //compute the reading address    REV S
+                TempFRAMaddress = (XmemStart+0xE) + (6 * (displayChannel - 1)); //compute the reading address    
             else
-            if (MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW32) //VER 6.0.13
-                 TempFRAMaddress = (XmemStart+0xC) + (4 * (displayChannel - 1));   //REV S
-            /*REM REV U:
-            else
-            if (MUX4_ENABLE.mflags.mux16_4 == TH8 | MUX4_ENABLE.mflags.mux16_4 == TH32) //8 or 32 Channel Therm   VER 6.0.9
-            {
-                TempFRAMaddress = XmemStart + (2 * (displayChannel - 1)); //compute the reading address   REV K
-                tempTherm=read_Int_FRAM(TempFRAMaddress);                      
-                extThermRaw = ((Vref * tempTherm) / 4096); //convert to voltage
-                extThermProcessed = V_HT2C(extThermRaw,1); //convert to degrees C      //REV J
-
-                if (extThermProcessed <= -10.0 | extThermProcessed >= 10.0) {
-                    if (extThermProcessed<-50.0) //no therm connected
-                        extThermProcessed = -99.0;
-                    sprintf(BUF, "%.1f", extThermProcessed); //format the external thermistor reading 1 decimal place
-                }
-
-                if (extThermProcessed>-10.0 && extThermProcessed < 10.0)
-                    sprintf(BUF, "%.2f", extThermProcessed); //format the external thermistor reading 2 decimal places
-
-            } 
-            //else                                                                  REV REM M
-            //{                                                                     REV REM M
-            */
+            if (MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW32) 
+                 TempFRAMaddress = (XmemStart+0xC) + (4 * (displayChannel - 1));   
 
             Nop();
-            //tempGage=read_longFRAM(TempFRAMaddress);                                //Read the transducer reading from internal FRAM    REM REV M
-            if(MUX4_ENABLE.mflags.mux16_4!=TH8 && MUX4_ENABLE.mflags.mux16_4!=TH32) //REV U
+
+            if(MUX4_ENABLE.mflags.mux16_4!=TH8 && MUX4_ENABLE.mflags.mux16_4!=TH32) 
             {
-                read_Flt_FRAM(TempFRAMaddress,0);                                       //Read the transducer reading from internal FRAM    REV M
-                sprintf(BUF, "%.3f", gageReading); //format the transducer reading      //REV M
-                if (gageReading==-999999.0)                                             //REV M
-                    sprintf(BUF, "%.1f", gageReading);                                  //format the error message (-999999.0)   REV M
-                gageReading = 0;                                                        //reset the gage reading   REV M
+                read_Flt_FRAM(TempFRAMaddress,0);                               //Read the transducer reading from internal FRAM    
+                sprintf(BUF, "%.3f", gageReading);                              //format the transducer reading      
+                if (gageReading==-999999.0)                                     
+                    sprintf(BUF, "%.1f", gageReading);                          //format the error message (-999999.0)   
+                gageReading = 0;                                                //reset the gage reading   
             }                                                                     
-            IEC1bits.INT1IE = 1; //Enable INT2
+            IEC1bits.INT1IE = 1;                                                //Enable INT2
 
 
-            if(MUX4_ENABLE.mflags.mux16_4!=TH8 && MUX4_ENABLE.mflags.mux16_4!=TH32) //REV U
+            if(MUX4_ENABLE.mflags.mux16_4!=TH8 && MUX4_ENABLE.mflags.mux16_4!=TH32) 
             {
                 switch (displayChannel) 
                 {
 
                     case 1:
 
-                        if (MUX4_ENABLE.mflags.mux16_4 == Single) //Single Channel    VER 6.0.7
-                        {
-                            putsUART1(BUF); //display reading
+                        //REM REV 1.8:
+                        //if (MUX4_ENABLE.mflags.mux16_4 == Single)               //Single Channel    
+                        //{
+                        //    putsUART1(BUF);                                     //display reading
+                        //    break;
+                        //}
+
+
+                        //if (!MUX_ENABLE1_16.e1flags.CH1)                      //Channel 1 disabled? REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 1 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH1)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH1))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
                             break;
-                        }
-
-
-                        if (!MUX_ENABLE1_16.e1flags.CH1) //Channel 1 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
 
                     case 2:
 
-                        if (!MUX_ENABLE1_16.e1flags.CH2) //Channel 2 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE1_16.e1flags.CH2)                        //Channel 2 disabled? REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 2 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH2)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH2))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                        
 
                     case 3:
 
-                        if (!MUX_ENABLE1_16.e1flags.CH3) //Channel 3 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE1_16.e1flags.CH3)                        //Channel 3 disabled? REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 3 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH3)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH3))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                        
+
 
                     case 4:
 
-                        if (!MUX_ENABLE1_16.e1flags.CH4) //Channel 4 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE1_16.e1flags.CH4)                        //Channel 4 disabled? REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 4 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH4)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH4))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                        
+
 
                     case 5:
 
-                        if (!MUX_ENABLE1_16.e1flags.CH5) //Channel 5 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE1_16.e1flags.CH5)                        //Channel 5 disabled? REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 5 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH5)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH5))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                        
 
                     case 6:
 
-                        if (!MUX_ENABLE1_16.e1flags.CH6) //Channel 6 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE1_16.e1flags.CH6)                        //Channel 6 disabled? REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 6 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH6)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH6))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                        
 
                     case 7:
 
-                        if (!MUX_ENABLE1_16.e1flags.CH7) //Channel 7 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE1_16.e1flags.CH7)                        //Channel 7 disabled? REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 7 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH7)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH7))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                        
+
 
                     case 8:
 
-                        if (!MUX_ENABLE1_16.e1flags.CH8) //Channel 8 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE1_16.e1flags.CH8)                        //Channel 8 disabled? REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 8 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH8)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH8))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                        
+
 
                     case 9:
 
-                        if (!MUX_ENABLE1_16.e1flags.CH9) //Channel 9 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE1_16.e1flags.CH9)                        //Channel 9 disabled? REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 9 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH9)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH9))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                        
+
 
                     case 10:
 
-                        if (!MUX_ENABLE1_16.e1flags.CH10) //Channel 10 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE1_16.e1flags.CH10)                       //Channel 10 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 10 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH10)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH10))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                        
+
 
                     case 11:
 
-                        if (!MUX_ENABLE1_16.e1flags.CH11) //Channel 11 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE1_16.e1flags.CH11)                       //Channel 11 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 11 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH11)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH11))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                        
+
 
                     case 12:
 
-                        if (!MUX_ENABLE1_16.e1flags.CH12) //Channel 12 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE1_16.e1flags.CH12)                       //Channel 12 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 12 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH12)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH12))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                        
+
 
                     case 13:
 
-                        if (!MUX_ENABLE1_16.e1flags.CH13) //Channel 13 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE1_16.e1flags.CH13)                       //Channel 13 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 13 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH13)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH13))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                        
+
 
                     case 14:
 
-                        if (!MUX_ENABLE1_16.e1flags.CH14) //Channel 14 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE1_16.e1flags.CH14)                       //Channel 14 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 14 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH14)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH14))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                        
+
 
                     case 15:
 
-                        if (!MUX_ENABLE1_16.e1flags.CH15) //Channel 15 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE1_16.e1flags.CH15)                       //Channel 15 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 15 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH15)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH15))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                        
+
 
                     case 16:
 
-                        if (!MUX_ENABLE1_16.e1flags.CH16) //Channel 16 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE1_16.e1flags.CH16)                       //Channel 16 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 16 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH16)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH16))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                        
+
 
                     case 17:
 
-                        if (!MUX_ENABLE17_32.e2flags.CH17) //Channel 17 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE17_32.e2flags.CH17)                      //Channel 17 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 17 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH17)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH17))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                        
+
 
                     case 18:
 
-                        if (!MUX_ENABLE17_32.e2flags.CH18) //Channel 18 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE17_32.e2flags.CH18)                      //Channel 18 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 18 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH18)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH18))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                
 
                     case 19:
 
-                        if (!MUX_ENABLE17_32.e2flags.CH19) //Channel 19 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE17_32.e2flags.CH19)                      //Channel 19 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 19 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH19)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH19))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                
 
                     case 20:
 
-                        if (!MUX_ENABLE17_32.e2flags.CH20) //Channel 20 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE17_32.e2flags.CH20)                      //Channel 20 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 20 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH20)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH20))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                
 
                     case 21:
 
-                        if (!MUX_ENABLE17_32.e2flags.CH21) //Channel 21 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE17_32.e2flags.CH21)                      //Channel 21 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 21 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH21)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH21))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                
 
                     case 22:
 
-                        if (!MUX_ENABLE17_32.e2flags.CH22) //Channel 22 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE17_32.e2flags.CH22)                      //Channel 22 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 22 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH22)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH22))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                
 
                     case 23:
 
-                        if (!MUX_ENABLE17_32.e2flags.CH23) //Channel 23 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE17_32.e2flags.CH23)                      //Channel 23 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 23 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH23)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH23))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                
 
                     case 24:
 
-                        if (!MUX_ENABLE17_32.e2flags.CH24) //Channel 24 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE17_32.e2flags.CH24)                      //Channel 24 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 24 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH24)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH24))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                
 
                     case 25:
 
-                        if (!MUX_ENABLE17_32.e2flags.CH25) //Channel 25 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE17_32.e2flags.CH25)                      //Channel 25 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 25 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH25)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH25))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                
 
                     case 26:
 
-                        if (!MUX_ENABLE17_32.e2flags.CH26) //Channel 26 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE17_32.e2flags.CH26)                      //Channel 26 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 26 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH26)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH26))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                
 
                     case 27:
 
-                        if (!MUX_ENABLE17_32.e2flags.CH27) //Channel 27 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE17_32.e2flags.CH27)                      //Channel 27 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 27 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH27)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH27))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                
 
                     case 28:
 
-                        if (!MUX_ENABLE17_32.e2flags.CH28) //Channel 28 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE17_32.e2flags.CH28)                      //Channel 28 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 28 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH28)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH28))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                
 
                     case 29:
 
-                        if (!MUX_ENABLE17_32.e2flags.CH29) //Channel 29 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE17_32.e2flags.CH29)                      //Channel 29 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 29 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH29)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH29))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                
 
                     case 30:
 
-                        if (!MUX_ENABLE17_32.e2flags.CH30) //Channel 30 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE17_32.e2flags.CH30)                      //Channel 30 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 30 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH30)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH30))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                
 
                     case 31:
 
-                        if (!MUX_ENABLE17_32.e2flags.CH31) //Channel 31 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE17_32.e2flags.CH31)                      //Channel 31 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 31 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH31)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH31))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                
 
                     case 32:
 
-                        if (!MUX_ENABLE17_32.e2flags.CH32) //Channel 32 disabled?
-                        {
-                            putsUART1(DisabledDisplay); //Yes - display "---"
-                        } else {
-                            putsUART1(BUF); //No - display reading
-                        }
-                        break;
+                        //if (!MUX_ENABLE17_32.e2flags.CH32)                      //Channel 32 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 32 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH32)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH32))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;                
 
                     default:
 
-                        putsUART1(Error); //"ERROR" (somethings wrong)
+                        putsUART1(Error);                                       //"ERROR" (somethings wrong)
                         break;
                 }
                 while (BusyUART1());
             }
-        } //end of 1st for(displayChannel) loop
+        }                                                                       //end of 1st for(displayChannel) loop
     }
-    //if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32 &&    REM REV U
-    //        MUX4_ENABLE.mflags.mux16_4 != VW8 && MUX4_ENABLE.mflags.mux16_4 != VW32) //REM REV U
-    if (MUX4_ENABLE.mflags.mux16_4 != VW8 && MUX4_ENABLE.mflags.mux16_4 != VW32)        //REV U    
-    {
-        for (displayChannel = 1; displayChannel < maxchannelplusone; displayChannel++) {
-            putcUART1(comma); // , DELIMITER
-            while (BusyUART1());
 
-            //EXTERNAL THERMISTOR
-            IEC1bits.INT1IE = 0; //Disable INT2
-            if(MUX4_ENABLE.mflags.mux16_4!=TH8 && MUX4_ENABLE.mflags.mux16_4!=TH32)  //REV U
-                TempFRAMaddress = (XmemStart+0xC) + (6 * (displayChannel - 1));     //compute memory location for external thermistor   REV T
-            else
-                TempFRAMaddress = (XmemStart+0xC) + (2 * (displayChannel - 1));     //compute memory location for external thermistor   REV U
-            //TempFRAMaddress = 0xsomething + (6 * (displayChannel - 1));     //REM REV K
-            //extThermreading=read_Int_FRAM(TempFRAMaddress);                  //Read the 12bit external thermistor reading from internal FRAM REM REV T
-            DEC_TEMP.decimaltemp=read_Int_FRAM(TempFRAMaddress);                    //Read the 16bit external thermistor reading from internal FRAM 
-            IEC1bits.INT1IE = 1; //Enable INT2
-            //extThermRaw = ((Vref * extThermreading) / 4096); //convert to voltage    VER 6.0.0    REM REV J
-            //extThermProcessed = V_HT2C(extThermRaw); //convert to degrees C   REM REV J
-            extThermProcessed=INT16tof32();				//convert 16 bit reading to 32 bit float	REV J
-            //sprintf(BUF, "%.1f", extThermProcessed); //format the external thermistor reading 1 decimal place   REM REV AE
+    //if (MUX4_ENABLE.mflags.mux16_4 != VW8 && MUX4_ENABLE.mflags.mux16_4 != VW32)            REM REV 1.8
+    //{                                                                                       REM REV 1.8
+    for (displayChannel = 1; displayChannel < maxchannelplusone; displayChannel++) {
+        putcUART1(comma);                                                       // , DELIMITER
+        while (BusyUART1());
+
+        //EXTERNAL THERMISTOR
+        IEC1bits.INT1IE = 0;                                                    //Disable INT2
+        if(MUX4_ENABLE.mflags.mux16_4!=TH8 && MUX4_ENABLE.mflags.mux16_4!=TH32)  
+            TempFRAMaddress = (XmemStart+0xC) + (6 * (displayChannel - 1));     //compute memory location for external thermistor   
+        else
+            TempFRAMaddress = (XmemStart+0xC) + (2 * (displayChannel - 1));     //compute memory location for external thermistor   
+
+        DEC_TEMP.decimaltemp=read_Int_FRAM(TempFRAMaddress);                    //Read the 16bit external thermistor reading from internal FRAM 
+        IEC1bits.INT1IE = 1;                                                    //Enable INT2
+        extThermProcessed=INT16tof32();                                         //convert 16 bit reading to 32 bit float	
             
-            if (extThermProcessed <= -10.0 | extThermProcessed >= 10.0)         //REV AE
-            {
-                //if (extThermProcessed<-50.0) //no therm connected             REM REV AE
-                //extThermProcessed = -99.0;                                    REM REV AE
-                sprintf(BUF, "%.1f", extThermProcessed); //format the external thermistor reading 1 decimal place
-            }
+        if (extThermProcessed <= -10.0 | extThermProcessed >= 10.0)         
+            sprintf(BUF, "%.1f", extThermProcessed);                            //format the external thermistor reading 1 decimal place
 
-            if (extThermProcessed>-10.0 && extThermProcessed < 10.0)
-                sprintf(BUF, "%.2f", extThermProcessed); //format the external thermistor reading 2 decimal places
+        if (extThermProcessed>-10.0 && extThermProcessed < 10.0)
+            sprintf(BUF, "%.2f", extThermProcessed);                            //format the external thermistor reading 2 decimal places
 
 
-            switch (displayChannel) {
+        switch (displayChannel) {
 
                 case 1:
 
-                    if (MUX4_ENABLE.mflags.mux16_4 == Single) //Single Channel    VER 6.0.7
-                    {
-                        putsUART1(BUF); //display reading
-                        break;
-                    }
+                    //REM REV 1.8:
+                    //if (MUX4_ENABLE.mflags.mux16_4 == Single)                   //Single Channel   
+                    //{
+                    //    putsUART1(BUF);                                         //display reading
+                    //    break;
+                    //}
 
 
-                    if (!MUX_ENABLE1_16.e1flags.CH1) //Channel 1 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE1_16.e1flags.CH1)                            //Channel 1 disabled? REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 1 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH1)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH1))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
+
 
                 case 2:
 
-                    if (!MUX_ENABLE1_16.e1flags.CH2) //Channel 2 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE1_16.e1flags.CH2)                            //Channel 2 disabled? REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 2 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH2)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH2))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
+
 
                 case 3:
 
-                    if (!MUX_ENABLE1_16.e1flags.CH3) //Channel 3 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE1_16.e1flags.CH3)                            //Channel 3 disabled? REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 3 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH3)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH3))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
+
 
                 case 4:
 
-                    if (!MUX_ENABLE1_16.e1flags.CH4) //Channel 4 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE1_16.e1flags.CH4)                            //Channel 4 disabled? REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 4 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH4)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH4))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
+
 
                 case 5:
 
-                    if (!MUX_ENABLE1_16.e1flags.CH5) //Channel 5 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE1_16.e1flags.CH5)                            //Channel 5 disabled? REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 5 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH5)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH5))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
+
 
                 case 6:
 
-                    if (!MUX_ENABLE1_16.e1flags.CH6) //Channel 6 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE1_16.e1flags.CH6)                            //Channel 6 disabled? REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 6 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH6)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH6))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
+
 
                 case 7:
 
-                    if (!MUX_ENABLE1_16.e1flags.CH7) //Channel 7 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE1_16.e1flags.CH7)                            //Channel 7 disabled? REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 7 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH7)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH7))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
+
 
                 case 8:
 
-                    if (!MUX_ENABLE1_16.e1flags.CH8) //Channel 8 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE1_16.e1flags.CH8)                            //Channel 8 disabled? REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 8 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH8)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH8))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
+
 
                 case 9:
 
-                    if (!MUX_ENABLE1_16.e1flags.CH9) //Channel 9 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE1_16.e1flags.CH9)                            //Channel 9 disabled? REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 9 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH9)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH9))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
+
 
                 case 10:
 
-                    if (!MUX_ENABLE1_16.e1flags.CH10) //Channel 10 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE1_16.e1flags.CH10)                           //Channel 10 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 10 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH10)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH10))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
+
 
                 case 11:
 
-                    if (!MUX_ENABLE1_16.e1flags.CH11) //Channel 11 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE1_16.e1flags.CH11)                           //Channel 11 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 11 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH11)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH11))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
+
 
                 case 12:
 
-                    if (!MUX_ENABLE1_16.e1flags.CH12) //Channel 12 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE1_16.e1flags.CH12)                           //Channel 12 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 12 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH12)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH12))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
+
 
                 case 13:
 
-                    if (!MUX_ENABLE1_16.e1flags.CH13) //Channel 13 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE1_16.e1flags.CH13)                           //Channel 13 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 13 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH13)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH13))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
+
 
                 case 14:
 
-                    if (!MUX_ENABLE1_16.e1flags.CH14) //Channel 14 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE1_16.e1flags.CH14)                           //Channel 14 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 14 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH14)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH14))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
+
 
                 case 15:
 
-                    if (!MUX_ENABLE1_16.e1flags.CH15) //Channel 15 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE1_16.e1flags.CH15)                           //Channel 15 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 15 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH15)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH15))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
+
 
                 case 16:
 
-                    if (!MUX_ENABLE1_16.e1flags.CH16) //Channel 16 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE1_16.e1flags.CH16)                           //Channel 16 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 16 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH16)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH16))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
+
 
                 case 17:
 
-                    if (!MUX_ENABLE17_32.e2flags.CH17) //Channel 17 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE17_32.e2flags.CH17)                          //Channel 17 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 17 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH17)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH17))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
+
 
                 case 18:
 
-                    if (!MUX_ENABLE17_32.e2flags.CH18) //Channel 18 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE17_32.e2flags.CH18)                          //Channel 18 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 18 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH18)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH18))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
 
                 case 19:
 
-                    if (!MUX_ENABLE17_32.e2flags.CH19) //Channel 19 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE17_32.e2flags.CH19)                          //Channel 19 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 19 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH19)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH19))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
 
                 case 20:
 
-                    if (!MUX_ENABLE17_32.e2flags.CH20) //Channel 20 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE17_32.e2flags.CH20)                          //Channel 20 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 20 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH20)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH20))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
 
                 case 21:
 
-                    if (!MUX_ENABLE17_32.e2flags.CH21) //Channel 21 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE17_32.e2flags.CH21)                          //Channel 21 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 21 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH21)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH21))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
 
                 case 22:
 
-                    if (!MUX_ENABLE17_32.e2flags.CH22) //Channel 22 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE17_32.e2flags.CH22)                          //Channel 22 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 22 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH22)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH22))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
 
                 case 23:
 
-                    if (!MUX_ENABLE17_32.e2flags.CH23) //Channel 23 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE17_32.e2flags.CH23)                          //Channel 23 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 23 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH23)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH23))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
 
                 case 24:
 
-                    if (!MUX_ENABLE17_32.e2flags.CH24) //Channel 24 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE17_32.e2flags.CH24)                          //Channel 24 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 24 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH24)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH24))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
 
                 case 25:
 
-                    if (!MUX_ENABLE17_32.e2flags.CH25) //Channel 25 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE17_32.e2flags.CH25)                          //Channel 25 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 25 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH25)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH25))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
 
                 case 26:
 
-                    if (!MUX_ENABLE17_32.e2flags.CH26) //Channel 26 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE17_32.e2flags.CH26)                          //Channel 26 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 26 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH26)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH26))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
 
                 case 27:
 
-                    if (!MUX_ENABLE17_32.e2flags.CH27) //Channel 27 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE17_32.e2flags.CH27)                          //Channel 27 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 27 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH27)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH27))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
 
                 case 28:
 
-                    if (!MUX_ENABLE17_32.e2flags.CH28) //Channel 28 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE17_32.e2flags.CH28)                          //Channel 28 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 28 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH28)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH28))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
 
                 case 29:
 
-                    if (!MUX_ENABLE17_32.e2flags.CH29) //Channel 29 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE17_32.e2flags.CH29)                          //Channel 29 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 29 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH29)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH29))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
 
                 case 30:
 
-                    if (!MUX_ENABLE17_32.e2flags.CH30) //Channel 30 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE17_32.e2flags.CH30)                          //Channel 30 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 30 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH30)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH30))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
 
                 case 31:
 
-                    if (!MUX_ENABLE17_32.e2flags.CH31) //Channel 31 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
+                    //if (!MUX_ENABLE17_32.e2flags.CH31)                          //Channel 31 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 31 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH31)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH31))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
 
                 case 32:
 
-                    if (!MUX_ENABLE17_32.e2flags.CH32) //Channel 32 disabled?
-                    {
-                        putsUART1(DisabledDisplay); //Yes - display "---"
-                    } else {
-                        putsUART1(BUF); //No - display reading
-                    }
-                    break;
-
+                    //if (!MUX_ENABLE17_32.e2flags.CH32)                          //Channel 32 disabled?    REM REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 32 disabled    REV 1.8
+                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
+                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH32)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     |
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE17_32.t2flags.CH32))
+                            {
+                                putsUART1(DisabledDisplay);                     //Yes - display "---"
+                            }
+                            else
+                            {
+                                putsUART1(BUF);                                 //No - display reading
+                            }
+                            break;
 
 
 
                 default:
 
-                    putsUART1(Error); //"ERROR" (somethings wrong)
+                    putsUART1(Error);                                           //"ERROR" (somethings wrong)
                     break;
 
             }
 
             while (BusyUART1());
-            Nop();                                                              //FOR TEST REV AE
+            Nop();                                                              
         }
-    }
+    //}                                                                         REM REV 1.8
     crlf();
 
 }
@@ -10971,16 +11239,153 @@ void enableChannel(int channel)
     }
 }
 
-//REM REV B:
-//void enableINT2(void) {
-//    INTCON1bits.NSTDIS = 1; //disable nested interrupts
-//    //IPC5bits.INT2IP=5;						//set interrupt priority to 5
-//    IFS1bits.INT2IF = 0; //clear the interrupt flag
-//    INTCON2bits.INT2EP = 1; //falling edge interrupt
-//    IEC1bits.INT2IE = 1; //enable the interrupt
-//}
 
-//REV B:
+void enableTHChannel(int channel)                                               //REV 1.8    
+{
+    switch (channel) 
+    {
+        case 1:
+            THMUX_ENABLE1_16.t1flags.CH1 = 1;
+            break;
+
+        case 2:
+            THMUX_ENABLE1_16.t1flags.CH2 = 1;
+            break;
+
+        case 3:
+            THMUX_ENABLE1_16.t1flags.CH3 = 1;
+            break;
+
+        case 4:
+            THMUX_ENABLE1_16.t1flags.CH4 = 1;
+            break;
+
+        case 5:
+            THMUX_ENABLE1_16.t1flags.CH5 = 1;
+            break;
+
+        case 6:
+            THMUX_ENABLE1_16.t1flags.CH6 = 1;
+            break;
+
+        case 7:
+            THMUX_ENABLE1_16.t1flags.CH7 = 1;
+            break;
+
+        case 8:
+            THMUX_ENABLE1_16.t1flags.CH8 = 1;
+            break;
+
+        case 9:
+            THMUX_ENABLE1_16.t1flags.CH9 = 1;
+            break;
+
+        case 10:
+            THMUX_ENABLE1_16.t1flags.CH10 = 1;
+            break;
+
+        case 11:
+            THMUX_ENABLE1_16.t1flags.CH11 = 1;
+            break;
+
+        case 12:
+            THMUX_ENABLE1_16.t1flags.CH12 = 1;
+            break;
+
+        case 13:
+            THMUX_ENABLE1_16.t1flags.CH13 = 1;
+            break;
+
+        case 14:
+            THMUX_ENABLE1_16.t1flags.CH14 = 1;
+            break;
+
+        case 15:
+            THMUX_ENABLE1_16.t1flags.CH15 = 1;
+            break;
+
+        case 16:
+            THMUX_ENABLE1_16.t1flags.CH16 = 1;
+            break;
+
+        case 17:
+            THMUX_ENABLE17_32.t2flags.CH17 = 1;
+            break;
+
+        case 18:
+            THMUX_ENABLE17_32.t2flags.CH18 = 1;
+            break;
+
+        case 19:
+            THMUX_ENABLE17_32.t2flags.CH19 = 1;
+            break;
+
+        case 20:
+            THMUX_ENABLE17_32.t2flags.CH20 = 1;
+            break;
+
+        case 21:
+            THMUX_ENABLE17_32.t2flags.CH21 = 1;
+            break;
+
+        case 22:
+            THMUX_ENABLE17_32.t2flags.CH22 = 1;
+            break;
+
+        case 23:
+            THMUX_ENABLE17_32.t2flags.CH23 = 1;
+            break;
+
+        case 24:
+            THMUX_ENABLE17_32.t2flags.CH24 = 1;
+            break;
+
+        case 25:
+            THMUX_ENABLE17_32.t2flags.CH25 = 1;
+            break;
+
+        case 26:
+            THMUX_ENABLE17_32.t2flags.CH26 = 1;
+            break;
+
+        case 27:
+            THMUX_ENABLE17_32.t2flags.CH27 = 1;
+            break;
+
+        case 28:
+            THMUX_ENABLE17_32.t2flags.CH28 = 1;
+            break;
+
+        case 29:
+            THMUX_ENABLE17_32.t2flags.CH29 = 1;
+            break;
+
+        case 30:
+            THMUX_ENABLE17_32.t2flags.CH30 = 1;
+            break;
+
+        case 31:
+            THMUX_ENABLE17_32.t2flags.CH31 = 1;
+            break;
+
+        case 32:
+            THMUX_ENABLE17_32.t2flags.CH32 = 1;
+            break;
+
+        default:
+            return;
+    }
+
+    if(channel<17)                                                              
+    {
+        write_Int_FRAM(THMUX_ENABLE1_16flagsaddress,THMUX_ENABLE1_16.THMUXen1_16);    //store flag in FRAM 
+    }
+    else                                                                        
+    {
+        write_Int_FRAM(THMUX_ENABLE17_32flagsaddress,THMUX_ENABLE17_32.THMUXen17_32); //store flag in FRAM  
+    }
+}
+
 void enableINT1(void)
 {
     ConfigINT1(FALLING_EDGE_INT & EXT_INT_PRI_5 & EXT_INT_ENABLE & GLOBAL_INT_ENABLE);  //Set IP to 5   REV O
@@ -13510,13 +13915,15 @@ char getThermtype(void)
 
 	if(buffer[2]==slash && buffer[4]==cr)
 	{
-		if(buffer[3]-0x30>=0 && buffer[3]-0x30<=2)
+		//if(buffer[3]-0x30>=0 && buffer[3]-0x30<=2)                            REM REV 1.8
+        if(buffer[3]-0x30>=0 && buffer[3]-0x30<=3)                              //REV 1,8
 			return buffer[3]-0x30;						//0,1,2
 	}
 	
 	if(buffer[3]==slash && buffer[5]==cr)
 	{
-		if(buffer[4]-0x30>=0 && buffer[4]-0x30<=2)
+		//if(buffer[4]-0x30>=0 && buffer[4]-0x30<=2)                            REM REV 1.8
+        if(buffer[4]-0x30>=0 && buffer[4]-0x30<=3)                              //REV 1.8
 		return buffer[4]-0x30;						//0,1,2
 	}
 
@@ -13678,225 +14085,161 @@ void loadDefaults(void)
 
     //	Clear the SetStopTime flag:
     LC2CONTROL2.flags2.SetStopTime = 0; //clear the set stop time flag
-    //LC2CONTROL2.flags2.R = 1; //set the R flag                                REM REV CP
-    LC2CONTROL2.flags2.scheduled=0;                                             //REV W
+    LC2CONTROL2.flags2.scheduled=0;                                             
     S_1.status1flags._SP=0;                                                     //clear the MODBUS Stop Time flag
-    S_1.status1flags._ST=0;                                                     //clear the MODBUS Start Time flag  REV CO
+    S_1.status1flags._ST=0;                                                     //clear the MODBUS Start Time flag  
     write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);                  //store flag in FRAM  
 
     // Linear Conversions:
-    MUX_CONVERSION1_16.MUXconv1_16 = 0; //All Linear Conversion
-    MUX_CONVERSION17_32.MUXconv17_32 = 0; //All Linear Conversion
+    MUX_CONVERSION1_16.MUXconv1_16 = 0;                                         //All Linear Conversion
+    MUX_CONVERSION17_32.MUXconv17_32 = 0;                                       //All Linear Conversion
     write_Int_FRAM(MUX_CONV1_16flagsaddress,MUX_CONVERSION1_16.MUXconv1_16); 
     write_Int_FRAM(MUX_CONV17_32flagsaddress,MUX_CONVERSION17_32.MUXconv17_32);  
 
-    //MUX_ENABLE1_16.MUXen1_16=0xFFFF;                                          //enable all channels   REV R
-    for(i=1;i<33;i++)                                                           //REV R
-    {                                                                           //REV R
-        enableChannel(i);                                                       //REV R
-    }                                                                           //REV R
-    //MUX4_ENABLE.mflags.mux16_4 = Single;                                      //Default as Single Channel   REM REV R
-    //write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);                  //REM REV R
-
+    //Enable all channels:
+    for(i=1;i<33;i++)                                                           
+    {                                                                           
+        enableChannel(i);                                                       
+    }                                                                           
 
     //initialize gage types to 1:
-    //for (i = CH1GTaddress; i < CH32GTaddress + 1; i += 0x001A)                  //channel gage type selection loop    REM REV BE
-    for (i = CH1GTaddress; i < CH32GTaddress + 1; i += 2)                       //channel gage type selection loop  REV BE
+    for (i = CH1GTaddress; i < CH32GTaddress + 1; i += 2)                       //channel gage type selection loop 
     {
-        write_Int_FRAM(i,1);					//write 1 to channel gage type  
+        write_Int_FRAM(i,1);                                                    //write 1 to channel gage type  
     }
 
     //initialize zero reading to 0:
-    //for (i = CH1ZRaddress; i < CH32ZRaddress + 1; i += 0x001A) //channel zero reading selection loop  REM REV BE
-    for (i = CH1ZRaddress; i < CH32ZRaddress + 1; i += 4)                       //channel zero reading selection loop   REV BE
+    for (i = CH1ZRaddress; i < CH32ZRaddress + 1; i += 4)                       //channel zero reading selection loop   
     {
-        //write_longFRAM(0,i);                                                    //write 0 to channel zero reading REM REV CN
-        write_Flt_FRAM(i,0.0);                                                  //REV CN
+        write_Flt_FRAM(i,0.0);                                                  
     }
 
 
     //initialize gage factor to 1:
-    //for (i = CH1GFaddress; i < CH32GFaddress + 1; i += 0x001A) //channel gage factor selection loop   REM REV BE
-    for (i = CH1GFaddress; i < CH32GFaddress + 1; i += 4)                       //channel gage factor selection loop REV BE
+    for (i = CH1GFaddress; i < CH32GFaddress + 1; i += 4)                       //channel gage factor selection loop 
     {
-        //write_longFRAM(1,i);                                                    //write 1 to channel gage factor  REM REV CN
-        write_Flt_FRAM(i,1.0);                                                  //REV CN
+        write_Flt_FRAM(i,1.0);                                                  
     }
 
     //initialize gage offset to 0:
-    //for (i = CH1GOaddress; i < CH32GOaddress + 1; i += 0x001A) //channel gage offset selection loop   REM REV BE
-    for (i = CH1GOaddress; i < CH32GOaddress + 1; i += 4)                       //channel gage offset selection loop REV BE
+    for (i = CH1GOaddress; i < CH32GOaddress + 1; i += 4)                       //channel gage offset selection loop 
     {
-        //write_longFRAM(0,i);                                                    //write 0 to channel gage offset  REM REV CN
-        write_Flt_FRAM(i,0.0);                                                  //REV CN
+        write_Flt_FRAM(i,0.0);                                                  
     }
 
     //initialize polynomial coefficient A to 0:
-    //for (i = CH1PolyCoAaddress; i < CH32PolyCoAaddress + 1; i += 0x001A) //channel polynomial coefficient A selection loop    REM REV BE
-    for (i = CH1PolyCoAaddress; i < CH32PolyCoAaddress + 1; i += 4)             //channel polynomial coefficient A selection loop  REV BE
+    for (i = CH1PolyCoAaddress; i < CH32PolyCoAaddress + 1; i += 4)             //channel polynomial coefficient A selection loop  
     {
-        //write_longFRAM(0,i);                                                    //write 0 to channel polynomial coefficient A REM REV CN
-        write_Flt_FRAM(i,0.0);                                                  //REV CN
+        write_Flt_FRAM(i,0.0);                                                  
     }
 
     //initialize polynomial coefficient B to 1:
-    //for (i = CH1PolyCoBaddress; i < CH32PolyCoBaddress + 1; i += 0x001A) //channel polynomial coefficient B selection loop    REM REV BE
-    for (i = CH1PolyCoBaddress; i < CH32PolyCoBaddress + 1; i += 4)             //channel polynomial coefficient B selection loop  REV BE
+    for (i = CH1PolyCoBaddress; i < CH32PolyCoBaddress + 1; i += 4)             //channel polynomial coefficient B selection loop  
     {
-        //write_longFRAM(1,i);                                                    //write 1 to channel polynomial coefficient B REM REV CN
-        write_Flt_FRAM(i,1.0);                                                  //REV CN
+        write_Flt_FRAM(i,1.0);                                                  
     }
 
     //initialize polynomial coefficient C to 0:
-    //for (i = CH1PolyCoCaddress; i < CH32PolyCoCaddress + 1; i += 0x001A) //channel polynomial coefficient C selection loop    REM REV BE
-    for (i = CH1PolyCoCaddress; i < CH32PolyCoCaddress + 1; i += 4)             //channel polynomial coefficient C selection loop  REV BE
+    for (i = CH1PolyCoCaddress; i < CH32PolyCoCaddress + 1; i += 4)             //channel polynomial coefficient C selection loop  
     {
-        //write_longFRAM(0,i);                                                    //write 0 to channel polynomial coefficient C REM REV CN
-        write_Flt_FRAM(i,0.0);                                                  //REV CN
+        write_Flt_FRAM(i,0.0);                                                  
     }
     
-    //REV J:
-	//for(i=_4CHMuxCH1THaddress;i<_16CHMuxCH16THaddress+1;i+=0x0002)               //all thermistors type 0    REV J    REM REV T
-    for(i=CH1THaddress;i<CH32THaddress+1;i+=0x0002)                     //all thermistors type 0    REV T
+    for(i=CH1THaddress;i<CH32THaddress+1;i+=0x0002)                             //all thermistors type 1    REV 1.8
 	{
-		write_Int_FRAM(i,0);                                                    //write 0 to channel thermistor type
+		write_Int_FRAM(i,1);                                                    //write 1 to channel thermistor type    REV 1.8
 	}
+    
+    //Enable all thermistor channels:
+   write_Int_FRAM(THMUX_ENABLE1_16flagsaddress, 0xFFFF);                        //REV 1.8
+   write_Int_FRAM(THMUX_ENABLE17_32flagsaddress, 0xFFFF);                       //REV 1.8
 
     //initialize scan intervals:
-    if (MUX4_ENABLE.mflags.mux16_4 == Single) //Single VW Channel
+    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //Single VW Channel
     {
-        S_1.status1flags._CFG=Single;                                           //REV CO
+        S_1.status1flags._CFG=Single;                                           
         LogIntLength = minScanSingleVW;
         hms(minScanSingleVW, 0);
         
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4) //4 channel VW MUX
+    if (MUX4_ENABLE.mflags.mux16_4 == VW4)                                      //4 channel VW MUX
     {
-        S_1.status1flags._CFG=VW4;                                              //REV CO
+        S_1.status1flags._CFG=VW4;                                              
         LogIntLength = minScanFourVW;
         hms(minScanFourVW, 0);
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW8) //8 channel VW MUX
+    if (MUX4_ENABLE.mflags.mux16_4 == VW8)                                      //8 channel VW MUX
     {
-        S_1.status1flags._CFG=VW8;                                              //REV CO
+        S_1.status1flags._CFG=VW8;                                              
         LogIntLength = minScanEightVW;
         hms(minScanEightVW, 0);
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16) //16 channel VW MUX
+    if (MUX4_ENABLE.mflags.mux16_4 == VW16)                                     //16 channel VW MUX
     {
-        S_1.status1flags._CFG=VW16;                                             //REV CO
+        S_1.status1flags._CFG=VW16;                                             
         LogIntLength = minScanSixteenVW;
         hms(minScanSixteenVW, 0);
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW32) //32 channel VW MUX
+    if (MUX4_ENABLE.mflags.mux16_4 == VW32)                                     //32 channel VW MUX
     {
-        S_1.status1flags._CFG=VW32;                                             //REV CO
+        S_1.status1flags._CFG=VW32;                                             
         LogIntLength = minScanThirtytwoVW;
         hms(minScanThirtytwoVW, 0);
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == TH8) //8 channel TH MUX
+    if (MUX4_ENABLE.mflags.mux16_4 == TH8)                                      //8 channel TH MUX
     {
-        S_1.status1flags._CFG=TH8;                                              //REV CO
+        S_1.status1flags._CFG=TH8;                                              
         LogIntLength = minScanEightTH;
         hms(minScanEightTH, 0);
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == TH32) //32 channel TH MUX
+    if (MUX4_ENABLE.mflags.mux16_4 == TH32)                                     //32 channel TH MUX
     {
-        S_1.status1flags._CFG=TH32;                                             //REV CO
+        S_1.status1flags._CFG=TH32;                                             
         LogIntLength = minScanThirtytwoTH;
         hms(minScanThirtytwoTH, 0);
     }
 
     //initialize log intervals:
     //Log interval #1:
-    storeLogInterval(1,100);                                                //100 iterations
-    write_Int_FRAM(LogItRemain1address,100);                                 //100 left to go
-    write_Int_FRAM(LogItRemain1MASTERaddress,100);                          //REV CI    
+    storeLogInterval(1,100);                                                    //100 iterations
+    write_Int_FRAM(LogItRemain1address,100);                                    //100 left to go
+    write_Int_FRAM(LogItRemain1MASTERaddress,100);                              
     
-    //if(MUX4_ENABLE.mflags.mux16_4==VW16)                                        //16 channel MUX selected?  VER 6.0.7
-    //{
-        //Log interval #1:
-        //LogIntLength=minScanSixteenVW;                                          //minScanSixteenVW second scan interval
-        //storeLogInterval(1,100);                                                //100 iterations
-        //write_Int_FRAM(LogItRemain1address,100);                                 //100 left to go
-        //write_Int_FRAM(LogItRemain1MASTERaddress,100);                          //REV CI
-
     //Log interval #2:
-    LogIntLength=40;                                                        //40 second scan interval
-    storeLogInterval(2,90);                                                 //90 iterations
-    write_Int_FRAM(LogItRemain2address,90);                                  //90 left to go
-    write_Int_FRAM(LogItRemain2MASTERaddress,90);                           //REV CI
+    LogIntLength=40;                                                            //40 second scan interval
+    storeLogInterval(2,90);                                                     //90 iterations
+    write_Int_FRAM(LogItRemain2address,90);                                     //90 left to go
+    write_Int_FRAM(LogItRemain2MASTERaddress,90);                           
 
     //Log interval #3:
-    LogIntLength=50;                                                        //50 second scan interval
-    storeLogInterval(3,80);                                                 //80 iterations
-    write_Int_FRAM(LogItRemain3address,80);                                  //80 left to go
-    write_Int_FRAM(LogItRemain3MASTERaddress,80);                           //REV CI
+    LogIntLength=50;                                                            //50 second scan interval
+    storeLogInterval(3,80);                                                     //80 iterations
+    write_Int_FRAM(LogItRemain3address,80);                                     //80 left to go
+    write_Int_FRAM(LogItRemain3MASTERaddress,80);                           
 
     //Log interval #4:
-    LogIntLength=60;                                                        //60 second scan interval
-    storeLogInterval(4,70);                                                 //70 iterations
-    write_Int_FRAM(LogItRemain4address,70);                                  //70 left to go
-    write_Int_FRAM(LogItRemain4MASTERaddress,70);                           //REV CI
+    LogIntLength=60;                                                            //60 second scan interval
+    storeLogInterval(4,70);                                                     //70 iterations
+    write_Int_FRAM(LogItRemain4address,70);                                     //70 left to go
+    write_Int_FRAM(LogItRemain4MASTERaddress,70);                           
 
     //Log interval #5:
-    LogIntLength=90;                                                        //90 second scan interval
-    storeLogInterval(5,60);                                                 //60 iterations
-    write_Int_FRAM(LogItRemain5address,60);                                   //60 left to go
-    write_Int_FRAM(LogItRemain5MASTERaddress,60);                           //REV CI
+    LogIntLength=90;                                                            //90 second scan interval
+    storeLogInterval(5,60);                                                     //60 iterations
+    write_Int_FRAM(LogItRemain5address,60);                                     //60 left to go
+    write_Int_FRAM(LogItRemain5MASTERaddress,60);                           
  
     //Log interval #6:
-    LogIntLength=120;                                                       //120 second scan interval
-    storeLogInterval(6,0);                                                  //0 iterations
-    write_Int_FRAM(LogItRemain6address,0);                                   //0 left to go
-    write_Int_FRAM(LogItRemain6MASTERaddress,0);                            //REV CI
-    //}
-
-    //if(MUX4_ENABLE.mflags.mux16_4==VW4)                                         //4 channel MUX selected    VER 6.0.7
-    //{
-        //Log interval #1:
-        //LogIntLength=minScanFourVW;                                             //10 second scan interval
-        //storeLogInterval(1,100);                                                //100 iterations
-        //write_Int_FRAM(LogItRemain1address,100);                                 //100 left to go
-        //write_Int_FRAM(LogItRemain1MASTERaddress,100);                          //REV CI
- 			
-        //Log interval #2:
-        //LogIntLength=20;                                                        //20 second scan interval
-        //storeLogInterval(2,90);                                                 //90 iterations
-        //write_Int_FRAM(LogItRemain2address,90);                                  //90 left to go
-        //write_Int_FRAM(LogItRemain2MASTERaddress,90);                           //REV CI
-
-        //Log interval #3:
-        //LogIntLength=30;                                                        //10 second scan interval
-        //storeLogInterval(3,80);                                                 //80 iterations
-        //write_Int_FRAM(LogItRemain3address,80);                                  //80 left to go
-        //write_Int_FRAM(LogItRemain3MASTERaddress,80);                           //REV CI
-        
-        //Log interval #4:
-        //LogIntLength=40;                                                        //40 second scan interval
-        //storeLogInterval(4,70);                                                 //70 iterations
-        //write_Int_FRAM(LogItRemain4address,70);                                  //70 left to go
-        //write_Int_FRAM(LogItRemain4MASTERaddress,70);                           //REV CI
-
-        //Log interval #5:
-        //LogIntLength=50;                                                        //50 second scan interval
-        //storeLogInterval(5,60);                                                 //60 iterations
-        //write_Int_FRAM(LogItRemain5address,60);                                  //60 left to go
-        //write_Int_FRAM(LogItRemain5MASTERaddress,60);                           //REV CI
-
-        //Log interval #6:
-        //LogIntLength=60;                                                        //60 second scan interval
-        //storeLogInterval(6,0);                                                  //0 iterations
-        //write_Int_FRAM(LogItRemain6address,0);                                   //0 left to go
-        //write_Int_FRAM(LogItRemain6MASTERaddress,0);                            //REV CI
-    //}
-
+    LogIntLength=120;                                                           //120 second scan interval
+    storeLogInterval(6,0);                                                      //0 iterations
+    write_Int_FRAM(LogItRemain6address,0);                                      //0 left to go
+    write_Int_FRAM(LogItRemain6MASTERaddress,0);                            
 
     if(MUX4_ENABLE.mflags.mux16_4==Single)                                      //Single Channel selected    
     {
@@ -13904,88 +14247,82 @@ void loadDefaults(void)
         LogIntLength = 3;                                                       //3 second scan interval
         storeLogInterval(1, 3);                                                 //3 iterations
         write_Int_FRAM(SingleLogItRemain1address,3);                            //3 left to go 
-        write_Int_FRAM(SingleLogItRemain1MASTERaddress,3);                      //REV CI
+        write_Int_FRAM(SingleLogItRemain1MASTERaddress,3);                      
 
         //Log interval #2:
         LogIntLength = 6;                                                       //6 second scan interval
         storeLogInterval(2, 9);                                                 //9 iterations
         write_Int_FRAM(SingleLogItRemain2address,9);                            //9 left to go`
-        write_Int_FRAM(SingleLogItRemain2MASTERaddress,9);                      //REV CI
+        write_Int_FRAM(SingleLogItRemain2MASTERaddress,9);                      
 
         //Log interval #3:
         LogIntLength = 10;                                                      //10 second scan interval
         storeLogInterval(3, 54);                                                //54 iterations
         write_Int_FRAM(SingleLogItRemain3address,54);                           //54 left to go 
-        write_Int_FRAM(SingleLogItRemain3MASTERaddress,54);                     //REV CI
+        write_Int_FRAM(SingleLogItRemain3MASTERaddress,54);                     
 
         //Log interval #4:
         LogIntLength = 30;                                                      //30 second scan interval
         storeLogInterval(4, 180);                                               //180 iterations
         write_Int_FRAM(SingleLogItRemain4address,180);                          //180 left to go  
-        write_Int_FRAM(SingleLogItRemain4MASTERaddress,180);                    //REV CI
+        write_Int_FRAM(SingleLogItRemain4MASTERaddress,180);                    
 
         //Log interval #5:
         LogIntLength = 240;                                                     //240 second scan interval
         storeLogInterval(5, 225);                                               //225 iterations
         write_Int_FRAM(SingleLogItRemain5address,225);                          //225 left to go  
-        write_Int_FRAM(SingleLogItRemain5MASTERaddress,225);                    //REV CI
+        write_Int_FRAM(SingleLogItRemain5MASTERaddress,225);                    
 
         //Log interval #6:
         LogIntLength = 3600;                                                    //3600 second scan interval
         storeLogInterval(6, 0);                                                 //0 iterations
-        write_Int_FRAM(SingleLogItRemain6address,0);                                //0 left to go 
-        write_Int_FRAM(SingleLogItRemain6MASTERaddress,0);                      //REV CI
+        write_Int_FRAM(SingleLogItRemain6address,0);                            //0 left to go 
+        write_Int_FRAM(SingleLogItRemain6MASTERaddress,0);                      
     }
 
 
     //initialize wrap format
     DISPLAY_CONTROL.flags.WrapMemory = 1;                                       //set memory to wrap
-    S_1.status1flags._Wrap=1;                                                    //REV CJ
+    S_1.status1flags._Wrap=1;                                                    
 
     //initialize reading synchronization
     DISPLAY_CONTROL.flags.Synch = 1;                                            //readings synchronized to top of hour
-    S_1.status1flags._Sync=1;                                                    //REV CJ
+    S_1.status1flags._Sync=1;                                                    
 
     //save the flags
     write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);        //store flags in FRAM 
 
-    //initialize thermistor type
-	//Thermtype=0;                                                                //standard temp thermistor	REM REV J
-
-    //save the thermistor type                                                  //REV J
-	//write_Int_FRAM(Thermtypeaddress,Thermtype);                                 //REM REV J
-    
     //initialize monitor mode
-    LC2CONTROL.flags.Monitor = 1; //Turn on the monitor
+    LC2CONTROL.flags.Monitor = 1;                                               //Turn on the monitor
 
     //initialize log intervals
-    LC2CONTROL.flags.LogInterval = 0; //Turn off log intervals
-    S_1.status1flags._Logint=0;                                                   //REV CJ
+    LC2CONTROL.flags.LogInterval = 0;                                           //Turn off log intervals
+    S_1.status1flags._Logint=0;                                                   
 
     //initialize logging
-    LC2CONTROL.flags.Logging = 0; //Logging stopped
-    S_1.status1flags._Logging=0;                                                 //REV CJ
+    LC2CONTROL.flags.Logging = 0;                                               //Logging stopped
+    S_1.status1flags._Logging=0;                                                 
 
     //initialize time format
-    LC2CONTROL.flags.TimeFormat = 0; //hhmm
+    LC2CONTROL.flags.TimeFormat = 0;                                            //hhmm
 
     //initialize date format
-    LC2CONTROL.flags.DateFormat = 0; //julian
+    LC2CONTROL.flags.DateFormat = 0;                                            //julian
     
-    //clear the stop time flag                                                  //REV CI
+    //clear the stop time flag                                                  
     LC2CONTROL.flags.LoggingStopTime=0;
     
-    //Lock the MODBUS protected registers                                       //REV CP
+    //Lock the MODBUS protected registers                                       
     LC2CONTROL.flags.Unlock=0;                                  
 
     //save the flags
     write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);                     //store flags in FRAM  
-    write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                          //REV CJ
-    write_Int_FRAM(MODBUS_STATUS2address,S_2.status2);                          //REV CJ
+    write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                          
+    write_Int_FRAM(MODBUS_STATUS2address,S_2.status2);                          
     
 }
 
-int MODBUScheckScanInterval(unsigned int x)                                     //Returns 0 if scan interval is ok  REV CR
+int MODBUScheckScanInterval(unsigned int x)                                     //Returns 0 if scan interval is ok  
 {
     MUX4_ENABLE.mux=read_Int_FRAM(MUX4_ENABLEflagsaddress);  
 
@@ -16343,154 +16680,176 @@ void setChannelConversion(int channel, int conversion) {
 //REV T:
 void setChannelThermtype(int channel,char Thermtype)                            
 {
-	switch(channel)							//assign the proper thermistor type per channel
+	switch(channel)                                                             //assign the proper thermistor type per channel
 	{
 		case 1:
-			//if(!MUX4_ENABLE.mflags.mux16_4)	//4 channel mux?                //REM REV K
-            //if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==Single)//Single or 4 channel mux?  REV K  REM REV T
-				//write_Int_FRAM(_4CHMuxCH1THaddress,Thermtype);		//store Thermistor type in EEPROM   REM REV T
-                write_Int_FRAM(CH1THaddress,Thermtype);                         //store Thermistor type in EEPROM   REV T
-			//else                                                              //REM REV T
-				//write_Int_FRAM(_16CHMuxCH1THaddress,Thermtype);               //REM REV T
-                //write_Int_FRAM(CH1THaddress,Thermtype);                       //REM REV T
-			return;
+            write_Int_FRAM(CH1THaddress,Thermtype);                             //store Thermistor type in EEPROM
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 2:
-			//if(!MUX4_ENABLE.mflags.mux16_4)	//4 channel mux?                //REM REV T
-				write_Int_FRAM(CH2THaddress,Thermtype);                         //store Thermistor type in EEPROM   REV T
-			//else
-				//write_Int_FRAM(_16CHMuxCH2THaddress,Thermtype);	
-			return;
+			write_Int_FRAM(CH2THaddress,Thermtype);                             
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 3:
-			//if(!MUX4_ENABLE.mflags.mux16_4)	//4 channel mux?
-				write_Int_FRAM(CH3THaddress,Thermtype);                         //store Thermistor type in EEPROM
-			//else
-			//	write_Int_FRAM(_16CHMuxCH3THaddress,Thermtype);	
-			return;
+			write_Int_FRAM(CH3THaddress,Thermtype);                             
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 4:
-			//if(!MUX4_ENABLE.mflags.mux16_4)	//4 channel mux?
-				write_Int_FRAM(CH4THaddress,Thermtype);                         //store Thermistor type in EEPROM
-			//else
-			//	write_Int_FRAM(_16CHMuxCH4THaddress,Thermtype);	
-			return;
+			write_Int_FRAM(CH4THaddress,Thermtype);                             
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 5:
 			write_Int_FRAM(CH5THaddress,Thermtype);	
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 6:
 			write_Int_FRAM(CH6THaddress,Thermtype);	
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 7:
 			write_Int_FRAM(CH7THaddress,Thermtype);	
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 8:		
 			write_Int_FRAM(CH8THaddress,Thermtype);	
-			return;
+			//return;                                                           REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 9:
 			write_Int_FRAM(CH9THaddress,Thermtype);	
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 10:
 			write_Int_FRAM(CH10THaddress,Thermtype);	
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 11:
 			write_Int_FRAM(CH11THaddress,Thermtype);	
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 12:
 			write_Int_FRAM(CH12THaddress,Thermtype);	
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 13:
 			write_Int_FRAM(CH13THaddress,Thermtype);	
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 14:
 			write_Int_FRAM(CH14THaddress,Thermtype);	
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 15:
 			write_Int_FRAM(CH15THaddress,Thermtype);	
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 16:
 			write_Int_FRAM(CH16THaddress,Thermtype);	
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
             
         case 17:
 			write_Int_FRAM(CH17THaddress,Thermtype);	
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 18:
 			write_Int_FRAM(CH18THaddress,Thermtype);	
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 19:
 			write_Int_FRAM(CH19THaddress,Thermtype);	
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 20:
 			write_Int_FRAM(CH20THaddress,Thermtype);	
-			return;  
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8 
             
         case 21:
 			write_Int_FRAM(CH21THaddress,Thermtype);	
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 22:
 			write_Int_FRAM(CH22THaddress,Thermtype);	
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 23:
 			write_Int_FRAM(CH23THaddress,Thermtype);	
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 24:
 			write_Int_FRAM(CH24THaddress,Thermtype);	
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
             
         case 25:
 			write_Int_FRAM(CH25THaddress,Thermtype);	
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 26:
 			write_Int_FRAM(CH26THaddress,Thermtype);	
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 27:
 			write_Int_FRAM(CH27THaddress,Thermtype);	
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 28:
 			write_Int_FRAM(CH28THaddress,Thermtype);	
-			return;    
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8   
             
         case 29:
 			write_Int_FRAM(CH29THaddress,Thermtype);	
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 30:
 			write_Int_FRAM(CH30THaddress,Thermtype);	
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 31:
 			write_Int_FRAM(CH31THaddress,Thermtype);	
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 
 		case 32:
 			write_Int_FRAM(CH32THaddress,Thermtype);	
-			return;    
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8    
 
 		default:
-			return;
+			//return;                                                           //REM REV 1.8
+            break;                                                              //REV 1.8
 	}
+    if(Thermtype==0)                                                            //REV 1.8
+        disableTHChannel(channel);                                              //REV 1.8
+    else                                                                        //REV 1.8
+        enableTHChannel(channel);                                               //REV 1.8
 }
 
 
@@ -17984,11 +18343,18 @@ void take_One_Complete_Reading(unsigned char store)
         extThermreading=0x0001;                                                 //Store -0.0 to indicate channel is disabled    REV BI
         storeChannelReading(ch);                                                //store the reading REV BI
 
-        if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32) //VER 6.0.9
+        //if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32) //VER 6.0.9  REM REV 1.8
+        //{                                                                     REM REV 1.8
+        switch (ch) //load the channel parameters
         {
-            switch (ch) //load the channel parameters
-            {
-                case 1: //Channel 1
+            case 1: //Channel 1
+                
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                               //REV 1.8
+                        if(!THMUX_ENABLE1_16.t1flags.CH1)                           //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag REV 1.8
+                        break;                                                      //break out of switch(ch)   REV 1.8                            
+                    }                                                               //REV 1.8
 
                     if (!MUX_ENABLE1_16.e1flags.CH1) //is channel disabled?
                     {
@@ -18016,7 +18382,14 @@ void take_One_Complete_Reading(unsigned char store)
                     break; //break out of switch(ch)
 
 
-                case 2: //Channel 2
+            case 2: //Channel 2
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE1_16.t1flags.CH2)                       //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                    
 
                     if (!MUX_ENABLE1_16.e1flags.CH2) //is channel disabled?
                     {
@@ -18036,6 +18409,13 @@ void take_One_Complete_Reading(unsigned char store)
 
 
                 case 3: //Channel 3
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE1_16.t1flags.CH3)                       //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                       
 
                     if (!MUX_ENABLE1_16.e1flags.CH3) //is channel disabled?
                     {
@@ -18055,6 +18435,13 @@ void take_One_Complete_Reading(unsigned char store)
 
 
                 case 4: //Channel 4
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE1_16.t1flags.CH4)                       //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                       
 
                     if (!MUX_ENABLE1_16.e1flags.CH4) //is channel disabled?
                     {
@@ -18074,6 +18461,13 @@ void take_One_Complete_Reading(unsigned char store)
 
 
                 case 5:
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE1_16.t1flags.CH5)                       //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                       
 
                     if (!MUX_ENABLE1_16.e1flags.CH5) //is channel disabled?
                     {
@@ -18093,6 +18487,13 @@ void take_One_Complete_Reading(unsigned char store)
 
 
                 case 6: //Channel 6
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE1_16.t1flags.CH6)                       //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                       
 
                     if (!MUX_ENABLE1_16.e1flags.CH6) //is channel disabled?
                     {
@@ -18112,6 +18513,13 @@ void take_One_Complete_Reading(unsigned char store)
 
 
                 case 7: //Channel 7
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE1_16.t1flags.CH7)                       //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                       
 
                     if (!MUX_ENABLE1_16.e1flags.CH7) //is channel disabled?
                     {
@@ -18131,6 +18539,13 @@ void take_One_Complete_Reading(unsigned char store)
 
 
                 case 8: //Channel 8
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE1_16.t1flags.CH8)                       //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                       
 
                     if (!MUX_ENABLE1_16.e1flags.CH8) //is channel disabled?
                     {
@@ -18150,6 +18565,13 @@ void take_One_Complete_Reading(unsigned char store)
 
 
                 case 9: //Channel 9
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE1_16.t1flags.CH9)                       //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                       
 
                     if (!MUX_ENABLE1_16.e1flags.CH9) //is channel disabled?
                     {
@@ -18168,6 +18590,13 @@ void take_One_Complete_Reading(unsigned char store)
                     break; //break out of switch(ch)
 
                 case 10: //Channel 10
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE1_16.t1flags.CH10)                      //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                       
 
                     if (!MUX_ENABLE1_16.e1flags.CH10) //is channel disabled?
                     {
@@ -18186,6 +18615,13 @@ void take_One_Complete_Reading(unsigned char store)
                     break; //break out of switch(ch)
 
                 case 11: //Channel 11
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE1_16.t1flags.CH11)                      //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                       
 
                     if (!MUX_ENABLE1_16.e1flags.CH11) //is channel disabled?
                     {
@@ -18204,6 +18640,13 @@ void take_One_Complete_Reading(unsigned char store)
                     break; //break out of switch(ch)
 
                 case 12: //Channel 12
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE1_16.t1flags.CH12)                      //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                       
 
                     if (!MUX_ENABLE1_16.e1flags.CH12) //is channel disabled?
                     {
@@ -18222,6 +18665,13 @@ void take_One_Complete_Reading(unsigned char store)
                     break; //break out of switch(ch)
 
                 case 13: //Channel 13
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE1_16.t1flags.CH13)                      //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                       
 
                     if (!MUX_ENABLE1_16.e1flags.CH13) //is channel disabled?
                     {
@@ -18240,6 +18690,13 @@ void take_One_Complete_Reading(unsigned char store)
                     break; //break out of switch(ch)
 
                 case 14: //Channel 14
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE1_16.t1flags.CH14)                      //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                       
 
                     if (!MUX_ENABLE1_16.e1flags.CH14) //is channel disabled?
                     {
@@ -18258,6 +18715,13 @@ void take_One_Complete_Reading(unsigned char store)
                     break; //break out of switch(ch)
 
                 case 15: //Channel 15
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE1_16.t1flags.CH15)                      //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                       
 
                     if (!MUX_ENABLE1_16.e1flags.CH15) //is channel disabled?
                     {
@@ -18276,6 +18740,13 @@ void take_One_Complete_Reading(unsigned char store)
                     break; //break out of switch(ch)
 
                 case 16: //Channel 16
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE1_16.t1flags.CH16)                      //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                       
 
                     if (!MUX_ENABLE1_16.e1flags.CH16) //is channel disabled?
                     {
@@ -18295,6 +18766,13 @@ void take_One_Complete_Reading(unsigned char store)
 
 
                 case 17: //Channel 17
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE17_32.t2flags.CH17)                     //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                       
 
                     if (!MUX_ENABLE17_32.e2flags.CH17) //is channel disabled?
                     {
@@ -18314,6 +18792,13 @@ void take_One_Complete_Reading(unsigned char store)
 
 
                 case 18: //Channel 18
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE17_32.t2flags.CH18)                     //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                    
 
                     if (!MUX_ENABLE17_32.e2flags.CH18) //is channel disabled?
                     {
@@ -18333,6 +18818,13 @@ void take_One_Complete_Reading(unsigned char store)
 
 
                 case 19: //Channel 19
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE17_32.t2flags.CH19)                     //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                    
 
                     if (!MUX_ENABLE17_32.e2flags.CH19) //is channel disabled?
                     {
@@ -18352,6 +18844,13 @@ void take_One_Complete_Reading(unsigned char store)
 
 
                 case 20: //Channel 20
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE17_32.t2flags.CH20)                     //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                    
 
                     if (!MUX_ENABLE17_32.e2flags.CH20) //is channel disabled?
                     {
@@ -18371,6 +18870,13 @@ void take_One_Complete_Reading(unsigned char store)
 
 
                 case 21: //Channel 21
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE17_32.t2flags.CH21)                     //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                    
 
                     if (!MUX_ENABLE17_32.e2flags.CH21) //is channel disabled?
                     {
@@ -18390,6 +18896,13 @@ void take_One_Complete_Reading(unsigned char store)
 
 
                 case 22: //Channel 22
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE17_32.t2flags.CH22)                     //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                    
 
                     if (!MUX_ENABLE17_32.e2flags.CH22) //is channel disabled?
                     {
@@ -18409,6 +18922,13 @@ void take_One_Complete_Reading(unsigned char store)
 
 
                 case 23: //Channel 23
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE17_32.t2flags.CH23)                     //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                    
 
                     if (!MUX_ENABLE17_32.e2flags.CH23) //is channel disabled?
                     {
@@ -18428,6 +18948,13 @@ void take_One_Complete_Reading(unsigned char store)
 
 
                 case 24: //Channel 24
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE17_32.t2flags.CH24)                     //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                    
 
                     if (!MUX_ENABLE17_32.e2flags.CH24) //is channel disabled?
                     {
@@ -18447,6 +18974,13 @@ void take_One_Complete_Reading(unsigned char store)
 
 
                 case 25: //Channel 25
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE17_32.t2flags.CH25)                     //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                    
 
                     if (!MUX_ENABLE17_32.e2flags.CH25) //is channel disabled?
                     {
@@ -18465,6 +18999,13 @@ void take_One_Complete_Reading(unsigned char store)
                     break; //break out of switch(ch)
 
                 case 26: //Channel 26
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE17_32.t2flags.CH26)                     //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                    
 
                     if (!MUX_ENABLE17_32.e2flags.CH26) //is channel disabled?
                     {
@@ -18483,6 +19024,13 @@ void take_One_Complete_Reading(unsigned char store)
                     break; //break out of switch(ch)
 
                 case 27: //Channel 27
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE17_32.t2flags.CH27)                     //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                    
 
                     if (!MUX_ENABLE17_32.e2flags.CH27) //is channel disabled?
                     {
@@ -18501,6 +19049,13 @@ void take_One_Complete_Reading(unsigned char store)
                     break; //break out of switch(ch)
 
                 case 28: //Channel 28
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE17_32.t2flags.CH28)                     //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                    
 
                     if (!MUX_ENABLE17_32.e2flags.CH28) //is channel disabled?
                     {
@@ -18519,6 +19074,13 @@ void take_One_Complete_Reading(unsigned char store)
                     break; //break out of switch(ch)
 
                 case 29: //Channel 29
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE17_32.t2flags.CH29)                     //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                    
 
                     if (!MUX_ENABLE17_32.e2flags.CH29) //is channel disabled?
                     {
@@ -18537,6 +19099,13 @@ void take_One_Complete_Reading(unsigned char store)
                     break; //break out of switch(ch)
 
                 case 30: //Channel 30
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE17_32.t2flags.CH30)                     //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                    
 
                     if (!MUX_ENABLE17_32.e2flags.CH30) //is channel disabled?
                     {
@@ -18555,6 +19124,13 @@ void take_One_Complete_Reading(unsigned char store)
                     break; //break out of switch(ch)
 
                 case 31: //Channel 31
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE17_32.t2flags.CH31)                     //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                    
 
                     if (!MUX_ENABLE17_32.e2flags.CH31) //is channel disabled?
                     {
@@ -18573,6 +19149,13 @@ void take_One_Complete_Reading(unsigned char store)
                     break; //break out of switch(ch)
 
                 case 32: //Channel 32
+                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
+                    {                                                           //REV 1.8
+                        if(!THMUX_ENABLE17_32.t2flags.CH32)                     //Therm channel disabled    REV 1.8
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
+                        break;                                                  //break out of switch(ch)   REV 1.8                            
+                    }                                                           //REV 1.8                    
 
                     if (!MUX_ENABLE17_32.e2flags.CH32) //is channel disabled?
                     {
@@ -18594,7 +19177,7 @@ void take_One_Complete_Reading(unsigned char store)
                     break;
 
             } //end of switch(ch)
-        }
+        //}
 
         if (!store) 
         {
@@ -18723,8 +19306,8 @@ void take_One_Complete_Reading(unsigned char store)
             Nop();
             if (LC2CONTROL2.flags2.Interrupt)
             {
-                U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  
-                U1STAbits.UTXEN=1;                                                          //Re-enable the COM PORT    REV CF
+                U1MODEbits.UARTEN=1;                                            //Re-enable the COM PORT  
+                U1STAbits.UTXEN=1;                                              //Re-enable the COM PORT    REV CF
                 return;
             }
         }
@@ -19844,23 +20427,26 @@ float V_HT2C(float V, unsigned int ch)                                          
     Thermtypeaddress=CH1THaddress + (2*(ch-1));                                 //REV U
 	Thermtype=read_Int_FRAM(Thermtypeaddress);
 
-	if(Thermtype==0)
+	//if(Thermtype==0)                                                          //REM REV 1.8
+    if(Thermtype==1)                                                            //REV 1.8
 	{
-		a=1.4051E-3;									//coefficients for standard therm
+		a=1.4051E-3;                                                            //coefficients for standard therm
 		b=2.369E-4;
 		c=1.019E-7;
 	}
 	else
-	if(Thermtype==1)									//VER 5.7.0
+	//if(Thermtype==1)                                                          //REM REV 1.8
+    if(Thermtype==2)                                                            //REV 1.8
 	{
-		a=1.02569E-3;									//coefficients for high temp BR55KA822J therm
+		a=1.02569E-3;                                                           //coefficients for high temp BR55KA822J therm
 		b=2.478265E-4;
 		c=1.289498E-7;
 	}
 	else
-	if(Thermtype==2)
+	//if(Thermtype==2)                                                          //REM REV 1.8
+    if(Thermtype==3)                                                            //REV 1.8    
 	{
-		a=1.12766979300187E-3;							//coefficients for high temp 103JL1A therm
+		a=1.12766979300187E-3;                                                  //coefficients for high temp 103JL1A therm
 		b=2.34444184128213E-4;
 		c=8.47692130592308E-8;
 		d=1.17512193579615E-11;	
@@ -19887,13 +20473,15 @@ float V_HT2C(float V, unsigned int ch)                                          
 	LogRht=log(Rht);
 
 //	
-	if(Thermtype==0 | Thermtype==1)
+	//if(Thermtype==0 | Thermtype==1)                                           //REM REV 1.8
+    if(Thermtype==1 | Thermtype==2)                                             //REV 1.8
 	{
 	//	Plug LogRht into Steinhart-Hart Log Equation and return temperature(C):
 		T=(1/(a+(b*LogRht)+(c*(LogRht*LogRht*LogRht))))-273.2;
 	}
 
-	if(Thermtype==2)
+	//if(Thermtype==2)                                                          //REM REV 1.8
+    if(Thermtype==3)                                                            //REV 1.8
 	{
 	//	Plug LogRht into Steinhart-Hart Log Equation and return temperature(C):
 		T=(1/(a+(b*LogRht)+(c*(LogRht*LogRht*LogRht)+(d*(LogRht*LogRht*LogRht*LogRht*LogRht)))))-273.2;

@@ -239,6 +239,55 @@ MUX_17_32EnableBits e2flags;
 }ue17_32flags;
 ue17_32flags    MUX_ENABLE17_32;
 
+//Thermistor MUX Enable flags:                                                  REV 1.8
+typedef struct{
+	unsigned	CH1:1;                                                          //0=DISABLED, 1=ENABLED
+	unsigned	CH2:1;
+	unsigned	CH3:1;
+	unsigned	CH4:1;
+	unsigned	CH5:1;
+	unsigned	CH6:1;
+	unsigned	CH7:1;
+	unsigned	CH8:1;
+	unsigned	CH9:1;
+	unsigned	CH10:1;
+	unsigned	CH11:1;
+	unsigned	CH12:1;
+	unsigned	CH13:1;
+	unsigned	CH14:1;
+	unsigned	CH15:1;
+	unsigned	CH16:1;
+}THMUX_1_16EnableBits;
+typedef union{ unsigned int THMUXen1_16;
+THMUX_1_16EnableBits t1flags;
+}te1_16flags;
+te1_16flags    THMUX_ENABLE1_16;
+
+//Thermistor MUX Enable flags:                                                  //REV 1.8
+typedef struct{
+	unsigned	CH17:1;
+	unsigned	CH18:1;
+	unsigned	CH19:1;
+	unsigned	CH20:1;
+	unsigned	CH21:1;
+	unsigned	CH22:1;
+	unsigned	CH23:1;
+	unsigned	CH24:1;
+	unsigned	CH25:1;
+	unsigned	CH26:1;
+	unsigned	CH27:1;
+	unsigned	CH28:1;
+	unsigned	CH29:1;
+	unsigned	CH30:1;
+	unsigned	CH31:1;
+	unsigned	CH32:1;
+}THMUX_17_32EnableBits;
+typedef union{ unsigned int THMUXen17_32;
+THMUX_17_32EnableBits t2flags;
+}te17_32flags;
+te17_32flags    THMUX_ENABLE17_32;
+
+
 //MUX Conversion flags:
 typedef struct{
 	unsigned	CH1:1;                                                  //0=Linear Conversion, 1=Polynomial Conversion
@@ -1383,7 +1432,8 @@ void crlf(void);
 unsigned int debounce(void);
 void disableBT(void);                                                           //REV AD
 void disableOP(void);                                                           //REV CC
-void disableChannel(int);                                                    
+void disableChannel(int); 
+void disableTHChannel(int);                                                     //REV 1.8
 void disableINT1(void);                                                         //REV B
 void DISLOGINT(void);                                                           //REV CI
 void disableTimers(void);                                                       //REV M
@@ -1404,6 +1454,7 @@ void displayTemporaryStatus(int);
 void displayTempReading(void);
 void displayTestMenu(void);	
 void enableChannel(int);
+void enableTHChannel(int);                                                      //REV 1.8
 void enableBT(void);                                                            //REV AD
 void ENLOGINT(void);                                                            //REV CI
 void enableOP(void);                                                            //REV CC

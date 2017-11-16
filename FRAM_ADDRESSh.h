@@ -484,6 +484,9 @@
 #define CH31Reading                 0x7ff6c                                     //2 bytes
 #define CH32Reading                 0x7ff6e                                     //2 bytes
 
+#define THMUX_ENABLE1_16flagsaddress  0x7ff70                                   //2 bytes   REV H
+#define THMUX_ENABLE17_32flagsaddress 0x7ff72                                   //2 bytes   REV H
+
 #define LastMemoryaddress           0x7ffff                              
 
                                                                                 
