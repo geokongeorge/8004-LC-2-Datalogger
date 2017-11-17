@@ -7,7 +7,9 @@
 //REV E 06/09/17    Relocate MODBUS control registers to preceed gage settings registers
 //REV F 06/15/17    Locate all MODBUS password protected registers together
 //REV G 06/22/17    Locate all 16 bit registers together. Locate all 32 bit registers together
-//REV H 08/21/17    Add registers for narrow-band pluck reading storage
+//REV H 11/16/17    Add registers for narrow-band pluck reading storage
+//                  Add registers for THMUX_ENABLE flags
+//                  Add registers for Gage Serial Number
 
 
 //----------CONTROL/CONFIGURATION REGISTERS STORED IN EXTERNAL MEMORY------------------------------
@@ -486,6 +488,9 @@
 
 #define THMUX_ENABLE1_16flagsaddress  0x7ff70                                   //2 bytes   REV H
 #define THMUX_ENABLE17_32flagsaddress 0x7ff72                                   //2 bytes   REV H
+
+#define GAGE_SERIAL_MSWaddress      0x7ff74                                     //2 bytes   REV H
+#define GAGE_SERIAL_LSWaddress      0x7ff76                                     //2 bytes   REV H
 
 #define LastMemoryaddress           0x7ffff                              
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project>
-  <executable name="dist/default/production/8004v1_8.production.elf">
+  <executable name="dist/default/production/8004v1_9.production.elf">
     <memory name="data">
       <units>bytes</units>
       <length>30720</length>
@@ -11,8 +11,8 @@
     <memory name="program">
       <units>bytes</units>
       <length>261888</length>
-      <used>183933</used>
-      <free>77955</free>
+      <used>183915</used>
+      <free>77973</free>
     </memory>
   </executable>
 </project>

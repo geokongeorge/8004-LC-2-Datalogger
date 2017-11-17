@@ -13,12 +13,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		11/16/2017
+//	DATE:		11/17/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   1.9
-//	CHECKSUM:	0xda6f  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0xafb9  (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8790/30720   29%
-//	PGM(FLASH)MEM:  183933/261888 70%
+//	PGM(FLASH)MEM:  183915/261888 70%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -216,7 +216,9 @@
 //      1.7     11/02/17            Experiment with Fcy = 29.4912MHz during VW read and various gate times
 //      1.8     11/13/17            Modify Thermistor types from 0,1,2 to 1,2,3
 //                                  Set Thermistor type 0 as disable thermistor channel switch
-//      1.9     11/16/17            Add Modbus capability to initiate and read a gage serial number read
+//      1.9     11/17/17            Add Modbus capability to initiate and read a gage serial number read
+//                                  Utilize STATUS/CONTROL2 bit 8 for this function (1=trigger serial number read)
+//                                  32 bit result stored in memory locations 0x7FF74(MSW)(Modbus register 0x7FBA) and 0x7FF76(LSW) (Modbus register 0x7FBB)
 //                                  
 //
 //
@@ -1722,7 +1724,7 @@ void CMDcomm(void)
     unsigned char Alarm1HoursValue;
     char RxDataTemp = 0;
     char trapBUF[6];                                                            //temporary storage for trap count, lithium cell reading and minimum allowable scan interval
-    char SNBUF[8];                                                              //REV 1.3
+    //char SNBUF[8];                                                              //REM REV 1.9
     char testmenuBUF[2];                                                        //stores test menu selection
     int channel = 0;                                                            //current channel #
     int conversion = 0;                                                         //current conversion type:
@@ -1746,18 +1748,18 @@ void CMDcomm(void)
     unsigned int data;                                                          //FOR FRAM TEST
     unsigned int testData;                                                      //for testInternalFRAM
     unsigned int id;                                                            //display index
-    unsigned int therm=0;                                                       //REV 1.2
+    //unsigned int therm=0;                                                       //REM REV 1.9
     unsigned long Alarm1SecondsLong = 0;
     unsigned long Alarm1MinutesLong = 0;
     unsigned long Alarm1HoursLong = 0;
     //unsigned long NetworkAddress = 0;                                         REM REV CH
     volatile unsigned long memoryStatus;
     unsigned long tempID = 0;                                                   //VER 6.0.12
-    volatile unsigned long SerialNumberD=0;                                     //REV 1.3
-    volatile unsigned long SerialNumberC=0;                                     //REV 1.3
-    volatile unsigned long SerialNumberB=0;                                     //REV 1.3
-    volatile unsigned long SerialNumberA=0;                                     //REV 1.3
-    volatile unsigned long SerialNumber=0;                                      //REV 1.3
+    //volatile unsigned long SerialNumberD=0;                                     //REM REV 1.9
+    //volatile unsigned long SerialNumberC=0;                                     //REM REV 1.9
+    //volatile unsigned long SerialNumberB=0;                                     //REM REV 1.9
+    //volatile unsigned long SerialNumberA=0;                                     //REM REV 1.9
+    //volatile unsigned long SerialNumber=0;                                      //REM REV 1.9
     //xFRAMul SerialNumber=0;                                                     //REV 1.3
 
     for(i=0;i<5;i++)                                                            //empty the Rx buffer
@@ -3582,36 +3584,7 @@ void CMDcomm(void)
                     }
                     
                     if (buffer[1] == capS && buffer[2] == capN && buffer[3] == cr) //"RSN" received REV 1.3
-                    {
-                        PORT_CONTROL.flags.temp=0;
-                        if(IEC1bits.INT1IE)
-                        {
-                            PORT_CONTROL.flags.temp=1;
-                            IEC1bits.INT1IE=0;
-                            IFS1bits.INT1IF=0;
-                        }
-                        crlf();          
-                        SerialNumber=0;
-                        if(getSerialNumber())                                   //display the probe serial number
-                        {
-                            for(i=0;i<4;i++)                                    //get the serial number from the buffer    
-                            {
-                                SerialNumber+=MODBUS_RXbuf[i];
-                                if(i==3)
-                                    break;
-                                SerialNumber<<=8;
-                            }
-                            sprintf(SNBUF, "%ld", SerialNumber);                //format the serial number
-                            putsUART1(SNBUF);                                   //display it
-                            while (BusyUART1());            
-                        }
-                        else                                                    //display ERROR
-                        {
-                            putsUART1(Error);                                   //"ERROR"  
-                            while(BusyUART1());
-                        }
-                        
-                    }
+                        ReadSN();                                               //get the gage serial number REV 1.9
                     
                     if(PORT_CONTROL.flags.temp)
                     {
@@ -15054,7 +15027,23 @@ void MODBUScomm(void)                                                           
                     case 7:                                                     
                         break;
 
-                    case 8:                                                     
+                    case 8:                                                     //Trigger a gage serial number read REV 1.9
+                        if (tempStatus2Value.status2flags._SN == tempValue2Value.status2flags._SN)    //no difference between received and stored value
+                        {
+                            tempStatus2Value.status2flags._SN=0;               
+                            tempValue2Value.status2flags._SN=0;                
+                            break; 
+                        }
+
+                        if(tempValue2Value.status2flags._SN)                    //Read the gage serial number
+                        {
+                            //mainBatreading = take_analog_reading(87);           //get the 12V Battery Voltage
+                            //write_Int_FRAM(BatteryReading,mainBatreading);      
+                        }                            
+
+                        tempValue2Value.status2flags._SN=0;                     //clear this bit on exit  
+                        S_2.status2flags._SN=0;                                 //clear the MODBUS status flag      
+                        write_Int_FRAM(MODBUS_STATUS2address,S_2.status2);                                            
                         break;
 
                     case 9:
@@ -16195,6 +16184,43 @@ void READ_TIME(void)                                                            
     write_Int_FRAM(RTCSecondsaddress,RTCSECOND);  
     
 }
+
+void ReadSN(void)                                                               //REV 1.9
+{
+    char SNBUF[8];                                                              
+    unsigned long   SerialNumber;
+    unsigned char   i;
+    
+    
+    PORT_CONTROL.flags.temp=0;
+    if(IEC1bits.INT1IE)
+    {
+        PORT_CONTROL.flags.temp=1;
+        IEC1bits.INT1IE=0;
+        IFS1bits.INT1IF=0;
+    }
+    crlf();          
+    SerialNumber=0;
+    if(getSerialNumber())                                                       //display the probe serial number
+    {
+        for(i=0;i<4;i++)                                                        //get the serial number from the buffer    
+        {
+            SerialNumber+=MODBUS_RXbuf[i];
+            if(i==3)
+                break;
+            SerialNumber<<=8;
+        }
+        sprintf(SNBUF, "%ld", SerialNumber);                                    //format the serial number
+        putsUART1(SNBUF);                                                       //display it
+        while (BusyUART1());            
+    }
+    else                                                                        //display ERROR
+    {
+        putsUART1(Error);                                                       //"ERROR"  
+        while(BusyUART1());
+    }    
+}
+
 
 
 void RST(void)                                                                  //REV CH

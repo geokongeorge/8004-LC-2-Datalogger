@@ -464,7 +464,7 @@ typedef struct{                                                                 
 	unsigned	_BV3:1;                                                         //   5              0                           1=Read 3V Battery Voltage to BatteryReading                                                          
     unsigned    _BV12:1;                                                        //   6              0                           1=Read 12V Battery Voltage to BatteryReading
 	unsigned	_BAT:1;                                                         //   7      1=12V Connected,0=3V Connected              RO
-	unsigned	bit8:1;                                                          
+	unsigned	_SN:1;                                                          //   8              0                           1=Read Gage Serial Number to GageSerialNumber   REV 1.9                                                
 	unsigned	bit9:1;                                                     
 	unsigned	bit10:1;                                                         
 	unsigned 	bit11:1;                                                           
@@ -1511,6 +1511,7 @@ void prompt(void);
 int qualifyNetAddress(void);
 void R(void);                                                                   //REV CH
 void READ_TIME(void);                                                           //REV CG
+void ReadSN(void);                                                                 //REV 1.9
 void RST(void);                                                                 //REV CH
 float read_vw(void);                                                            //REV M
 void reloadLogTable(void);                                                      //REV CI
