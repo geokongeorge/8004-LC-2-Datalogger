@@ -16,9 +16,9 @@
 //	DATE:		11/20/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   1.10
-//	CHECKSUM:	0x7e4f  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x6074  (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8800/30720   29%
-//	PGM(FLASH)MEM:  184242/261888 70%
+//	PGM(FLASH)MEM:  184251/261888 70%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -1636,91 +1636,89 @@ void CMDcomm(void)
 
     while (!IFS3bits.T9IF)                                                      //enable COM for Timeout period
     {
-        //shutdownTimer(TimeOut);                                                 //start 15S shutdown timer	(network not enabled)   TEST REM REV Z
+        shutdownTimer(TimeOut);                                                 //start 15S shutdown timer	
         //wait till first char is received
         while(!DataRdyUART1() && !IFS3bits.T9IF && !U1STAbits.FERR && !U1STAbits.PERR && !U1STAbits.OERR);    
 
         if(U1STAbits.FERR | U1STAbits.PERR | U1STAbits.OERR)  
-            handleCOMError();				//if communications error   TEST REM
+            handleCOMError();                                                   //if communications error   
 
         RxData = ReadUART1();
 
-        //if (!LC2CONTROL.flags.NetEnabled && !DISPLAY_CONTROL.flags.Shutup && !IFS3bits.T9IF)  REM REV CH
-        if (!DISPLAY_CONTROL.flags.Shutup && !IFS3bits.T9IF)                    //REV CH
+        if (!DISPLAY_CONTROL.flags.Shutup && !IFS3bits.T9IF)                    
         {
             putsUART1(Hello);
             while (BusyUART1());
             prompt();
         }
 
-        DISPLAY_CONTROL.flags.Shutup = 0; //Clear Shutup flag if set 
+        DISPLAY_CONTROL.flags.Shutup = 0;                                       //Clear Shutup flag if set 
 
-        for (i = 0; i < 30; i++) //clear the buffer
+        for (i = 0; i < 30; i++)                                                //clear the buffer
         {
             buffer[i] = 0;
         }
 
-        i = 0; //initialize char buffer index
+        i = 0;                                                                  //initialize char buffer index
 
-        RxData = 0; //initialize receive buffer
+        RxData = 0;                                                             //initialize receive buffer
 
         while (!IFS3bits.T9IF)
         {
             while (!IFS3bits.T9IF)
             {
-                shutdownTimer(TimeOut);                                         //start 15S shutdown timer	(network not enabled)   REV Z
+                shutdownTimer(TimeOut);                                         //start 15S shutdown timer	
 
                 while (!DataRdyUART1() && !U1STAbits.FERR && !U1STAbits.PERR && !U1STAbits.OERR && !IFS3bits.T9IF); //read the keyboard input - timeout if 15 seconds of inactivity
-                if(U1STAbits.FERR | U1STAbits.PERR | U1STAbits.OERR)            //REV DA
-                    handleCOMError();                                           //if communications error   REV DA
+                if(U1STAbits.FERR | U1STAbits.PERR | U1STAbits.OERR)            
+                    handleCOMError();                                           //if communications error   
 
-                if (IFS3bits.T9IF) //break out of loop if time to shutdown	
+                if (IFS3bits.T9IF)                                              //break out of loop if time to shutdown	
                 {
-                    //break;                                                    REM REV AF
-                    prompt();                                                   //REV AF
-                    return;                                                     //REV AF
+                    prompt();                                                   
+                    return;                                                     
                 }
 
-                RxData = ReadUART1(); //get the char from the USART buffer
+                RxData = ReadUART1();                                           //get the char from the USART buffer
                 if (RxData != cr && RxData != escape) {
-                    putcUART1(RxData); //echo char (except <CR>) to terminal
+                    putcUART1(RxData);                                          //echo char (except <CR>) to terminal
                     while (BusyUART1());
                 }
 
-                if (RxData == 0x08) //decrement buffer index if backspace is received
+                if (RxData == 0x08)                                             //decrement buffer index if backspace is received
                 {
                     i--;
-                    putcUART1(space); //clear the previous character
+                    putcUART1(space);                                           //clear the previous character
                     while (BusyUART1());
                     putcUART1(0x08);
                     while (BusyUART1());
                 }
 
-                if (i < 0) //don't let buffer index go below zero
+                if (i < 0)                                                      //don't let buffer index go below zero
                     i = 0;
 
-                if (RxData != 0x08 && i < 52) //as long as char is not backspace and index is <52	
+                if (RxData != 0x08 && i < 52)                                   //as long as char is not backspace and index is <52	
                 {
-                    buffer[i] = RxData; //store the received char in the buffer
+                    buffer[i] = RxData;                                         //store the received char in the buffer
                     i++;
                     if (i > 51)
                         i = 0;
                 }
 
-                if (RxData == cr) //CR received - buffer is ready
+                if (RxData == cr)                                               //CR received - buffer is ready
                 {
-                    RxData = 0; //clear the receive buffer
+                    RxData = 0;                                                 //clear the receive buffer
                     break;
                 }
             }
 
-            LC2CONTROL2.flags2.X = 0; //make sure 'X' flag is clear VER 6.0.10
+            LC2CONTROL2.flags2.X = 0;                                           //make sure 'X' flag is clear 
 
             switch (buffer[0]) 
             {
 
-                case question: //Help Screen
-                    shutdownTimer(TimeOut);                                     //Reset 15S timer   REV Z
+                case question:                                                  //Help Screen
+                    shutdownTimer(TimeOut);                                     //Reset 15S timer   
                     crlf();
                     putsUART1(CommandDescription);                              //Command				Description
                     while (BusyUART1());
@@ -1742,15 +1740,15 @@ void CMDcomm(void)
                     while (BusyUART1());     
                     
                     crlf();
-                    putsUART1(BTD);                                             //BTD					Disable Bluetooth Timer REV AG
+                    putsUART1(BTD);                                             //BTD					Disable Bluetooth Timer 
                     while (BusyUART1());  
                     
                     crlf();
-                    putsUART1(BTE);                                             //BTE					Enable Bluetooth Timer REV AG
+                    putsUART1(BTE);                                             //BTE					Enable Bluetooth Timer 
                     while (BusyUART1());    
                     
                     crlf();                                     
-                    putsUART1(BTR);                                             //BTR                   Bluetooth Reset     REV 1.2
+                    putsUART1(BTR);                                             //BTR                   Bluetooth Reset     
                     while(BusyUART1());
 
                     crlf();
@@ -1777,25 +1775,6 @@ void CMDcomm(void)
                     putsUART1(Displaynnnn);                                     //Dnnnnn				Display nnnn arrays (formatted) from pointer
                     while (BusyUART1());
 
-                    /***********************************************************REM REV BC
-                    crlf();
-                    putsUART1(DisplayXnnnn);                                    //DXnnnnn				Display nnnn arrays (not formatted) from pointer
-                    while (BusyUART1());
-                    
-                    
-                    crlf();
-                    putsUART1(DX);                                              //DX                    Current Download Data Format    REV AF
-                    while(BusyUART1());
-                    
-                    crlf();
-                    putsUART1(Dx0);                                             //DX0                    ASCII Data Download    REV AF
-                    while(BusyUART1());
-                    
-                    crlf();
-                    putsUART1(Dx1);                                             //DX1                    Binary Data Download   REV AF
-                    while(BusyUART1());
-                    ***********************************************************/
-                                
                     crlf();
                     putsUART1(End);                                             //E						End communications and go to sleep
                     while (BusyUART1());
@@ -1888,7 +1867,7 @@ void CMDcomm(void)
                     putsUART1(Logdisenable);                                    //LD,LE					Log intervals Disable, Enable
                     while (BusyUART1());
                     
-                    crlf();                                                     //MAddd                 MODBUS Address (1-247)  REV BC
+                    crlf();                                                     //MAddd                 MODBUS Address (1-247)  
                     putsUART1(Modbusaddress);                                   //REV BC
                     while(BusyUART1());                                         //REV BC
 
@@ -1897,7 +1876,7 @@ void CMDcomm(void)
                     while (BusyUART1());
                     
                     crlf();                                                     //REV 1.0
-					putsUART1(MEMSTAT);                                         //MS					Memory Status   REV 1.0
+					putsUART1(MEMSTAT);                                         //MS					Memory Status   
 					while(BusyUART1());                                         //REV 1.0
 					
 
@@ -1912,14 +1891,6 @@ void CMDcomm(void)
                     crlf();
                     putsUART1(Displaynext);                                     //N						display Next time to read
                     while (BusyUART1());
-
-                    //crlf();                                                   REM REV CH
-                    //putsUART1(Networkaddress);                                  //NAddd					Network Address (1-256) REM REV CH
-                    //while (BusyUART1());                                      REM REV CH
-
-                    //crlf();                                                   REM REV CH
-                    //putsUART1(Networkstatus_enable_disable);                    //NAddd			Network Status, Disable, Enable REM REV CH
-                    //while (BusyUART1());                                      REM REV CH
 
                     crlf();
                     putsUART1(O);                                               //O 					pOrt status
@@ -1961,9 +1932,9 @@ void CMDcomm(void)
                     putsUART1(RESET);                                           //RESET					RESET processor
                     while (BusyUART1());
                     
-                    crlf();                                                     //REV 1.2
-                    putsUART1(RSN);                                             //RSN                   Read transducer Serial Number    REV 1.2
-                    while (BusyUART1());                                        //REV 1.2
+                    crlf();                                                     
+                    putsUART1(RSN);                                             //RSN                   Read transducer Serial Number    
+                    while (BusyUART1());                                        
 
 
                     crlf();
@@ -1990,37 +1961,25 @@ void CMDcomm(void)
                     putsUART1(SV);                                              //SV					Software Version
                     while (BusyUART1());
                     
-					crlf();														//REV J
-					putsUART1(Tnn);                                             //Tnn/t					//REV J	
-					while(BusyUART1());											//REV J
+					crlf();														
+					putsUART1(Tnn);                                             //Tnn/t						
+					while(BusyUART1());											
 
-					//putsUART1(TherminfoWhere);                                  //Thermistor Information where;	//REV J
-					//while(BusyUART1());											//REV J
-					crlf();														//REV J
-
-					putsUART1(nn);                                              //						nn = Channel #	REV J
-					while(BusyUART1());											//REV J
-					crlf();														//REV J
-
-					putsUART1(t);                                               //						t = Thermistor Type	REV J
-					while(BusyUART1());											//REV J
-                    
+					crlf();														
+					putsUART1(nn);                                              //						nn = Channel #	
+					while(BusyUART1());											
+					
+                    crlf();														
+					putsUART1(t);                                               //						t = Thermistor Type	
+					while(BusyUART1());											
 
                     crlf();
                     putsUART1(TF);                                              //TF					Time Format(0=hhmm, 1=hh,mm)
                     while (BusyUART1());
-                    
-					//crlf();                                                                             //REV J
-					//putsUART1(TH);                                              //TT					THermistor type	REV J		
-					//while(BusyUART1());                                                                 //REV J
 				
                     crlf();
                     putsUART1(TR);                                              //TR					display TRap count, zero TRap count
                     while (BusyUART1());
-
-                    //crlf();                                                   REM VER 6.0.5
-                    //putsUART1(UF);						//UF					Update Firmware REM VER 6.0.5
-                    //while(BusyUART1());                                       REM VER 6.0.5
 
                     crlf();
                     putsUART1(VL);                                              //VL					display Lithium cell Voltage
@@ -2043,7 +2002,7 @@ void CMDcomm(void)
                     while (BusyUART1());
                     
                     crlf();
-                    putsUART1(Modbus);                                          //:::					Switch to MODBUS communications     REV CK
+                    putsUART1(Modbus);                                          //:::					Switch to MODBUS communications     
                     while (BusyUART1());                    
 
                     break;
@@ -2051,126 +2010,64 @@ void CMDcomm(void)
 
                 case capB:
 
-                    shutdownTimer(TimeOut);                                     //Reset 15S timer   REV Z
+                    shutdownTimer(TimeOut);                                     //Reset 15S timer   
                     while (BusyUART1());
 
                     if (buffer[1] == cr)
                         break;
                     
-                    if(buffer[1]==capT && buffer[2]==cr)                        //BT received   REV AD  
+                    if(buffer[1]==capT && buffer[2]==cr)                        //BT received     
                     {
-                        //displayBT();                                          REM REV AG
                         BTStatus();                                             //REV AG
                         break;
                     }
                     
-                    if (buffer[1] == capT && buffer[2] == zero && buffer[3] == cr)  //BT0 received  Deactivate Bluetooth  REV AG    
+                    if (buffer[1] == capT && buffer[2] == zero && buffer[3] == cr)  //BT0 received  Deactivate Bluetooth      
                     {
-                        BTZERO();                                               //REV CJ
-                        //disableBT();                                            //Turn off bluetooth  REM REV CJ
-                        //if (!PORT_CONTROL.flags.BTTime)                         
-                        //    PORT_CONTROL.flags.BluetoothON = 0;                 //clear flag if not in scheduled ON time
-                        //PORT_CONTROL.flags.B0issued = 1;                        //set B0issued flag
-                        //write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);	//store flag in FRAM  
-                        //S_1.status1flags.BT=0;                                  //clear the MODBUS status flag    
-                        //write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);      //REV CB
+                        BTZERO();                                               
                         BTStatus();                                             //display Bluetooth status                        
                         break;
                     }
                     
-                    if (buffer[1] == capT && buffer[2] == one && buffer[3] == cr)   //BT1 received  Activate Bluetooth  REV AG  
+                    if (buffer[1] == capT && buffer[2] == one && buffer[3] == cr)   //BT1 received  Activate Bluetooth    
                     {
-                        BTONE();                                                //REV CJ
-                        //enableBT();                                           //REM REV CJ
-                        //PORT_CONTROL.flags.BluetoothON = 1;
-                        //PORT_CONTROL.flags.B0issued = 0;                        //clear B0issued flag
-                        //write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);	//store flag in FRAM  
-                        //S_1.status1flags.BT=1;                                  //set the MODBUS status flag    REV CB
-                        //write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);      //REV CB
+                        BTONE();                                                
                         BTStatus();                                             //display Bluetooth status
                         break;
                     }
 
 
-                    if (buffer[1]==capT && buffer[2] == capD && buffer[3] == cr) //BTD<CR> received REV AG
+                    if (buffer[1]==capT && buffer[2] == capD && buffer[3] == cr) //BTD<CR> received 
                     {
-                        BT_D();                                                 //REV CJ
-                        //PORT_CONTROL.flags.BluetoothTimerEN = 0;                //clear Bluetooth Timer enable flag REM REV CJ
-                        //write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);	//store flag in FRAM`
-                        //S_1.status1flags.BT_Timer=0;                              //clear the MODBUS status flag    REV BF
-                        //write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
-                        //disableAlarm(Alarm2);                                   //disable the Alarm2 interrupt		
+                        BT_D();                                                 
                         BTStatus();                                             //display Bluetooth status
                         break;
                     }
 
-                    if (buffer[1]==capT &&buffer[2] == capE && buffer[3] == cr) //BTE<CR> received  REV AG
+                    if (buffer[1]==capT &&buffer[2] == capE && buffer[3] == cr) //BTE<CR> received  
                     {
-                        BT_E();                                                  //REV CJ
-                        //PORT_CONTROL.flags.BluetoothTimerEN = 1;                //set Bluetooth Timer enable flag REM REV CJ
-                        //PORT_CONTROL.flags.PortTimerEN=0;                       //clear the Control Port Timer enable flag
-                        //PORT_CONTROL.flags.BTTime = 0;                          //clear the BTtime flag
-                        //write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);	//store flag in FRAM 
-                        //S_1.status1flags.BT_Timer=1;                              //set the MODBUS status flag    REV BF
-                        //write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
-                        //delay(4000);                                            //REV AE    if this delay required? TEST
-                        //enableAlarm(Alarm2); //enable the Alarm2 interrupt
+                        BT_E();                                                  
                         BTStatus();                                             //display Bluetooth status
                         break;
                     }
 
-                    if (buffer[1]==capT &&buffer[2] == capR && buffer[3] == cr) //BTR<CR> received  REV 1.2
+                    if (buffer[1]==capT &&buffer[2] == capR && buffer[3] == cr) //BTR<CR> received  
                     {
-                        BT_R();                                                  //REV CJ
-
+                        BT_R();                                                  
                         break;
                     }                    
-                    /*
-                    if (buffer[1] == capT && isdigit(buffer[2]))                //BluetoothControl Port Start time being entered
-                    {
-                        crlf();
-                        PORT_CONTROL.flags.SetAlarm2StopTime=0;                 //make sure stop time flag is clear REV N
-                        PORT_CONTROL.flags.SetAlarm2Time = 1; //set the flag
-                        Buf2DateTime(buffer); //set the RTC Alarm2 time
-                        PORT_CONTROL.flags.SetAlarm2Time = 0; //clear the flag
-                        controlPortStatus(); //display control port status
-                        break;
-                    }
 
-                    if (buffer[1] == capP && isdigit(buffer[2]))                //Control Port Stop time being entered
-                    {
-                        crlf();
-                        PORT_CONTROL.flags.SetAlarm2Time=0;                     //make sure on time flag is clear   REV N
-                        PORT_CONTROL.flags.SetAlarm2StopTime = 1;               //set the SetAlarm2StopTime flag		
-                        Buf2DateTime(buffer);                                   //get Logging Stop Time from buffer
-                        PORT_CONTROL.flags.SetAlarm2StopTime = 0;               //clear the SetAlarm2StopTime flag
-                        if (LC2CONTROL.flags.ERROR) 
-                        {
-                            LC2CONTROL.flags.ERROR = 0; //clear the ERROR flag
-                            PORT_CONTROL.flags.SetAlarm2StopTime = 0; //clear the Alarm2StopTime flag
-                            write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);	//store flag in FRAM  
-                            break;
-                        }
-                        LC2CONTROL2.flags2.SetStopTime = 0; //clear the SetStopTime flag
-
-                        write_Int_FRAM(PortOffHoursaddress,PortOffHours);	//store Port OFF time in FRAM 
-                        write_Int_FRAM(PortOffMinutesaddress,PortOffMinutes);  
-                        controlPortStatus(); //display control port status
-                        break;
-                    }
-                    */
-     
                     if (buffer[2] == nine && buffer[3] == cr)                   //setup for 9600 baud
                         value = brg9600;
                     else
                     if (buffer[2] == one && buffer[3] == one && buffer[4] == five && buffer[5] == cr) //setup for 115200 baud
                         value = brg115200;
-                    else                                                        //REV AE
-                    if (buffer[2] == two && buffer[3] == three && buffer[4] == zero && buffer[5] == cr) //setup for 230400 baud REV AE
-                        value = brg230400;                                      //REV AE    
-                    else                                                        //REV AE
-                    if (buffer[2] == four && buffer[3] == six && buffer[4] == zero && buffer[5] == cr) //setup for 460800 baud REV AE
-                        value = brg460800;                                      //REV AE                        
+                    else                                                        
+                    if (buffer[2] == two && buffer[3] == three && buffer[4] == zero && buffer[5] == cr) //setup for 230400 baud 
+                        value = brg230400;                                          
+                    else                                                        
+                    if (buffer[2] == four && buffer[3] == six && buffer[4] == zero && buffer[5] == cr) //setup for 460800 baud 
+                        value = brg460800;                                                              
            
                     baudrate = value;
                     write_Int_FRAM(baudrateaddress,baudrate);                   //store baudrate in FRAM		
@@ -2185,22 +2082,22 @@ void CMDcomm(void)
 
                 case capC:
 
-                    shutdownTimer(TimeOut);                                     //Reset 15S timer   REV Z
+                    shutdownTimer(TimeOut);                                     //Reset 15S timer   
                     while (BusyUART1());
 
-                    if (buffer[1] == cr) //C<CR> received
+                    if (buffer[1] == cr)                                        //C<CR> received
                     {
-                        READ_TIME();                                            //REV CG
+                        READ_TIME();                                            
                         break;
                     }
 
-                    if (buffer[1] == capS) //CS received
+                    if (buffer[1] == capS)                                      //CS received
                     {
                         SR_SAVE = SR;
                         TBLPAG_SAVE = TBLPAG;
-                        SRbits.IPL = 0x7; //Disable interrupts 
+                        SRbits.IPL = 0x7;                                       //Disable interrupts 
 
-                        if (LC2CONTROL.flags.LoggingStartTime) //save flags
+                        if (LC2CONTROL.flags.LoggingStartTime)                  //save flags
                             LC2CONTROL2.flags2.LoggingStartTimeTemp = 1;
 
                         if (LC2CONTROL2.flags2.SetStartTime)
@@ -2208,24 +2105,24 @@ void CMDcomm(void)
 
                         LC2CONTROL.flags.LoggingStartTime = 0;
                         LC2CONTROL2.flags2.SetStartTime = 0;
-                        LC2CONTROL2.flags2.SetStopTime = 0; //VER 6.0.0
-                        PORT_CONTROL.flags.SetAlarm2Time = 0; //VER 6.0.0
-                        PORT_CONTROL.flags.SetAlarm2StopTime = 0; //VER 6.0.0
+                        LC2CONTROL2.flags2.SetStopTime = 0; 
+                        PORT_CONTROL.flags.SetAlarm2Time = 0; 
+                        PORT_CONTROL.flags.SetAlarm2StopTime = 0; 
 
                         Buf2DateTime(buffer);
 
                         if (LC2CONTROL.flags.ERROR) 
                         {
-                            LC2CONTROL.flags.ERROR = 0; //clear the ERROR flag
+                            LC2CONTROL.flags.ERROR = 0;                         //clear the ERROR flag
                             break;
                         }
 
-                        if (LC2CONTROL2.flags2.LoggingStartTimeTemp) //restore flags
+                        if (LC2CONTROL2.flags2.LoggingStartTimeTemp)            //restore flags
                             LC2CONTROL.flags.LoggingStartTime = 1;
                         if (LC2CONTROL2.flags2.SetStartTimeTemp)
                             LC2CONTROL2.flags2.SetStartTime = 1;
                         if (DISPLAY_CONTROL.flags.Synch)
-                            VWflagsbits.synch = 1; //set the synch flag
+                            VWflagsbits.synch = 1;                              //set the synch flag
                         if (LC2CONTROL.flags.Logging && !LC2CONTROL2.flags2.Waiting) // update only if logging
                             upD8RTCAlarm1();
 
@@ -2238,7 +2135,7 @@ void CMDcomm(void)
 
                 case capD:
 
-                    shutdownTimer(TimeOut);                                     //Reset 15S timer   REV Z
+                    shutdownTimer(TimeOut);                                     //Reset 15S timer   
                     crlf();
                     while (BusyUART1());
 
@@ -2249,59 +2146,57 @@ void CMDcomm(void)
                     {
                         if (LC2CONTROL.flags.Logging) 
                         {
-                            putsUART1(DnotAllowed); //"DEFAULT not allowed while logging"
+                            putsUART1(DnotAllowed);                             //"DEFAULT not allowed while logging"
                             while (BusyUART1());
                             break;
                         }
 
-                        putsUART1(ThisWillLoadDefaults); //"This will load the factory default settings!"    VER 6.0.0
+                        putsUART1(ThisWillLoadDefaults);                        //"This will load the factory default settings!"    
                         while (BusyUART1());
                         
                         crlf();
-                        putsUART1(RUsure); //Are you sure(Y/N)?
+                        putsUART1(RUsure);                                      //Are you sure(Y/N)?
                         while (BusyUART1());
                         
                         while (!DataRdyUART1() && !U1STAbits.FERR && !U1STAbits.PERR && !U1STAbits.OERR && !IFS3bits.T9IF); //wait for user response	
                         if (U1STAbits.FERR | U1STAbits.PERR | U1STAbits.OERR)
-                            handleCOMError(); //if communications error
+                            handleCOMError();                                   //if communications error
 
-                        response = ReadUART1(); //get the char from the USART buffer
-                        putcUART1(response); //echo char to terminal
+                        response = ReadUART1();                                 //get the char from the USART buffer
+                        putcUART1(response);                                    //echo char to terminal
                         while (BusyUART1());
 
                         while (!DataRdyUART1() && !U1STAbits.FERR && !U1STAbits.PERR && !U1STAbits.OERR && !IFS3bits.T9IF); //wait for <CR>	
-                        //if (U1STAbits.FERR | U1STAbits.PERR | U1STAbits.OERR) TEST REM REV B
-                          //  handleCOMError(); //if communications error   TEST REM REV B
 
                         RxData = ReadUART1(); //RxData contains user response
 
-                        if (response == capY && RxData == cr) //yes, so load defaults
+                        if (response == capY && RxData == cr)                   //yes, so load defaults
                         {
                             loadDefaults();
                             crlf();
-                            putsUART1(AllChannelsLoaded); //"Restored to factory default settings."  VER 6.0.0
+                            putsUART1(AllChannelsLoaded);                       //"Restored to factory default settings."  
                             while (BusyUART1());
                             break;
                         } else {
                             crlf();
-                            putsUART1(DefaultsNotLoaded); //"Settings not restored to factory defaults."  VER 6.0.0
+                            putsUART1(DefaultsNotLoaded);                       //"Settings not restored to factory defaults."  
                             while (BusyUART1());
                             break;
                         }
                     }
 
-                    if (buffer[1] == cr) //D<CR> received
+                    if (buffer[1] == cr)                                        //D<CR> received
                     {
-                        if (memoryStatus == 0 && FRAM_MEMORY.flags.memEmpty) //if memory is empty
+                        if (memoryStatus == 0 && FRAM_MEMORY.flags.memEmpty)    //if memory is empty
                         {
                             crlf();
-                            putsUART1(Noarrays2display); //"There are no arrays to display"
+                            putsUART1(Noarrays2display);                        //"There are no arrays to display"
                             while (BusyUART1());
                             break;
                         }
 
                         if (!DISPLAY_CONTROL.flags.BPD) {
-                            displayMemoryStatus(); //display memory status from FRAM
+                            displayMemoryStatus();                              //display memory status from FRAM
                             break;
                         } else {
                             if (tempUserPosition <= memoryStatus && (!DISPLAY_CONTROL.flags.newPointer &&
@@ -2309,65 +2204,59 @@ void CMDcomm(void)
                                 tempUserPosition = id;
 
                             if (tempUserPosition <= memoryStatus) {
-                                LC2CONTROL2.flags2.ID = 1; //set the ID flag   VER 6.0.2  REM REV AA
-                                displayReading(ch, tempUserPosition); //display the reading at the current user position
+                                LC2CONTROL2.flags2.ID = 1;                      //set the ID flag   
+                                displayReading(ch, tempUserPosition);           //display the reading at the current user position
                             }
 
                             tempUserPosition++;
-                            //if (!LC2CONTROL2.flags2.d) //VER 6.0.2            REM VER BA
-                            //    crlf();                                       REM VER BA
-
                             if (tempUserPosition > memoryStatus + 1)
                                 tempUserPosition = memoryStatus + 1;
-
-                            //if (!LC2CONTROL2.flags2.d) //VER 6.0.2            REM VER BA
-                            //    displayTemporaryStatus(tempUserPosition); //display memory status with current User Position  REM VER BA
                             DISPLAY_CONTROL.flags.Backup = 0; //clear the Backup flag
                             break;
                         }
 
                     }
 
-                    if (buffer[1] == capL && buffer[2] == cr) //DL<CR> received
+                    if (buffer[1] == capL && buffer[2] == cr)                   //DL<CR> received
                     {
-                        if (MUX4_ENABLE.mflags.mux16_4 == Single) //Single Channel    VER 6.0.7
+                        if (MUX4_ENABLE.mflags.mux16_4 == Single)               //Single Channel    
                             putsUART1(LCtwo);
-                        if (MUX4_ENABLE.mflags.mux16_4 == VW4) //4 channel mux VER 6.0.7
+                        if (MUX4_ENABLE.mflags.mux16_4 == VW4)                  //4 channel mux 
                             putsUART1(LCtwobyfour);
-                        if (MUX4_ENABLE.mflags.mux16_4 == VW8) //8 channel VW mux VER 6.0.13
+                        if (MUX4_ENABLE.mflags.mux16_4 == VW8)                  //8 channel VW mux 
                             putsUART1(LCtwobyeightVW);
-                        if (MUX4_ENABLE.mflags.mux16_4 == VW16) //VER 6.0.7
-                            putsUART1(LCtwobysixteen); //16 channel mux
-                        if (MUX4_ENABLE.mflags.mux16_4 == VW32) //32 channel VW mux VER 6.0.13
+                        if (MUX4_ENABLE.mflags.mux16_4 == VW16)                 //16 channel mux
+                            putsUART1(LCtwobysixteen);                          
+                        if (MUX4_ENABLE.mflags.mux16_4 == VW32)                 //32 channel VW mux 
                             putsUART1(LCtwobythirtytwoVW);
-                        if (MUX4_ENABLE.mflags.mux16_4 == TH8) //8 channel Therm    VER 6.0.7
+                        if (MUX4_ENABLE.mflags.mux16_4 == TH8)                  //8 channel Therm    
                             putsUART1(LCtwobyeightTH);
-                        if (MUX4_ENABLE.mflags.mux16_4 == TH32) //32 channel Therm    VER 6.0.9
+                        if (MUX4_ENABLE.mflags.mux16_4 == TH32)                 //32 channel Therm    
                             putsUART1(LCtwobythirtytwoTH);
                         while (BusyUART1());
                         break;
                     }
 
-                    if (buffer[1] == capF && buffer[2] == cr) //DF<CR> received
+                    if (buffer[1] == capF && buffer[2] == cr)                   //DF<CR> received
                     {
-                        if (!LC2CONTROL.flags.DateFormat) //0=julian date format
+                        if (!LC2CONTROL.flags.DateFormat)                       //0=julian date format
                             putsUART1(Datejulian);
                         else
-                            putsUART1(Datemonthday); //1=month/day format
+                            putsUART1(Datemonthday);                            //1=month/day format
                         while (BusyUART1());
                         break;
                     }
 
-                    if (buffer[1] == capF && buffer[3] == cr) //DF#<CR> received
+                    if (buffer[1] == capF && buffer[3] == cr)                   //DF#<CR> received
                     {
-                        if (buffer[2] == zero) //julian date format chosen
+                        if (buffer[2] == zero)                                  //julian date format chosen
                         {
                             LC2CONTROL.flags.DateFormat = 0;
                             putsUART1(Datejulian);
                             write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM  
                         }
 
-                        if (buffer[2] == one) //month/day format chosen
+                        if (buffer[2] == one)                                   //month/day format chosen
                         {
                             LC2CONTROL.flags.DateFormat = 1;
                             putsUART1(Datemonthday);
@@ -2378,165 +2267,113 @@ void CMDcomm(void)
                         break;
                     }
 
-                    /*REM VER BA
-                    //**********************************************************************************************************************
-                    //VER 6.0.2:
-                    if (buffer[1] == capX && buffer[2] == cr) //DX<CR> received
-                    {
-                        if (!LC2CONTROL2.flags2.d) //0=ASCII Data Download
-                            putsUART1(DX0);
-                        else
-                            putsUART1(DX1); //1=Binary Data Download
-                        while (BusyUART1());
-                        break;
-                    }
-
-                    if (buffer[1] == capX && buffer[3] == cr) //DX#<CR> received
-                    {
-                        if (buffer[2] == zero) //ASCII data download chosen
-                        {
-                            LC2CONTROL2.flags2.d = 0;
-                            putsUART1(DX0);
-                            write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);	//store flag in FRAM  
-                        }
-
-                        if (buffer[2] == one) //Binary data download chosen
-                        {
-                            LC2CONTROL2.flags2.d = 1;
-                            putsUART1(DX1);
-                            write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);	//store flag in FRAM  
-                        }
-
-                        while (BusyUART1());
-                        break;
-                    }
-                    //*******************************************************************************************************************************************
-                    */
-                    
-                    if (isdigit(buffer[1]) && !FRAM_MEMORY.flags.memEmpty) //Enter # of arrays to display from PositionArrayPointer value
+                    if (isdigit(buffer[1]) && !FRAM_MEMORY.flags.memEmpty)      //Enter # of arrays to display from PositionArrayPointer value
                     {
                         if (LC2CONTROL.flags.Monitor) {
                             MonitorWasEnabled = 1;
-                            LC2CONTROL.flags.Monitor = 0; //clear the Monitor Flag
+                            LC2CONTROL.flags.Monitor = 0;                       //clear the Monitor Flag
                             write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM  
                         }
 
-                        DISPLAY_CONTROL.flags.BPD = 1; //set the P_D mode flag						
-                        DisplayArrayPointer = Buffer2Decimal(buffer, i, 0); //Get the requested # of arrays to display
+                        DISPLAY_CONTROL.flags.BPD = 1;                          //set the P_D mode flag						
+                        DisplayArrayPointer = Buffer2Decimal(buffer, i, 0);     //Get the requested # of arrays to display
 
-                        if (!DISPLAY_CONTROL.flags.Display) //Display from where previous display left off
+                        if (!DISPLAY_CONTROL.flags.Display)                     //Display from where previous display left off
                             id = tempUserPosition;
                         else
                             tempUserPosition = id;
 
-                        restoreSettings(); //load the flags from internal FRAM   VER 6.0.2
-                        LC2CONTROL2.flags2.ID = 1; //set the ID flag   VER 6.0.2  REM REV AA
-                        DISPLAY_CONTROL.flags.bail = 0; //VER 6.0.2
-                        IFS0bits.U1RXIF = 0; //clear the UART1 interrupt flag
-                        //IEC0bits.U1RXIE=1;                              //Enable UART1 interrupt    VER 6.0.2 TEST REM
+                        restoreSettings();                                      //load the flags from FRAM   
+                        LC2CONTROL2.flags2.ID = 1;                              //set the ID flag   
+                        DISPLAY_CONTROL.flags.bail = 0;                         
+                        IFS0bits.U1RXIF = 0;                                    //clear the UART1 interrupt flag
+
                         for (id; id < (tempUserPosition + DisplayArrayPointer); id++) {
-                            IEC0bits.U1RXIE = 1; //TEST
-                            if (DISPLAY_CONTROL.flags.bail) //break out of data download
+                            IEC0bits.U1RXIE = 1; 
+                            if (DISPLAY_CONTROL.flags.bail)                     //break out of data download
                                 break;
 
-                            if (id == (maxSingleVW + 1) && MUX4_ENABLE.mflags.mux16_4 == Single) //Single Channel  VW VER 6.0.7
+                            if (id == (maxSingleVW + 1) && MUX4_ENABLE.mflags.mux16_4 == Single) //Single Channel  VW 
                             {
-                                id = 1; //memory rolled over so reset display pointers
-                                //DisplayArrayPointer=(DisplayArrayPointer+tempUserPosition)-16001; REM VER 6.0.3
-                                DisplayArrayPointer = (DisplayArrayPointer + tempUserPosition)-(maxSingleVW + 1); //VER 6.0.3
+                                id = 1;                                         //memory rolled over so reset display pointers
+                                DisplayArrayPointer = (DisplayArrayPointer + tempUserPosition)-(maxSingleVW + 1); 
                                 tempUserPosition = 1;
                             }
 
-                            if (id == (maxFourVW + 1) && MUX4_ENABLE.mflags.mux16_4 == VW4) //if 4 channel VW MUX  VER 6.0.7
+                            if (id == (maxFourVW + 1) && MUX4_ENABLE.mflags.mux16_4 == VW4) //if 4 channel VW MUX  
                             {
-                                id = 1; //memory rolled over so reset display pointers
+                                id = 1;                                         //memory rolled over so reset display pointers
                                 DisplayArrayPointer = (DisplayArrayPointer + tempUserPosition)-(maxFourVW + 1);
                                 tempUserPosition = 1;
                             }
 
-                            if (id == (maxEightVW + 1) && MUX4_ENABLE.mflags.mux16_4 == VW8) //if 8 channel VW MUX  VER 6.0.7
+                            if (id == (maxEightVW + 1) && MUX4_ENABLE.mflags.mux16_4 == VW8) //if 8 channel VW MUX  
                             {
-                                id = 1; //memory rolled over so reset display pointers
+                                id = 1;                                         //memory rolled over so reset display pointers
                                 DisplayArrayPointer = (DisplayArrayPointer + tempUserPosition)-(maxEightVW + 1);
                                 tempUserPosition = 1;
                             }
 
-                            if (id == (maxSixteenVW + 1) && MUX4_ENABLE.mflags.mux16_4 == VW16) //if 16 channel VW MUX     VER 6.0.7
+                            if (id == (maxSixteenVW + 1) && MUX4_ENABLE.mflags.mux16_4 == VW16) //if 16 channel VW MUX     
                             {
-                                id = 1; //memory rolled over so reset display pointers
+                                id = 1;                                         //memory rolled over so reset display pointers
                                 DisplayArrayPointer = (DisplayArrayPointer + tempUserPosition)-(maxSixteenVW + 1);
                                 tempUserPosition = 1;
                             }
 
-                            if (id == (maxThirtytwoVW + 1) && MUX4_ENABLE.mflags.mux16_4 == VW32) //if 32 channel VW MUX     VER 6.0.7
+                            if (id == (maxThirtytwoVW + 1) && MUX4_ENABLE.mflags.mux16_4 == VW32) //if 32 channel VW MUX     
                             {
-                                id = 1; //memory rolled over so reset display pointers
+                                id = 1;                                         //memory rolled over so reset display pointers
                                 DisplayArrayPointer = (DisplayArrayPointer + tempUserPosition)-(maxThirtytwoVW + 1);
                                 tempUserPosition = 1;
                             }
 
-                            if (id == (maxEightTH + 1) && MUX4_ENABLE.mflags.mux16_4 == TH8) //if 8 channel TH MUX  VER 6.0.7
+                            if (id == (maxEightTH + 1) && MUX4_ENABLE.mflags.mux16_4 == TH8) //if 8 channel TH MUX  
                             {
-                                id = 1; //memory rolled over so reset display pointers
+                                id = 1;                                         //memory rolled over so reset display pointers
                                 DisplayArrayPointer = (DisplayArrayPointer + tempUserPosition)-(maxEightTH + 1);
                                 tempUserPosition = 1;
                             }
 
-                            if (id == (maxThirtytwoTH + 1) && MUX4_ENABLE.mflags.mux16_4 == TH32) //if 32 channel MUX  VER 6.0.9
+                            if (id == (maxThirtytwoTH + 1) && MUX4_ENABLE.mflags.mux16_4 == TH32) //if 32 channel MUX  
                             {
-                                id = 1; //memory rolled over so reset display pointers
+                                id = 1;                                         //memory rolled over so reset display pointers
                                 DisplayArrayPointer = (DisplayArrayPointer + tempUserPosition)-(maxThirtytwoTH + 1);
                                 tempUserPosition = 1;
                             }
 
-                            displayReading(ch, id); //display the array at address id
+                            displayReading(ch, id);                             //display the array at address id
                             
-                        } //end of For loop
-                        //IEC0bits.U1RXIE = 0; //Disable UART1 interrupt        //REM REV AA
-
-                        //if (!LC2CONTROL2.flags2.d) //VER 6.0.2    REM REV AB
-                        displayTemporaryStatus(id); //display memory status with current User Position    
+                        }                                                       //end of For loop
+                        displayTemporaryStatus(id);                             //display memory status with current User Position    
                         
-                        /*REM VER BA
-                        if (!LC2CONTROL2.flags2.d)                              //REV AB
-                        {
-                            displayTemporaryStatus(id);                         //display memory status with current User Position
-                        }
-                        else
-                        {
-                            putcUART1(eot);                                     //Tx End of Transmission
-                            while(BusyUART1());
-                        }
-                        */
-                        
-                        
-                        DISPLAY_CONTROL.flags.newPointer = 0; //clear the pointer updated flag
+                        DISPLAY_CONTROL.flags.newPointer = 0;                   //clear the pointer updated flag
 
                         if (MonitorWasEnabled) {
-                            LC2CONTROL.flags.Monitor = 1; //reset the monitor flag if previously set
+                            LC2CONTROL.flags.Monitor = 1;                       //reset the monitor flag if previously set
                             write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM  
                         }
 
-                        DISPLAY_CONTROL.flags.BPD = 0; //clear the P_D mode flag	
-                        DISPLAY_CONTROL.flags.Backup = 0; //clear the Backup flag 
-                        DISPLAY_CONTROL.flags.Display = 1; //set the Display flag
+                        DISPLAY_CONTROL.flags.BPD = 0;                          //clear the P_D mode flag	
+                        DISPLAY_CONTROL.flags.Backup = 0;                       //clear the Backup flag 
+                        DISPLAY_CONTROL.flags.Display = 1;                      //set the Display flag
                         write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//store flags in FRAM 
-                        shutdownTimer(TimeOut);                                 //REV Z
+                        shutdownTimer(TimeOut);                                 
                         break;
                     }
 
                     if (FRAM_MEMORY.flags.memEmpty) 
                     {
                         crlf();
-                        putsUART1(Noarrays2display); //"There are no arrays to display"
+                        putsUART1(Noarrays2display);                            //"There are no arrays to display"
                         while (BusyUART1());
                         break;
                     }
 
-                    DISPLAY_CONTROL.flags.Backup = 0; //clear the back pointer up flag
+                    DISPLAY_CONTROL.flags.Backup = 0;                           //clear the back pointer up flag
                     break;
 
-                case capE:                                                      //Shutdown  REV AE                     
+                case capE:                                                      //Shutdown                       
                     
                     crlf();
                     write_Int_FRAM(UserPositionaddress,0x00);                   //Zero the User Position pointer    
@@ -2549,37 +2386,27 @@ void CMDcomm(void)
 
                 case capG:
 
-                    shutdownTimer(TimeOut);                                     //Reset 15S timer   REV Z
+                    shutdownTimer(TimeOut);                                     //Reset 15S timer   
 
                     for (i = 1; buffer[i] != cr && !LC2CONTROL.flags.ERROR; i++) //parse buffer for illegal characters
-                    { //exit if one is encountered
+                    {                                                           //exit if one is encountered
                         if (buffer[i] != minus && buffer[i] != decimal && buffer[i] != slash && !isdigit(buffer[i]) && buffer[i] != capD
                                 && buffer[i] != capL && buffer[i] != capP)
-                            LC2CONTROL.flags.ERROR = 1; //set the error flag
+                            LC2CONTROL.flags.ERROR = 1;                         //set the error flag
                     }
 
-                    if (LC2CONTROL.flags.ERROR) //Test for error
+                    if (LC2CONTROL.flags.ERROR)                                 //Test for error
                     {
-                        LC2CONTROL.flags.ERROR = 0; //reset the error flag
-                        break; //return to '*' prompt
+                        LC2CONTROL.flags.ERROR = 0;                             //reset the error flag
+                        break;                                                  //return to '*' prompt
                     }
 
-                    if (!isdigit(buffer[1])) //if buffer[1] is not valid channel #
-                        break; //return to '*' prompt
+                    if (!isdigit(buffer[1]))                                    //if buffer[1] is not valid channel #
+                        break;                                                  //return to '*' prompt
 
                     if ((isdigit(buffer[1]) && buffer[2] == slash) | (isdigit(buffer[1]) && isdigit(buffer[2]) && buffer[3] == slash))
-                        channel = getChannel(); //get the current channel #
+                        channel = getChannel();                                 //get the current channel #
 
-                    //REM VER 6.0.6:
-                    /*
-                    //TEST MUX CONFIGURATION FOR INVALID CHANNELS:
-                    if((channel>=5&& (MUX4_ENABLE.mflags.mux16_4==0)) |         //4 channel //VER 6.0.0
-            (channel>=17&&(MUX4_ENABLE.mflags.mux16_4==1)) |        //16 channel
-                        (channel!=0 && (MUX4_ENABLE.mflags.mux16_4==2)))        //single channel
-                        break;							//return to '*' prompt
-                     */
-
-                    //VER 6.0.6:
                     //TEST MUX CONFIGURATION FOR INVALID CHANNELS:
                     if ((channel >= 5 && (MUX4_ENABLE.mflags.mux16_4 == VW4)) | //4 channel VW/TH
                             (channel >= 9 && (MUX4_ENABLE.mflags.mux16_4 == TH8)) | //8 channel TH
@@ -2588,75 +2415,75 @@ void CMDcomm(void)
                             (channel >= 33 && (MUX4_ENABLE.mflags.mux16_4 == TH32)) | //32 channel TH
                             (channel >= 33 && (MUX4_ENABLE.mflags.mux16_4 == VW32)) |
                             (channel != 1 && (MUX4_ENABLE.mflags.mux16_4 == Single))) //single channel
-                        break; //return to '*' prompt
+                        break;                                                  //return to '*' prompt
 
-                    if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32) //VER 6.0.11
+                    if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32) 
                     {
-                        conversion = getConversion(); //get the type of conversion:
-                        //0=linear
-                        //1=polynomial
-                        //-1=channel disabled
-                        //2=invalid
+                        conversion = getConversion();                           //get the type of conversion:
+                                                                                //0=linear
+                                                                                //1=polynomial
+                                                                                //-1=channel disabled
+                                                                                //2=invalid
                         //TEST MUX CONFIGURATION FOR INVALID CONVERSION:
-                        if (conversion == 2) //invalid conversion
-                            break; //return to the '*' prompt
-                        setChannelConversion(channel, conversion); //setup the channel conversion
+                        if (conversion == 2)                                    //invalid conversion
+                            break;                                              //return to the '*' prompt
+                        setChannelConversion(channel, conversion);              //setup the channel conversion
                     }
 
                     //Extract gage type from buffer and save to FRAM:
-                    gageType = getGageType(channel); //get the user entered gage type
-                    if (gageType == 0) //is the channel being disabled?
+                    gageType = getGageType(channel);                            //get the user entered gage type
+                    if (gageType == 0)                                          //is the channel being disabled?
                     {
                         disableChannel(channel);
-                        displayMUX(channel); //display the channel #
+                        displayMUX(channel);                                    //display the channel #
                         break;
                     }
 
                     if ((gageType == -1 | gageType == -2) && (buffer[1] != slash))
-                        break; //gage type hasn't changed or illegal entry
+                        break;                                                  //gage type hasn't changed or illegal entry
 
-                    if (gageType != -1) //if valid gage type is entered, store it
+                    if (gageType != -1)                                         //if valid gage type is entered, store it
                         storeGageType(channel, gageType);
 
-                    enableChannel(channel); //enable the selected channel
+                    enableChannel(channel);                                     //enable the selected channel
 
                     //Extract gage info or polynomial coefficients from buffer and save to FRAM:
 
-                    if (conversion) //Polynomial Conversion
+                    if (conversion)                                             //Polynomial Conversion
                     {
-                        getGageInfo(1, channel); //get coefficient A
-                        getGageInfo(2, channel); //get coefficient B
-                        getGageInfo(3, channel); //get coefficient C
-                    } else //Linear Conversion
+                        getGageInfo(1, channel);                                //get coefficient A
+                        getGageInfo(2, channel);                                //get coefficient B
+                        getGageInfo(3, channel);                                //get coefficient C
+                    } else                                                      //Linear Conversion
                     {
-                        getGageInfo(1, channel); //get zero reading
-                        getGageInfo(2, channel); //get gage factor
-                        getGageInfo(3, channel); //get gage offset
+                        getGageInfo(1, channel);                                //get zero reading
+                        getGageInfo(2, channel);                                //get gage factor
+                        getGageInfo(3, channel);                                //get gage offset
                     }
 
-                    displayMUX(channel); //display the channel #
+                    displayMUX(channel);                                        //display the channel #
                     break;
 
 
                 case capI:
 
-                    shutdownTimer(TimeOut);                                     //Reset 15S timer   REV Z
+                    shutdownTimer(TimeOut);                                     //Reset 15S timer   
                     crlf();
 
                     if (buffer[1] == capD && buffer[2] == cr && LC2CONTROL.flags.ID) //Display ID
                     {
-                        putsUART1(DataloggerID); //Datalogger ID:
+                        putsUART1(DataloggerID);                                //Datalogger ID:
                         while (BusyUART1());
 
-                        for (i = IDaddress; i < CH1GTaddress; i += 2) //parse the buffer and extract the ID character   REV 1.4
+                        for (i = IDaddress; i < CH1GTaddress; i += 2)           //parse the buffer and extract the ID character   
                         {
-                            data=read_Int_FRAM(i);				//read the ID starting FRAM location  
-                            unpack(data); //unpack into (2) bytes
-                            if (Hbyte == cr) //exit if MSB = <CR>
+                            data=read_Int_FRAM(i);                              //read the ID starting FRAM location  
+                            unpack(data);                                       //unpack into (2) bytes
+                            if (Hbyte == cr)                                    //exit if MSB = <CR>
                                 break;
                             putcUART1(Hbyte);
                             while (BusyUART1());
-                            if (Lbyte == cr) //exit if LSB = <CR>
+                            if (Lbyte == cr)                                    //exit if LSB = <CR>
                                 break;
                             putcUART1(Lbyte);
                             while (BusyUART1());
@@ -2668,22 +2495,22 @@ void CMDcomm(void)
 
                     if (buffer[1] == capD && buffer[2] == cr && !LC2CONTROL.flags.ID) //No ID to display
                     {
-                        putsUART1(DataloggerID); //Datalogger ID:
+                        putsUART1(DataloggerID);                                //Datalogger ID:
                         while (BusyUART1());
                         break;
                     }
 
-                    if (buffer[1] == capD && buffer[2] == space) //clear the current ID
+                    if (buffer[1] == capD && buffer[2] == space)                //clear the current ID
                     {
-                        putsUART1(DataloggerID); //Datalogger ID:
+                        putsUART1(DataloggerID);                                //Datalogger ID:
                         while (BusyUART1());
 
-                        for (i = IDaddress; i < CH1GTaddress; i++) //load the ID buffer with <cr>   REV 1.4
+                        for (i = IDaddress; i < CH1GTaddress; i++)              //load the ID buffer with <cr>   
                         {
-                            write_Int_FRAM(IDaddress,cr);  //VER 6.0.2 VER 6.0.13    
+                            write_Int_FRAM(IDaddress,cr);      
                         }
 
-                        LC2CONTROL.flags.ID = 0; //reset the ID flag
+                        LC2CONTROL.flags.ID = 0;                                //reset the ID flag
                         write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM	
                         break;
                     }
@@ -2693,21 +2520,21 @@ void CMDcomm(void)
                         tempID = IDaddress; 
                         LC2CONTROL.flags.ID = 1;                                //set the ID flag
                         write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM	
-                        putsUART1(DataloggerID); //Datalogger ID:
+                        putsUART1(DataloggerID);                                //Datalogger ID:
                         while (BusyUART1());
 
                         for (i = 2; i < 17; i++) {
                             if (!isdigit(buffer[i]) && !isalpha(buffer[i]) && buffer[i] != cr && !isgraph(buffer[i]) && buffer[i] != space)//invalid
-                            { //so display the stored ID
-                                for (i = tempID; i < CH1GTaddress; i += 2)      //parse the buffer and extract the ID character REV 1.4
+                            {                                                   //so display the stored ID
+                                for (i = tempID; i < CH1GTaddress; i += 2)      //parse the buffer and extract the ID character 
                                 {
-                                    data=read_Int_FRAM(i);				//read the ID starting FRAM location  
-                                    unpack(data); //unpack into (2) bytes
-                                    if (Hbyte == cr) //exit if MSB = <CR>
+                                    data=read_Int_FRAM(i);                      //read the ID starting FRAM location  
+                                    unpack(data);                               //unpack into (2) bytes
+                                    if (Hbyte == cr)                            //exit if MSB = <CR>
                                         break;
                                     putcUART1(Hbyte);
                                     while (BusyUART1());
-                                    if (Lbyte == cr) //exit if LSB = <CR>
+                                    if (Lbyte == cr)                            //exit if LSB = <CR>
                                         break;
                                     putcUART1(Lbyte);
                                     while (BusyUART1());
@@ -2715,27 +2542,27 @@ void CMDcomm(void)
                                 break;
                             }
 
-                            Hbyte = buffer[i]; //load Hbyte
+                            Hbyte = buffer[i];                                  //load Hbyte
                             if (Hbyte == cr) {
                                 data = pack(Hbyte, 0x00);
                                 write_Int_FRAM(tempID,data);   
                                 break;
                             }
 
-                            i += 1; //increment array pointer
-                            Lbyte = buffer[i]; //load Lbyte
-                            putcUART1(Hbyte); //display ID
+                            i += 1;                                             //increment array pointer
+                            Lbyte = buffer[i];                                  //load Lbyte
+                            putcUART1(Hbyte);                                   //display ID
                             while (BusyUART1());
                             if (Lbyte != cr) {
                                 putcUART1(Lbyte);
                                 while (BusyUART1());
                             }
                             data = pack(Hbyte, Lbyte);
-                            write_Int_FRAM(tempID,data);			//store in FRAM   
+                            write_Int_FRAM(tempID,data);                        //store in FRAM   
 
                             if (Lbyte == cr)
                                 break;
-                            tempID += 2; //increment FRAM pointer
+                            tempID += 2;                                        //increment FRAM pointer
                         }
 
                         break;
