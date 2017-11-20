@@ -3410,7 +3410,7 @@ void CMDcomm(void)
                         {
                             crlf();												
                             Thermtype=read_Int_FRAM(CH1THaddress);              //read thermistor type	
-                            if(Thermtype==3)                                        //3=High Temp 103JL1A thermistor	REV 1.10
+                            if(Thermtype==3)                                    //3=High Temp 103JL1A thermistor	REV 1.10
                             {													
                                 putsUART1(Hightemp3);                           //High temp 103JL1A thermistor selected REV 1.10						
                             }
@@ -3431,86 +3431,34 @@ void CMDcomm(void)
 
 
                     //**********************************************Start Logging************************************************
-                    if (buffer[1] == capT && buffer[2] == cr) //ST received
+                    if (buffer[1] == capT && buffer[2] == cr)                   //ST received
                     {
-                        if(START())                                             //REV CF
-                            return;                                             //REV CF
-                        break;                                                  //REV CF
-                        /*REM REV CF
-                        if (USB_PWR)
-                            LC2CONTROL.flags.USBpower = 1; //set flag if powered by USB
-                        else
-                            LC2CONTROL.flags.USBpower = 0;
-
-                        IEC1bits.INT1IE = 0; //temporarily disable the INT2 interrupt	
-                        LC2CONTROL2.full2=read_Int_FRAM(LC2CONTROL2flagsaddress);	//restore flags from FRAM     
-                        IEC1bits.INT1IE = 1; //re-enable INT2 interrupt	
-
-                        //delay(100);                                           //REM REV AE
-                        delay(400);                                             //REV AE
-                        crlf();
-                        testScanInterval = 0; //set ScanInterval to 0
-
-                        ScanInterval = hms2s(); //get the stored scan interval
-
-                        testScanInterval = checkScanInterval(); //test for minimum allowable Scan Interval
-
-                        if (testScanInterval) //if error
-                        {
-                            if (LC2CONTROL.flags.LogInterval) //Log Intervals?
-                            {
-                                putsUART1(MinInterror); //ERROR: Minumum Log Interval Length for this configuration is :
-                            } else {
-                                putsUART1(Minscanerror); //ERROR: Minumum Scan Interval for this configuration is :
-                            }
-                            while (BusyUART1());
-                            sprintf(trapBUF, "%d", testScanInterval); //minimum scan interval in seconds
-                            putsUART1(trapBUF);
-                            while (BusyUART1());
-                            putsUART1(Seconds);
-                            while (BusyUART1());
-                            break;
-                        }
-
-                        if (!LC2CONTROL.flags.Logging) //is Logging flag clear?
-                        {
-                            if (DISPLAY_CONTROL.flags.Synch)
-                                VWflagsbits.synch = 1;
-                            LC2CONTROL2.flags2.FirstReading = 1; //set the first reading flag
-                            LC2CONTROL2.flags2.Interrupt = 0; //clear the INT2 interrupt flag
-                            IEC1bits.INT1IE = 0; //temporarily disable the INT2 interrupt
-                            write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);	//store flags in FRAM 
-                            IEC1bits.INT1IE = 1; //re-enable INT2 interrupt
-                            startLogging();
-                            return;
-                        }
-
-                        putsUART1(Loggingalreadystarted); //Logging already started!
-                        while (BusyUART1());
-                        */
+                        if(START())                                             
+                            return;                                             
+                        break;                                                  
                     }
 
 
-                    if (buffer[1] == capT && buffer[2] != cr) //Enter Start Logging Time
+                    if (buffer[1] == capT && buffer[2] != cr)                   //Enter Start Logging Time
                     {
                         crlf();
 
                         testScanInterval = 0;
 
-                        ScanInterval = hms2s(); //get the stored scan interval
-                        testScanInterval = checkScanInterval(); //test for minimum allowable Scan Interval
+                        ScanInterval = hms2s();                                 //get the stored scan interval
+                        testScanInterval = checkScanInterval();                 //test for minimum allowable Scan Interval
 
-                        if (testScanInterval) //if error
+                        if (testScanInterval)                                   //if error
                         {
-                            if (LC2CONTROL.flags.LogInterval) //Log Intervals?
+                            if (LC2CONTROL.flags.LogInterval)                   //Log Intervals?
                             {
-                                putsUART1(MinInterror); //ERROR: Minimum Log Interval Length for this configuration is :
+                                putsUART1(MinInterror);                         //ERROR: Minimum Log Interval Length for this configuration is :
                             } else {
-                                putsUART1(Minscanerror); //ERROR: Minimum Scan Interval for this configuration is :
+                                putsUART1(Minscanerror);                        //ERROR: Minimum Scan Interval for this configuration is :
                             }
 
                             while (BusyUART1());
-                            sprintf(trapBUF, "%d", testScanInterval); //minimum scan interval in seconds
+                            sprintf(trapBUF, "%d", testScanInterval);           //minimum scan interval in seconds
                             putsUART1(trapBUF);
                             while (BusyUART1());
                             putsUART1(Seconds);
@@ -3521,32 +3469,32 @@ void CMDcomm(void)
                         LC2CONTROL.flags.LoggingStartTime = 1;
                         LC2CONTROL.flags.Logging = 0;
                         write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM 
-                        S_1.status1flags._ST=1;                                    //set the MODBUS status flag    REV BF
+                        S_1.status1flags._ST=1;                                 //set the MODBUS status flag    
                         write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                          
-                        LC2CONTROL2.flags2.SetStartTime = 1; //Going to set Start time	
-                        DISPLAY_CONTROL.flags.Synch = 0; //make sure Synch flag is clear	
+                        LC2CONTROL2.flags2.SetStartTime = 1;                    //Going to set Start time	
+                        DISPLAY_CONTROL.flags.Synch = 0;                        //make sure Synch flag is clear	
                         write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//store flags in FRAM  
-                        DISPLAY_CONTROL.flags.firstTime=1;                      //REV W
-                        PORT_CONTROL.flags.SetAlarm2StopTime=0;                 //REV Z
-                        PORT_CONTROL.flags.SetAlarm2Time=0;                     //REV Z
-                        Buf2DateTime(buffer); //set RTC Alarm time
-                        DISPLAY_CONTROL.flags.firstTime=0;                      //REV W
+                        DISPLAY_CONTROL.flags.firstTime=1;                      
+                        PORT_CONTROL.flags.SetAlarm2StopTime=0;                 
+                        PORT_CONTROL.flags.SetAlarm2Time=0;                     
+                        Buf2DateTime(buffer);                                   //set RTC Alarm time
+                        DISPLAY_CONTROL.flags.firstTime=0;                      
 
                         if (LC2CONTROL.flags.ERROR) {
-                            LC2CONTROL.flags.ERROR = 0; //clear the ERROR flag
-                            LC2CONTROL.flags.LoggingStartTime = 0; //clear the LoggingStartTime flag
+                            LC2CONTROL.flags.ERROR = 0;                         //clear the ERROR flag
+                            LC2CONTROL.flags.LoggingStartTime = 0;              //clear the LoggingStartTime flag
                             write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM 
-                            S_1.status1flags._ST=0;                                //clear the MODBUS status flag    REV BF
+                            S_1.status1flags._ST=0;                             //clear the MODBUS status flag    
                             write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                              
-                            LC2CONTROL2.flags2.SetStartTime = 0; //clear the SetStartTime flag
+                            LC2CONTROL2.flags2.SetStartTime = 0;                //clear the SetStartTime flag
                             break;
                         }
 
-                        LC2CONTROL2.flags2.SetStartTime = 0; //clear the set start time flag
-                        putsUART1(Loggingwillstart); //Logging will start at:
+                        LC2CONTROL2.flags2.SetStartTime = 0;                    //clear the set start time flag
+                        putsUART1(Loggingwillstart);                            //Logging will start at:
                         while (BusyUART1());
 
-                        Alarm1HoursValue = readClock(RTCAlarm1HoursAddress); //Display Alarm1 hours MAY BE ABLE TO MAKE FUNCTION HERE
+                        Alarm1HoursValue = readClock(RTCAlarm1HoursAddress);    //Display Alarm1 hours MAY BE ABLE TO MAKE FUNCTION HERE
                         displayClock(Alarm1HoursValue);
                         putcUART1(colon); // :
                         while (BusyUART1());
@@ -3558,7 +3506,7 @@ void CMDcomm(void)
 
                         Alarm1SecondsValue = readClock(RTCAlarm1SecondsAddress); //Display Alarm1 seconds
                         displayClock(Alarm1SecondsValue);
-                        Alarm1SecondsLong = bcd2d(Alarm1SecondsValue); //convert to decimal from BCD
+                        Alarm1SecondsLong = bcd2d(Alarm1SecondsValue);          //convert to decimal from BCD
                         Alarm1MinutesLong = bcd2d(Alarm1MinutesValue);
                         Alarm1HoursLong = bcd2d(Alarm1HoursValue);
 
@@ -3566,66 +3514,56 @@ void CMDcomm(void)
                         write_longFRAM(TotalStartSeconds,TotalStartSecondsaddress);	//store to FRAM   
                         TotalStopSeconds=read_longFRAM(TotalStopSecondsaddress);		//get the stored stop time  
 
-                        if (TotalStopSeconds < TotalStartSeconds) //midnight rollover?
+                        if (TotalStopSeconds < TotalStartSeconds)               //midnight rollover?
                         {
-                            TotalStopSeconds += 86400; //compensate
+                            TotalStopSeconds += 86400;                          //compensate
                             write_longFRAM(TotalStopSeconds,TotalStopSecondsaddress);	//store to FRAM   
                         }
 
-                        LoggingStartDays = readClock(RTCDaysAddress); //Get and store the current day 
+                        LoggingStartDays = readClock(RTCDaysAddress);           //Get and store the current day 
                         LoggingStartDay = RTCtoDecimal(LoggingStartDays);
                         write_Int_FRAM(LoggingStartDayaddress,LoggingStartDay);    
 
-                        //ConfigIntCapture8(IC_INT_ON & IC_INT_PRIOR_6); //configure input capture interrupt        REM REV N
-                        //enableAlarm(Alarm1);                                  REM REV W
-                        //enableINT1(); //enable INT1 (take a reading on interrupt) REM REV W
-                        //configUARTnormal();   REM REV D
-                        //INTCON1bits.NSTDIS = 0; //reset nesting of interrupts     REM REV W
-
-                        LC2CONTROL.flags.Logging = 1; //set the Logging flag	
-                        LC2CONTROL.flags.LoggingStartTime = 0; //clear the Logging Start Time flag	
+                        LC2CONTROL.flags.Logging = 1;                           //set the Logging flag	
+                        LC2CONTROL.flags.LoggingStartTime = 0;                  //clear the Logging Start Time flag	
                         write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flags in FRAM     
 
-                        VWflagsbits.firstReading=1;                             //REV 1.1
-                        LC2CONTROL2.flags2.Waiting = 1; //Set the Waiting flag	
-                        LC2CONTROL2.flags2.scheduled=1;                         //REV W
+                        VWflagsbits.firstReading=1;                             
+                        LC2CONTROL2.flags2.Waiting = 1;                         //Set the Waiting flag	
+                        LC2CONTROL2.flags2.scheduled=1;                         
                         write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);	//store flags in FRAM   
-                        IFS1bits.INT1IF = 0;                                    //clear the interrupt flag  REV 1.0
-                        IFS1bits.INT2IF = 0;                                    //clear the interrupt flag  REV 1.0
-                        setClock(0x0F, 0);                                      //Clear the RTC Alarm flags REV 1.0    
-                        enableAlarm(Alarm1);                                    //  REV W    TEST REM REV 1.0
-                        enableINT1();                                           //enable INT1 (take a reading on interrupt) REV W
-                        INTCON1bits.NSTDIS = 0;                                 //reset nesting of interrupts   REV W	                        
-                        break;                                                  //REV U
+                        IFS1bits.INT1IF = 0;                                    //clear the interrupt flag  
+                        IFS1bits.INT2IF = 0;                                    //clear the interrupt flag  
+                        setClock(0x0F, 0);                                      //Clear the RTC Alarm flags     
+                        enableAlarm(Alarm1);                                    
+                        enableINT1();                                           //enable INT1 (take a reading on interrupt) 
+                        INTCON1bits.NSTDIS = 0;                                 //reset nesting of interrupts   	                        
+                        break;                                                  
                     }
 
 
                     //*******************************************Software Version*****************************************************
 
-                    if (buffer[1] == capV && buffer[2] == cr) //display software revision
+                    if (buffer[1] == capV && buffer[2] == cr)                   //display software revision
                     {
                         crlf();
-                        putsUART1(Softwareversion); //Software version:
+                        putsUART1(Softwareversion);                             //Software version:
                         while (BusyUART1());
                         putsUART1(Rev);
                         while (BusyUART1());
                         break;
                     }
 
-
-                    //***************************************************************************************************************
-
-
                     //**********************************************Synchronize Readings**********************************************
-                    if (buffer[1] == capR && buffer[2] == cr) //SR received
+                    if (buffer[1] == capR && buffer[2] == cr)                   //SR received
                     {
                         crlf();
 
-                        if (DISPLAY_CONTROL.flags.Synch) //If readings will be synchronized
+                        if (DISPLAY_CONTROL.flags.Synch)                        //If readings will be synchronized
                         {
-                            putsUART1(Synch); //"Readings are synchronized to the top of the hour"
+                            putsUART1(Synch);                                   //"Readings are synchronized to the top of the hour"
                         } else {
-                            putsUART1(Synchnot); //"Readings are not synchronized to the top of the hour"
+                            putsUART1(Synchnot);                                //"Readings are not synchronized to the top of the hour"
                         }
                         while (BusyUART1());
                         break;
@@ -3633,17 +3571,17 @@ void CMDcomm(void)
 
                     if (buffer[1] == capR && buffer[2] == zero && buffer[3] == cr) //SR0 received
                     {
-                        if(!LC2CONTROL2.flags2.Modbus)                          //if command line interface REV CC
+                        if(!LC2CONTROL2.flags2.Modbus)                          //if command line interface 
                             crlf();
-                        synch_zero();                                           //REV CC             
+                        synch_zero();                                                        
                         break;
                     }
 
                     if (buffer[1] == capR && buffer[2] == one && buffer[3] == cr) //SR1 received
                     {
-                        if(!LC2CONTROL2.flags2.Modbus)                          //if command line interface REV CC
+                        if(!LC2CONTROL2.flags2.Modbus)                          //if command line interface 
                             crlf();
-                        synch_one();                                            //REV CC
+                        synch_one();                                            
 
                         break;
                     }
@@ -3651,12 +3589,12 @@ void CMDcomm(void)
 
                 case capT:
 
-                    shutdownTimer(TimeOut);                                     //Reset 15S timer   REV Z
+                    shutdownTimer(TimeOut);                                     //Reset 15S timer   
                     crlf();
 
-                    if (buffer[1] == capR && buffer[2] == cr) //TR<CR> received
+                    if (buffer[1] == capR && buffer[2] == cr)                   //TR<CR> received
                     {
-                        putsUART1(Trapcount); //Display value in Trapcount
+                        putsUART1(Trapcount);                                   //Display value in Trapcount
                         while (BusyUART1());
                         trap=read_Int_FRAM(TrapRegisteraddress); 
                         sprintf(trapBUF, "%d", trap);
@@ -3667,9 +3605,9 @@ void CMDcomm(void)
 
                     if (buffer[1] == capR && buffer[2] == zero && buffer[3] == cr) //reset Trap Counter
                     {
-                        trap = 0; //reset trap counter
+                        trap = 0;                                               //reset trap counter
                         write_Int_FRAM(TrapRegisteraddress,trap);  
-                        putsUART1(Trapcount); //Display value in Trapcount
+                        putsUART1(Trapcount);                                   //Display value in Trapcount
                         while (BusyUART1());
                         sprintf(trapBUF, "%d", trap);
                         putsUART1(trapBUF);
@@ -3677,26 +3615,26 @@ void CMDcomm(void)
                         break;
                     }
 
-                    if (buffer[1] == capF && buffer[2] == cr) //TF<CR> received
+                    if (buffer[1] == capF && buffer[2] == cr)                   //TF<CR> received
                     {
-                        if (!LC2CONTROL.flags.TimeFormat) //0=hhmm
+                        if (!LC2CONTROL.flags.TimeFormat)                       //0=hhmm
                             putsUART1(Timeformat);
                         else
-                            putsUART1(Timeformatcomma); //1=hh,mm
+                            putsUART1(Timeformatcomma);                         //1=hh,mm
                         while (BusyUART1());
                         break;
                     }
 
-                    if (buffer[1] == capF && buffer[3] == cr) //TF#<CR> received
+                    if (buffer[1] == capF && buffer[3] == cr)                   //TF#<CR> received
                     {
-                        if (buffer[2] == zero) //hhmm format chosen
+                        if (buffer[2] == zero)                                  //hhmm format chosen
                         {
                             LC2CONTROL.flags.TimeFormat = 0;
                             putsUART1(Timeformat);
                             write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM  
                         }
 
-                        if (buffer[2] == one) //hh,mm format chosen
+                        if (buffer[2] == one)                                   //hh,mm format chosen
                         {
                             LC2CONTROL.flags.TimeFormat = 1;
                             putsUART1(Timeformatcomma);
@@ -3719,69 +3657,69 @@ void CMDcomm(void)
 
                         while (testmenuBUF[0] != capX) 
                         {
-                            for (i = 0; i < 2; i++) //clear the buffer
+                            for (i = 0; i < 2; i++)                             //clear the buffer
                             {
                                 testmenuBUF[i] = 0;
                             }
 
-                            for (i = 0; i < 22; i++) //clear the buffer
+                            for (i = 0; i < 22; i++)                            //clear the buffer
                             {
                                 buffer[i] = 0;
                             }
 
-                            i = 0; //initialize char buffer index
+                            i = 0;                                              //initialize char buffer index
 
-                            RxData = 0; //initialize receive buffer
+                            RxData = 0;                                         //initialize receive buffer
 
-                            displayTestMenu(); //display the test choices
+                            displayTestMenu();                                  //display the test choices
 
-                            while (RxData != cr) //put chars in buffer until <CR> is received
-                                while (1) //put chars in buffer until <CR> is received
+                            while (RxData != cr)                                //put chars in buffer until <CR> is received
+                                while (1)                                       //put chars in buffer until <CR> is received
                                 {
-                                    while (!DataRdyUART1() && !U1STAbits.FERR //wait for choice
+                                    while (!DataRdyUART1() && !U1STAbits.FERR   //wait for choice
                                             && !U1STAbits.PERR && !U1STAbits.OERR);
                                     if (U1STAbits.FERR | U1STAbits.PERR | U1STAbits.OERR)
                                         handleCOMError();
 
-                                    RxData = ReadUART1(); //get the char from the USART buffer
+                                    RxData = ReadUART1();                       //get the char from the USART buffer
 
                                     if (RxData != 0x08 && RxData != cr) {
-                                        putcUART1(RxData); //echo char (except backspace & <CR>) to terminal
+                                        putcUART1(RxData);                      //echo char (except backspace & <CR>) to terminal
                                         while (BusyUART1());
-                                        putcUART1(0x08); //restore cursor to original location
+                                        putcUART1(0x08);                        //restore cursor to original location
                                         while (BusyUART1());
-                                        testmenuBUF[0] = RxData; //store the received char in the buffer
+                                        testmenuBUF[0] = RxData;                //store the received char in the buffer
                                     }
 
-                                    if (testmenuBUF[0] != 0 && RxData == cr) //break out of loop if selection made
+                                    if (testmenuBUF[0] != 0 && RxData == cr)    //break out of loop if selection made
                                         break;
                                 }
 
 
-                            switch (testmenuBUF[0]) //perform the test
+                            switch (testmenuBUF[0])                             //perform the test
                             {
 
-                                case one: //test ALL FRAM                       //DURATION: 1m 35s/FRAM
+                                case one:                                       //test ALL FRAM DURATION: 1m 35s/FRAM
                                     
                                     crlf();
                                     testData = testFRAM(1); //test external FRAM bank 1
-                                    //handleFRAMResults(testData); //display the results    REM REV D
+
                                     crlf();
                                     testData = testFRAM(2); //test external FRAM bank 2
-                                    //handleFRAMResults(testData); //display the results    REM REV D
+
                                     crlf();
                                     testData = testFRAM(3); //test external FRAM bank 3
-                                    //handleFRAMResults(testData);                          REM REV D
+
                                     crlf();
                                     testData = testFRAM(4); //test external FRAM bank 4
-                                    //handleFRAMResults(testData);                          REM REV D
+
                                     crlf();
                                     RxData = 0;
                                     break;
 
-                                case two: //test +3V_X
-                                    ADPCFG = 0; //all analog channels
-                                    //ADCON2=0;                                 //VDD & VSS are references
+                                case two:                                       //test +3V_X
+                                    ADPCFG = 0;                                 //all analog channels
+
                                     pluckOFF();
                                     _EXC_EN=1;
                                     _3VX_on();                                  //power-up analog circuitry
@@ -3790,11 +3728,12 @@ void CMDcomm(void)
                                     while (BusyUART1());
                                     IFS0bits.U1RXIF = 0;                        //clear the UART1 interrupt flag
                                     while (!IFS0bits.U1RXIF);                   //wait until a key is pressed
-                                    if (IFS0bits.U1RXIF)                        //TEST POINT
+                                    
+                                    if (IFS0bits.U1RXIF)                        
                                         IFS0bits.U1RXIF = 0;                    //clear the UART1 interrupt flag
                                     RxDataTemp = ReadUART1();                   //get the char from the UART buffer to clear it
                                     _3VX_off();                                 //power-down the analog circuitry
-                                    setADCsleep();                              //REV X
+                                    setADCsleep();                              
                                     putcUART1(0x0D);                            //<CR>
                                     while (BusyUART1());
                                     putsUART1(Poweroff);                        //display "Analog power supplies off"
@@ -3809,45 +3748,38 @@ void CMDcomm(void)
                                     start32KHz();                               //start the RTC 32KHz output
                                     IFS0bits.U1RXIF = 0;                        //clear the UART1 interrupt flag
                                     while (!IFS0bits.U1RXIF);                   //wait until a key is pressed
+                                    
                                     IFS0bits.U1RXIF = 0;                        //clear the UART1 interrupt flag
                                     RxDataTemp = ReadUART1();                   //get the char from the UART buffer to clear it
                                     stop32KHz();                                //stop the RTC 32KHz output
                                     putcUART1(0x0D);                            //<CR>
                                     while (BusyUART1());
-                                    putsUART1(RTC32KHZOFF); //display "RTC 32KHz output off."
+                                    putsUART1(RTC32KHZOFF);                     //display "RTC 32KHz output off."
                                     while (BusyUART1());
                                     RxData = 0;
                                     break;
                                     
-                                case four:                                      //Test Excitation    VER E
+                                case four:                                      //Test Excitation    
                                     crlf();
                                     putsUART1(_5VEXCON);                        //display "Excitation on."
                                     while (BusyUART1());   
                                     
-                                    pluckON();                                  //REV CB 
-                                    //_EXC_EN=1;
-                                    //V12_EXC=0;   
+                                    pluckON();                                   
                                     _3VX_on();                                  //power-up analog circuitry  
-                                    //_EXC_EN=0;                                  //Enable the Excitation power supply
                                     IFS0bits.U1RXIF = 0;                        //clear the UART1 interrupt flag
                                     
                                     while (!IFS0bits.U1RXIF)                    //wait until a key is pressed
                                     {
                                         pluckPOS();
-                                        //delay(332);                             //500uS positive alternation  REM REV AE
-                                        delay(1220);                            //REV CB
+                                        delay(1220);                            
                                         pluckNEG();
-                                        //delay(332);                             //500uS negative alternation  REM REV AE
-                                        delay(1220);                            //REV CB    
+                                        delay(1220);                               
                                     }
                                     IFS0bits.U1RXIF = 0;                        //clear the UART1 interrupt flag
                                     RxDataTemp = ReadUART1();                   //get the char from the UART buffer to clear it
                                                                         
                                     pluckOFF();                                 //turn off the pluck drivers
-                                    //V12_EXC=0;     
-              
                                     _3VX_off();                                 //power-down the analog circuitry
-                                    //_EXC_EN=0;
                                     putcUART1(0x0D);                            //<CR>
                                     while (BusyUART1());
                                     putsUART1(_5VEXCOFF);                       //display "Excitation off."
@@ -3855,60 +3787,56 @@ void CMDcomm(void)
                                     RxData = 0;
                                     break;
                                     
-                                case five:                                      //REV G
-                                    ADPCFG = 0; //all analog channels
-                                    //ADCON2=0;                                 //VDD & VSS are references
+                                case five:                                      
+                                    ADPCFG = 0;                                 //all analog channels
                                     pluckOFF();
-                                    //_EXC_EN=1;
-                                    
-                                    //REV H:
-//******************************************************************************                                    
+                                 
                                     while(testmenuBUF[0]!=capX)
                                     {
                                         crlf();                                     
                                         putsUART1(_selectGT);                       
                                         while(BusyUART1());                         
                                     
-                                        for (i = 0; i < 2; i++) //clear the buffer  
+                                        for (i = 0; i < 2; i++)                 //clear the buffer  
                                         {
                                             testmenuBUF[i] = 0;
                                         }
                                         i=0;
                                         
-                                        while (1) //put chars in buffer until <CR> is received  
+                                        while (1)                               //put chars in buffer until <CR> is received  
                                         {
                                             while (!DataRdyUART1() && !U1STAbits.FERR && !U1STAbits.PERR && !U1STAbits.OERR); 
 
-                                            RxData = ReadUART1(); //get the char from the USART buffer
+                                            RxData = ReadUART1();               //get the char from the USART buffer
                                             if (RxData != cr && RxData != escape) 
                                             {
-                                                putcUART1(RxData); //echo char (except <CR>) to terminal
+                                                putcUART1(RxData);              //echo char (except <CR>) to terminal
                                                 while (BusyUART1());
                                             }
 
-                                            if (RxData == 0x08) //decrement buffer index if backspace is received
+                                            if (RxData == 0x08)                 //decrement buffer index if backspace is received
                                             {
                                                 i--;
-                                                putcUART1(space); //clear the previous character
+                                                putcUART1(space);               //clear the previous character
                                                 while (BusyUART1());
                                                 putcUART1(0x08);
                                                 while (BusyUART1());
                                             }
 
-                                            if (i < 0) //don't let buffer index go below zero
+                                            if (i < 0)                          //don't let buffer index go below zero
                                                 i = 0;
 
-                                            if (RxData != 0x08 && i < 3) //as long as char is not backspace and index is <2	
+                                            if (RxData != 0x08 && i < 3)        //as long as char is not backspace and index is <2	
                                             {
-                                                testmenuBUF[i] = RxData; //store the received char in the buffer
+                                                testmenuBUF[i] = RxData;        //store the received char in the buffer
                                                 i++;
                                                 if (i > 2)
                                                     i = 0;
                                             }
 
-                                            if (RxData == cr) //CR received - buffer is ready
+                                            if (RxData == cr)                   //CR received - buffer is ready
                                             {
-                                                RxData = 0; //clear the receive buffer
+                                                RxData = 0;                     //clear the receive buffer
                                                 break;
                                             }
                                         }
@@ -3924,14 +3852,14 @@ void CMDcomm(void)
                                                 crlf();
                                                 putsUART1(_wrong);
                                                 while(BusyUART1());
-                                                for (i = 0; i < 2; i++) //clear the buffer  
+                                                for (i = 0; i < 2; i++)         //clear the buffer  
                                                 {
                                                     testmenuBUF[i] = 0;
                                                 }
                                             }
                                                                             
                                     }
-//******************************************************************************                                    
+                          
                                     if(testmenuBUF[0]==capX)                    //exit back to main test menu
                                     {
                                         testmenuBUF[0]=0;
@@ -3965,14 +3893,14 @@ void CMDcomm(void)
                                     while (BusyUART1());
                                     crlf();
                                     _3VX_on();                                  //power-up analog circuitry 
-                                    LC2CONTROL2.flags2.uCclock=1;               //set flag for HSPLL osc    REV CF
+                                    LC2CONTROL2.flags2.uCclock=1;               //set flag for HSPLL osc    
                                     enableVWchannel(testmenuBUF[0]-0x30);                      
                                     IFS0bits.U1RXIF = 0;                        //clear the UART1 interrupt flag
                                     while (!IFS0bits.U1RXIF);                    //wait until a key is pressed
                                     IFS0bits.U1RXIF = 0;                        //KEY PRESSED - clear the UART1 interrupt flag
                                     RxDataTemp = ReadUART1();                   //get the char from the UART buffer to clear it
                                     disableVWchannel();                         //turn off the VW channel
-                                    LC2CONTROL2.flags2.uCclock=0;               //Reset the flag    REV CF
+                                    LC2CONTROL2.flags2.uCclock=0;               //Reset the flag    
                                     _3VX_off();                                 //power-down the analog circuitry 
                                     putcUART1(0x0D);                            //<CR>
                                     while (BusyUART1());
@@ -3985,25 +3913,24 @@ void CMDcomm(void)
                                     
                                 case capX:
                                     RxData = 0;
-                                    break; //exit Test Menu
+                                    break;                                      //exit Test Menu
 
                                 default:
                                     RxData = 0;
                                     break;
-                            } //end of switch(buffer[0])
+                            }                                                   //end of switch(buffer[0])
 
                             if (RxData == 0) {
-                                //delay(320000); //a little aesthetic delay       //REV F   REM REV AE
-                                delay(1280000);                                 //REV AE
-                                crlf(); //put space between tests
+                                delay(1280000);                                 
+                                crlf();                                         //put space between tests
                                 crlf();
                                 crlf();
                             }
-                        } //end of while(testmenuBUF[0]!=capX)
-                        testmenuBUF[0] = 0; //clear the buffer
-                        _3VX_off();                                             //REV F                           
+                        }                                                       //end of while(testmenuBUF[0]!=capX)
+                        testmenuBUF[0] = 0;                                     //clear the buffer
+                        _3VX_off();                                                                       
                         break;
-                    } //end of if(buffer[1]==capE && buffer[2]==capS && buffer[3]==capT)
+                    }                                                           //end of if(buffer[1]==capE && buffer[2]==capS && buffer[3]==capT)
                     
 					if((isdigit(buffer[1]) && buffer[2]==slash) | (isdigit(buffer[1]) && isdigit(buffer[2]) && 	buffer[3]==slash))
 							channel=getChannel();                               //get the current channel #		
@@ -4019,8 +3946,7 @@ void CMDcomm(void)
                     
 					Thermtype=getThermtype();                                   //Get the thermistor type
 
-                    //if(Thermtype==0 | Thermtype==1 | Thermtype==2)            REM REV 1.8
-                    if(Thermtype==0 | Thermtype==1 | Thermtype==2 | Thermtype==3)   //REV 1.8     
+                    if(Thermtype==0 | Thermtype==1 | Thermtype==2 | Thermtype==3)       
                         setChannelThermtype(channel,Thermtype);                 //Assign the Thermistor type to the channel		
 
 					displayMUX(channel);
@@ -4030,15 +3956,15 @@ void CMDcomm(void)
                     //***********************************************************************************************************
 
 
-                case capV: //Lithium Cell Voltage
+                case capV:                                                      //Lithium Cell Voltage
 
-                    if (buffer[1] == capL && buffer[2] == cr) //VL<CR>
+                    if (buffer[1] == capL && buffer[2] == cr)                   //VL<CR>
                     {
                         crlf();
-                        lithBatreading = take_analog_reading(95); //get the lithium coin cell voltage
-                        write_Int_FRAM(BatteryReading,lithBatreading);          //REV CK
-                        putsUART1(LithiumVoltage); //display "Lithium Cell Voltage ="
-                        Lithiumreading = (((Vref * lithBatreading) / 4096.0) * mullith3V); //convert to voltage	lithBatreading; VER 6.0.0
+                        lithBatreading = take_analog_reading(95);               //get the lithium coin cell voltage
+                        write_Int_FRAM(BatteryReading,lithBatreading);          
+                        putsUART1(LithiumVoltage);                              //display "Lithium Cell Voltage ="
+                        Lithiumreading = (((Vref * lithBatreading) / 4096.0) * mullith3V); //convert to voltage	lithBatreading; 
                         while (BusyUART1());
                         sprintf(trapBUF, "%.2f", Lithiumreading);
                         putsUART1(trapBUF);
@@ -4048,13 +3974,13 @@ void CMDcomm(void)
                         break;
                     }
 
-                    if (buffer[1] == three && buffer[2] == cr) //V3<CR>
+                    if (buffer[1] == three && buffer[2] == cr)                  //V3<CR>
                     {
                         crlf();
-                        mainBatreading = take_analog_reading(97); //get the 3V Battery Voltage
-                        write_Int_FRAM(BatteryReading,mainBatreading);          //REV CK
-                        putsUART1(THREEV); //display "3V Battery Voltage ="
-                        batteryReading = (((Vref * mainBatreading) / 4096.0) * mul3V); //convert to voltage	lithBatreading; VER 6.0.2
+                        mainBatreading = take_analog_reading(97);               //get the 3V Battery Voltage
+                        write_Int_FRAM(BatteryReading,mainBatreading);          
+                        putsUART1(THREEV);                                      //display "3V Battery Voltage ="
+                        batteryReading = (((Vref * mainBatreading) / 4096.0) * mul3V); //convert to voltage	lithBatreading; 
                         while (BusyUART1());
                         sprintf(trapBUF, "%.2f", batteryReading);
                         putsUART1(trapBUF);
@@ -4067,10 +3993,10 @@ void CMDcomm(void)
                     if (buffer[1] == one && buffer[2] == two && buffer[3] == cr) //V12<CR>
                     {
                         crlf();
-                        mainBatreading = take_analog_reading(87); //get the 12V Battery Voltage
-                        write_Int_FRAM(BatteryReading,mainBatreading);          //REV CK
-                        putsUART1(TWELVEV); //display "12V Battery Voltage ="
-                        batteryReading = (((Vref * mainBatreading) / 4096.0) * mul12V); //convert to voltage    VER 6.0.2
+                        mainBatreading = take_analog_reading(87);               //get the 12V Battery Voltage
+                        write_Int_FRAM(BatteryReading,mainBatreading);          
+                        putsUART1(TWELVEV);                                     //display "12V Battery Voltage ="
+                        batteryReading = (((Vref * mainBatreading) / 4096.0) * mul12V); //convert to voltage    V
                         while (BusyUART1());
                         sprintf(trapBUF, "%.2f", batteryReading);
                         putsUART1(trapBUF);
@@ -4081,86 +4007,7 @@ void CMDcomm(void)
 
                     break;
 
-                    /*  REM VER 6.0.5:
-            case capU:
 
-                        if(buffer[1]==capF && buffer[2]==cr)				//Update Firmware
-                        {
-                            if(LC2CONTROL.flags.Logging | LC2CONTROL2.flags2.Waiting)
-                            {
-                                crlf();
-                                putsUART1(FUWhileLogging);
-                                while(BusyUART1());
-                                break;
-                }							
-
-                crlf();
-                putsUART1(UpdateFirmware);						//Update Firmware(Y/N)?
-                while(BusyUART1());
-
-                while(!DataRdyUART1() && !U1STAbits.FERR && !U1STAbits.PERR && !U1STAbits.OERR && !IFS1bits.T5IF);	//wait for response
-                if(U1STAbits.FERR | U1STAbits.PERR | U1STAbits.OERR)
-                                handleCOMError();							//if communications error
-
-                response=ReadUART1();							//get the char from the USART buffer
-                putcUART1(response);							//echo char to terminal
-                while(BusyUART1());
-
-                while(!DataRdyUART1() && !U1STAbits.FERR && !U1STAbits.PERR && !U1STAbits.OERR && !IFS1bits.T5IF);	
-                if(U1STAbits.FERR | U1STAbits.PERR | U1STAbits.OERR)
-                                handleCOMError();							//if communications error
-
-                RxData=ReadUART1();								//RxData contains user response
-
-                if(response==capY && RxData==cr)				//yes, so wait for 0xC1 from TinyBLD
-                {
-                                shutdownTimer(FUTimeOut);					//start 30S background timer
-                                crlf();
-                                putsUART1(WaitingForUpdate);				//"Waiting for Update..."
-                                while(BusyUART1());
-
-                                while(!DataRdyUART1() && !U1STAbits.FERR && !U1STAbits.PERR && !U1STAbits.OERR && !IFS1bits.T5IF);
-                                if(U1STAbits.FERR | U1STAbits.PERR | U1STAbits.OERR)
-                                    handleCOMError();							//if communications error
-
-                                if(IFS1bits.T5IF)							//timed-out
-                                {
-                                    crlf();
-                    putsUART1(TimeOutFirmwareNotUpdated);
-                    while(BusyUART1());
-                    break;
-                                }
-
-                                RxData=ReadUART1();								//RxData should contain 0xC1
-
-                                if(RxData==0xC1)								//received 0xC1
-                                {
-                                    LC2CONTROL.flags.Reset=0;					//make sure Reset flag is clear
-                    LC2CONTROL2.flags2.FU=1;						//set the FU flag
-                    FRAMTest=write_intFRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM
-                    FRAMTest=write_intFRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);	//store flag in FRAM
-                    asm("RESET");								//reset processor
-                                }
-                                else
-                                {
-                                    crlf();
-                    putsUART1(FirmwareNotUpdated);					//"Firmware not Updated"
-                    while(BusyUART1());
-                    break;
-                                }
-                            }
-                else
-                {
-                                crlf();
-                                putsUART1(FirmwareNotUpdated);					//"Firmware not Updated"
-                                while(BusyUART1());
-                                break;
-                }
-
-                        }
-                     */
-
-                    //***********************************************************************************************************
                 case capW: //Wrap Format
 
                     if (buffer[1] == capF && buffer[2] == zero && buffer[3] == cr) //stop logging when memory full
