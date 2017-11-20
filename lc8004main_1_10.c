@@ -2989,84 +2989,71 @@ void CMDcomm(void)
 
                 case capO:
 
-                    shutdownTimer(TimeOut);                                     //Reset 15S timer   REV Z
+                    shutdownTimer(TimeOut);                                     //Reset 15S timer   
                     while (BusyUART1());
 
-                    if (buffer[1] == cr) //O<CR> received
+                    if (buffer[1] == cr)                                        //O<CR> received
                     {
-                        controlPortStatus(1);                                   //display control port status     REV AG
+                        controlPortStatus(1);                                   //display control port status     
                         break;
                     }
 
-                    if (buffer[1] == zero && buffer[2] == cr) //O0<CR> received
+                    if (buffer[1] == zero && buffer[2] == cr)                   //O0<CR> received
                     {
-                        disableOP();                                            //REV CC
+                        disableOP();                                            
                         break;
                     }
 
                     if (buffer[1] == one && buffer[2] == cr)                    //O1<CR> received
                     {
-                        enableOP();                                             //REV CC
+                        enableOP();                                             
                         break;
                     }
 
-                    if (buffer[1] == capD && buffer[2] == cr) //OD<CR> received
+                    if (buffer[1] == capD && buffer[2] == cr)                   //OD<CR> received
                     {
-                        O_D();                                                  //REV CJ
-                        //PORT_CONTROL.flags.PortTimerEN = 0;                     //clear Port Timer enable flag    REM REV CJ
-                        //write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);	//store flag in FRAM`
-                        //S_1.status1flags.CP_Timer=0;                              //clear the MODBUS status flag    
-                        //write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
-                        //disableAlarm(Alarm2); //disable the Alarm2 interrupt		
+                        O_D();                                                  
                         controlPortStatus(1);                                   //display control port status   
                         break;
                     }
 
-                    if (buffer[1] == capE && buffer[2] == cr) //OE<CR> received
+                    if (buffer[1] == capE && buffer[2] == cr)                   //OE<CR> received
                     {
-                        O_E();                                                  //REV CJ
-                        //PORT_CONTROL.flags.PortTimerEN = 1;                     //set Port Timer enable flag  REM REV CJ
-                        //PORT_CONTROL.flags.BluetoothTimerEN = 0;                //clear Bluetooth Timer enable flag 
-                        //PORT_CONTROL.flags.CPTime = 0;                          //clear the CPtime flag
-                        //write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);	//store flag in FRAM  
-                        //S_1.status1flags.CP_Timer=1;                              //set the MODBUS status flag    
-                        //write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                        
-                        //delay(4000);                                            //REV AE    if this delay required? TEST
-                        //enableAlarm(Alarm2); //enable the Alarm2 interrupt
-                        controlPortStatus(1);                                   //display control port status   REV AG
+                        O_E();                                                  
+                        controlPortStatus(1);                                   //display control port status   
                         break;
                     }
 
                     if (buffer[1] == capT && isdigit(buffer[2]))                //Control Port Start time being entered
                     {
                         crlf();
-                        PORT_CONTROL.flags.SetAlarm2StopTime=0;                 //make sure stop time flag is clear REV N
-                        PORT_CONTROL.flags.SetAlarm2Time = 1; //set the flag
-                        Buf2DateTime(buffer); //set the RTC Alarm2 time
-                        PORT_CONTROL.flags.SetAlarm2Time = 0; //clear the flag
-                        controlPortStatus(0);                                   //display Timer status  REV AG
+                        PORT_CONTROL.flags.SetAlarm2StopTime=0;                 //make sure stop time flag is clear 
+                        PORT_CONTROL.flags.SetAlarm2Time = 1;                   //set the flag
+                        Buf2DateTime(buffer);                                   //set the RTC Alarm2 time
+                        PORT_CONTROL.flags.SetAlarm2Time = 0;                   //clear the flag
+                        controlPortStatus(0);                                   //display Timer status  
                         break;
                     }
 
                     if (buffer[1] == capP && isdigit(buffer[2]))                //Control Port Stop time being entered
                     {
                         crlf();
-                        PORT_CONTROL.flags.SetAlarm2Time=0;                     //make sure on time flag is clear   REV N
+                        PORT_CONTROL.flags.SetAlarm2Time=0;                     //make sure on time flag is clear   
                         PORT_CONTROL.flags.SetAlarm2StopTime = 1;               //set the SetAlarm2StopTime flag		
                         Buf2DateTime(buffer);                                   //get Logging Stop Time from buffer
                         PORT_CONTROL.flags.SetAlarm2StopTime = 0;               //clear the SetAlarm2StopTime flag
                         if (LC2CONTROL.flags.ERROR) 
                         {
-                            LC2CONTROL.flags.ERROR = 0; //clear the ERROR flag
-                            PORT_CONTROL.flags.SetAlarm2StopTime = 0; //clear the Alarm2StopTime flag
+                            LC2CONTROL.flags.ERROR = 0;                         //clear the ERROR flag
+                            PORT_CONTROL.flags.SetAlarm2StopTime = 0;           //clear the Alarm2StopTime flag
                             write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);	//store flag in FRAM  
                             break;
                         }
-                        LC2CONTROL2.flags2.SetStopTime = 0; //clear the SetStopTime flag
+                        LC2CONTROL2.flags2.SetStopTime = 0;                     //clear the SetStopTime flag
 
-                        write_Int_FRAM(PortOffHoursaddress,PortOffHours);	//store Port OFF time in FRAM 
+                        write_Int_FRAM(PortOffHoursaddress,PortOffHours);       //store Port OFF time in FRAM 
                         write_Int_FRAM(PortOffMinutesaddress,PortOffMinutes);  
-                        controlPortStatus(0);                                   //display Timer status  REV AG
+                        controlPortStatus(0);                                   //display Timer status  
                         break;
                     }
 
@@ -3075,71 +3062,71 @@ void CMDcomm(void)
 
                 case capP:
 
-                    shutdownTimer(TimeOut);                                     //Reset 15S timer   REV Z
+                    shutdownTimer(TimeOut);                                     //Reset 15S timer   
                     while (BusyUART1());
 
-                    if (buffer[1] == cr) //P<CR> received
+                    if (buffer[1] == cr)                                        //P<CR> received
                     {
                         crlf();
                         if (!DISPLAY_CONTROL.flags.BPD)
-                            displayMemoryStatus(); //display memory status from FRAM
+                            displayMemoryStatus();                              //display memory status from FRAM
                         else
-                            displayTemporaryStatus(tempUserPosition); //manipulating the pointers
+                            displayTemporaryStatus(tempUserPosition);           //manipulating the pointers
 
                         break;
                     }
 
                     if (isdigit(buffer[1])) {
-                        memoryStatus=read_Int_FRAM(MemoryStatusaddress);//get Memory Status (MS) pointer 
-                        tempUserPosition = Buffer2Decimal(buffer, i, 0); //Get the requested pointer position
-                        if (tempUserPosition > memoryStatus) //invalid input
+                        memoryStatus=read_Int_FRAM(MemoryStatusaddress);        //get Memory Status (MS) pointer 
+                        tempUserPosition = Buffer2Decimal(buffer, i, 0);        //Get the requested pointer position
+                        if (tempUserPosition > memoryStatus)                    //invalid input
                             break;
-                        DISPLAY_CONTROL.flags.BPD = 1; //set the P_D mode flag
-                        DISPLAY_CONTROL.flags.newPointer = 1; //set the pointer updated flag
-                        DISPLAY_CONTROL.flags.Scan = 1; //set the Scan flag
-                        DISPLAY_CONTROL.flags.Display = 0; //clear Display flag if previously enabled
+                        DISPLAY_CONTROL.flags.BPD = 1;                          //set the P_D mode flag
+                        DISPLAY_CONTROL.flags.newPointer = 1;                   //set the pointer updated flag
+                        DISPLAY_CONTROL.flags.Scan = 1;                         //set the Scan flag
+                        DISPLAY_CONTROL.flags.Display = 0;                      //clear Display flag if previously enabled
                         write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//store flags in FRAM 
-                        displayTemporaryStatus(tempUserPosition); //display temporary memory status
+                        displayTemporaryStatus(tempUserPosition);               //display temporary memory status
                         break;
                     }
 
                     break;
 
 
-                case capR: //R received
+                case capR:                                                      //R received
 
-                    shutdownTimer(TimeOut);                                     //Reset 15S timer   REV Z
+                    shutdownTimer(TimeOut);                                     //Reset 15S timer   
                     while (BusyUART1());
 
-                    if (buffer[1] == cr) //CR received
+                    if (buffer[1] == cr)                                        //CR received
                     {
                         crlf();
-                        putsUART1(RUsure); //Are you sure(Y/N)?
+                        putsUART1(RUsure);                                      //Are you sure(Y/N)?
 
                         while (!DataRdyUART1() && !U1STAbits.FERR && !U1STAbits.PERR && !U1STAbits.OERR && !IFS3bits.T9IF);
                         if (U1STAbits.FERR | U1STAbits.PERR | U1STAbits.OERR)
-                            handleCOMError(); //if communications error
+                            handleCOMError();                                   //if communications error
 
-                        response = ReadUART1(); //get the char from the USART buffer
-                        putcUART1(response); //echo char to terminal					
+                        response = ReadUART1();                                 //get the char from the USART buffer
+                        putcUART1(response);                                    //echo char to terminal					
                         while (BusyUART1());
 
                         while (!DataRdyUART1() && !U1STAbits.FERR && !U1STAbits.PERR && !U1STAbits.OERR && !IFS3bits.T9IF);
                         if (U1STAbits.FERR | U1STAbits.PERR | U1STAbits.OERR)
-                            handleCOMError(); //if communications error
+                            handleCOMError();                                   //if communications error
 
-                        RxData = ReadUART1(); //RxData contains user response
+                        RxData = ReadUART1();                                   //RxData contains user response
 
-                        if (response == capY && RxData == cr) //yes, so clear memory
+                        if (response == capY && RxData == cr)                   //yes, so clear memory
                         {
                             R();
                             crlf();
-                            putsUART1(MEMcleared); //Memory cleared
+                            putsUART1(MEMcleared);                              //Memory cleared
                             while (BusyUART1());
                             break;
                         } else {
                             crlf();
-                            putsUART1(MEMnotcleared); //Memory not cleared
+                            putsUART1(MEMnotcleared);                           //Memory not cleared
                             while (BusyUART1());
                             break;
                         }
@@ -3155,20 +3142,14 @@ void CMDcomm(void)
                         } else {
                             putsUART1(Resetting);
                             while (BusyUART1());
-                            crlf();                                             //REV CH
-                            RST();                                            //REV CH
+                            crlf();                                             
+                            RST();                                            
                         }
                     }
                     
-                    if (buffer[1] == capS && buffer[2] == capN && buffer[3] == cr) //"RSN" received REV 1.3
-                        ReadSN();                                               //get the gage serial number REV 1.9
-                    
-                    //if(PORT_CONTROL.flags.temp)                               REM REV 1.9
-                    //{                                                         REM REV 1.9
-                    //    IEC1bits.INT1IE=1;                                    REM REV 1.9
-                    //}                                                         REM REV 1.9
-                    
-                    //Restore Register values:                                  REV 1.4
+                    if (buffer[1] == capS && buffer[2] == capN && buffer[3] == cr) //"RSN" received 
+                        ReadSN();                                               //get the gage serial number 
+                    //Restore Register values:                                  
                     T6CONbits.T32=0;                                            //Reset TMR6/7 for 16bit mode   
                     PR6=0;                                                      //Reset PR6/7/8   
                     PR7=0;  
@@ -3185,7 +3166,7 @@ void CMDcomm(void)
                     break;
 
                 case capS:
-                    shutdownTimer(TimeOut);                                     //Reset 15S timer   REV Z
+                    shutdownTimer(TimeOut);                                     //Reset 15S timer   
                     while (BusyUART1());
 
                     if (buffer[1] == cr) //S received
@@ -3197,7 +3178,7 @@ void CMDcomm(void)
                                 ||
                                 (!DISPLAY_CONTROL.flags.newPointer && !DISPLAY_CONTROL.flags.BPD &&
                                 !DISPLAY_CONTROL.flags.Backup && !DISPLAY_CONTROL.flags.Scan))
-                            displayMemoryStatus(); //Display the memory status from FRAM
+                            displayMemoryStatus();                              //Display the memory status from FRAM
 
                         if ((DISPLAY_CONTROL.flags.newPointer && DISPLAY_CONTROL.flags.BPD &&
                                 !DISPLAY_CONTROL.flags.Backup && DISPLAY_CONTROL.flags.Scan)
@@ -3211,70 +3192,67 @@ void CMDcomm(void)
 
                         if (!DISPLAY_CONTROL.flags.newPointer && DISPLAY_CONTROL.flags.BPD &&
                                 !DISPLAY_CONTROL.flags.Backup && DISPLAY_CONTROL.flags.Scan)
-                            displayTemporaryStatus(id); //working with P,B and D commands
+                            displayTemporaryStatus(id);                         //working with P,B and D commands
 
                         crlf();
 
-                        //VER 6.0.0:
+                        
                         if (MUX4_ENABLE.mflags.mux16_4 == Single)
                             putsUART1(MUX1);
-                        if (MUX4_ENABLE.mflags.mux16_4 == VW4) //Display MUX type  VER 6.0.7
+                        if (MUX4_ENABLE.mflags.mux16_4 == VW4)                  //Display MUX type  
                             putsUART1(MUX4);
-                        if (MUX4_ENABLE.mflags.mux16_4 == VW8) //VER 6.0.11
+                        if (MUX4_ENABLE.mflags.mux16_4 == VW8) 
                             putsUART1(MUX8VW);
                         if (MUX4_ENABLE.mflags.mux16_4 == VW16)
                             putsUART1(MUX16);
-                        if (MUX4_ENABLE.mflags.mux16_4 == VW32) //VER 6.0.11
+                        if (MUX4_ENABLE.mflags.mux16_4 == VW32) 
                             putsUART1(MUX32VW);
-                        if (MUX4_ENABLE.mflags.mux16_4 == TH8) //VER 6.0.7
+                        if (MUX4_ENABLE.mflags.mux16_4 == TH8) 
                             putsUART1(MUX8);
-                        if (MUX4_ENABLE.mflags.mux16_4 == TH32) //VER 6.0.9
+                        if (MUX4_ENABLE.mflags.mux16_4 == TH32) 
                             putsUART1(MUX32);
 
 
                         while (BusyUART1());
                         crlf();
 
-                        putsUART1(Scaninterval); //Scan interval:
+                        putsUART1(Scaninterval);                                //Scan interval:
                         while (BusyUART1());
-                        ScanInterval = hms2s(); //convert h,m,s to s
-                        displayScanInterval(ScanInterval, 1); //display scan interval in seconds
+                        ScanInterval = hms2s();                                 //convert h,m,s to s
+                        displayScanInterval(ScanInterval, 1);                   //display scan interval in seconds
 
 
                         if (LC2CONTROL.flags.Logging && !LC2CONTROL.flags.LoggingStartTime && !LC2CONTROL2.flags2.Waiting) 
                         {
-                            crlf(); //display logging status
-                            putsUART1(Loggingstarted); //Logging Started
+                            crlf();                                             //display logging status
+                            putsUART1(Loggingstarted);                          //Logging Started
                         }
 
                         if (!LC2CONTROL.flags.Logging && !LC2CONTROL.flags.LoggingStopTime &&!LC2CONTROL.flags.LoggingStartTime) {
-                            crlf(); //display logging status
-                            putsUART1(Loggingstopped); //Logging Stopped
+                            crlf();                                             //display logging status
+                            putsUART1(Loggingstopped);                          //Logging Stopped
                         }
                         while (BusyUART1());
 
 
-                        if (LC2CONTROL2.flags2.Waiting) //display logging start time	
+                        if (LC2CONTROL2.flags2.Waiting)                         //display logging start time	
                         {
                             crlf();
                             displayLoggingWillStart();
-                            while (BusyUART1());                                    //REV BE
+                            while (BusyUART1());                                    
                         }
 
-                        if (LC2CONTROL.flags.LoggingStopTime) //display logging stop time
+                        if (LC2CONTROL.flags.LoggingStopTime)                   //display logging stop time
                         {
-                            //if(LC2CONTROL.flags.Logging)                        //REV CI
-                            //{
-                                LC2CONTROL2.flags2.SetStopTime = 1; //set the flag to format the stop time
-                                crlf();
-                                displayLoggingWillStop();
-                                while (BusyUART1());                                    //REV BE
-                                LC2CONTROL2.flags2.SetStopTime = 0; //reset the flag
-                            //}
+                            LC2CONTROL2.flags2.SetStopTime = 1;                 //set the flag to format the stop time
+                            crlf();
+                            displayLoggingWillStop();
+                            while (BusyUART1());                                    
+                            LC2CONTROL2.flags2.SetStopTime = 0;                 //reset the flag
                         }
                         
 
-                        crlf(); //display log interval status
+                        crlf();                                                 //display log interval status
 
                         if (LC2CONTROL.flags.LogInterval)
                             putsUART1(Logenabled);
@@ -3282,7 +3260,7 @@ void CMDcomm(void)
                             putsUART1(Logdisabled);
                         while (BusyUART1());
 
-                        crlf(); //display monitor status
+                        crlf();                                                 //display monitor status
 
                         if (LC2CONTROL.flags.Monitor)
                             putsUART1(Monitorenabled);
@@ -3293,66 +3271,66 @@ void CMDcomm(void)
                         break;
                     }
 
-                    if (buffer[1] == capC && buffer[2] == cr) //SC received
+                    if (buffer[1] == capC && buffer[2] == cr)                   //SC received
                     {
                         crlf();
-                        putsUART1(Scaninterval); //Scan Interval:
+                        putsUART1(Scaninterval);                                //Scan Interval:
                         while (BusyUART1());
-                        ScanInterval = hms2s(); //convert h,m,s to s
-                        displayScanInterval(ScanInterval, 1); //display scan interval in seconds
+                        ScanInterval = hms2s();                                 //convert h,m,s to s
+                        displayScanInterval(ScanInterval, 1);                   //display scan interval in seconds
                         break;
                     }
 
-                    if (buffer[1] == capC && buffer[2] != cr) //Enter Scan Interval
+                    if (buffer[1] == capC && buffer[2] != cr)                   //Enter Scan Interval
                     {
                         crlf();
-                        testScanInterval = 0; //set testScanInterval to 0
-                        LC2CONTROL.flags.ScanError = 0; //clear the flag	
+                        testScanInterval = 0;                                   //set testScanInterval to 0
+                        LC2CONTROL.flags.ScanError = 0;                         //clear the flag	
 
                         if ((buffer[2] >= zero && buffer[2] <= nine) && buffer[3] == cr) //SC#<CR>?
                         {
-                            ScanInterval = buffer[2] - 0x30; //convert to integer
-                            testScanInterval = checkScanInterval(); //test for minimum allowable Scan Interval
+                            ScanInterval = buffer[2] - 0x30;                    //convert to integer
+                            testScanInterval = checkScanInterval();             //test for minimum allowable Scan Interval
                         }
 
                         if ((buffer[2] >= zero && buffer[2] <= nine) && (buffer[3] >= zero && buffer[3] <= nine) && buffer[4] == cr) //SC##<CR>?
                         {
-                            tensScanInterval = (buffer[2] - 0x30)*10; //scan interval 10's convert to integer
-                            ScanInterval = buffer[3] - 0x30; //scan interval 1's convert to integer
-                            ScanInterval += tensScanInterval; //add 10's to 1's
-                            testScanInterval = checkScanInterval(); //test for minimum allowable Scan Interval
+                            tensScanInterval = (buffer[2] - 0x30)*10;           //scan interval 10's convert to integer
+                            ScanInterval = buffer[3] - 0x30;                    //scan interval 1's convert to integer
+                            ScanInterval += tensScanInterval;                   //add 10's to 1's
+                            testScanInterval = checkScanInterval();             //test for minimum allowable Scan Interval
                         }
 
-                        if (testScanInterval) //if error
+                        if (testScanInterval)                                   //if error
                         {
-                            putsUART1(Minscanerror); //ERROR: Minumum Scan Interval for this configuration is :
+                            putsUART1(Minscanerror);                            //ERROR: Minumum Scan Interval for this configuration is :
                             while (BusyUART1());
-                            sprintf(trapBUF, "%d", testScanInterval); //minimum scan interval in seconds
+                            sprintf(trapBUF, "%d", testScanInterval);           //minimum scan interval in seconds
                             putsUART1(trapBUF);
                             while (BusyUART1());
                             putsUART1(Seconds);
                             while (BusyUART1());
-                        } else //scan interval is ok
+                        } else                                                  //scan interval is ok
                         {
-                            hms(Buffer2Decimal(buffer, i, 1), 0); //convert to hours,minutes,seconds
-                            ScanInterval = hms2s(); //convert h,m,s to s
-                            putsUART1(Scaninterval); //Scan Interval:
+                            hms(Buffer2Decimal(buffer, i, 1), 0);               //convert to hours,minutes,seconds
+                            ScanInterval = hms2s();                             //convert h,m,s to s
+                            putsUART1(Scaninterval);                            //Scan Interval:
                             while (BusyUART1());
-                            displayScanInterval(ScanInterval, 1); //display scan interval in seconds
+                            displayScanInterval(ScanInterval, 1);               //display scan interval in seconds
 
                             if (LC2CONTROL.flags.Logging && !LC2CONTROL2.flags2.Waiting) //is datalogger logging?
                             {
-                                DISPLAY_CONTROL.flags.Shutup = 1; //don't allow message display
-                                stopLogging(); //stop and restart logging if it is	
+                                DISPLAY_CONTROL.flags.Shutup = 1;               //don't allow message display
+                                stopLogging();                                  //stop and restart logging if it is	
                                 if (DISPLAY_CONTROL.flags.Synch)
-                                    VWflagsbits.synch = 1; //set the synch flag
+                                    VWflagsbits.synch = 1;                      //set the synch flag
                                 crlf();
                                 startLogging();
                                 DISPLAY_CONTROL.flags.Shutup = 0;
                             }
                         }
 
-                        for (i = 0; i < 30; i++) //clear the buffer
+                        for (i = 0; i < 30; i++)                                //clear the buffer
                         {
                             buffer[i] = 0;
                         }
@@ -3364,36 +3342,12 @@ void CMDcomm(void)
 
                     if (buffer[1] == capP && buffer[2] == cr) //SP received
                     {
-                        if(STOP())                                              //REV CF
+                        if(STOP())                                              
                             crlf();
-                        break;                                                  //REV CF
-                        
-                        /*REM REV CF
-                        crlf();
-
-                        if (!LC2CONTROL.flags.Logging && !LC2CONTROL.flags.LoggingStopTime &&!LC2CONTROL.flags.LoggingStartTime) {
-                            putsUART1(Loggingalreadystopped); //Logging already stopped!
-                            while (BusyUART1());
-                            break;
-                        }
-
-                        if (LC2CONTROL.flags.Logging || LC2CONTROL.flags.LoggingStartTime || LC2CONTROL.flags.LoggingStopTime) //is a logging flag set?
-                        {
-                            LC2CONTROL2.flags2.scheduled=0;                     //clear the scheduled flag  REV W
-                            write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);  //store in FRAM REV W
-                            stopLogging();
-                            if (!DISPLAY_CONTROL.flags.Shutup) {
-                                putsUART1(Loggingstopped); //Logging stopped
-                                while (BusyUART1());
-                            }
-                            break;
-                        }
-
-                        //configUARTsleep();    REM REV D
-                        */
+                        break;                                                  
                     }
 
-                    if (buffer[1] == capP && isdigit(buffer[2])) //Enter Stop Logging Time
+                    if (buffer[1] == capP && isdigit(buffer[2]))                //Enter Stop Logging Time
                     {
                         if (LC2CONTROL.flags.LogInterval) 
                         {
@@ -3407,67 +3361,26 @@ void CMDcomm(void)
 
                         if (!LC2CONTROL.flags.LoggingStartTime && !LC2CONTROL.flags.Logging) 
                         {
-                            putsUART1(Loggingalreadystopped); //Logging already stopped!
+                            putsUART1(Loggingalreadystopped);                   //Logging already stopped!
                             while (BusyUART1());
                             break;
                         }
                         
-                        STOPTIME();                                             //REV CM
-                        
-                        /*REM REV CM:
-                        LC2CONTROL.flags.LoggingStopTime = 1; //set the LoggingStopTime flag		
-                        write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM 
-                        S_1.status1flags._SP=1;                                    //set the MODBUS status flag    REV BF
-                        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                              
-                        LC2CONTROL2.flags2.SetStopTime = 1; //set the SetStopTime flag
-
-                        Buf2DateTime(buffer); //get Logging Stop Time from buffer
-
-                        if (LC2CONTROL.flags.ERROR) 
-                        {
-                            LC2CONTROL.flags.ERROR = 0; //clear the ERROR flag
-                            LC2CONTROL.flags.LoggingStopTime = 0; //clear the LoggingStopTime flag
-                            write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM  
-                            S_1.status1flags._SP=0;                                //clear the MODBUS status flag    REV BF
-                            write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);      
-                            LC2CONTROL2.flags2.SetStopTime = 0; //clear the SetStopTime flag
-                            break;
-                        }
-
-                        LC2CONTROL2.flags2.SetStopTime = 0; //clear the SetStopTime flag
-
-                        write_Int_FRAM(LoggingStopHoursaddress,LoggingStopHours);	//store logging stop time in FRAM 
-                        write_Int_FRAM(LoggingStopMinutesaddress,LoggingStopMinutes);  
-                        write_Int_FRAM(LoggingStopSecondsaddress,LoggingStopSeconds);  
-
-                        TotalStopSeconds = ((LoggingStopHours * 3600)+(LoggingStopMinutes * 60) + LoggingStopSeconds);
-                        TotalStartSeconds=read_longFRAM(TotalStartSecondsaddress); 
-
-                        if (TotalStopSeconds < TotalStartSeconds) //midnight rollover?	
-                            TotalStopSeconds += 86400; //compensate
-                        write_longFRAM(TotalStopSeconds,TotalStopSecondsaddress);	//store to FRAM   
-
-                        displayLoggingWillStart(); //display logging start time
-                        crlf();
-                        if(LC2CONTROL.flags.LoggingStopTime)                    //REV CI
-                            displayLoggingWillStop(); //display logging stop time
-                        */
-                        
+                        STOPTIME();                                             
                         break;
                     }
 
                     //**********************************************System Status************************************************
                     if (buffer[1] == capS && buffer[2] == cr) {
                         crlf();
-                        putsUART1(Trapcount); //Display value in Trapcount 
+                        putsUART1(Trapcount);                                   //Display value in Trapcount 
                         while (BusyUART1());
-                        trap=read_Int_FRAM(TrapRegisteraddress);		//TEST LC2MUX   
+                        trap=read_Int_FRAM(TrapRegisteraddress);                //TEST LC2MUX   
                         sprintf(trapBUF, "%d", trap);
                         putsUART1(trapBUF);
                         while (BusyUART1());
                         crlf();
                         
-                        //REV BC:
                         NAdata=read_Int_FRAM(MODBUSaddress);                    //read MODBUS Address from FRAM  
                         putsUART1(ModbusaddressIS);                             //"MODBUS Address:"
                         while (BusyUART1());
@@ -3475,28 +3388,9 @@ void CMDcomm(void)
                         putsUART1(NABUF);                                       //display MODBUS address
                         while (BusyUART1());
                         crlf();
-                        //******************************************************
-                        
-                        /*REM REV CH:
-                        NAdata=read_Int_FRAM(Netaddress);			//read Network Address from FRAM  
-                        putsUART1(NetworkaddressIS); //"Network address:"
-                        while (BusyUART1());
-                        sprintf(NABUF, "%d", NAdata); //format network address
-                        putsUART1(NABUF); //display network address
-                        while (BusyUART1());
-                        crlf();
 
-                        if (LC2CONTROL.flags.NetEnabled) {
-                            putsUART1(Networkenabled);
-                        } else {
-                            putsUART1(Networkdisabled);
-                        }
-                        while (BusyUART1());
-                        crlf();
-                        */
-                        
-                        if (LC2CONTROL.flags.TimeFormat) //0=hhmm format
-                        { //1=hh,mm format
+                        if (LC2CONTROL.flags.TimeFormat)                        //0=hhmm format
+                        {                                                       //1=hh,mm format
                             putsUART1(Timeformatcomma);
                         } else {
                             putsUART1(Timeformat);
@@ -3504,19 +3398,18 @@ void CMDcomm(void)
                         while (BusyUART1());
                         crlf();
 
-                        if (LC2CONTROL.flags.DateFormat) //0=julian date format
-                        { //1=month/day format
+                        if (LC2CONTROL.flags.DateFormat)                        //0=julian date format
+                        {                                                       //1=month/day format
                             putsUART1(Datemonthday);
                         } else {
                             putsUART1(Datejulian);
                         }
                         while (BusyUART1());
                         
-                        if(MUX4_ENABLE.mflags.mux16_4==Single)                  //if Single Channel   REV S
+                        if(MUX4_ENABLE.mflags.mux16_4==Single)                  //if Single Channel   
                         {
                             crlf();												
-                            //Thermtype=read_Int_FRAM(_4CHMuxCH1THaddress);           //read thermistor type		REM REV T
-                            Thermtype=read_Int_FRAM(CH1THaddress);           //read thermistor type	REV T
+                            Thermtype=read_Int_FRAM(CH1THaddress);              //read thermistor type	
                             if(Thermtype==2)                                        //2=High Temp 103JL1A thermistor	
                             {													
                                 putsUART1(Hightemp2);                               //High temp 103JL1A thermistor selected						
