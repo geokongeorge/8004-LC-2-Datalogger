@@ -16,9 +16,9 @@
 //	DATE:		11/20/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   1.10
-//	CHECKSUM:	0x6076  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x7e91  (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8800/30720   29%
-//	PGM(FLASH)MEM:  184251/261888 70%
+//	PGM(FLASH)MEM:  184242/261888 70%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -4008,12 +4008,12 @@ void CMDcomm(void)
                     break;
 
 
-                case capW: //Wrap Format
+                case capW:                                                      //Wrap Format
 
                     if (buffer[1] == capF && buffer[2] == zero && buffer[3] == cr) //stop logging when memory full
                     {
                         crlf();
-                        wrap_zero();                                            //REV CC
+                        wrap_zero();                                            
                         putsUART1(Loggingwillstopmemfull);
                         while (BusyUART1());
                         break;
@@ -4022,16 +4022,16 @@ void CMDcomm(void)
                     if (buffer[1] == capF && buffer[2] == one && buffer[3] == cr) //wrap memory when full
                     {
                         crlf();
-                        wrap_one();                                             //REV CC
+                        wrap_one();                                             
                         putsUART1(Loggingwillnotstopmemfull);
                         while (BusyUART1());
                         break;
                     }
 
-                    if (buffer[1] == capF && buffer[2] == cr) //WF<CR> received
+                    if (buffer[1] == capF && buffer[2] == cr)                   //WF<CR> received
                     {
                         crlf();
-                        shutdownTimer(TimeOut);                                 //Reset 15S timer   REV Z
+                        shutdownTimer(TimeOut);                                 //Reset 15S timer   
                         if (DISPLAY_CONTROL.flags.WrapMemory)
                             putsUART1(Loggingwillnotstopmemfull);
                         else
@@ -4043,18 +4043,17 @@ void CMDcomm(void)
                     break;
 
 
-                    //***********************************************************************************************************	
-                case capX: //take and display, but don't store a reading
+                case capX:                                                      //take and display, but don't store a reading
 
                     if (buffer[1] == cr) 
                     {
                         crlf();
-                        X();                                                    //REV CE
+                        X();                                                    
                     }
 
                     break;
 
-                case colon:                                                     //Enter MODBUS communications :::<cr>  VER BA
+                case colon:                                                     //Enter MODBUS communications :::<cr>  
                     
                     if (buffer[1] == colon && buffer[2] == colon && buffer[3]==cr)
                     {
@@ -4080,7 +4079,7 @@ void CMDcomm(void)
 
                         if (response == capY && RxData == cr)                   //yes, so reboot into MODBUS
                         {
-                            LC2CONTROL2.flags2.Modbus=1;                            //set the Modbus flag
+                            LC2CONTROL2.flags2.Modbus=1;                        //set the Modbus flag
                             write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);	//store flag in FRAM`
                             asm("RESET");                                       //reboot
                         } 
@@ -4094,89 +4093,7 @@ void CMDcomm(void)
                     
                     break;
                 
-                /* REM REV CH:
-                case pound: //prevent bus collision if networked and not shut down before	
-
-                    for (i = 1; buffer[i] != cr; i++) {
-                        if (!isdigit(buffer[i]))
-                            break; //ERROR - buffer[i] is not a digit
-                    }
-
-                    i--; //# of digits in network address
-
-                    switch (i) {
-                        case 1:
-                            NetAddress = buffer[1] - 0x30; //address 1-9
-                            break;
-                        case 2:
-                            tens = (buffer[1] - 0x30)*10; //address 10-99
-                            ones = buffer[2] - 0x30;
-                            NetAddress = tens + ones;
-                            break;
-                        case 3:
-                            hundreds = (buffer[1] - 0x30)*100; //address 100-256
-                            tens = (buffer[2] - 0x30)*10;
-                            ones = buffer[3] - 0x30;
-                            NetAddress = hundreds + tens + ones;
-                            break;
-                        default:
-                            break;
-                    }
-
-                    if (NetAddress <= 0 | NetAddress > 256) //invalid addresses
-                        break;
-
-                    StoredNetAddress=read_Int_FRAM(Netaddress);  
-
-                    if (NetAddress != StoredNetAddress && LC2CONTROL.flags.NetEnabled) //address doesn't match
-                    {
-                        crlf();
-                        IFS3bits.T9IF = 1; //set the T5IF to break out on CMDcomm() in main()
-                        DISPLAY_CONTROL.flags.Shutdown = 1; //set the Shutdown flag	
-                        return;
-                    }
-
-                    break;
-                    */
-                /*REM REV CP:    
-                case tilde: //select R1-R0 or R0-R1 format
-
-                    if (buffer[1] == tilde && buffer[2] == cr) //~~<CR> received
-                    {
-                        crlf();
-                        shutdownTimer(TimeOut);                                 //Reset 15S timer   REV Z
-
-                        if (LC2CONTROL2.flags2.R)
-                            putsUART1(R1);
-                        else
-                            putsUART1(R0);
-                        while (BusyUART1());
-                        break;
-                    }
-
-                    if (buffer[1] == tilde && buffer[2] == one && buffer[3] == cr) //~~1<CR> received
-                    {
-                        crlf();
-                        shutdownTimer(TimeOut);                                 //Reset 15S timer   REV Z
-
-                        LC2CONTROL2.flags2.R = 1; //set the R flag
-                        write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);	//store flag in FRAM`
-                        break;
-                    }
-
-                    if (buffer[1] == tilde && buffer[2] == zero && buffer[3] == cr) //~~0<CR> received
-                    {
-                        crlf();
-                        shutdownTimer(TimeOut);                                 //Reset 15S timer   REV Z
-
-                        LC2CONTROL2.flags2.R = 0; //clear the R flag
-                        write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);	//store flag in FRAM  
-                        break;
-                    }
-
-                    break;
-                  */
-            } //end of switch
+            }                                                                   //end of switch
 
             prompt();                                                       
             
@@ -4185,27 +4102,26 @@ void CMDcomm(void)
                 buffer[i] = 0;
             }
 
-            i = 0; //re-initialize buffer pointer
+            i = 0;                                                              //re-initialize buffer pointer
 
 
-        } //end of 2nd while(!IFS3bits.T9IF)
-        Nop();                                                                  //TEST REV AF
-    } //end of 1st while(!IFS3bits.T9IF)
+        }                                                                       //end of 2nd while(!IFS3bits.T9IF)
+
+    }                                                                           //end of 1st while(!IFS3bits.T9IF)
     
-    Nop();                                                                      //TEST REV AF
-} //end of CMDcomm()
+}                                                                               //end of CMDcomm()
 
 
 void CMD_LINE(void)
 {
-    LC2CONTROL2.flags2.Modbus=0;                                     //clear the Modbus flag
-    write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);       //store flag in FRAM`
-    _RS485RX_EN=1;                                                   //Disable RS485 Rx  REV CG
+    LC2CONTROL2.flags2.Modbus=0;                                                //clear the Modbus flag
+    write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);                  //store flag in FRAM`
+    _RS485RX_EN=1;                                                              //Disable RS485 Rx  
     asm("RESET");    
 }
 
 
-void configMODBUStimers(void)                                                   //REV CK
+void configMODBUStimers(void)                                                   
 {
     
     //Tcy=33.9084201389E-9S (Fcy=29.4912MHz with HSPLL x 4 and 14.7456MHz xtal)
@@ -4266,7 +4182,7 @@ void configMODBUStimers(void)                                                   
 
 void configShutdownTimer(void)
 {
-    //Configure Timer8/9 as 32 bit timer                                        //REV Z
+    //Configure Timer8/9 as 32 bit timer                                        
 	T8CONbits.TON=0;                                                            //make sure Timer 8 is off
 	T9CONbits.TON=0;                                                            //make sure Timer 9 is off
 	T8CONbits.T32=1;                                                            //Setup for 32 bit timer
@@ -4277,23 +4193,19 @@ void configShutdownTimer(void)
 
 
 
-void configTimers(void)                                                         //REV M
+void configTimers(void)                                                         
 {
-    Nop();
     //Enable Timers:
     PMD1bits.T1MD=0;                                                            //Timer 1
-    //PMD1bits.T2MD=0;                                                            //Timer 2
-    //PMD1bits.T3MD=0;                                                            //Timer 3
     PMD1bits.T4MD=0;                                                            //Timer 4
     PMD1bits.T5MD=0;                                                            //Timer 5
     PMD3bits.T7MD=0;                                                            //Timer 7
-    PMD3bits.T8MD=0;                                                            //Timer 8   REV Z
-    PMD3bits.T9MD=0;                                                            //Timer 9   REV Z
+    PMD3bits.T8MD=0;                                                            //Timer 8   
+    PMD3bits.T9MD=0;                                                            //Timer 9   
     
     //Configure Timer7 as 16 bit counter with no prescaler and T7CK as input
     T7CONbits.TON=0;                                                            //make sure Timer 7 is off
-    //T7CONbits.TCKPS=1;                                                          //setup for 1:8 prescale  REM REV O
-    T7CONbits.TCKPS=0;                                                          //setup for no prescale  REV O
+    T7CONbits.TCKPS=0;                                                          //setup for no prescale  
     T7CONbits.TSIDL=0;                                                          //continue operation in idle
     T7CONbits.TGATE=0;                                                          //no timer gate operation
     T7CONbits.TCS=0;                                                            //count internal Tcy clocks
@@ -4336,126 +4248,39 @@ void configUARTnormal(void)
             UART_ADR_DETECT_DIS &
             UART_RX_OVERRUN_CLEAR;
     
-    //ConfigIntUART1(UART_RX_INT_EN & //configure the UART interrupt              //REM REV N
-    //        UART_RX_INT_PR1 &       //priority same as CPU priority
-    //        UART_TX_INT_DIS &
-    //        UART_TX_INT_PR5);
-    
-    ConfigIntUART1(UART_RX_INT_EN & //configure the UART interrupt              //REV N            
-            UART_RX_INT_PR2 &       //priority 1 higher than CPU priority
+    ConfigIntUART1(UART_RX_INT_EN &                                             //configure the UART interrupt                          
+            UART_RX_INT_PR2 &                                                   //priority 1 higher than CPU priority
             UART_TX_INT_DIS &
             UART_TX_INT_PR5);
 
     OpenUART1(U1MODEvalue, U1STAvalue, baudrate);
     U1MODEbits.URXINV=0;                                                        //idle high
-    if(baudrate==brg9600)                                                       //REV AE
-        U1MODEbits.BRGH=0;                                                      //REV AE
-    else                                                                        //REV AE
+    if(baudrate==brg9600)                                                       
+        U1MODEbits.BRGH=0;                                                      
+    else                                                                        
         U1MODEbits.BRGH=1;                                                      //low speed mode
-    //SRbits.IPL = 5; //Set CPU Interrupt priority to 5                         //REM REV O
-    SRbits.IPL=4;   //Set CPU Interrupt priority to 4                           //REV O
-    U1MODEbits.WAKE=1;                                                          //Set the WAKE bit  REV D
-    U1STAbits.FERR = 0; //clear UART error flags
+
+    SRbits.IPL=4;                                                               //Set CPU Interrupt priority to 4                           
+    U1MODEbits.WAKE=1;                                                          //Set the WAKE bit  
+    U1STAbits.FERR = 0;                                                         //clear UART error flags
     U1STAbits.PERR = 0;
     U1STAbits.OERR = 0;
 }
 
-/*  REM REV D:
-void configUARTsleep(void) 
+void controlPortStatus(unsigned char x)                                         
 {
-    unsigned int U1MODEvalue;
-    unsigned int U1STAvalue;
-    
-    ConfigIntUART1(UART_RX_INT_EN & //configure the UART interrupt                     
-            UART_RX_INT_PR1 &       //priority same as CPU priority
-            UART_TX_INT_DIS &
-            UART_TX_INT_PR5);
-    
-    U1MODEvalue = UART_EN &
-            UART_IDLE_CON &
-            UART_IrDA_DISABLE &
-            UART_MODE_SIMPLEX &
-            UART_UEN_00 &
-            UART_EN_WAKE &
-            UART_DIS_LOOPBACK &
-            UART_DIS_ABAUD &
-            UART_BRGH_FOUR &
-            UART_NO_PAR_8BIT &
-            UART_1STOPBIT;
-
-    U1STAvalue = UART_INT_TX_BUF_EMPTY &
-            UART_IrDA_POL_INV_ZERO &
-            UART_SYNC_BREAK_DISABLED &
-            UART_TX_ENABLE &
-            UART_INT_RX_CHAR &
-            UART_ADR_DETECT_DIS &
-            UART_RX_OVERRUN_CLEAR;
-
-    OpenUART1(U1MODEvalue, U1STAvalue, baudrate);
-    U1MODEbits.URXINV=0;                                                        //idle high
-    U1MODEbits.BRGH=0;                                                          //low speed mode
-    SRbits.IPL = 5; //Set CPU Interrupt priority to 0                         //REV D
-    U1MODEbits.WAKE=1;                                                          //Set the WAKE bit  REV D
-    U1STAbits.FERR = 0; //clear UART error flags
-    U1STAbits.PERR = 0;
-    U1STAbits.OERR = 0;
-
-    ConfigIntUART1(UART_RX_INT_EN & //configure the UART                      
-                UART_RX_INT_PR0 &
-                UART_TX_INT_DIS &
-                UART_TX_INT_PR5);
-    
-    U1MODEvalue = UART_EN &
-            UART_IDLE_CON &
-            UART_EN_WAKE &
-            UART_DIS_LOOPBACK &
-            UART_DIS_ABAUD &
-            UART_NO_PAR_8BIT &
-            UART_1STOPBIT;
-
-    U1STAvalue = UART_INT_TX_BUF_EMPTY &
-            //UART_TX_PIN_NORMAL &
-            UART_TX_ENABLE &
-            UART_INT_RX_CHAR &
-            UART_ADR_DETECT_DIS &
-            UART_RX_OVERRUN_CLEAR;
-
-    OpenUART1(U1MODEvalue, U1STAvalue, baudrate);
-
-    SRbits.IPL = 2; //Set CPU Interrupt priority to 2 so                        //TEST REM REV D
-    //SRbits.IPL = 0; //Set CPU Interrupt priority to 2 so                        //TEST REV D
-    //wakeup due to UART1 Rx will cause execution
-    //to resume & not vector
-
-    Sleep();                                                                  
-}
-*/
-
-/*REM REV M:
-void configVWchannel(unsigned char gageType) 
-{
-    Nop();
-}
-*/
-
-
-void controlPortStatus(unsigned char x)                                         //REV AG
-{
-    char eeBUF[6]; //temporary storage for EE values
-    //unsigned char Alarm2HoursValue;
-    //unsigned char Alarm2MinutesValue;
-
+    char eeBUF[6];                                                              //temporary storage for EE values
 
     crlf();
     PORT_CONTROL.control=read_Int_FRAM(CONTROL_PORTflagsaddress);   
 
-    if(x)                                                                       //REV AG
+    if(x)                                                                       
     {
-        if (CONTROL) //Port is currently ON
+        if (CONTROL)                                                            //Port is currently ON
         {
-            putsUART1(CPON); //"Control Port ON"
+            putsUART1(CPON);                                                    //"Control Port ON"
         } else {
-            putsUART1(CPOFF); //"Control Port OFF"
+            putsUART1(CPOFF);                                                   //"Control Port OFF"
         }
         while (BusyUART1());
         crlf();
@@ -4463,63 +4288,63 @@ void controlPortStatus(unsigned char x)                                         
 
     if(x)
     {
-        if (PORT_CONTROL.flags.PortTimerEN) //Port Timer Enabled
+        if (PORT_CONTROL.flags.PortTimerEN)                                     //Port Timer Enabled
         {
-            putsUART1(CPTIMEREN); //"Control Port Timer Enabled."
+            putsUART1(CPTIMEREN);                                               //"Control Port Timer Enabled."
         } else {
-            putsUART1(CPTIMERDIS); //"Control Port Timer Disabled."
+            putsUART1(CPTIMERDIS);                                              //"Control Port Timer Disabled."
         }
         while (BusyUART1());
         crlf();
     }
 
-    putsUART1(CPTIMERACT); //"Timer activate at "
+    putsUART1(CPTIMERACT);                                                      //"Timer activate at "
     while (BusyUART1());
 
     PortOnHours=read_Int_FRAM(PortOnHoursaddress);   
-    if (PortOnHours < 10) //add leading zero
+    if (PortOnHours < 10)                                                       //add leading zero
     {
         putcUART1(zero);
         while (BusyUART1());
     }
-    sprintf(eeBUF, "%d", PortOnHours); //format the hour data
-    putsUART1(eeBUF); //display it
+    sprintf(eeBUF, "%d", PortOnHours);                                          //format the hour data
+    putsUART1(eeBUF);                                                           //display it
     while (BusyUART1());
-    putcUART1(colon); // :
+    putcUART1(colon);                                                           // :
     while (BusyUART1());
     PortOnMinutes=read_Int_FRAM(PortOnMinutesaddress);   
-    if (PortOnMinutes < 10) //add leading zero
+    if (PortOnMinutes < 10)                                                     //add leading zero
     {
         putcUART1(zero);
         while (BusyUART1());
     }
-    sprintf(eeBUF, "%d", PortOnMinutes); //format the minute data
-    putsUART1(eeBUF); //display it
+    sprintf(eeBUF, "%d", PortOnMinutes);                                        //format the minute data
+    putsUART1(eeBUF);                                                           //display it
     while (BusyUART1());
 
     crlf();
 
-    putsUART1(CPTIMERDEACT); //"Control Port Timer deactivate at "
+    putsUART1(CPTIMERDEACT);                                                    //"Control Port Timer deactivate at "
     while (BusyUART1());
     PortOffHours=read_Int_FRAM(PortOffHoursaddress); 
-    if (PortOffHours < 10) //add leading zero
+    if (PortOffHours < 10)                                                      //add leading zero
     {
         putcUART1(zero);
         while (BusyUART1());
     }
-    sprintf(eeBUF, "%d", PortOffHours); //format the hour data
-    putsUART1(eeBUF); //display it
+    sprintf(eeBUF, "%d", PortOffHours);                                         //format the hour data
+    putsUART1(eeBUF);                                                           //display it
     while (BusyUART1());
-    putcUART1(colon); // :
+    putcUART1(colon);                                                           // :
     while (BusyUART1());
     PortOffMinutes=read_Int_FRAM(PortOffMinutesaddress); 
-    if (PortOffMinutes < 10) //add leading zero
+    if (PortOffMinutes < 10)                                                    //add leading zero
     {
         putcUART1(zero);
         while (BusyUART1());
     }
-    sprintf(eeBUF, "%d", PortOffMinutes); //format the minute data
-    putsUART1(eeBUF); //display it
+    sprintf(eeBUF, "%d", PortOffMinutes);                                       //format the minute data
+    putsUART1(eeBUF);                                                           //display it
     while (BusyUART1());
     crlf();
 }
@@ -4557,7 +4382,7 @@ unsigned int CRC(_Bool test, unsigned char size)
     return crcREG;
 }
 
-unsigned int CRC_SN(void)                                                       //REV 1.9
+unsigned int CRC_SN(void)                                                       
 {
     unsigned int crcREG=0xFFFF;
     unsigned int i=0;
@@ -4585,7 +4410,7 @@ unsigned int CRC_SN(void)                                                       
     return crcREG;    
 }
 
-void crlf(void) //transmit <CR><LF>
+void crlf(void)                                                                 //transmit <CR><LF>
 {
     putcUART1(cr);
     while (BusyUART1());
@@ -4594,68 +4419,50 @@ void crlf(void) //transmit <CR><LF>
 }
 
 unsigned int debounce(void) {
-    //delay(7373);                                                              //delay 1mS REM REV AE
-    delay(29492);                                                               //REV AE
+    delay(29492);                                                               
     if (!_CLK_INT) //RTC INTERRUPT valid
         return 1;
     return 0; //RTC INTERRUPT not valid
 }
 
-//REV D:
+
 void disableAlarm(unsigned char alarm)                                         
 {
     unsigned char temp;
 
-    if(alarm==1)											//RTC Alarm 1 (Reading)
+    if(alarm==1)                                                                //RTC Alarm 1 (Reading)
     {
-        //PORT_CONTROL.flags.Alarm1Enabled=0;					//Clear the Alarm1 enabled flag
-	//EEPROMTest=write_intEEPROM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);	//store flag in EEPROM
-      //  if(EEPROMTest)                                            
-        //    displayEEPROMError(EEPROMTest);
-			
-	//PORT_CONTROL.control=read_intEEPROM(CONTROL_PORTflagsaddress);	
-	//if(!PORT_CONTROL.flags.Alarm2Enabled)						
-      //      IEC1bits.INT2IE=0;								//disable the INT2 interrupt if not in use by Alarm2
-			
-	temp=readClock(RTCControlAddress);					//get the value in the RTC Control Register
-	temp&=0xFE;											//AND it with 11111110 to set A1IE to 0
-	setClock(RTCControlAddress,temp);					//write updated Control register to RTC
+        temp=readClock(RTCControlAddress);                                      //get the value in the RTC Control Register
+        temp&=0xFE;                                                             //AND it with 11111110 to set A1IE to 0
+        setClock(RTCControlAddress,temp);                                       //write updated Control register to RTC
 		
-	temp=readClock(RTCStatusAddress);					//get the value in the RTC Status Register
-	temp&=0xFE;											//AND it with 11111110 to clear A1F
-	setClock(RTCStatusAddress,temp);					//write updated Status register to RTC	
-	return;	
+        temp=readClock(RTCStatusAddress);                                       //get the value in the RTC Status Register
+        temp&=0xFE;                                                             //AND it with 11111110 to clear A1F
+        setClock(RTCStatusAddress,temp);                                        //write updated Status register to RTC	
+        return;	
     }
 
-    if(alarm==2)											//RTC Alarm 2 (Control Port)
+    if(alarm==2)                                                                //RTC Alarm 2 (Control Port)
     {
-        //PORT_CONTROL.flags.Alarm2Enabled=0;					//Clear the Alarm2 enabled flag
-	//EEPROMTest=write_intEEPROM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);	//store flag in EEPROM
-        //if(EEPROMTest)                                            
-          //  displayEEPROMError(EEPROMTest);
-						
-	//PORT_CONTROL.control=read_intEEPROM(CONTROL_PORTflagsaddress);	
-	//if(!PORT_CONTROL.flags.Alarm1Enabled)						
-      //      IEC1bits.INT2IE=0;								//disable the INT2 interrupt if not in use by Alarm1
-	temp=readClock(RTCControlAddress);					//get the value in the RTC Control Register
-	temp&=0xFD;											//AND it with 11111101 to set A2IE to 0
-	setClock(RTCControlAddress,temp);					//write updated Control register to RTC
+        temp=readClock(RTCControlAddress);                                      //get the value in the RTC Control Register
+        temp&=0xFD;                                                             //AND it with 11111101 to set A2IE to 0
+        setClock(RTCControlAddress,temp);                                       //write updated Control register to RTC
 		
-	temp=readClock(RTCStatusAddress);					//get the value in the RTC Status Register
-	temp&=0xFD;											//AND it with 11111101 to clear A2F
-	setClock(RTCStatusAddress,temp);					//write updated Status register to RTC		
+        temp=readClock(RTCStatusAddress);                                       //get the value in the RTC Status Register
+        temp&=0xFD;                                                             //AND it with 11111101 to clear A2F
+        setClock(RTCStatusAddress,temp);                                        //write updated Status register to RTC		
     }
 
-    setClock(0x0F,0);										//Clear the RTC Alarm flags
+    setClock(0x0F,0);                                                           //Clear the RTC Alarm flags
 }
 
 
-void disableBT(void)                                                            //REV AD
+void disableBT(void)                                                            
 {
-    PORT_CONTROL.control=read_Int_FRAM(CONTROL_PORTflagsaddress);               //REV AG
+    PORT_CONTROL.control=read_Int_FRAM(CONTROL_PORTflagsaddress);               
     crlf();
-    //if(BT_CONNECT)                                                            //REM REV AG
-    if(BT_CONNECT && !PORT_CONTROL.flags.BluetoothTimerEN)                      //REV AG
+
+    if(BT_CONNECT && !PORT_CONTROL.flags.BluetoothTimerEN)                      
     {
         putsUART1(BTDisablenotAllowed);
     }
@@ -4663,13 +4470,11 @@ void disableBT(void)                                                            
     {
         DISPLAY_CONTROL.flags.BT=0;                                             //clear the BT flag
         write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);    //store flags in FRAM   
-        S_1.status1flags._BT=0;                                                    //Clear the MODBUS status flag    REV BF
+        S_1.status1flags._BT=0;                                                 //Clear the MODBUS status flag    
         write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
         _BT_RESET=0;                                                            //make sure RESET is low    
         BT_BAUD=0;                                                              //make sure BT_BAUD is low          
         BT_ENABLE=0;                                                            //Powerdown Bluetooth
-        //putsUART1(BTDisabled);                                                  //Display "Bluetooth Disabled."    REM REV AG
-        //while(BusyUART1());                                                   REm REV AG
     }
 }
 
@@ -4807,12 +4612,12 @@ void disableChannel(int channel) {
             break;
     }
 
-    write_Int_FRAM(MUX_ENABLE1_16flagsaddress,MUX_ENABLE1_16.MUXen1_16);              //store flag in FRAM  
-    write_Int_FRAM(MUX_ENABLE17_32flagsaddress,MUX_ENABLE17_32.MUXen17_32);             //store flag in FRAM  
+    write_Int_FRAM(MUX_ENABLE1_16flagsaddress,MUX_ENABLE1_16.MUXen1_16);        //store flag in FRAM  
+    write_Int_FRAM(MUX_ENABLE17_32flagsaddress,MUX_ENABLE17_32.MUXen17_32);     //store flag in FRAM  
 }
 
 
-void disableTHChannel(int channel)                                              //REV 1.8
+void disableTHChannel(int channel)                                              
 {
     THMUX_ENABLE1_16.THMUXen1_16=read_Int_FRAM(THMUX_ENABLE1_16flagsaddress);            
     THMUX_ENABLE17_32.THMUXen17_32=read_Int_FRAM(THMUX_ENABLE17_32flagsaddress);          
@@ -4947,8 +4752,8 @@ void disableTHChannel(int channel)                                              
             break;
     }
 
-    write_Int_FRAM(THMUX_ENABLE1_16flagsaddress,THMUX_ENABLE1_16.THMUXen1_16);              //store flag in FRAM  
-    write_Int_FRAM(THMUX_ENABLE17_32flagsaddress,THMUX_ENABLE17_32.THMUXen17_32);             //store flag in FRAM  
+    write_Int_FRAM(THMUX_ENABLE1_16flagsaddress,THMUX_ENABLE1_16.THMUXen1_16);  //store flag in FRAM  
+    write_Int_FRAM(THMUX_ENABLE17_32flagsaddress,THMUX_ENABLE17_32.THMUXen17_32); //store flag in FRAM  
 }
 
 
@@ -4958,27 +4763,27 @@ void disableINT1(void)
     IEC1bits.INT1IE = 0;                                                        //enable the interrupt
 }
 
-//REV CC:
+
 void disableOP(void)
 {
     CONTROL = 0;
     _READ=1;                                                                    //OFF the LED   
-    S_1.status1flags._OP=0;                                                      //clear the MODBUS status flag    
+    S_1.status1flags._OP=0;                                                     //clear the MODBUS status flag    
     write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
     if (!PORT_CONTROL.flags.CPTime)                                             //turn off control port
         PORT_CONTROL.flags.ControlPortON = 0;                                   //clear flag if not in scheduled ON time
     PORT_CONTROL.flags.O0issued = 1;                                            //set O0issued flag
     write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);              //store flag in FRAM  
-    if(!LC2CONTROL2.flags2.Modbus)                                              //Only if command line interface    REV CC    
+    if(!LC2CONTROL2.flags2.Modbus)                                              //Only if command line interface       
         controlPortStatus(1);                                                   //display control port status     
 }
 
 
-void DISLOGINT(void)                                                            //REV CI
+void DISLOGINT(void)                                                            
 {
-    LC2CONTROL.flags.LogInterval = 0; //clear the Log interval flag
-    write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM  
-    S_1.status1flags._Logint=0;                            //Clear the MODBUS status flag    REV BF
+    LC2CONTROL.flags.LogInterval = 0;                                           //clear the Log interval flag
+    write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);                     //store flag in FRAM  
+    S_1.status1flags._Logint=0;                                                 //Clear the MODBUS status flag    
     write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
 }
 
@@ -4989,14 +4794,11 @@ void disableTimers(void)
     IEC1bits.T5IE=0;                                                            //disable Timer 5 interrupt
     //Disable Timers:
     PMD1bits.T1MD=1;                                                            //Timer 1
-    //PMD1bits.T2MD=1;                                                            //Timer 2
-    //PMD1bits.T3MD=1;                                                            //Timer 3
     PMD1bits.T4MD=1;                                                            //Timer 4
-    //PMD1bits.T5MD=1;                                                            //Timer 5     
     PMD3bits.T7MD=1;                                                            //Timer 7
 }
 
-void disableVWchannel(void)                                                     //REV H
+void disableVWchannel(void)                                                     
 {
     A=0;                                                                        //Turn off PLL VCO control signals
     B=0;
@@ -5007,99 +4809,65 @@ void disableVWchannel(void)                                                     
     PMD1bits.T3MD=1;                                                            //Disable Timer3 module
     PMD1bits.T2MD=1;                                                            //Disable Timer2 module
     PMD2bits.OC1MD=1;                                                           //Disable Output Compare1 module
-    _AMP_SHDN=0;                                                                 //Disable the AGC amp    REV BC
+    _AMP_SHDN=0;                                                                //Disable the AGC amp    
 }
 
-void displayBCD(void) //convert BCDtens and BCDones to ascii
-{ //and transmit out UART1
+void displayBCD(void)                                                           //convert BCDtens and BCDones to ascii
+{                                                                               //and transmit out UART1
     if (LC2CONTROL2.flags2.SetStopTime | (LC2CONTROL2.flags2.GageDisplay && BCDtens >= 1)) {
-        putcUART1(BCDtens + 0x30); //format leading zero in stop time
+        putcUART1(BCDtens + 0x30);                                              //format leading zero in stop time
         while (BusyUART1());
     }
     putcUART1(BCDones + 0x30);
     while (BusyUART1());
 }
 
-/*REM REV AG
-void displayBT(void)                                                            //REV AD
-{
-    DISPLAY_CONTROL.display=read_Int_FRAM(DISPLAY_CONTROLflagsaddress);         //Read the BT flag
-    crlf();
-    if(DISPLAY_CONTROL.flags.BT)
-    {
-        putsUART1(BTEnabled);                                                   //Display BT Enabled
-    }
-    else
-    {
-        putsUART1(BTDisabled);                                                  //Display BT Disabled
-    }
-    while(BusyUART1());
-}
-*/
-//REV D:
 void displayClock(unsigned char data)
 {
-    BCDone=0;						//initialize
+    BCDone=0;                                                                   //initialize
     BCDten=0;
     BCDtwenty=0;
     BCDthirty=0;
     BCDforty=0;
     BCDfifty=0;
-    BCDsixty=0;                                                                 //REV CQ
-    BCDseventy=0;                                                               //REV CQ
-    BCDeighty=0;                                                                //REV CQ
-    BCDninety=0;                                                                //REV CQ
+    BCDsixty=0;                                                                 
+    BCDseventy=0;                                                               
+    BCDeighty=0;                                                                
+    BCDninety=0;                                                                
 
-    if(data>=0x90) BCDninety=1;     //extract BCDninety                         REV CQ
-    if(data>=0x80) BCDeighty=1;     //extract BCDeighty                         REV CQ
-    if(data>=0x70) BCDseventy=1;    //extract BCDseventy                        REV CQ
-    if(data>=0x60) BCDsixty=1;      //extract BCDsixty                          REV CQ
-    if(data>=0x50) BCDfifty=1;		//extract BCDfifty
-    if(data>=0x40) BCDforty=1;		//extract BCDforty
-    if(data>=0x30) BCDthirty=1;		//extract BCDthirty
-    if(data>=0x20) BCDtwenty=1;		//extract BCDtwenty
-    if(data>=0x10) BCDten=1;		//extract BCDten
-    BCDten=BCDten+BCDtwenty+BCDthirty+BCDforty+BCDfifty+BCDsixty+BCDseventy+BCDeighty+BCDninety;	//sum them in BCDten    REV CQ
+    if(data>=0x90) BCDninety=1;                                                 //extract BCDninety                         
+    if(data>=0x80) BCDeighty=1;                                                 //extract BCDeighty                         
+    if(data>=0x70) BCDseventy=1;                                                //extract BCDseventy                        
+    if(data>=0x60) BCDsixty=1;                                                  //extract BCDsixty                          
+    if(data>=0x50) BCDfifty=1;                                                  //extract BCDfifty
+    if(data>=0x40) BCDforty=1;                                                  //extract BCDforty
+    if(data>=0x30) BCDthirty=1;                                                 //extract BCDthirty
+    if(data>=0x20) BCDtwenty=1;                                                 //extract BCDtwenty
+    if(data>=0x10) BCDten=1;                                                    //extract BCDten
+    BCDten=BCDten+BCDtwenty+BCDthirty+BCDforty+BCDfifty+BCDsixty+BCDseventy+BCDeighty+BCDninety;	//sum them in BCDten    
 
-    BCDten+=0x30;					//convert BCDten to ascii
-    putcUART1(BCDten);				//display tens
+    BCDten+=0x30;                                                               //convert BCDten to ascii
+    putcUART1(BCDten);                                                          //display tens
     while(BusyUART1());
 
-    BCDone=data&0x0F;				//mask off upper nybble of RTCdata
-    BCDone+=0x30;					//convert ones to ascii
-    putcUART1(BCDone);				//display ones
+    BCDone=data&0x0F;                                                           //mask off upper nybble of RTCdata
+    BCDone+=0x30;                                                               //convert ones to ascii
+    putcUART1(BCDone);                                                          //display ones
     while(BusyUART1());
 }
 
-void displayFRAMError(int errorAddress) //REM VER 6.0.0
+void displayFRAMError(int errorAddress) 
 {
     char ERRORBUF[4];
 
     crlf();
-    putsUART1(Errors); //"Errors detected at 0x"
+    putsUART1(Errors);                                                          //"Errors detected at 0x"
     while (BusyUART1());
-    sprintf(ERRORBUF, "%d", errorAddress); //format the address of the FRAM error
-    putsUART1(ERRORBUF); //display it
+    sprintf(ERRORBUF, "%d", errorAddress);                                      //format the address of the FRAM error
+    putsUART1(ERRORBUF);                                                        //display it
     while (BusyUART1());
     crlf();
 }
-
-/*
-void displayExternalAddress(unsigned int x)	//FOR DEBUG
-{
-    char addressBUF[10];
-
-    putcUART1(lessthan);					// < DELIMITER
-    while(BusyUART1());
-
-    sprintf(addressBUF,"%d",x);				//format external FRAM address
-    putsUART1(addressBUF);					//display external FRAM address
-    while(BusyUART1());
-
-    putcUART1(greaterthan);					// > DELIMITER
-    while(BusyUART1());
-}
- */
 
 void displayGageInfo(int channel)                                               //display the gage information
 {
@@ -5815,14 +5583,12 @@ void displayGageInfo(int channel)                                               
 
             putsUART1(PB);
             while (BusyUART1());
-            //TEMPVAL=read_longFRAM(PolyCoAaddress+0x0004);                        //extract coefficient B from FRAM   REM REV BE
-            TEMPVAL=read_float(PolyCoAaddress+0x0080);                          //extract coefficient B from FRAM   REV BE
+            TEMPVAL=read_float(PolyCoAaddress+0x0080);                          //extract coefficient B from FRAM   
             formatandDisplayGageInfo(TEMPVAL);
 
             putsUART1(PC);
             while (BusyUART1());
-            //TEMPVAL=read_longFRAM(PolyCoAaddress+0x0008);                        //extract coefficient C from FRAM   REM REV BE
-            TEMPVAL=read_float(PolyCoAaddress+0x0100);                          //extract coefficient C from FRAM  REV BE
+            TEMPVAL=read_float(PolyCoAaddress+0x0100);                          //extract coefficient C from FRAM  
             formatandDisplayGageInfo(TEMPVAL);
         } else 
         {
@@ -5833,19 +5599,17 @@ void displayGageInfo(int channel)                                               
 
             putsUART1(GF);
             while (BusyUART1());
-            //TEMPVAL=read_longFRAM(ZeroReadingaddress+0x0004);                    //extract Gage Factor from FRAM  REM REV BE
-            TEMPVAL=read_float(ZeroReadingaddress+0x0080);                      //extract Gage Factor from FRAM REV BE
+            TEMPVAL=read_float(ZeroReadingaddress+0x0080);                      //extract Gage Factor from FRAM 
             formatandDisplayGageInfo(TEMPVAL);
 
             putsUART1(GO);
             while (BusyUART1());
-            //TEMPVAL=read_longFRAM(ZeroReadingaddress+0x0008);                    //extract Gage Offset from FRAM  REM REV BE
-            TEMPVAL=read_float(ZeroReadingaddress+0x0100);                      //extract Gage Offset from FRAM REV BE
+            TEMPVAL=read_float(ZeroReadingaddress+0x0100);                      //extract Gage Offset from FRAM 
             formatandDisplayGageInfo(TEMPVAL);
         }
     }
     
-    if(MUX4_ENABLE.mflags.mux16_4!=VW8 && MUX4_ENABLE.mflags.mux16_4!=VW32)     //if thermistor is included in reading  REV T
+    if(MUX4_ENABLE.mflags.mux16_4!=VW8 && MUX4_ENABLE.mflags.mux16_4!=VW32)     //if thermistor is included in reading  
     {
         //DISPLAY THERMISTOR TYPE:                                              
 		putsUART1(Tab);
@@ -5860,25 +5624,25 @@ void displayGageInfo(int channel)                                               
 }
 
 void displayLoggingWillStart(void) {
-    putsUART1(Loggingwillstart); //Logging will start at:
+    putsUART1(Loggingwillstart);                                                //Logging will start at:
     while (BusyUART1());
-    RTCdata = readClock(RTCAlarm1HoursAddress); //Display Alarm1 hours MAY BE ABLE TO MAKE FUNCTION HERE
+    RTCdata = readClock(RTCAlarm1HoursAddress);                                 //Display Alarm1 hours 
     displayClock(RTCdata);
     putcUART1(colon); // :
     while (BusyUART1());
-    RTCdata = readClock(RTCAlarm1MinutesAddress); //Display Alarm1 minutes
+    RTCdata = readClock(RTCAlarm1MinutesAddress);                               //Display Alarm1 minutes
     displayClock(RTCdata);
     putcUART1(colon);
     while (BusyUART1());
-    RTCdata = readClock(RTCAlarm1SecondsAddress); //Display Alarm1 seconds
+    RTCdata = readClock(RTCAlarm1SecondsAddress);                               //Display Alarm1 seconds
     displayClock(RTCdata);
 }
 
 void displayLoggingWillStop(void) {
-    LC2CONTROL2.flags2.SetStopTime = 1; //set the flag for formatting display
+    LC2CONTROL2.flags2.SetStopTime = 1;                                         //set the flag for formatting display
 
-    putsUART1(Loggingwillstop); //Logging will stop at:
-    while (BusyUART1()); //get and display stop time from FRAM
+    putsUART1(Loggingwillstop);                                                 //Logging will stop at:
+    while (BusyUART1());                                                        //get and display stop time from FRAM
 
     toBCD(read_Int_FRAM(LoggingStopHoursaddress));   
     displayBCD();
@@ -5895,7 +5659,7 @@ void displayLoggingWillStop(void) {
         toBCD(read_Int_FRAM(LoggingStopSecondsaddress)); 
         displayBCD();
 
-    LC2CONTROL2.flags2.SetStopTime = 0; //reset the flag
+    LC2CONTROL2.flags2.SetStopTime = 0;                                         //reset the flag
 }
 
 void displayLogInterval(int interval) {
@@ -5904,11 +5668,11 @@ void displayLogInterval(int interval) {
     unsigned long length;
 
     crlf();
-    putsUART1(Interval); //"Interval #"
+    putsUART1(Interval);                                                        //"Interval #"
     while (BusyUART1());
 
-    sprintf(BUF, "%d", interval); //format it
-    putsUART1(BUF); //display it
+    sprintf(BUF, "%d", interval);                                               //format it
+    putsUART1(BUF);                                                             //display it
     while (BusyUART1());
 
     putcUART1(space);
@@ -5916,14 +5680,14 @@ void displayLogInterval(int interval) {
     putcUART1(space);
     while (BusyUART1());
 
-    interval -= 1; //change interval from 1-6 to 0-5
+    interval -= 1;                                                              //change interval from 1-6 to 0-5
 
     putsUART1(Length);
     while (BusyUART1());
-    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //Single VW Channel REV CI
-        length=read_longFRAM(SingleLogIntLength1address+(interval*4));          //get Interval value  REV CI
-    else                                                                        //multichannel  REV CI
-        length=read_longFRAM(LogIntLength1address+(interval*4));                //get Interval value  REV CI
+    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //Single VW Channel 
+        length=read_longFRAM(SingleLogIntLength1address+(interval*4));          //get Interval value  
+    else                                                                        //multichannel  
+        length=read_longFRAM(LogIntLength1address+(interval*4));                //get Interval value  
     displayScanInterval(length, 0);
 
     putcUART1(space);
@@ -5937,22 +5701,22 @@ void displayLogInterval(int interval) {
 
     putsUART1(Iterations);
     while (BusyUART1());
-    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //Single VW Channel REV CI
-        value=read_Int_FRAM(SingleLogIt1address+(interval*2));                  //get Interval iterations REV CI
-    else                                                                        //multichannel  REV CI
-        value=read_Int_FRAM(LogIt1address+(interval*2));                        //get Interval value    REV CI
-    sprintf(BUF, "%d", value); //format it
-    putsUART1(BUF); //display it
+    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //Single VW Channel 
+        value=read_Int_FRAM(SingleLogIt1address+(interval*2));                  //get Interval iterations 
+    else                                                                        //multichannel  
+        value=read_Int_FRAM(LogIt1address+(interval*2));                        //get Interval value    
+    sprintf(BUF, "%d", value);                                                  //format it
+    putsUART1(BUF);                                                             //display it
     while (BusyUART1());
 
     if (LC2CONTROL.flags.Logging && LC2CONTROL.flags.LogInterval)               //if logging and log intervals enabled
     {
-        putcUART1(slash); //foreslash
+        putcUART1(slash);                                                       //foreslash
         while (BusyUART1());
-        if (MUX4_ENABLE.mflags.mux16_4 == Single)                               //Single VW Channel REV CI
-            value=read_Int_FRAM(SingleLogItRemain1address+(interval*2));            //get the remaining iterations at this interval   REV CI
+        if (MUX4_ENABLE.mflags.mux16_4 == Single)                               //Single VW Channel 
+            value=read_Int_FRAM(SingleLogItRemain1address+(interval*2));        //get the remaining iterations at this interval   
         else                                                                    //multichannel
-            value=read_Int_FRAM(LogItRemain1address+(interval*2));              //get the remaining iterations at this interval   REV CI
+            value=read_Int_FRAM(LogItRemain1address+(interval*2));              //get the remaining iterations at this interval   
 
         if (interval == 0)
             value += 1;
@@ -5969,37 +5733,37 @@ void displayLogInterval(int interval) {
 
 void displayLogTable(void) 
 {
-    int i; //index for Log Interval loop
+    int i;                                                                      //index for Log Interval loop
 
     crlf();
 
-    putsUART1(Loglist); //"Log Intervals List"
+    putsUART1(Loglist);                                                         //"Log Intervals List"
     while (BusyUART1());
 
     crlf();
 
-    putsUART1(Dashes); //"----------------------"
+    putsUART1(Dashes);                                                          //"----------------------"
     while (BusyUART1());
 
     crlf();
 
     for (i = 1; i < 7; i++) {
-        displayLogInterval(i); //display the Log Interval information
+        displayLogInterval(i);                                                  //display the Log Interval information
         crlf();
     }
 
 }
 
 void displayMemoryStatus(void) {
-    char BUF[6]; //temporary storage for display
+    char BUF[6];                                                                //temporary storage for display
     unsigned int pointer = 0;
 
     crlf();
-    putsUART1(MS); //MS:
-    while (BusyUART1()); //Display Memory Status
-    pointer=read_Int_FRAM(MemoryStatusaddress);//get Memory Status (MS) pointer  
-    sprintf(BUF, "%d", pointer); //format it                                  
-    putsUART1(BUF); //display it
+    putsUART1(MS);                                                              //MS:
+    while (BusyUART1());                                                        //Display Memory Status
+    pointer=read_Int_FRAM(MemoryStatusaddress);                                 //get Memory Status (MS) pointer  
+    sprintf(BUF, "%d", pointer);                                                //format it                                  
+    putsUART1(BUF);                                                             //display it
     while (BusyUART1());
     putcUART1(space);
     while (BusyUART1());
@@ -6008,11 +5772,11 @@ void displayMemoryStatus(void) {
     putcUART1(space);
     while (BusyUART1());
 
-    putsUART1(OP); //OP:
-    while (BusyUART1()); //Display Output Position
-    pointer=read_Int_FRAM(OutputPositionaddress);//get Output Position (OP) pointer  
-    sprintf(BUF, "%d", pointer); //format it
-    putsUART1(BUF); //display it
+    putsUART1(OP);                                                              //OP:
+    while (BusyUART1());                                                        //Display Output Position
+    pointer=read_Int_FRAM(OutputPositionaddress);                               //get Output Position (OP) pointer  
+    sprintf(BUF, "%d", pointer);                                                //format it
+    putsUART1(BUF);                                                             //display it
     while (BusyUART1());
     putcUART1(space);
     while (BusyUART1());
@@ -6021,11 +5785,11 @@ void displayMemoryStatus(void) {
     putcUART1(space);
     while (BusyUART1());
 
-    putsUART1(UP); //UP:
-    while (BusyUART1()); //Display User Position
-    pointer=read_Int_FRAM(UserPositionaddress);//get User Position (UP) pointer from FRAM  
+    putsUART1(UP);                                                              //UP:
+    while (BusyUART1());                                                        //Display User Position
+    pointer=read_Int_FRAM(UserPositionaddress);                                 //get User Position (UP) pointer from FRAM  
     sprintf(BUF, "%d", pointer);
-    putsUART1(BUF); //display it
+    putsUART1(BUF);                                                             //display it
     while (BusyUART1());
 
 }
@@ -6035,35 +5799,35 @@ void displayMUX(int displayChannel)
 {
     MUX_ENABLE1_16.MUXen1_16=read_Int_FRAM(MUX_ENABLE1_16flagsaddress);       
     MUX_ENABLE17_32.MUXen17_32=read_Int_FRAM(MUX_ENABLE17_32flagsaddress);          
-    THMUX_ENABLE1_16.THMUXen1_16=read_Int_FRAM(THMUX_ENABLE1_16flagsaddress);       //REV 1.8
-    THMUX_ENABLE17_32.THMUXen17_32=read_Int_FRAM(THMUX_ENABLE17_32flagsaddress);    //REV 1.8      
+    THMUX_ENABLE1_16.THMUXen1_16=read_Int_FRAM(THMUX_ENABLE1_16flagsaddress);       
+    THMUX_ENABLE17_32.THMUXen17_32=read_Int_FRAM(THMUX_ENABLE17_32flagsaddress);          
     //DISPLAY MUX SETUP TABLE:
     crlf();
 
-    if (MUX4_ENABLE.mflags.mux16_4 == Single) //Single Channel    
+    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //Single Channel    
     {
-        putsUART1(MUX1setupmenu); //"LC-2 Single Channel VW Setup:"
+        putsUART1(MUX1setupmenu);                                               //"LC-4 Single Channel VW Setup:"
         while (BusyUART1());
         crlf();
-        displayGageInfo(1); //Display gage information
+        displayGageInfo(1);                                                     //Display gage information
         crlf();
         crlf();
-        return; //just return
+        return;                                                                 //just return
     }
 
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW4)
-        putsUART1(MUX4setupmenu); //"LC-2MUX 4-Channel VW Multiplexer Setup:"
+        putsUART1(MUX4setupmenu);                                               //"LC-4MUX 4-Channel VW Multiplexer Setup:"
     if (MUX4_ENABLE.mflags.mux16_4 == VW8)
-        putsUART1(MUX8setupmenu); //"LC-2MUX 8-Channel VW Multiplexer Setup:"
+        putsUART1(MUX8setupmenu);                                               //"LC-4MUX 8-Channel VW Multiplexer Setup:"
     if (MUX4_ENABLE.mflags.mux16_4 == VW16)
-        putsUART1(MUX16setupmenu); //"LC-2MUX 16-Channel VW Mulitplexer Setup:"
+        putsUART1(MUX16setupmenu);                                              //"LC-4MUX 16-Channel VW Mulitplexer Setup:"
     if (MUX4_ENABLE.mflags.mux16_4 == VW32)
-        putsUART1(MUX32setupmenu); //"LC-2MUX 32-Channel VW Multiplexer Setup:"
+        putsUART1(MUX32setupmenu);                                              //"LC-4MUX 32-Channel VW Multiplexer Setup:"
     if (MUX4_ENABLE.mflags.mux16_4 == TH8)
-        putsUART1(MUX8Tsetupmenu); //LC-2MUX 8-Channel Thermistor Multiplexer Setup:"
+        putsUART1(MUX8Tsetupmenu);                                              //LC-4MUX 8-Channel Thermistor Multiplexer Setup:"
     if (MUX4_ENABLE.mflags.mux16_4 == TH32)
-        putsUART1(MUX32Tsetupmenu); //LC-2MUX 32-Channel Thermistor Multiplexer Setup:"
+        putsUART1(MUX32Tsetupmenu);                                             //LC-4MUX 32-Channel Thermistor Multiplexer Setup:"
     while (BusyUART1());
     crlf();
     crlf();
@@ -6071,112 +5835,112 @@ void displayMUX(int displayChannel)
 
     if (displayChannel == 1 | displayChannel == 0) 
     {
-        putsUART1(CH1); //CH1 setup
+        putsUART1(CH1);                                                         //CH1 setup
         while (BusyUART1());
         
         if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW8 |      
-                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE1_16.e1flags.CH1) //Display ENABLED or DISABLED
+            if (MUX_ENABLE1_16.e1flags.CH1)                                     //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE1_16.t1flags.CH1) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE1_16.t1flags.CH1)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }        
         while (BusyUART1());
 
-        displayGageInfo(1); //Display gage information
+        displayGageInfo(1);                                                     //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 2 | displayChannel == 0) 
     {
-        putsUART1(CH2); //CH2 setup
+        putsUART1(CH2);                                                         //CH2 setup
         while (BusyUART1());
 
         if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW8 |      
-                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE1_16.e1flags.CH2) //Display ENABLED or DISABLED
+            if (MUX_ENABLE1_16.e1flags.CH2)                                     //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE1_16.t1flags.CH2) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE1_16.t1flags.CH2)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(2); //Display gage information
+        displayGageInfo(2);                                                     //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 3 | displayChannel == 0) 
     {
-        putsUART1(CH3); //CH3 setup
+        putsUART1(CH3);                                                         //CH3 setup
         while (BusyUART1());
         
         if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW8 |      
-                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE1_16.e1flags.CH3) //Display ENABLED or DISABLED
+            if (MUX_ENABLE1_16.e1flags.CH3)                                     //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE1_16.t1flags.CH3) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE1_16.t1flags.CH3)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(3); //Display gage information
+        displayGageInfo(3);                                                     //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 4 | displayChannel == 0) 
     {
-        putsUART1(CH4); //CH4 setup
+        putsUART1(CH4);                                                         //CH4 setup
         while (BusyUART1());
         
         if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW8 |      
-                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE1_16.e1flags.CH4) //Display ENABLED or DISABLED
+            if (MUX_ENABLE1_16.e1flags.CH4)                                     //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE1_16.t1flags.CH4) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE1_16.t1flags.CH4)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(4); //Display gage information
+        displayGageInfo(4);                                                     //Display gage information
         crlf();
         crlf();
     }
@@ -6187,112 +5951,112 @@ void displayMUX(int displayChannel)
 
     if (displayChannel == 5 | displayChannel == 0) 
     {
-        putsUART1(CH5); //CH5 setup
+        putsUART1(CH5);                                                         //CH5 setup
         while (BusyUART1());
         
         if(MUX4_ENABLE.mflags.mux16_4==VW8 |      
-                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE1_16.e1flags.CH5) //Display ENABLED or DISABLED
+            if (MUX_ENABLE1_16.e1flags.CH5)                                     //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE1_16.t1flags.CH5) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE1_16.t1flags.CH5)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(5); //Display gage information
+        displayGageInfo(5);                                                     //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 6 | displayChannel == 0) 
     {
-        putsUART1(CH6); //CH6 setup
+        putsUART1(CH6);                                                         //CH6 setup
         while (BusyUART1());
         
         if(MUX4_ENABLE.mflags.mux16_4==VW8 |      
-                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE1_16.e1flags.CH6) //Display ENABLED or DISABLED
+            if (MUX_ENABLE1_16.e1flags.CH6)                                     //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE1_16.t1flags.CH6) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE1_16.t1flags.CH6)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(6); //Display gage information
+        displayGageInfo(6);                                                     //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 7 | displayChannel == 0) 
     {
-        putsUART1(CH7); //CH7 setup
+        putsUART1(CH7);                                                         //CH7 setup
         while (BusyUART1());
         
         if(MUX4_ENABLE.mflags.mux16_4==VW8 |      
-                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE1_16.e1flags.CH7) //Display ENABLED or DISABLED
+            if (MUX_ENABLE1_16.e1flags.CH7)                                     //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE1_16.t1flags.CH7) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE1_16.t1flags.CH7)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(7); //Display gage information
+        displayGageInfo(7);                                                     //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 8 | displayChannel == 0) 
     {
-        putsUART1(CH8); //CH8 setup
+        putsUART1(CH8);                                                         //CH8 setup
         while (BusyUART1());
         
         if(MUX4_ENABLE.mflags.mux16_4==VW8 |      
-                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE1_16.e1flags.CH8) //Display ENABLED or DISABLED
+            if (MUX_ENABLE1_16.e1flags.CH8)                                     //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE1_16.t1flags.CH8) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE1_16.t1flags.CH8)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(8); //Display gage information
+        displayGageInfo(8);                                                     //Display gage information
         crlf();
         crlf();
     }
@@ -6303,216 +6067,216 @@ void displayMUX(int displayChannel)
 
     if (displayChannel == 9 | displayChannel == 0) 
     {
-        putsUART1(CH9); //CH9 setup
+        putsUART1(CH9);                                                         //CH9 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE1_16.e1flags.CH9) //Display ENABLED or DISABLED
+            if (MUX_ENABLE1_16.e1flags.CH9)                                     //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE1_16.t1flags.CH9) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE1_16.t1flags.CH9)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(9); //Display gage information
+        displayGageInfo(9);                                                     //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 10 | displayChannel == 0) 
     {
-        putsUART1(CH10); //CH10 setup
+        putsUART1(CH10);                                                        //CH10 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE1_16.e1flags.CH10) //Display ENABLED or DISABLED
+            if (MUX_ENABLE1_16.e1flags.CH10)                                    //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE1_16.t1flags.CH10) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE1_16.t1flags.CH10)                                  //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(10); //Display gage information
+        displayGageInfo(10);                                                    //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 11 | displayChannel == 0) 
     {
-        putsUART1(CH11); //CH11 setup
+        putsUART1(CH11);                                                        //CH11 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE1_16.e1flags.CH11) //Display ENABLED or DISABLED
+            if (MUX_ENABLE1_16.e1flags.CH11)                                    //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE1_16.t1flags.CH11) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE1_16.t1flags.CH11)                                  //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(11); //Display gage information
+        displayGageInfo(11);                                                    //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 12 | displayChannel == 0) 
     {
-        putsUART1(CH12); //CH12 setup
+        putsUART1(CH12);                                                        //CH12 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE1_16.e1flags.CH12) //Display ENABLED or DISABLED
+            if (MUX_ENABLE1_16.e1flags.CH12)                                    //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE1_16.t1flags.CH12) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE1_16.t1flags.CH12)                                  //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(12); //Display gage information
+        displayGageInfo(12);                                                    //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 13 | displayChannel == 0) 
     {
-        putsUART1(CH13); //CH13 setup
+        putsUART1(CH13);                                                        //CH13 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE1_16.e1flags.CH13) //Display ENABLED or DISABLED
+            if (MUX_ENABLE1_16.e1flags.CH13)                                    //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE1_16.t1flags.CH13) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE1_16.t1flags.CH13)                                  //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(13); //Display gage information
+        displayGageInfo(13);                                                    //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 14 | displayChannel == 0) 
     {
-        putsUART1(CH14); //CH14 setup
+        putsUART1(CH14);                                                        //CH14 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE1_16.e1flags.CH14) //Display ENABLED or DISABLED
+            if (MUX_ENABLE1_16.e1flags.CH14)                                    //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE1_16.t1flags.CH14) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE1_16.t1flags.CH14)                                  //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(14); //Display gage information
+        displayGageInfo(14);                                                    //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 15 | displayChannel == 0) 
     {
-        putsUART1(CH15); //CH15 setup
+        putsUART1(CH15);                                                        //CH15 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE1_16.e1flags.CH15) //Display ENABLED or DISABLED
+            if (MUX_ENABLE1_16.e1flags.CH15)                                    //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE1_16.t1flags.CH15) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE1_16.t1flags.CH15)                                  //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(15); //Display gage information
+        displayGageInfo(15);                                                    //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 16 | displayChannel == 0) 
     {
-        putsUART1(CH16); //CH16 setup
+        putsUART1(CH16);                                                        //CH16 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE1_16.e1flags.CH16) //Display ENABLED or DISABLED
+            if (MUX_ENABLE1_16.e1flags.CH16)                                    //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE1_16.t1flags.CH16) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE1_16.t1flags.CH16)                                  //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(16); //Display gage information
+        displayGageInfo(16);                                                    //Display gage information
         crlf();
         crlf();
     }
@@ -6522,432 +6286,432 @@ void displayMUX(int displayChannel)
 
     if (displayChannel == 17 | displayChannel == 0) 
     {
-        putsUART1(CH17); //CH17 setup
+        putsUART1(CH17);                                                        //CH17 setup
         while (BusyUART1());
     
-        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE17_32.e2flags.CH17) //Display ENABLED or DISABLED
+            if (MUX_ENABLE17_32.e2flags.CH17)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE17_32.t2flags.CH17) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE17_32.t2flags.CH17)                                 //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(17); //Display gage information
+        displayGageInfo(17);                                                    //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 18 | displayChannel == 0) 
     {
-        putsUART1(CH18); //CH18 setup
+        putsUART1(CH18);                                                        //CH18 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE17_32.e2flags.CH18) //Display ENABLED or DISABLED
+            if (MUX_ENABLE17_32.e2flags.CH18)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE17_32.t2flags.CH18) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE17_32.t2flags.CH18)                                 //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(18); //Display gage information
+        displayGageInfo(18);                                                    //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 19 | displayChannel == 0) 
     {
-        putsUART1(CH19); //CH19 setup
+        putsUART1(CH19);                                                        //CH19 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE17_32.e2flags.CH19) //Display ENABLED or DISABLED
+            if (MUX_ENABLE17_32.e2flags.CH19)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE17_32.t2flags.CH19) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE17_32.t2flags.CH19)                                 //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(19); //Display gage information
+        displayGageInfo(19);                                                    //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 20 | displayChannel == 0) 
     {
-        putsUART1(CH20); //CH20 setup
+        putsUART1(CH20);                                                        //CH20 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE17_32.e2flags.CH20) //Display ENABLED or DISABLED
+            if (MUX_ENABLE17_32.e2flags.CH20)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE17_32.t2flags.CH20) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE17_32.t2flags.CH20)                                 //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(20); //Display gage information
+        displayGageInfo(20);                                                    //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 21 | displayChannel == 0) 
     {
-        putsUART1(CH21); //CH21 setup
+        putsUART1(CH21);                                                        //CH21 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE17_32.e2flags.CH21) //Display ENABLED or DISABLED
+            if (MUX_ENABLE17_32.e2flags.CH21)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE17_32.t2flags.CH21) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE17_32.t2flags.CH21)                                 //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(21); //Display gage information
+        displayGageInfo(21);                                                    //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 22 | displayChannel == 0) 
     {
-        putsUART1(CH22); //CH22 setup
+        putsUART1(CH22);                                                        //CH22 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE17_32.e2flags.CH22) //Display ENABLED or DISABLED
+            if (MUX_ENABLE17_32.e2flags.CH22)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE17_32.t2flags.CH22) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE17_32.t2flags.CH22)                                 //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(22); //Display gage information
+        displayGageInfo(22);                                                    //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 23 | displayChannel == 0) 
     {
-        putsUART1(CH23); //CH23 setup
+        putsUART1(CH23);                                                        //CH23 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE17_32.e2flags.CH23) //Display ENABLED or DISABLED
+            if (MUX_ENABLE17_32.e2flags.CH23)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE17_32.t2flags.CH23) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE17_32.t2flags.CH23)                                 //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(23); //Display gage information
+        displayGageInfo(23);                                                    //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 24 | displayChannel == 0) 
     {
-        putsUART1(CH24); //CH24 setup
+        putsUART1(CH24);                                                        //CH24 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE17_32.e2flags.CH24) //Display ENABLED or DISABLED
+            if (MUX_ENABLE17_32.e2flags.CH24)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE17_32.t2flags.CH24) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE17_32.t2flags.CH24)                                 //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(24); //Display gage information
+        displayGageInfo(24);                                                    //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 25 | displayChannel == 0) 
     {
-        putsUART1(CH25); //CH25 setup
+        putsUART1(CH25);                                                        //CH25 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE17_32.e2flags.CH25) //Display ENABLED or DISABLED
+            if (MUX_ENABLE17_32.e2flags.CH25)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE17_32.t2flags.CH25) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE17_32.t2flags.CH25)                                 //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(25); //Display gage information
+        displayGageInfo(25);                                                    //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 26 | displayChannel == 0) 
     {
-        putsUART1(CH26); //CH26 setup
+        putsUART1(CH26);                                                        //CH26 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE17_32.e2flags.CH26) //Display ENABLED or DISABLED
+            if (MUX_ENABLE17_32.e2flags.CH26)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE17_32.t2flags.CH26) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE17_32.t2flags.CH26)                                 //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(26); //Display gage information
+        displayGageInfo(26);                                                    //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 27 | displayChannel == 0) 
     {
-        putsUART1(CH27); //CH27 setup
+        putsUART1(CH27);                                                        //CH27 setup
         while (BusyUART1());
     
-        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE17_32.e2flags.CH27) //Display ENABLED or DISABLED
+            if (MUX_ENABLE17_32.e2flags.CH27)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE17_32.t2flags.CH27) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE17_32.t2flags.CH27)                                 //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(27); //Display gage information
+        displayGageInfo(27);                                                    //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 28 | displayChannel == 0) 
     {
-        putsUART1(CH28); //CH28 setup
+        putsUART1(CH28);                                                        //CH28 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE17_32.e2flags.CH28) //Display ENABLED or DISABLED
+            if (MUX_ENABLE17_32.e2flags.CH28)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE17_32.t2flags.CH28) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE17_32.t2flags.CH28)                                 //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(28); //Display gage information
+        displayGageInfo(28);                                                    //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 29 | displayChannel == 0) 
     {
-        putsUART1(CH29); //CH29 setup
+        putsUART1(CH29);                                                        //CH29 setup
         while (BusyUART1());
     
-        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE17_32.e2flags.CH29) //Display ENABLED or DISABLED
+            if (MUX_ENABLE17_32.e2flags.CH29)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE17_32.t2flags.CH29) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE17_32.t2flags.CH29)                                 //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(29); //Display gage information
+        displayGageInfo(29);                                                    //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 30 | displayChannel == 0) 
     {
-        putsUART1(CH30); //CH30 setup
+        putsUART1(CH30);                                                        //CH30 setup
         while (BusyUART1());
     
-        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE17_32.e2flags.CH30) //Display ENABLED or DISABLED
+            if (MUX_ENABLE17_32.e2flags.CH30)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE17_32.t2flags.CH30) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE17_32.t2flags.CH30)                                 //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(30); //Display gage information
+        displayGageInfo(30);                                                    //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 31 | displayChannel == 0) 
     {
-        putsUART1(CH31); //CH31 setup
+        putsUART1(CH31);                                                        //CH31 setup
         while (BusyUART1());
     
-        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE17_32.e2flags.CH31) //Display ENABLED or DISABLED
+            if (MUX_ENABLE17_32.e2flags.CH31)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE17_32.t2flags.CH31) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE17_32.t2flags.CH31)                                 //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(31); //Display gage information
+        displayGageInfo(31);                                                    //Display gage information
         crlf();
         crlf();
     }
 
     if (displayChannel == 32 | displayChannel == 0) 
     {
-        putsUART1(CH32); //CH32 setup
+        putsUART1(CH32);                                                        //CH32 setup
         while (BusyUART1());
     
-        if(MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
-            if (MUX_ENABLE17_32.e2flags.CH32) //Display ENABLED or DISABLED
+            if (MUX_ENABLE17_32.e2flags.CH32)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    //REV 1.8
+        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
         {
-            if (THMUX_ENABLE17_32.t2flags.CH32) //Display ENABLED or DISABLED
+            if (THMUX_ENABLE17_32.t2flags.CH32)                                 //Display ENABLED or DISABLED
                 putsUART1(Enabled);
             else
                 putsUART1(Disabled);
         }                
         while (BusyUART1());
 
-        displayGageInfo(32); //Display gage information
+        displayGageInfo(32);                                                    //Display gage information
         crlf();
         crlf();
     }
