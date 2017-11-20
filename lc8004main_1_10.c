@@ -7793,18 +7793,15 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
         }
         while (BusyUART1());
-        Nop();
-
     }                                                                           //end of 1st for(displayChannel) loop
 
 
     if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32 &&
-            MUX4_ENABLE.mflags.mux16_4 != VW8 && MUX4_ENABLE.mflags.mux16_4 != VW32) //Thermistor display for VW VER 6.0.13
+            MUX4_ENABLE.mflags.mux16_4 != VW8 && MUX4_ENABLE.mflags.mux16_4 != VW32) //Thermistor display for VW 
     {
         for (displayChannel = 1; displayChannel < maxchannelplusone; displayChannel++) 
         {
-            //if (!LC2CONTROL2.flags2.d && displayChannel != 1)                 //REM VER BA
-            if (displayChannel != 1)                                            //VER BA            
+            if (displayChannel != 1)                                                        
             {
                 putcUART1(comma);                                               // , DELIMITER
                 while (BusyUART1());
@@ -7813,48 +7810,37 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
             IEC1bits.INT1IE = 0;                                                //Disable INT1
 
-            if (MUX4_ENABLE.mflags.mux16_4 == Single) //Single Channel VW
+            if (MUX4_ENABLE.mflags.mux16_4 == Single)                           //Single Channel VW
                 FRAMaddress = SingleVWBytes * (tempoutputPosition - 1)+(6 * (displayChannel - 1)) + 12;
 
-            if (MUX4_ENABLE.mflags.mux16_4 == VW4) //4 channel VW mux
+            if (MUX4_ENABLE.mflags.mux16_4 == VW4)                              //4 channel VW mux
                 FRAMaddress = VW4Bytes * (tempoutputPosition - 1)+(6 * (displayChannel - 1)) + 12;
 
-            if (MUX4_ENABLE.mflags.mux16_4 == VW8) //8 channel VW mux
+            if (MUX4_ENABLE.mflags.mux16_4 == VW8)                              //8 channel VW mux
                 FRAMaddress = VW8Bytes * (tempoutputPosition - 1)+(4 * (displayChannel - 1)) + 12;
 
-            if (MUX4_ENABLE.mflags.mux16_4 == VW16) //16 channel VW mux
+            if (MUX4_ENABLE.mflags.mux16_4 == VW16)                             //16 channel VW mux
                 FRAMaddress = VW16Bytes * (tempoutputPosition - 1)+(6 * (displayChannel - 1)) + 12;
 
-            if (MUX4_ENABLE.mflags.mux16_4 == VW32) //32 channel VW mux
+            if (MUX4_ENABLE.mflags.mux16_4 == VW32)                             //32 channel VW mux
                 FRAMaddress = VW32Bytes * (tempoutputPosition - 1)+(4 * (displayChannel - 1)) + 12;
 
             //****************Get and format the readings from FRAM****************************************************
             //EXTERNAL THERMISTOR
             IEC1bits.INT1IE = 0;                                                //Disable INT1
-            DEC_TEMP.decimaltemp=read_Int_FRAM(FRAMaddress+4);                  //Read the 12bit external thermistor reading from external EEPROM	REV J
+            DEC_TEMP.decimaltemp=read_Int_FRAM(FRAMaddress+4);                  //Read the 12bit external thermistor reading from external EEPROM	
             IEC1bits.INT1IE = 1;                                                //Enable INT1
 
-            //if (!LC2CONTROL2.flags2.d)                                        //REM REV AA
-            //{                                                                 //REM REV AA    
-            extThermProcessed=INT16tof32();                                     //convert 16 bit reading to 32 bit float	REV J
-            //sprintf(BUF, "%.1f", extThermProcessed);                            //format the external thermistor reading 1 decimal place   REM REV AE
-                
-                //if (extThermProcessed <= -10.0 | extThermProcessed >= 10.0)   REM REV AE
+            extThermProcessed=INT16tof32();                                     //convert 16 bit reading to 32 bit float	
+
             if (extThermProcessed <= -10.0 | extThermProcessed >= 10.0)                         
-            {
-                //if (extThermProcessed<-50.0)                                  //no therm connected  REM REV AE
-                //extThermProcessed = -99.0;                                    REM REV AE
                 sprintf(BUF, "%.1f", extThermProcessed);                        //format the external thermistor reading 1 decimal place
-            }
 
             if (extThermProcessed>-10.0 && extThermProcessed < 10.0)
                 sprintf(BUF, "%.2f", extThermProcessed);                        //format the external thermistor reading 2 decimal places
                 
-            //}                                                                 //REM REV AA
-                
-                
-            write_Flt_FRAM(scratchaddress,extThermProcessed);                   //write to scratch address  REV AA
-            read_Flt_FRAM(scratchaddress,3);                                    //read back to load MSB,MMSB,MMMSB & LSB    REV AA
+            write_Flt_FRAM(scratchaddress,extThermProcessed);                   //write to scratch address  
+            read_Flt_FRAM(scratchaddress,3);                                    //read back to load MSB,MMSB,MMMSB & LSB    
             
             switch (displayChannel) 
             {
@@ -7867,7 +7853,7 @@ void displayReading(int ch, unsigned long outputPosition)                       
                     } 
                     else
                     {
-                        putsUART1(BUF);                                     //display reading
+                        putsUART1(BUF);                                         //display reading
                     }
                     break;
 
@@ -7879,7 +7865,7 @@ void displayReading(int ch, unsigned long outputPosition)                       
                     } 
                     else
                     {
-                        putsUART1(BUF);                                     //display reading
+                        putsUART1(BUF);                                         //display reading
                     }
                     break;
 
@@ -7891,7 +7877,7 @@ void displayReading(int ch, unsigned long outputPosition)                       
                     } 
                     else
                     {
-                        putsUART1(BUF);                                     //display reading
+                        putsUART1(BUF);                                         //display reading
                     }
                     break;
 
@@ -7903,7 +7889,7 @@ void displayReading(int ch, unsigned long outputPosition)                       
                     } 
                     else
                     {
-                        putsUART1(BUF);                                     //display reading
+                        putsUART1(BUF);                                         //display reading
                     }
                     break;
 
@@ -7915,7 +7901,7 @@ void displayReading(int ch, unsigned long outputPosition)                       
                     } 
                     else
                     {
-                        putsUART1(BUF);                                     //display reading
+                        putsUART1(BUF);                                         //display reading
                     }
                     break;
 
@@ -7927,7 +7913,7 @@ void displayReading(int ch, unsigned long outputPosition)                       
                     } 
                     else
                     {
-                        putsUART1(BUF);                                     //display reading
+                        putsUART1(BUF);                                         //display reading
                     }
                     break;
 
@@ -7939,7 +7925,7 @@ void displayReading(int ch, unsigned long outputPosition)                       
                     } 
                     else
                     {
-                        putsUART1(BUF);                                     //display reading
+                        putsUART1(BUF);                                         //display reading
                     }
 
                     break;
@@ -7952,7 +7938,7 @@ void displayReading(int ch, unsigned long outputPosition)                       
                     }
                     else
                     {
-                        putsUART1(BUF);                                     //display reading
+                        putsUART1(BUF);                                         //display reading
                     }
 
                     break;
@@ -7965,7 +7951,7 @@ void displayReading(int ch, unsigned long outputPosition)                       
                     } 
                     else
                     {
-                        putsUART1(BUF);                                     //display reading
+                        putsUART1(BUF);                                         //display reading
                     }
 
                     break;
@@ -7978,7 +7964,7 @@ void displayReading(int ch, unsigned long outputPosition)                       
                     } 
                     else
                     {
-                        putsUART1(BUF);                                     //display reading
+                        putsUART1(BUF);                                         //display reading
                     }
 
                     break;
@@ -7991,7 +7977,7 @@ void displayReading(int ch, unsigned long outputPosition)                       
                     } 
                     else
                     {
-                        putsUART1(BUF);                                     //display reading
+                        putsUART1(BUF);                                         //display reading
                     }
 
                     break;
@@ -8004,7 +7990,7 @@ void displayReading(int ch, unsigned long outputPosition)                       
                     } 
                     else
                     {
-                        putsUART1(BUF);                                     //display reading
+                        putsUART1(BUF);                                         //display reading
                     }
 
                     break;
@@ -8017,7 +8003,7 @@ void displayReading(int ch, unsigned long outputPosition)                       
                     } 
                     else
                     {
-                        putsUART1(BUF);                                     //display reading
+                        putsUART1(BUF);                                         //display reading
                     }
 
                     break;
@@ -8030,7 +8016,7 @@ void displayReading(int ch, unsigned long outputPosition)                       
                     } 
                     else
                     {
-                        putsUART1(BUF);                                     //display reading
+                        putsUART1(BUF);                                         //display reading
                     }
 
                     break;
@@ -8043,7 +8029,7 @@ void displayReading(int ch, unsigned long outputPosition)                       
                     } 
                     else
                     {
-                        putsUART1(BUF);                                     //display reading
+                        putsUART1(BUF);                                         //display reading
                     }
 
                     break;
@@ -8056,89 +8042,89 @@ void displayReading(int ch, unsigned long outputPosition)                       
                     } 
                     else
                     {
-                        putsUART1(BUF);                                     //display reading
+                        putsUART1(BUF);                                         //display reading
                     }
 
                     break;
 
                 case 17:
                     
-                    putsUART1(BUF);                                         //display reading
+                    putsUART1(BUF);                                             //display reading
                     break;
 
                 case 18:
 
-                    putsUART1(BUF);                                         //display reading
+                    putsUART1(BUF);                                             //display reading
                     break;
 
                 case 19:
 
-                    putsUART1(BUF);                                         //display reading
+                    putsUART1(BUF);                                             //display reading
                     break;
 
                 case 20:
 
-                    putsUART1(BUF);                                         //display reading
+                    putsUART1(BUF);                                             //display reading
                     break;
 
                 case 21:
 
-                    putsUART1(BUF);                                         //display reading
+                    putsUART1(BUF);                                             //display reading
                     break;
 
                 case 22:
 
-                    putsUART1(BUF);                                         //display reading
+                    putsUART1(BUF);                                             //display reading
                     break;
 
                 case 23:
 
-                    putsUART1(BUF);                                         //display reading
+                    putsUART1(BUF);                                             //display reading
                     break;
 
                 case 24:
 
-                    putsUART1(BUF);                                         //display reading
+                    putsUART1(BUF);                                             //display reading
                     break;
 
                 case 25:
 
-                    putsUART1(BUF);                                         //display reading
+                    putsUART1(BUF);                                             //display reading
                     break;
 
                 case 26:
 
-                    putsUART1(BUF);                                         //display reading
+                    putsUART1(BUF);                                             //display reading
                     break;
 
                 case 27:
 
-                    putsUART1(BUF);                                         //display reading
+                    putsUART1(BUF);                                             //display reading
                     break;
 
                 case 28:
 
-                    putsUART1(BUF);                                         //display reading
+                    putsUART1(BUF);                                             //display reading
                     break;
 
                 case 29:
 
-                    putsUART1(BUF);                                         //display reading
+                    putsUART1(BUF);                                             //display reading
                     break;
 
                 case 30:
 
-                    putsUART1(BUF);                                         //display reading
+                    putsUART1(BUF);                                             //display reading
                     break;
 
                 case 31:
     
-                    putsUART1(BUF);                                         //display reading
+                    putsUART1(BUF);                                             //display reading
                     break;
 
                 case 32:
 
-                    putsUART1(BUF);                                         //display reading
+                    putsUART1(BUF);                                             //display reading
                     break;
 
 
@@ -8153,132 +8139,25 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
             while (BusyUART1());
 
-        } //end of 2nd for(displayChannel)
+        }                                                                       //end of 2nd for(displayChannel)
 
-    } // end of if(MUX4_ENABLE.mflags.mux16_4!=TH8 && MUX4_ENABLE.mflags.mux16_4!=TH32)   VER 6.0.9
+    }                                                                           // end of if(MUX4_ENABLE.mflags.mux16_4!=TH8 && MUX4_ENABLE.mflags.mux16_4!=TH32)   
 
 
     if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32 &&
            MUX4_ENABLE.mflags.mux16_4 != VW8 && MUX4_ENABLE.mflags.mux16_4 != VW32)
-        putcUART1(comma);                                                   // , DELIMITER
-    sprintf(BUF, "%d", TXARRAY.array);                                       //REV AB
+        putcUART1(comma);                                                       // , DELIMITER
+    sprintf(BUF, "%d", TXARRAY.array);                                       
     putsUART1(BUF);
     while (BusyUART1());
     crlf();
 }
 
-/*REM REV CI:
-void displayScanInterval(unsigned long ScanInterval, unsigned int text) 
-{
-    long interval = 0;                                                          //signed ScanInterval                                  REM REV CI
-    //unsigned long interval = 0;                                               //unsigned ScanInterval REV CI                           
-    unsigned char z = 0; //loop index
-
-    BCDones = 0; //initialize
-    BCDtens = 0;
-    BCDhundreds = 0;
-    BCDthousands = 0;
-    BCDtenthousands = 0;
-
-
-    for (interval = ScanInterval - 10000; interval >= 0; interval -= 10000) 
-    {
-        BCDtenthousands += 1; //increment ten thousands
-    }
-
-    interval += 10000;
-
-    for (interval -= 1000; interval >= 0; interval -= 1000) 
-    {
-        BCDthousands += 1; //increment thousands
-    }
-
-    interval += 1000;
-
-    for (interval -= 100; interval >= 0; interval -= 100) 
-    {
-        BCDhundreds += 1; //increment hundreds
-    }
-
-    interval += 100;
-
-    for (interval -= 10; interval >= 0; interval -= 10) 
-    {
-        BCDtens += 1; //increment tens
-    }
-
-    interval += 10;
-
-    for (interval -= 1; interval >= 0; interval -= 1) 
-    {
-        BCDones += 1; //increment ones
-    }
-
-
-    //remove leading zeros, convert to ascii and transmit out UART
-
-    if (BCDtenthousands != 0) {
-        putcUART1(BCDtenthousands + 0x30);
-        while (BusyUART1());
-    }
-
-
-    if (BCDtenthousands != 0 | BCDthousands != 0) {
-        putcUART1(BCDthousands + 0x30);
-        while (BusyUART1());
-    }
-
-
-    if (BCDtenthousands != 0 | BCDthousands != 0 | BCDhundreds != 0) {
-        putcUART1(BCDhundreds + 0x30);
-        while (BusyUART1());
-    }
-
-
-    if (BCDtenthousands != 0 | BCDthousands != 0 | BCDhundreds != 0 | BCDtens != 0) {
-        putcUART1(BCDtens + 0x30);
-        while (BusyUART1());
-    }
-
-
-    putcUART1(BCDones + 0x30);
-    while (BusyUART1());
-
-    if (!text) {
-        //determine index for formatting loop
-        if (BCDtenthousands == 0 && BCDthousands == 0 && BCDhundreds == 0 && BCDtens == 0 && BCDones != 0)
-            z = 4;
-
-        if (BCDtenthousands == 0 && BCDthousands == 0 && BCDhundreds == 0 && BCDtens != 0)
-            z = 3;
-
-        if (BCDtenthousands == 0 && BCDthousands == 0 && BCDhundreds != 0)
-            z = 2;
-
-        if (BCDtenthousands == 0 && BCDthousands != 0)
-            z = 1;
-
-        for (z; z > 0; z--) //format the scan interval
-        {
-            putcUART1(' ');
-            while (BusyUART1());
-        }
-    }
-
-    if (text) //display "second(s)."
-    {
-        putsUART1(Seconds);
-        while (BusyUART1());
-    }
-}
-*/
-
-//REV CI:
 void displayScanInterval(unsigned long ScanInterval, unsigned int text) 
 {
     char siBUF[8];
     
-    sprintf(siBUF, "%ld", ScanInterval);                                         //format the scan interval data
+    sprintf(siBUF, "%ld", ScanInterval);                                        //format the scan interval data
     putsUART1(siBUF);                                                           //display it
     while (BusyUART1());    
     
