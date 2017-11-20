@@ -16,9 +16,9 @@
 //	DATE:		11/17/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   1.9
-//	CHECKSUM:	0xafb9  (MPLABX ver 3.15 and XC16 ver 1.26)
-//	DATA(RAM)MEM:	8790/30720   29%
-//	PGM(FLASH)MEM:  183915/261888 70%
+//	CHECKSUM:	0x63d3  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	DATA(RAM)MEM:	8800/30720   29%
+//	PGM(FLASH)MEM:  184233/261888 70%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -347,7 +347,7 @@ int main(void)
     
     LC2CONTROL2.flags2.scheduled=0;                                             //REV W
     write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);                  //store flag in FRAM REV W
-    stopLogging();                                                              //TEST REV K
+    //stopLogging();                                                              //TEST REV K
     
     SLEEP12V = 0; //Set 12V regulator into switchmode
     wait2S(); //provide a 2S delay to allow DS3231 to stabilize
@@ -3586,10 +3586,10 @@ void CMDcomm(void)
                     if (buffer[1] == capS && buffer[2] == capN && buffer[3] == cr) //"RSN" received REV 1.3
                         ReadSN();                                               //get the gage serial number REV 1.9
                     
-                    if(PORT_CONTROL.flags.temp)
-                    {
-                        IEC1bits.INT1IE=1;
-                    }
+                    //if(PORT_CONTROL.flags.temp)                               REM REV 1.9
+                    //{                                                         REM REV 1.9
+                    //    IEC1bits.INT1IE=1;                                    REM REV 1.9
+                    //}                                                         REM REV 1.9
                     
                     //Restore Register values:                                  REV 1.4
                     T6CONbits.T32=0;                                            //Reset TMR6/7 for 16bit mode   
@@ -5240,6 +5240,33 @@ unsigned int CRC(_Bool test, unsigned char size)
     return crcREG;
 }
 
+unsigned int CRC_SN(void)                                                       //REV 1.9
+{
+    unsigned int crcREG=0xFFFF;
+    unsigned int i=0;
+    unsigned int x=0;
+        
+    for(i=0;i<4;i++)                                                            //CRC calculation
+    {
+        crcREG^=_SNbuf[i];                                               
+
+        for(x=0;x<8;x++)
+        {
+            if((crcREG & 0x0001) !=0)
+            {
+                crcREG>>=1;
+                crcREG^=0xA001;
+            }
+            else
+            {
+                crcREG>>=1;
+            }
+        }
+
+    }
+    
+    return crcREG;    
+}
 
 void crlf(void) //transmit <CR><LF>
 {
@@ -11670,13 +11697,6 @@ unsigned char getSNbytes(unsigned int logicthreshold)                           
     unsigned char s=0;                                                          //loop index
     unsigned int *ADC16Ptr;                                                     //pointer to ADC result buffer
 
-
-    //Configure ADC:                                                            REM REV 1.3
-    //AD1CON3bits.SAMC=0x03;                                                      //sampling clock = 3 Tad  REM REV 1.3
-    //AD1CON3bits.ADCS=0x0D;                                                      //conversion clock = 14 Tad (ADCS value +1)   REM REV 1.3
-    //AD1CHS0=0x0004;                                                             //AN4 is positive input   REM REV 1.3
-    //IFS0bits.AD1IF=0;                                                           //Clear the ADC interrupt flag    REM REV 1.3
-    
     //Configure Timer 6/7 as 32-bit timer:
     INTCON2bits.ALTIVT=1;                                                       //set to use alternate interrupt vectors
     PMD3bits.T6MD=0;                                                            //Enable TMR6
@@ -11710,6 +11730,11 @@ unsigned char getSNbytes(unsigned int logicthreshold)                           
         if(IFS3bits.T8IF)                                                       //0.5S timeout?
         {
             IFS3bits.T8IF=0;    
+            INTCON2bits.ALTIVT=0;                                               //reset to use standard interrupt vectors
+
+            T6CONbits.T32=0;                                                    //Set TMR6/7 for 16bit mode
+            PMD3bits.T6MD=1;                                                    //Disable TMR6
+            PMD3bits.T7MD=1;                                                    //Disable TMR7
             return 0;
         }
     
@@ -11724,7 +11749,13 @@ unsigned char getSNbytes(unsigned int logicthreshold)                           
         databit=take_fast_analog_reading();                                     //REV 1.3
         
         if(databit<logicthreshold)
+        {
+            INTCON2bits.ALTIVT=0;                                               //reset to use standard interrupt vectors
+            T6CONbits.T32=0;                                                    //Set TMR6/7 for 16bit mode
+            PMD3bits.T6MD=1;                                                    //Disable TMR6
+            PMD3bits.T7MD=1;                                                    //Disable TMR7
             return 0;                                                           //Error - return 0
+        }
     
         for(s=0;s<9;s++)                                                        //get the bits of the byte
         {
@@ -11741,7 +11772,13 @@ unsigned char getSNbytes(unsigned int logicthreshold)                           
             databit=take_fast_analog_reading();                                 //REV 1.3
             
             if(s==8 && (databit>logicthreshold))                                //stop bit not detected
+            {
+                INTCON2bits.ALTIVT=0;                                           //reset to use standard interrupt vectors
+                T6CONbits.T32=0;                                                //Set TMR6/7 for 16bit mode
+                PMD3bits.T6MD=1;                                                //Disable TMR6
+                PMD3bits.T7MD=1;                                                //Disable TMR7
                 return 0;                                                       //Error - return 0
+            }
 
             
             if(s==8 && (databit<logicthreshold))
@@ -11807,10 +11844,15 @@ unsigned char getSNbytes(unsigned int logicthreshold)                           
             }
         }
     
-        MODBUS_RXbuf[b]=SN_BITS.sn;                                             //store the received byte
+        //MODBUS_RXbuf[b]=SN_BITS.sn;                                             //store the received byte REM REV 1.9
+        _SNbuf[b]=SN_BITS.sn;                                                   //REV 1.9
 
     }
 
+    INTCON2bits.ALTIVT=0;                                                       //reset to use standard interrupt vectors
+    T6CONbits.T32=0;                                                            //Set TMR6/7 for 16bit mode
+    PMD3bits.T6MD=1;                                                            //Disable TMR6
+    PMD3bits.T7MD=1;                                                            //Disable TMR7
     return 1;                                                                   //6 bytes received ok - return 1
 }
 
@@ -13821,7 +13863,6 @@ unsigned char getSerialNumber(void)
     unsigned char result=0;
     unsigned int logicthreshold=0;
     unsigned int therm=0;
-    //unsigned int Vmax=3413;                                                     //2.083V: max V at TH (Rth = 0)   REM REV 1.5
     unsigned int Vmax=0;                                                        //value of max V at TH (Rth = 0)    REV 1.5    
     unsigned int *ADC16Ptr;                                                     //pointer to ADC result buffer
     
@@ -13851,12 +13892,9 @@ unsigned char getSerialNumber(void)
     _3VX_on();
     
     //Get the logic threshold:
-    //therm=take_analog_reading(85);                                              //get the baseline thermistor reading REM REV 1.3
     therm=take_fast_analog_reading();                                           //get the baseline thermistor reading   rev 1.3
-    //logicthreshold=therm+((Vmax-therm)/2);                                      //determine the logic threshold (varies with temperature) REM REV 1.5
 
     //Apply DC excitation to the VW:
-    //_3VX_on();                                                                  //power-up analog circuitry   REM REV 1.3
     pluckON();      
     pluckPOS();
     
@@ -13866,7 +13904,8 @@ unsigned char getSerialNumber(void)
     __delay32(mS10);                                                            //20mS delay    REV 1.5
  
     //Get the 4 byte serial number and 2 byte checksum. Will be in MODBUS_RXbuf[0..7] 
-    result=getSNbytes(logicthreshold);
+    result=getSNbytes(logicthreshold);                                        
+    //result=1;                                                                   //TEST REV 1.9
     pluckOFF();
     _3VX_off();
     
@@ -13874,12 +13913,23 @@ unsigned char getSerialNumber(void)
         return 0;
     
     //Check CRC:
-    crc.c=CRC(TEST,6);
+    crc.c=CRC_SN();                                                             //REV 1.9
     
-    if((MODBUS_RXbuf[5] != crc.z[1]) | (MODBUS_RXbuf[4] != crc.z[0]))           //received crc does not agree with computed crc
+    if((_SNbuf[5] != crc.z[1]) | (_SNbuf[4] != crc.z[0]))                       //received crc does not agree with computed crc_    REV 1.9
+    {
         return 0;                                                               
-    else    
+    }
+    else   
+    {
+        //Store Serial Number in FRAM:                                          REV 1.9
+        crc.z[1]=_SNbuf[0];                                                     //Serial Number MSB
+        crc.z[0]=_SNbuf[1];
+        write_Int_FRAM(GAGE_SERIAL_MSWaddress,crc.c);                           //store Serial Number MSW in FRAM`
+        crc.z[1]=_SNbuf[2];                                               
+        crc.z[0]=_SNbuf[3];                                                     //Serial Number LSB
+        write_Int_FRAM(GAGE_SERIAL_LSWaddress,crc.c);                           //store Serial Number LSW in FRAM`        
         return 1;                                                               //Serial Number reading good
+    }
 }
 
 
@@ -14457,27 +14507,6 @@ void MODBUScomm(void)                                                           
             LC2CONTROL.flags.Unlock=0;                                          //lock the password protected registers REV CP
             break;
 
-        /*REM REV CP:
-        case WRITE_HOLDING:
-            if((memaddressStart>=0x7FA6C) && (memaddressStart<=0x7FFFF))        //Registers are not write protected
-            {
-                tempStatusValue.status1=read_Int_FRAM(MODBUS_STATUS1address);   //REV CB
-                MODBUS_TXbuf[REGISTER_MSB]=MODBUS_RXbuf[REGISTER_MSB];          //Load the TXbuf[] with Register address MSB
-                MODBUS_TXbuf[REGISTER_LSB]=MODBUS_RXbuf[REGISTER_LSB];          //Load the TXbuf[] with Register address LSB
-                value.z[1]=MODBUS_RXbuf[WRITE_DATA_MSB];                        //get the write data MSB
-                MODBUS_TXbuf[WRITE_DATA_MSB]=MODBUS_RXbuf[WRITE_DATA_MSB];      //Load the TXbuf[] with data MSB
-                value.z[0]=MODBUS_RXbuf[WRITE_DATA_LSB];                        //get the write data LSB
-                MODBUS_TXbuf[WRITE_DATA_LSB]=MODBUS_RXbuf[WRITE_DATA_LSB];      //Load the TXbuf[] with data LSB
-                write_Int_FRAM(memaddressStart, value.c);                       //Write to FRAM Register             
-            }
-            else
-            {
-                IFS3bits.T9IF=1;                                                //exit if write protected REM REV CP
-                return;                
-            }
-            break;
-            */
-
         case WRITE_HOLDING:                                                     //REV CP
             //16 Bit:
             if((memaddressStart>=baudrateaddress) && (memaddressStart<=RESERVED2))   //MODBUS 16 bit Registers REV CQ
@@ -15037,13 +15066,14 @@ void MODBUScomm(void)                                                           
 
                         if(tempValue2Value.status2flags._SN)                    //Read the gage serial number
                         {
-                            //mainBatreading = take_analog_reading(87);           //get the 12V Battery Voltage
-                            //write_Int_FRAM(BatteryReading,mainBatreading);      
+                            //Nop();
+                            ReadSN();                                           //get the gage serial number
                         }                            
 
                         tempValue2Value.status2flags._SN=0;                     //clear this bit on exit  
                         S_2.status2flags._SN=0;                                 //clear the MODBUS status flag      
-                        write_Int_FRAM(MODBUS_STATUS2address,S_2.status2);                                            
+                        write_Int_FRAM(MODBUS_STATUS2address,S_2.status2);  
+                        //shutdownTimer(TimeOut);                                 //Reset 15S timer	TEST REV 1.9
                         break;
 
                     case 9:
@@ -15179,7 +15209,7 @@ unsigned char MODBUS_RX(void)                                                   
         while (!IFS3bits.T9IF)
         {
             while (!IFS3bits.T9IF)
-            {
+            {   
                 while (!DataRdyUART1() && !U1STAbits.FERR && !U1STAbits.PERR && !U1STAbits.OERR && !IFS3bits.T9IF  && !IFS0bits.T2IF && !IFS2bits.T6IF); //read the MODBUS transmission
 
                 if(U1STAbits.FERR | U1STAbits.PERR | U1STAbits.OERR) 
@@ -16199,25 +16229,44 @@ void ReadSN(void)                                                               
         IEC1bits.INT1IE=0;
         IFS1bits.INT1IF=0;
     }
-    crlf();          
+    
+    if(!LC2CONTROL2.flags2.Modbus)                          
+    {
+        crlf();          
+    }
+    
     SerialNumber=0;
     if(getSerialNumber())                                                       //display the probe serial number
     {
         for(i=0;i<4;i++)                                                        //get the serial number from the buffer    
         {
-            SerialNumber+=MODBUS_RXbuf[i];
+            SerialNumber+=_SNbuf[i];
             if(i==3)
                 break;
             SerialNumber<<=8;
         }
-        sprintf(SNBUF, "%ld", SerialNumber);                                    //format the serial number
-        putsUART1(SNBUF);                                                       //display it
-        while (BusyUART1());            
+        
+        
+        
+        if(!LC2CONTROL2.flags2.Modbus)                          
+        {
+            sprintf(SNBUF, "%ld", SerialNumber);                                //format the serial number
+            putsUART1(SNBUF);                                                   //display it
+            while (BusyUART1());            
+        }
     }
     else                                                                        //display ERROR
     {
-        putsUART1(Error);                                                       //"ERROR"  
-        while(BusyUART1());
+        if(!LC2CONTROL2.flags2.Modbus)                          
+        {
+            putsUART1(Error);                                                   //"ERROR"  
+            while(BusyUART1());
+        }
+    }    
+    
+    if(PORT_CONTROL.flags.temp)
+    {
+        IEC1bits.INT1IE=1;
     }    
 }
 
@@ -16332,8 +16381,8 @@ float read_vw(void)
 		digits=(frequency*frequency)*.001;			//digits = F^2x10E-3 if linear conversion
 	}
 
-	//return digits;							 		//return the digits	TEST REM REV 1.4
-	return frequency;								//TEST REV 1.4
+	return digits;							 		//return the digits	TEST REM REV 1.4
+	//return frequency;								//TEST REV 1.4
 }
 
 
@@ -18206,7 +18255,7 @@ unsigned int take_fast_analog_reading(void)                                     
     {
         AD1CON1bits.DONE=0;                                                  
         AD1CON1bits.SAMP=1;                                                     //begin sampling   
-        testPoint(1,1);
+        //testPoint(1,1);
         while(!IFS0bits.AD1IF && !IFS3bits.T8IF);                               //REV 1.4                                      
         AD1CON1bits.SAMP=0;                                                     //stop sampling 
         IFS0bits.AD1IF=0;                                                    

@@ -485,6 +485,7 @@ s2flags	S_2;
 unsigned char MODBUS_RXbuf[126];                                                //125 registers max REV CK
 unsigned char MODBUS_TXbuf[126];                                                //125 registers max REV CK
 unsigned char TxBinaryBUF[152];                                                 //REV AB
+unsigned char _SNbuf[10];                                                       //REV 1.9
 char buffer[52];
 char NABUF[7];                                                                  //temporary storage for network address   
 char DS3231Integer=0;                                                           //REV K
@@ -1428,6 +1429,7 @@ void configUARTnormal(void);
 unsigned int convertStruc2Reg(unsigned char);
 void controlPortStatus(unsigned char);                                          //REV AG	
 unsigned int CRC(_Bool,unsigned char);                                          //REV CK
+unsigned int CRC_SN(void);                                                      //REV 1.9
 void crlf(void);
 unsigned int debounce(void);
 void disableBT(void);                                                           //REV AD
