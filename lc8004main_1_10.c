@@ -16,7 +16,7 @@
 //	DATE:		11/20/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   1.10
-//	CHECKSUM:	0x6074  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x6076  (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8800/30720   29%
 //	PGM(FLASH)MEM:  184251/261888 70%
 
@@ -3410,18 +3410,18 @@ void CMDcomm(void)
                         {
                             crlf();												
                             Thermtype=read_Int_FRAM(CH1THaddress);              //read thermistor type	
-                            if(Thermtype==2)                                        //2=High Temp 103JL1A thermistor	
+                            if(Thermtype==3)                                        //3=High Temp 103JL1A thermistor	REV 1.10
                             {													
-                                putsUART1(Hightemp2);                               //High temp 103JL1A thermistor selected						
+                                putsUART1(Hightemp3);                           //High temp 103JL1A thermistor selected REV 1.10						
                             }
                             else
-                            if(Thermtype==1)                                        //1=High Temp BR55KA822J thermistor
+                            if(Thermtype==2)                                    //2=High Temp BR55KA822J thermistor REV 1.10
                             {
-                                putsUART1(Hightemp1);                               //High temp BR55KA822J thermistor selected
+                                putsUART1(Hightemp2);                           //High temp BR55KA822J thermistor selected
                             }
                             else
                             {
-                                putsUART1(Hightemp0);                               //Standard themistor selected
+                                putsUART1(Hightemp1);                           //Standard themistor selected   REV 1.10
                             }                        
 
                             while(BusyUART1());                                     
