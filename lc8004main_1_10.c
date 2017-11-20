@@ -16,9 +16,9 @@
 //	DATE:		11/20/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   1.10
-//	CHECKSUM:	0x63d3  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x7e4f  (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8800/30720   29%
-//	PGM(FLASH)MEM:  184233/261888 70%
+//	PGM(FLASH)MEM:  184242/261888 70%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -243,7 +243,7 @@
 //		95				LITHIUM BATTERY (V)
 //		97				MAIN BATTERY - 3V (V)
 
-//				THERMISTOR TYPES												REV 1.8
+//				THERMISTOR TYPES												
 //      0               DISABLE CHANNEL
 //		1				STANDARD 3K @ 25C NTC	
 //		2				BR55KA822J 8.2K @ 25C HIGH TEMP			
@@ -291,18 +291,18 @@
 //#include <math.h>
 //#include <p33Fxxxx.h>
 //#include <xc.h>
-//#include <stdbool.h>                                                          //REV BB
+//#include <stdbool.h>                                                          
 
 
 //--------------------------------------------------------------
 //						Includes
 //--------------------------------------------------------------
 #include "p33FJ256GP710A.h"
-#include "LC8004extFRAM_i.h"                                                    //REV BH
+#include "LC8004extFRAM_i.h"                                                    
 #include "LC8004main_1_10.h"
-#include "LC8004delay_b.h"                                                      //REV Z
-#include "AD5241b.h"                                                            //REV 1.7
-#include "FRAM_ADDRESSh.h"                                                      //REV 1.1
+#include "LC8004delay_b.h"                                                      
+#include "AD5241b.h"                                                            
+#include "FRAM_ADDRESSh.h"                                                      
 #include <outcompare.h>
 #include <ports.h>
 #include <timer.h>
@@ -313,11 +313,11 @@
 #include <i2c.h>
 #include <string.h>
 #include <stdio.h>
-#include <stdbool.h>                                                            //REV CK
+#include <stdbool.h>                                                            
 #include <adc.h>
 #include <math.h>
 #include <p33Fxxxx.h>
-#include <stdbool.h>                                                            //REV BB
+#include <stdbool.h>                                                            
 #include <xc.h>
 
 
@@ -330,74 +330,49 @@ int main(void)
 {
 
     Nop();
-    PLLFBDbits.PLLDIV=14;                                                       //PLL Feedback Divisor M value (x16)    REV AE
+    PLLFBDbits.PLLDIV=14;                                                       //PLL Feedback Divisor M value (x16)    
     Nop();
-    CLKDIVbits.PLLPOST=0;                                                       //PLL Postcaler N2 value (DIV/2)    REV CB
+    CLKDIVbits.PLLPOST=0;                                                       //PLL Postcaler N2 value (DIV/2)    
     Nop();
-    CLKDIVbits.PLLPRE=0;                                                        //PLL Prescaler N1 value (DIV/2)    REV CB
+    CLKDIVbits.PLLPRE=0;                                                        //PLL Prescaler N1 value (DIV/2)    
     Nop();
-    while(!OSCCONbits.LOCK){};                                                  //Wait for PLL to lock  REV CB
+    while(!OSCCONbits.LOCK){};                                                  //Wait for PLL to lock  
     setup();                                 
     
     
     //REV Y
     
-    restoreSettings();                                                          //reload the settings from FRAM REV Z   
+    restoreSettings();                                                          //reload the settings from FRAM    
     
-    LC2CONTROL.flags.Logging=0;                                                 //TEST REV CM
-    write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);                     //TEST REV CM
+    LC2CONTROL.flags.Logging=0;                                                 
+    write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);                     
     
-    LC2CONTROL2.flags2.scheduled=0;                                             //REV W
-    write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);                  //store flag in FRAM REV W
-    //stopLogging();                                                              //TEST REV K
+    LC2CONTROL2.flags2.scheduled=0;                                             
+    write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);                  //store flag in FRAM 
+    //stopLogging();                                                              
     
-    SLEEP12V = 0; //Set 12V regulator into switchmode
-    wait2S(); //provide a 2S delay to allow DS3231 to stabilize
-    
-/*  REM REV Z
-    //***************************TEST FOR 3V or 12V BATTERY*****************************************************************
-    //Determine whether 3V or 12V battery is connected
-    mainBatreading=take_analog_reading(87);                                     //test the 12V_SENSE input
-    //config_Ports_Low_Power();                       
-    if (mainBatreading > 137) //12V_SENSE >0.5V, so connected
-    {
-        Blink(12);
-    } else 
-    {
-        mainBatreading=take_analog_reading(97);                                 //take the 3V battery reading
-        //config_Ports_Low_Power();                       
-        if (mainBatreading > 273) //3VSENSE>0.5V, so connected
-        {
-            Blink(3);
-        }
-    }
+    SLEEP12V = 0;                                                               //Set 12V regulator into switchmode
+    wait2S();                                                                   //provide a 2S delay to allow DS3231 to stabilize
 
-    //********************************************************************************************************************************
-*/
-  
-//REV Z:    
 //***************************TEST FOR 3V or 12V BATTERY*****************************************************************
     //Determine whether 3V or 12V battery is connected
     mainBatreading=take_analog_reading(87);                                     //test the 12V_SENSE input
                    
-    //if (mainBatreading > 137)                                                 //12V_SENSE >0.5V, so connected   REM REV Z
-    if (mainBatreading > V0_5)                                                  //12V_SENSE >0.5V, so connected REV Z
+    if (mainBatreading > V0_5)                                                  //12V_SENSE >0.5V, so connected 
     {
-        S_2.status2flags._BAT=1;                                                //Set the _BAT flag REV CK           
+        S_2.status2flags._BAT=1;                                                //Set the _BAT flag           
         batteryReading=(((Vref*mainBatreading)/4096)*mul12V);
-        //if(batteryReading>=11.8)                                              //REM REV Z
-        if(batteryReading>=bat_12LOW)                                           //REV Z
+        if(batteryReading>=bat_12LOW)                                           
             Blink(12);                                                          //Battery good
         else
             Blink(1);                                                           //Battery low
     } 
     else 
     {
-        S_2.status2flags._BAT=0;                                                //Clear the _BAT flag REV CK    
+        S_2.status2flags._BAT=0;                                                //Clear the _BAT flag     
         mainBatreading=take_analog_reading(97);                                 //take the 3V battery reading
         batteryReading=(((Vref*mainBatreading)/4096)*mul3V);
-        //if (batteryReading>=2.8)                                              //3VSENSE>0.5V, so connected  REM REV Z
-        if (batteryReading>=bat_3LOW)                                           //REV Z   
+        if (batteryReading>=bat_3LOW)                                              
             Blink(3);                                                           //Battery good
         else
             Blink(1);                                                           //Battery low
@@ -408,7 +383,7 @@ int main(void)
     
     
     baudrate = read_Int_FRAM(baudrateaddress);
-    if ((baudrate != brg9600) && (baudrate != brg115200) && (baudrate != brg230400) && (baudrate != brg460800)) //FRAM does not contain valid baud rate value  REV AE
+    if ((baudrate != brg9600) && (baudrate != brg115200) && (baudrate != brg230400) && (baudrate != brg460800)) //FRAM does not contain valid baud rate value  
     {
         baudrate = brg115200;                                                   //set initial baud rate to 115200 bps           
         write_Int_FRAM(baudrateaddress, baudrate);                              //store baudrate in FRAM   
@@ -421,10 +396,10 @@ int main(void)
         write_Int_FRAM(MODBUSaddress,MODBUSaddressvalue);                       //store in FRAM
     }
     
-    configUARTnormal();                                                         //TEST
-    IFS0bits.U1RXIF = 0; //clear the UART1 interrupt flag
+    configUARTnormal();                                                         
+    IFS0bits.U1RXIF = 0;                                                        //clear the UART1 interrupt flag
     
-    if(LC2CONTROL2.flags2.Modbus)                                               //Test if need to switch back to Command Line interface REV BA
+    if(LC2CONTROL2.flags2.Modbus)                                               //Test if need to switch back to Command Line interface 
     {
        shutdownTimer(2);                                                        //start 2 second timer
        for(ModbusTestIdx=0;ModbusTestIdx<10;ModbusTestIdx++)                    //Powerup with ';' being entered while rebooting
@@ -435,161 +410,109 @@ int main(void)
                IFS3bits.T9IF=0;                                                 //clear the T9 interrupt flag
                break;                                                           //breakout & continue with MODBUS communications
            }
-           IFS0bits.U1RXIF = 0; //clear the UART1 interrupt flag
+           IFS0bits.U1RXIF = 0;                                                 //clear the UART1 interrupt flag
            RxData=ReadUART1();                                                  //Test for ';' being entered
            if(U1STAbits.FERR | U1STAbits.PERR | U1STAbits.OERR)
                handleCOMError();
 
            if(RxData==semicolon)
            {
-               CMD_LINE();                                                      //Reboot into command line interface    REV CH
+               CMD_LINE();                                                      //Reboot into command line interface    
            }
        }
     }
     
     
-    configShutdownTimer();                                                      //REV Z
+    configShutdownTimer();                                                      
   
     
     if(!LC2CONTROL2.flags2.Modbus)                                              
         testReset();
     
-    if (isWDTTO()) //Did WDT timeout during VW read?		
+    if (isWDTTO())                                                              //Did WDT timeout during VW read?		
     {
-        MUX_CLOCK = 0; //set the MUX_CLOCK line low
-        MUX_RESET = 0; //set the MUX_RESET line low
+        MUX_CLOCK = 0;                                                          //set the MUX_CLOCK line low
+        MUX_RESET = 0;                                                          //set the MUX_RESET line low
         trap = read_Int_FRAM(TrapRegisteraddress);
-        trap += 1; //increment trap counter if it did
-        write_Int_FRAM(TrapRegisteraddress, trap); //store trap value in FRAM  
-        if(!LC2CONTROL2.flags2.Modbus)                                          //REV BA
+        trap += 1;                                                              //increment trap counter if it did
+        write_Int_FRAM(TrapRegisteraddress, trap);                              //store trap value in FRAM  
+        if(!LC2CONTROL2.flags2.Modbus)                                          
         {
-            putsUART1(VWTimeout); //"VW Timeout Occurred!"
+            putsUART1(VWTimeout);                                               //"VW Timeout Occurred!"
             while (BusyUART1());
             crlf();
         }
     }
 
-    if(DISPLAY_CONTROL.flags.BT)                                                //Enable Bluetooth if previously enabled    REV AF
+    if(DISPLAY_CONTROL.flags.BT)                                                //Enable Bluetooth if previously enabled    
         enableBT();
     
-    if(PORT_CONTROL.flags.ControlPortON)                                        //Turn on Control Port if previously on     REV BC
+    if(PORT_CONTROL.flags.ControlPortON)                                        //Turn on Control Port if previously on     
     {
         CONTROL = 1; //turn on control port
-        _READ=0;                                                                //LED ON    REV B        
+        _READ=0;                                                                //LED ON            
     }
     
-    //DISPLAY_CONTROL.flags.Synch = 1; //default Synch setting                  //REM REV CC
-    //restoreSettings(); //reload the settings from FRAM                        //REM REV Z
-    
-
-    /*********************REM VER 6.0.5
-if(LC2CONTROL2.flags2.FU)					//reboot from firmware update?
-{
-        configUARTnormal();                                         //configure the UART1 for normal communications
-        crlf();
-        putsUART1(UpdateComplete);                                  //Display "Firmware Update Complete"
-        while(BusyUART1());
-        crlf();
-        putsUART1(Softwareversion);                                 //Software version:
-        while(BusyUART1());
-        putsUART1(Rev);
-        while(BusyUART1());
-        crlf();
-}								
-LC2CONTROL2.flags2.FU=0;					//Clear the FU flag
-FRAMTest=write_intFRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);	//store flag in FRAM
-     */
-
-    if (LC2CONTROL.flags.Reset && !LC2CONTROL2.flags2.Modbus)                   //REV BA
+    if (LC2CONTROL.flags.Reset && !LC2CONTROL2.flags2.Modbus)                   
     {
-        putsUART1(ResetComplete); //Display "Reset Complete" if RESET command was previously issued
+        putsUART1(ResetComplete);                                               //Display "Reset Complete" if RESET command was previously issued
         while (BusyUART1());
         prompt();
-        LC2CONTROL.flags.Reset = 0; //Clear the Reset flag
-        write_Int_FRAM(LC2CONTROLflagsaddress, LC2CONTROL.full); //store flag in FRAM  
+        LC2CONTROL.flags.Reset = 0;                                             //Clear the Reset flag
+        write_Int_FRAM(LC2CONTROLflagsaddress, LC2CONTROL.full);                //store flag in FRAM  
     }
 
 
-    if (LC2CONTROL.flags.Logging && !LC2CONTROL2.flags2.Waiting) //was logger previously logging?
+    if (LC2CONTROL.flags.Logging && !LC2CONTROL2.flags2.Waiting)                //was logger previously logging?
     {
         if (DISPLAY_CONTROL.flags.Synch)
-            VWflagsbits.synch = 1; //set the synch flag
-        LC2CONTROL2.flags2.FirstReading = 1; //clear the first reading flag
-        write_Int_FRAM(LC2CONTROL2flagsaddress, LC2CONTROL2.full2); //store flags in FRAM 
-        startLogging(); //yes                                                 TEST REM
+            VWflagsbits.synch = 1;                                              //set the synch flag
+        LC2CONTROL2.flags2.FirstReading = 1;                                    //clear the first reading flag
+        write_Int_FRAM(LC2CONTROL2flagsaddress, LC2CONTROL2.full2);             //store flags in FRAM 
+        startLogging();                                                         //yes                                                 
     }
     
     DISPLAY_CONTROL.flags.TakingReading = 0;
     DISPLAY_CONTROL.flags.Shutdown = 0;
-    shutdownTimer(TimeOut);                                                     //Reset 15S timer       REV Z
+    shutdownTimer(TimeOut);                                                     //Reset 15S timer       
     
     ///*TEST REM
-    if(LC2CONTROL2.flags2.Modbus)                                               //if MODBUS REV CG
-        _RS485RX_EN=0;                                                          //enable RS485 Rx   REV CG
-    else                                                                        //REV CG
-        _RS485RX_EN=1;                                                          //disable RS485 Rx if not   REV CG
+    if(LC2CONTROL2.flags2.Modbus)                                               //if MODBUS 
+        _RS485RX_EN=0;                                                          //enable RS485 Rx   
+    else                                                                        
+        _RS485RX_EN=1;                                                          //disable RS485 Rx if not   
     
     
-    DISPLAY_CONTROL.flags.Shutdown=1;                                           //TEST REM VER BA
-    IFS3bits.T9IF=1;                                                            //TEST REM VER BA
-    shutdown();                                                                 //TEST REM VER BA
+    DISPLAY_CONTROL.flags.Shutdown=1;                                           
+    IFS3bits.T9IF=1;                                                            
+    shutdown();                                                                 
 
-    while (1) //infinite loop
+    while (1)                                                                   //infinite loop
     {
         Nop();
         while (!IFS3bits.T9IF) 
         {
-            if(LC2CONTROL2.flags2.Modbus)                                       //REV BA
+            if(LC2CONTROL2.flags2.Modbus)                                       
             {
-               MODBUScomm();                                                     //REV BA     
+               MODBUScomm();                                                         
             }
-            else                                                                //REV BA
+            else                                                                
             {
                CMDcomm();
             }
         }
 
-        IFS0bits.U1RXIF = 0; //clear the UART1 interrupt flag
-        if(DISPLAY_CONTROL.flags.Shutdown | IFS3bits.T9IF)                                      //REV D
+        IFS0bits.U1RXIF = 0;                                                    //clear the UART1 interrupt flag
+        if(DISPLAY_CONTROL.flags.Shutdown | IFS3bits.T9IF)                                      
         {
             IFS3bits.T9IF=0;                                                    //clear the T5 interrupt flag
             shutdown();
         }
 
-        /*REM REV CH:
-        while (LC2CONTROL.flags.NetEnabled && (!USB_PWR | _232 | !BT_CONNECT) && DISPLAY_CONTROL.flags.Shutdown && IFS0bits.U1RXIF) //REV AF
-        {
-            IFS0bits.U1RXIF = 0;
-            shutdownTimer(TimeOut);                                             //Reset 15S timer   REV Z
-
-            netTest = qualifyNetAddress();
-
-            if (LC2CONTROL.flags.NetEnabled && netTest == 0 && (!USB_PWR | _232 | !BT_CONNECT))  //REV AF
-            {
-                IFS3bits.T9IF = 1;
-                break;
-            }
-
-            NAdata = read_Int_FRAM(Netaddress); //read Network Address from FRAM    
-            putsUART1(NetworkaddressIS); //"Network address:"
-            while (BusyUART1());
-            sprintf(NABUF, "%d", NAdata); //format network address
-            putsUART1(NABUF); //display network address
-            while (BusyUART1());
-            prompt();
-            DISPLAY_CONTROL.flags.Shutdown = 0;
-            write_Int_FRAM(DISPLAY_CONTROLflagsaddress, DISPLAY_CONTROL.display); //store flags in FRAM     
-        }
-        */
-        
-        //if (!LC2CONTROL.flags.NetEnabled)                                     //REM REV CH
-        //{                                                                     //REM REV CH
-        //shutdownTimer(TimeOut);                                                 //Reset 15S timer   REM REV CH
         LC2CONTROL2.flags2.ON = 0;
-        write_Int_FRAM(LC2CONTROL2flagsaddress, LC2CONTROL2.full2); //store flag in FRAM  
-        //}                                                                     //REM REV CH
-    } //end of while(1)
-} //end of main()
+        write_Int_FRAM(LC2CONTROL2flagsaddress, LC2CONTROL2.full2);             //store flag in FRAM  
+    }                                                                           //end of while(1)
+}                                                                               //end of main()
 
 
 
