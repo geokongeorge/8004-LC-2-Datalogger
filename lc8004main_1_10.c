@@ -16,7 +16,7 @@
 //	DATE:		11/20/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   1.10
-//	CHECKSUM:	0x7e91  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x7e7d  (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8800/30720   29%
 //	PGM(FLASH)MEM:  184242/261888 70%
 
@@ -6717,7 +6717,7 @@ void displayMUX(int displayChannel)
     }
 }
 
-void displayReading(int ch, unsigned long outputPosition) //display readings stored in external FRAM at FRAMaddress
+void displayReading(int ch, unsigned long outputPosition)                       //display readings stored in external FRAM at FRAMaddress
 {
     typedef struct                                                              
     {
@@ -6742,7 +6742,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
     unsigned long i;                                                            
     unsigned int maxchannelplusone;
     unsigned long FRAMaddress;
-    unsigned long tempoutputPosition = 0;                                       //for DEBUG
+    unsigned long tempoutputPosition = 0;                                       
     float mainBat = 0.0;
     float extThermProcessed = 0.0;
 
@@ -6821,7 +6821,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
             data=read_Int_FRAM(i);                                              //read the ID starting FRAM location    
             unpack(data);                                                       //unpack into (2) bytes
 
-            if (Hbyte == cr)                                                    //VER BA
+            if (Hbyte == cr)                                                    
                 break;
             putcUART1(Hbyte);
 
@@ -7024,7 +7024,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
             FRAMaddress = TH8Bytes * (tempoutputPosition - 1)+(2 * (displayChannel - 1)) + 12;
 
         if (MUX4_ENABLE.mflags.mux16_4 == TH32)                                 //32 channel TH mux
-            FRAMaddress = TH32Bytes * (tempoutputPosition - 1)+(2 * (displayChannel - 1)) + 12; //VER 6.0.12
+            FRAMaddress = TH32Bytes * (tempoutputPosition - 1)+(2 * (displayChannel - 1)) + 12; 
 
 
 
@@ -7066,8 +7066,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
         {
 
             case 1:
-                //if (!MUX_ENABLE1_16.e1flags.CH1)                                //Channel 1 disabled? REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 1 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 1 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7079,20 +7078,17 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else 
                 {
                     putsUART1(BUF);                                             //Display reading
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 }
                 break;
 
             case 2:
-                //if (!MUX_ENABLE1_16.e1flags.CH2)                                //Channel 2 disabled? REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 2 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 2 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7105,20 +7101,17 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
                     putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 }
                 break;
 
             case 3:
-                //if (!MUX_ENABLE1_16.e1flags.CH3)                                //Channel 3 disabled? REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 3 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 3 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7130,20 +7123,17 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 }
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
             case 4:
-                //if (!MUX_ENABLE1_16.e1flags.CH4)                                //Channel 4 disabled? REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 4 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 4 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7155,20 +7145,17 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
             case 5:
-                //if (!MUX_ENABLE1_16.e1flags.CH5)                                //Channel 5 disabled? REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 5 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 5 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7180,20 +7167,17 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
             case 6:
-                //if (!MUX_ENABLE1_16.e1flags.CH6)                                //Channel 6 disabled? REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 6 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 6 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7205,20 +7189,17 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 }
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
             case 7:
-                //if (!MUX_ENABLE1_16.e1flags.CH7)                                //Channel 7 disabled? REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 7 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 7 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7230,20 +7211,17 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8    
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
             case 8:
-                //if (!MUX_ENABLE1_16.e1flags.CH8)                                //Channel 8 disabled? REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 8 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 8 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7255,20 +7233,18 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
             case 9:
-                //if (!MUX_ENABLE1_16.e1flags.CH9)                                //Channel 9 disabled? REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 9 disabled    REV 1.8
+
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 9 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7280,20 +7256,17 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
             case 10:
-                //if (!MUX_ENABLE1_16.e1flags.CH10)                               //Channel 10 disabled?    REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 10 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 10 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7305,20 +7278,17 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
             case 11:
-                //if (!MUX_ENABLE1_16.e1flags.CH11)                               //Channel 11 disabled?    REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 11 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 11 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7330,20 +7300,17 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
             case 12:
-                //if (!MUX_ENABLE1_16.e1flags.CH12)                               //Channel 12 disabled?    REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 12 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 12 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7355,21 +7322,18 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
 
             case 13:
-                //if (!MUX_ENABLE1_16.e1flags.CH13)                               //Channel 13 disabled?    REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 13 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 13 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7381,21 +7345,18 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
 
             case 14:
-                //if (!MUX_ENABLE1_16.e1flags.CH14)                               //Channel 14 disabled?    REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 14 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 14 disabled   
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7407,20 +7368,17 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
 
             case 15:
-                //if (!MUX_ENABLE1_16.e1flags.CH15)                               //Channel 15 disabled?    REM REV 1.8
                 if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 15 disabled    REV 1.8
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
@@ -7433,21 +7391,18 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8            
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
 
             case 16:
-                //if (!MUX_ENABLE1_16.e1flags.CH16)                               //Channel 16 disabled?    REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 16 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 16 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7459,21 +7414,18 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
 
             case 17:
-                //if (!MUX_ENABLE17_32.e2flags.CH17)                              //Channel 17 disabled?    REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 17 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 17 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7485,21 +7437,18 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
 
             case 18:
-                //if (!MUX_ENABLE17_32.e2flags.CH18)                              //Channel 18 disabled?    REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 18 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 18 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7511,21 +7460,18 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
 
             case 19:
-                //if (!MUX_ENABLE17_32.e2flags.CH19)                              //Channel 19 disabled?    REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 4 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 4 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7537,21 +7483,18 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
 
             case 20:
-                //if (!MUX_ENABLE17_32.e2flags.CH20)                              //Channel 20 disabled?    REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 20 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 20 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7563,21 +7506,18 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
                     putsUART1(BUF);                                         //Display VW reading
                     while (BusyUART1());
                     putcUART1(comma);                                       // , DELIMITER
-                    break;
                 }
                 break;
 
 
             case 21:
-                //if (!MUX_ENABLE17_32.e2flags.CH21)                              //Channel 21 disabled?    REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 21 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 21 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7589,21 +7529,18 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
 
             case 22:
-                //if (!MUX_ENABLE17_32.e2flags.CH22)                              //Channel 22 disabled?    REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 22 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 22 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7615,21 +7552,18 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
 
             case 23:
-                //if (!MUX_ENABLE17_32.e2flags.CH23)                              //Channel 23 disabled?    REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 23 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 23 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7641,21 +7575,18 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
 
             case 24:
-                //if (!MUX_ENABLE17_32.e2flags.CH24)                              //Channel 24 disabled?    REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 24 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 24 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7667,21 +7598,18 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
 
             case 25:
-                //if (!MUX_ENABLE17_32.e2flags.CH25)                              //Channel 25 disabled?    REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 25 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 25 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7693,21 +7621,18 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
 
             case 26:
-                //if (!MUX_ENABLE17_32.e2flags.CH26)                              //Channel 26 disabled?    REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 26 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 26 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7719,21 +7644,18 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
 
             case 27:
-                //if (!MUX_ENABLE17_32.e2flags.CH27)                              //Channel 27 disabled?    REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 27 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 27 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7745,21 +7667,18 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
 
             case 28:
-                //if (!MUX_ENABLE17_32.e2flags.CH28)                              //Channel 28 disabled?    REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 28 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 28 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7771,20 +7690,17 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
 
             case 29:
-                //if (!MUX_ENABLE17_32.e2flags.CH29)                              //Channel 29 disabled?    REM REV 1.8
                 if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 29 disabled    REV 1.8
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
@@ -7797,21 +7713,18 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
 
             case 30:
-                //if (!MUX_ENABLE17_32.e2flags.CH30)                              //Channel 30 disabled?    REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 30 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 30 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7823,21 +7736,18 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
 
             case 31:
-                //if (!MUX_ENABLE17_32.e2flags.CH31)                              //Channel 31 disabled?    REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 31 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 31 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7849,21 +7759,18 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
 
             case 32:
-                //if (!MUX_ENABLE17_32.e2flags.CH32)                              //Channel 32 disabled?    REM REV 1.8
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 32 disabled    REV 1.8
+                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 32 disabled    
                     MUX4_ENABLE.mflags.mux16_4==VW4     |
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
                     MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -7875,14 +7782,12 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
                     putsUART1(DisabledDisplay);                                 //Yes - display "---"
                     while (BusyUART1());
                     putcUART1(comma);                                           // , DELIMITER
-                    //break;                                                    REM REV 1.8
                 } 
                 else
                 {
-                    putsUART1(BUF);                                         //Display VW reading
+                    putsUART1(BUF);                                             //Display VW reading
                     while (BusyUART1());
-                    putcUART1(comma);                                       // , DELIMITER
-                    //break;                                                    REM REV 1.8
+                    putcUART1(comma);                                           // , DELIMITER
                 }
                 break;
 
@@ -7890,7 +7795,7 @@ void displayReading(int ch, unsigned long outputPosition) //display readings sto
         while (BusyUART1());
         Nop();
 
-    } //end of 1st for(displayChannel) loop
+    }                                                                           //end of 1st for(displayChannel) loop
 
 
     if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32 &&
