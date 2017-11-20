@@ -534,16 +534,11 @@ int main(void)
 
 void _3VX_on(void) 
 {
-    PMD3bits.I2C2MD=0;                                                          //Enable the I2C2 module for AD5241 communications  REV F
+    PMD3bits.I2C2MD=0;                                                          //Enable the I2C2 module for AD5241 communications  
     V3_X_CONTROL = 1;                                                           //turn on +3VX
-    //delay(73730);                                                               //10mS delay  REM REV AE
-    delay(294920);                                                              //10mS delay    REV AE
-    SCL_VW=1;                                                                   //drive high    REV CB
-    SDA_VW=1;                                                                   //drive high    REV CB
-    //TRISAbits.TRISA2=1;                                                         //Configure RA2 as INPUT
-    //LATAbits.LATA2=1;                                                           //drive high
-    //TRISAbits.TRISA3=1;                                                         //Configure RA3 as INPUT
-    //LATAbits.LATA3=1;                                                           //drive high
+    delay(294920);                                                              //10mS delay    
+    SCL_VW=1;                                                                   //drive high    
+    SDA_VW=1;                                                                   //drive high    
 }
 
 //***************************************************************************
@@ -560,13 +555,13 @@ void _3VX_on(void)
 
 void _3VX_off(void) 
 {
-    write_AD5241(0);                                                            //reset the gain setting to 1   REV H
+    write_AD5241(0);                                                            //reset the gain setting to 1   
     PMD3bits.I2C2MD=1;                                                          //Disable the I2C2 module
     TRISAbits.TRISA2=0;                                                         //Configure RA2 (SCL_VW) as digital output    
     LATAbits.LATA2=0;                                                           //drive low       
     TRISAbits.TRISA3=0;                                                         //Configure RA3 (SCL_VW) as digital output    
     LATAbits.LATA3=0;                                                           //drive low   
-    V3_X_CONTROL = 0; //shut off +5VX
+    V3_X_CONTROL = 0;                                                           //shut off +5VX
 }
 
 
@@ -587,7 +582,7 @@ unsigned long bcd2d(unsigned char bcd) {
 
     x = bcd;
 
-    if (bcd >= 0 && bcd <= 0x09) //convert 2 digit bcd to decimal
+    if (bcd >= 0 && bcd <= 0x09)                                                //convert 2 digit bcd to decimal
         return x;
 
     if (bcd >= 0x10 && bcd <= 0x19)
@@ -626,29 +621,25 @@ void Blink(unsigned char times)
 
     for (t=0; t < times; t++) 
     {
-        if(_READ)                                                               //REV N
+        if(_READ)                                                               
         {
             _READ = 0;                                                          //Light the LED
-            //delay(20000);                                                     REM REV AE
-            delay(80000);                                                        //REV AE
+            delay(80000);                                                        
             _READ=1;                                                            //Off the LED
-            //delay(20000);                                                     REM REV AE
-            delay(320000);                                                       //REV AE
+            delay(320000);                                                       
         }
         else
         {   
             _READ=1;                                                            //Off the LED
-             //delay(20000);                                                    REM REV AE
-            delay(80000);                                                       //REV AE
+            delay(80000);                                                       
             _READ = 0;                                                          //Light the LED
-            //delay(20000);                                                     REM REV AE
-            delay(320000);                                                       //REV AE
+            delay(320000);                                                      
         }
     }
 
 }
 
-void BT_D(void)                                                                 //REV CJ
+void BT_D(void)                                                                 
 {
     PORT_CONTROL.flags.BluetoothTimerEN = 0;                                    //clear Bluetooth Timer enable flag
     write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);              //store flag in FRAM`
@@ -657,7 +648,7 @@ void BT_D(void)                                                                 
     disableAlarm(Alarm2);                                                       //disable the Alarm2 interrupt		
 }
 
-void BT_E(void)                                                                  //REV CJ
+void BT_E(void)                                                                  
 {
     PORT_CONTROL.flags.BluetoothTimerEN = 1;                                    //set Bluetooth Timer enable flag
     PORT_CONTROL.flags.PortTimerEN=0;                                           //clear the Control Port Timer enable flag
@@ -666,10 +657,10 @@ void BT_E(void)                                                                 
     S_1.status1flags._BT_Timer=1;                                                //set the MODBUS status flag    
     write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
     delay(4000);                                                                //delay required? 
-    enableAlarm(Alarm2); //enable the Alarm2 interrupt    
+    enableAlarm(Alarm2);                                                        //enable the Alarm2 interrupt    
 }
 
-void BT_R(void)                                                                 //REV 1.2
+void BT_R(void)                                                                 
 {
     unsigned char b = 0;
     
@@ -707,9 +698,9 @@ void BT_R(void)                                                                 
     
 }
 
-void BTStatus(void)                                                             //REV AG
+void BTStatus(void)                                                             
 {
-    char bbBUF[6]; //temporary storage for BB values
+    char bbBUF[6];                                                              //temporary storage for BB values
    
     
     DISPLAY_CONTROL.display=read_Int_FRAM(DISPLAY_CONTROLflagsaddress);         //Read the BT flag
@@ -717,17 +708,17 @@ void BTStatus(void)                                                             
     crlf();
     if(DISPLAY_CONTROL.flags.BT)
     {
-        putsUART1(BTON);                                                   //Display BT Enabled
+        putsUART1(BTON);                                                        //Display BT Enabled
     }
     else
     {
-        putsUART1(BTOFF);                                                  //Display BT Disabled
+        putsUART1(BTOFF);                                                       //Display BT Disabled
     }
     while(BusyUART1());
     
     crlf();
 
-    if (PORT_CONTROL.flags.BluetoothTimerEN)                                         //Bluetooth Timer Enabled
+    if (PORT_CONTROL.flags.BluetoothTimerEN)                                    //Bluetooth Timer Enabled
     {
         putsUART1(BTTIMEREN);                                                   //"Bluetooth Timer Enabled."
     } else {
@@ -741,24 +732,24 @@ void BTStatus(void)                                                             
     while (BusyUART1());
 
     PortOnHours=read_Int_FRAM(PortOnHoursaddress);   
-    if (PortOnHours < 10) //add leading zero
+    if (PortOnHours < 10)                                                       //add leading zero
     {
         putcUART1(zero);
         while (BusyUART1());
     }
-    sprintf(bbBUF, "%d", PortOnHours); //format the hour data
-    putsUART1(bbBUF); //display it
+    sprintf(bbBUF, "%d", PortOnHours);                                          //format the hour data
+    putsUART1(bbBUF);                                                           //display it
     while (BusyUART1());
-    putcUART1(colon); // :
+    putcUART1(colon);                                                           // :
     while (BusyUART1());
     PortOnMinutes=read_Int_FRAM(PortOnMinutesaddress);   
-    if (PortOnMinutes < 10) //add leading zero
+    if (PortOnMinutes < 10)                                                     //add leading zero
     {
         putcUART1(zero);
         while (BusyUART1());
     }
-    sprintf(bbBUF, "%d", PortOnMinutes); //format the minute data
-    putsUART1(bbBUF); //display it
+    sprintf(bbBUF, "%d", PortOnMinutes);                                        //format the minute data
+    putsUART1(bbBUF);                                                           //display it
     while (BusyUART1());
 
     crlf();
@@ -766,49 +757,49 @@ void BTStatus(void)                                                             
     putsUART1(CPTIMERDEACT);                                                    //"Timer deactivate at "
     while (BusyUART1());
     PortOffHours=read_Int_FRAM(PortOffHoursaddress); 
-    if (PortOffHours < 10) //add leading zero
+    if (PortOffHours < 10)                                                      //add leading zero
     {
         putcUART1(zero);
         while (BusyUART1());
     }
-    sprintf(bbBUF, "%d", PortOffHours); //format the hour data
-    putsUART1(bbBUF); //display it
+    sprintf(bbBUF, "%d", PortOffHours);                                         //format the hour data
+    putsUART1(bbBUF);                                                           //display it
     while (BusyUART1());
-    putcUART1(colon); // :
+    putcUART1(colon);                                                           // :
     while (BusyUART1());
     PortOffMinutes=read_Int_FRAM(PortOffMinutesaddress); 
-    if (PortOffMinutes < 10) //add leading zero
+    if (PortOffMinutes < 10)                                                    //add leading zero
     {
         putcUART1(zero);
         while (BusyUART1());
     }
-    sprintf(bbBUF, "%d", PortOffMinutes); //format the minute data
-    putsUART1(bbBUF); //display it
+    sprintf(bbBUF, "%d", PortOffMinutes);                                       //format the minute data
+    putsUART1(bbBUF);                                                           //display it
     while (BusyUART1());
     crlf();   
 
 }
 
-void BTONE(void)                                                                //REV CJ
+void BTONE(void)                                                                
 {
     enableBT();  
     PORT_CONTROL.flags.BluetoothON = 1;
     PORT_CONTROL.flags.B0issued = 0;                                            //clear B0issued flag
     write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);              //store flag in FRAM  
-    S_1.status1flags._BT=1;                                                      //set the MODBUS status flag    
+    S_1.status1flags._BT=1;                                                     //set the MODBUS status flag    
     write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                             
 }
 
 
-void BTZERO(void)                                                               //REV CJ
+void BTZERO(void)                                                               
 {
     disableBT();                                                                //Turn off bluetooth
     if (!PORT_CONTROL.flags.BTTime)                         
         PORT_CONTROL.flags.BluetoothON = 0;                                     //clear flag if not in scheduled ON time
     PORT_CONTROL.flags.B0issued = 1;                                            //set B0issued flag
     write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);              //store flag in FRAM  
-    S_1.status1flags._BT=0;                                                      //clear the MODBUS status flag    REV CB
-    write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                          //REV CB    
+    S_1.status1flags._BT=0;                                                     //clear the MODBUS status flag    
+    write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                              
 }
 
 void Buf2DateTime(char buffer[]) {
@@ -829,7 +820,7 @@ void Buf2DateTime(char buffer[]) {
         int firstpass : 1;
     } RTCFlagBits;
 
-    RTCFlagBits.monthsChanged = 0; //initialize flags
+    RTCFlagBits.monthsChanged = 0;                                              //initialize flags
     RTCFlagBits.daysChanged = 0;
     RTCFlagBits.yearsChanged = 0;
     RTCFlagBits.hoursChanged = 0;
@@ -837,88 +828,88 @@ void Buf2DateTime(char buffer[]) {
     RTCFlagBits.secondsChanged = 0;
     RTCFlagBits.firstpass = 1;
 
-    RTCseconds = 0; //initialize RTCseconds to 0
-    LC2CONTROL.flags.ERROR = 0; //clear the ERROR flag
+    RTCseconds = 0;                                                             //initialize RTCseconds to 0
+    LC2CONTROL.flags.ERROR = 0;                                                 //clear the ERROR flag
 
     for (SelectionLoop = 1; SelectionLoop < 7; SelectionLoop++) {
-        for (index; buffer[index] != cr; index++) //parse the buffer for data
+        for (index; buffer[index] != cr; index++)                               //parse the buffer for data
         {
-            temp = buffer[index]; //get the char at buffer[index]
+            temp = buffer[index];                                               //get the char at buffer[index]
 
-            if (isalpha(temp)) //don't allow any letters
+            if (isalpha(temp))                                                  //don't allow any letters
             {
-                LC2CONTROL.flags.ERROR = 1; //set the ERROR flag
+                LC2CONTROL.flags.ERROR = 1;                                     //set the ERROR flag
                 return;
             }
 
 
             if (LC2CONTROL2.flags2.SetStartTime | LC2CONTROL2.flags2.SetStopTime | PORT_CONTROL.flags.SetAlarm2Time | PORT_CONTROL.flags.SetAlarm2StopTime) {
-                if (index == 2 && (temp > two | temp < zero)) //don't allow hour(tens) > 2
+                if (index == 2 && (temp > two | temp < zero))                   //don't allow hour(tens) > 2
                 {
-                    LC2CONTROL.flags.ERROR = 1; //set the ERROR flag
+                    LC2CONTROL.flags.ERROR = 1;                                 //set the ERROR flag
                     return;
                 }
 
                 if (index == 3 && (((buffer[2] == two) && (temp > three | temp < zero))//don't allow hour(ones) > 3 
                         | ((buffer[2] == one) && (temp > nine | temp < zero)))) {
-                    LC2CONTROL.flags.ERROR = 1; //set the ERROR flag
+                    LC2CONTROL.flags.ERROR = 1;                                 //set the ERROR flag
                     return;
                 }
 
-                if (index == 4 && temp != colon) //don't allow char other than colon 
+                if (index == 4 && temp != colon)                                //don't allow char other than colon 
                 {
-                    LC2CONTROL.flags.ERROR = 1; //set the ERROR flag
+                    LC2CONTROL.flags.ERROR = 1;                                 //set the ERROR flag
                     return;
                 }
 
-                if (index == 5 && (temp > five | temp < zero)) //don't allow minute(tens) > 5
+                if (index == 5 && (temp > five | temp < zero))                  //don't allow minute(tens) > 5
                 {
-                    LC2CONTROL.flags.ERROR = 1; //set the ERROR flag
+                    LC2CONTROL.flags.ERROR = 1;                                 //set the ERROR flag
                     return;
                 }
 
-                if (index == 6 && (temp > nine | temp < zero)) //don't allow minute(ones) > 9
+                if (index == 6 && (temp > nine | temp < zero))                  //don't allow minute(ones) > 9
                 {
-                    LC2CONTROL.flags.ERROR = 1; //set the ERROR flag
+                    LC2CONTROL.flags.ERROR = 1;                                 //set the ERROR flag
                     return;
                 }
 
                 if (buffer[7] != cr) {
-                    if (index == 7 && (temp != colon)) //don't allow char other than colon
+                    if (index == 7 && (temp != colon))                          //don't allow char other than colon
                     {
-                        LC2CONTROL.flags.ERROR = 1; //set the ERROR flag
+                        LC2CONTROL.flags.ERROR = 1;                             //set the ERROR flag
                         return;
                     }
 
                     if (index == 8 && (temp > five | temp < zero)) {
-                        LC2CONTROL.flags.ERROR = 1; //set the ERROR flag
+                        LC2CONTROL.flags.ERROR = 1;                             //set the ERROR flag
                         return;
                     }
 
                     if (index == 9 && (temp > nine | temp < zero)) {
-                        LC2CONTROL.flags.ERROR = 1; //set the ERROR flag
+                        LC2CONTROL.flags.ERROR = 1;                             //set the ERROR flag
                         return;
                     }
 
                     if (index == 10 && (temp != cr)) {
-                        LC2CONTROL.flags.ERROR = 1; //set the ERROR flag
+                        LC2CONTROL.flags.ERROR = 1;                             //set the ERROR flag
                         return;
                     }
                 }
             }
 
-            switch (SelectionLoop) //get the value from the array
+            switch (SelectionLoop)                                              //get the value from the array
             {
                 case 1:
                 case 2:
                 case 3:
                     if (!isdigit(temp) && temp != slash && temp != colon && temp != nul) 
-                        return; //not valid digit,slash or colon, so exit
+                        return;                                                 //not valid digit,slash or colon, so exit
                     break;
                 case 4:
                 case 5:
                     if (!isdigit(temp) && temp != colon) 
-                        return; //not valid digit or colon, so exit
+                        return;                                                 //not valid digit or colon, so exit
                     break;
                 case 6:
                     if (!isdigit(temp) && temp != colon) 
@@ -930,7 +921,7 @@ void Buf2DateTime(char buffer[]) {
 
 
 
-            if (temp == nul) //convert nul char to ascii zero
+            if (temp == nul)                                                    //convert nul char to ascii zero
                 temp = zero;
 
             if ((SelectionLoop < 4 && temp == slash) | (SelectionLoop >= 4 && temp == colon) |
@@ -943,13 +934,13 @@ void Buf2DateTime(char buffer[]) {
                     (PORT_CONTROL.flags.SetAlarm2Time && SelectionLoop == 3 && temp == zero && RTCFlagBits.firstpass == 1) |
                     (PORT_CONTROL.flags.SetAlarm2StopTime && SelectionLoop == 3 && temp == zero && RTCFlagBits.firstpass == 1)) break;
 
-            temp = temp - 0x30; //convert to decimal
+            temp = temp - 0x30;                                                 //convert to decimal
 
             if (RTCFlagBits.firstpass)
                 ones = temp;
             else {
-                tens = 10 * (ones); //buffer[2] was tens
-                ones = temp; //buffer[3] is ones 
+                tens = 10 * (ones);                                             //buffer[2] was tens
+                ones = temp;                                                    //buffer[3] is ones 
             }
 
             switch (SelectionLoop) {
@@ -958,13 +949,13 @@ void Buf2DateTime(char buffer[]) {
                     if (!LC2CONTROL.flags.LoggingStartTime && !LC2CONTROL2.flags2.SetStopTime && !PORT_CONTROL.flags.SetAlarm2Time && !PORT_CONTROL.flags.SetAlarm2StopTime) {
                         RTCmonths = tens + ones;
                         if ((RTCmonths > 12 | RTCmonths == 0) && !RTCFlagBits.firstpass) return; //invalid	
-                        RTCFlagBits.monthsChanged = 1; //set the months changed flag
+                        RTCFlagBits.monthsChanged = 1;                          //set the months changed flag
                         break;
                     } else {
                         if (PORT_CONTROL.flags.SetAlarm2StopTime) {
                             PortOffHours = tens + ones;
                             if ((PortOffHours > 23) && !RTCFlagBits.firstpass) {
-                                return; //invalid
+                                return;                                         //invalid
                             }
                             break;
                         }
@@ -980,13 +971,13 @@ void Buf2DateTime(char buffer[]) {
                         if (!LC2CONTROL2.flags2.SetStopTime && !PORT_CONTROL.flags.SetAlarm2Time && !PORT_CONTROL.flags.SetAlarm2StopTime) //if logging stop time is not being extracted from buffer						
                         {
                             setClock(RTCAlarm1HoursAddress, RTChours);          //load the Start Time Hours into the RTC
-                            if(DISPLAY_CONTROL.flags.firstTime)                 //REV W
-                                write_Int_FRAM(startHoursaddress,RTChours);     //store first time in FRAM REV W
+                            if(DISPLAY_CONTROL.flags.firstTime)                 
+                                write_Int_FRAM(startHoursaddress,RTChours);     //store first time in FRAM 
                         }
 
                         if (PORT_CONTROL.flags.SetAlarm2Time) {
                             setClock(RTCAlarm2HoursAddress, RTChours);          //load the Start Time Hours into the RTC
-                            write_Int_FRAM(PortOnHoursaddress,RTChours);	//store Port ON hours in FRAM 
+                            write_Int_FRAM(PortOnHoursaddress,RTChours);        //store Port ON hours in FRAM 
                         }
                         break;
                     }
@@ -996,13 +987,13 @@ void Buf2DateTime(char buffer[]) {
                     if (!LC2CONTROL.flags.LoggingStartTime && !LC2CONTROL2.flags2.SetStopTime && !PORT_CONTROL.flags.SetAlarm2Time && !PORT_CONTROL.flags.SetAlarm2StopTime) {
                         RTCdays = tens + ones;
                         if ((RTCdays > 31 | RTCdays == 0) && !RTCFlagBits.firstpass) return; //invalid
-                        RTCFlagBits.daysChanged = 1; //set the days changed flag
+                        RTCFlagBits.daysChanged = 1;                            //set the days changed flag
                         break;
                     } else {
                         if (PORT_CONTROL.flags.SetAlarm2StopTime) {
                             PortOffMinutes = tens + ones;
                             if ((PortOffMinutes > 59) && !RTCFlagBits.firstpass) {
-                                return; //invalid
+                                return;                                         //invalid
                             }
                             break;
                         }
@@ -1017,20 +1008,20 @@ void Buf2DateTime(char buffer[]) {
 
                         if (!LC2CONTROL2.flags2.SetStopTime && !PORT_CONTROL.flags.SetAlarm2Time)//if logging stop time is not being extracted from buffer
                         {
-                            setClock(RTCAlarm1MinutesAddress, RTCminutes); //load the Start Time Minutes into the RTC
+                            setClock(RTCAlarm1MinutesAddress, RTCminutes);      //load the Start Time Minutes into the RTC
                             RTCseconds = 0;
                             setClock(RTCAlarm1SecondsAddress, RTCseconds);
-                            if(DISPLAY_CONTROL.flags.firstTime)                 //REV W
+                            if(DISPLAY_CONTROL.flags.firstTime)                 
                             {
-                                write_Int_FRAM(startMinutesaddress,RTCminutes); //store in FRAM     REV W
-                                write_Int_FRAM(startSecondsaddress,RTCseconds); //store in FRAM     REV W
+                                write_Int_FRAM(startMinutesaddress,RTCminutes); //store in FRAM     
+                                write_Int_FRAM(startSecondsaddress,RTCseconds); //store in FRAM     
                             }
                         }
 
                         if (PORT_CONTROL.flags.SetAlarm2Time) {
                             RTCminutes = tens + ones;
                             if ((PortOffMinutes > 59) && !RTCFlagBits.firstpass) {
-                                return; //invalid
+                                return;                                         //invalid
                             }
                             setClock(RTCAlarm2MinutesAddress, RTCminutes);      //load the Control Port RTC Alarm2 minutes into the RTC
                             write_Int_FRAM(PortOnMinutesaddress,RTCminutes);	//store Port ON minutes in FRAM   
@@ -1042,8 +1033,8 @@ void Buf2DateTime(char buffer[]) {
 
                     if (!LC2CONTROL.flags.LoggingStartTime && !LC2CONTROL2.flags2.SetStopTime && !PORT_CONTROL.flags.SetAlarm2Time && !PORT_CONTROL.flags.SetAlarm2StopTime) {
                         RTCyears = tens + ones;
-                        if ((RTCyears > 99) && !RTCFlagBits.firstpass) return; //invalid
-                        RTCFlagBits.yearsChanged = 1; //set the years changed flag
+                        if ((RTCyears > 99) && !RTCFlagBits.firstpass) return;  //invalid
+                        RTCFlagBits.yearsChanged = 1;                           //set the years changed flag
                         break;
                     } else {
                         if (LC2CONTROL2.flags2.SetStopTime) {
@@ -1052,15 +1043,15 @@ void Buf2DateTime(char buffer[]) {
                         } else {
                             RTCseconds = tens + ones;
                             if ((RTCseconds > 59) && !RTCFlagBits.firstpass) {
-                                return; //invalid
+                                return;                                         //invalid
                             }
                         }
 
-                        if (!LC2CONTROL2.flags2.SetStopTime) //if logging stop time is not being extracted from buffer
+                        if (!LC2CONTROL2.flags2.SetStopTime)                    //if logging stop time is not being extracted from buffer
                         {
                             setClock(RTCAlarm1SecondsAddress, RTCseconds);      //load the Start Time Seconds into the RTC
-                            if(DISPLAY_CONTROL.flags.firstTime)                 //REV W
-                                write_Int_FRAM(startSecondsaddress,RTCseconds);     //store in FRAM REV W
+                            if(DISPLAY_CONTROL.flags.firstTime)                 
+                                write_Int_FRAM(startSecondsaddress,RTCseconds); //store in FRAM REV W
                         }
 
                         if (temp == nul && !RTCFlagBits.firstpass) return;
@@ -1071,20 +1062,20 @@ void Buf2DateTime(char buffer[]) {
 
                     if (!LC2CONTROL2.flags2.SetStopTime) {
                         RTChours = tens + ones;
-                        if ((RTChours > 23) && !RTCFlagBits.firstpass) return; //invalid
-                        RTCFlagBits.hoursChanged = 1; //set the hours changed flag
+                        if ((RTChours > 23) && !RTCFlagBits.firstpass) return;  //invalid
+                        RTCFlagBits.hoursChanged = 1;                           //set the hours changed flag
                         break;
                     }
 
                     if (PORT_CONTROL.flags.SetAlarm2StopTime) {
                         PortOffHours = tens + ones;
                         if ((PortOffHours > 23) && !RTCFlagBits.firstpass) return; //invalid
-                        RTCFlagBits.hoursChanged = 1; //set the hours changed flag
+                        RTCFlagBits.hoursChanged = 1;                           //set the hours changed flag
                         break;
                     } else {
                         LoggingStopHours = tens + ones;
                         if ((LoggingStopHours > 23) && !RTCFlagBits.firstpass) return; //invalid
-                        RTCFlagBits.hoursChanged = 1; //set the hours changed flag
+                        RTCFlagBits.hoursChanged = 1;                           //set the hours changed flag
                         break;
                     }
 
@@ -1093,19 +1084,19 @@ void Buf2DateTime(char buffer[]) {
                     if (!LC2CONTROL2.flags2.SetStopTime) {
                         RTCminutes = tens + ones;
                         if ((RTCminutes > 59) && !RTCFlagBits.firstpass) return; //invalid
-                        RTCFlagBits.minutesChanged = 1; //set the minutes changed flag
+                        RTCFlagBits.minutesChanged = 1;                         //set the minutes changed flag
                         break;
                     }
 
                     if (PORT_CONTROL.flags.SetAlarm2StopTime) {
                         PortOffMinutes = tens + ones;
                         if ((PortOffMinutes > 59) && !RTCFlagBits.firstpass) return; //invalid
-                        RTCFlagBits.minutesChanged = 1; //set the hours changed flag
+                        RTCFlagBits.minutesChanged = 1;                         //set the hours changed flag
                         break;
                     } else {
                         LoggingStopMinutes = tens + ones;
                         if ((LoggingStopMinutes > 59) && !RTCFlagBits.firstpass) return; //invalid
-                        RTCFlagBits.minutesChanged = 1; //set the minutes changed flag
+                        RTCFlagBits.minutesChanged = 1;                         //set the minutes changed flag
                         break;
                     }
 
@@ -1114,12 +1105,12 @@ void Buf2DateTime(char buffer[]) {
                     if (!LC2CONTROL2.flags2.SetStopTime) {
                         RTCseconds = tens + ones;
                         if ((RTCseconds > 59) && !RTCFlagBits.firstpass) return; //invalid
-                        RTCFlagBits.secondsChanged = 1; //set the seconds changed flag
+                        RTCFlagBits.secondsChanged = 1;                         //set the seconds changed flag
                         break;
                     } else {
                         LoggingStopSeconds = tens + ones;
                         if ((LoggingStopSeconds > 59) && !RTCFlagBits.firstpass) return; //invalid
-                        RTCFlagBits.secondsChanged = 1; //set the seconds changed flag
+                        RTCFlagBits.secondsChanged = 1;                         //set the seconds changed flag
                         break;
                     }
 
@@ -1128,89 +1119,89 @@ void Buf2DateTime(char buffer[]) {
             }
 
             RTCFlagBits.firstpass = 0;
-        } //end of for(index)
+        }                                                                       //end of for(index)
 
         index++;
         RTCFlagBits.firstpass = 1;
         tens = 0;
         ones = 0;
-    } //end of for(SelectionLoop)
+    }                                                                           //end of for(SelectionLoop)
 
     if (PORT_CONTROL.flags.SetAlarm2Time) {
-        setClock(RTCAlarm2HoursAddress, RTChours); //load the Control Port RTC Alarm2 Hours into the RTC
-        write_Int_FRAM(PortOnHoursaddress,RTChours);	//store Port ON hours in FRAM		
+        setClock(RTCAlarm2HoursAddress, RTChours);                              //load the Control Port RTC Alarm2 Hours into the RTC
+        write_Int_FRAM(PortOnHoursaddress,RTChours);                            //store Port ON hours in FRAM		
     }
 
-    if (!LC2CONTROL2.flags2.SetStopTime) //don't load RTC if logging stop time is being extracted from buffer
+    if (!LC2CONTROL2.flags2.SetStopTime)                                        //don't load RTC if logging stop time is being extracted from buffer
     {
 
 
-        if (RTCFlagBits.monthsChanged) //if the user entered new month info
-            setClock(RTCMonthsAddress, RTCmonths); //load it into the RTC
+        if (RTCFlagBits.monthsChanged)                                          //if the user entered new month info
+            setClock(RTCMonthsAddress, RTCmonths);                              //load it into the RTC
 
-        if (RTCFlagBits.daysChanged) //if the user entered new day info
-            setClock(RTCDaysAddress, RTCdays); //load it into the RTC
+        if (RTCFlagBits.daysChanged)                                            //if the user entered new day info
+            setClock(RTCDaysAddress, RTCdays);                                  //load it into the RTC
 
-        if (RTCFlagBits.yearsChanged) //if the user entered new year info
-            setClock(RTCYearsAddress, RTCyears); //load it into the RTC
+        if (RTCFlagBits.yearsChanged)                                           //if the user entered new year info
+            setClock(RTCYearsAddress, RTCyears);                                //load it into the RTC
 
-        if (RTCFlagBits.hoursChanged && !LC2CONTROL.flags.LoggingStartTime) //if the user entered new hour info for current time
-            setClock(RTCHoursAddress, RTChours); //load it into the RTC
+        if (RTCFlagBits.hoursChanged && !LC2CONTROL.flags.LoggingStartTime)     //if the user entered new hour info for current time
+            setClock(RTCHoursAddress, RTChours);                                //load it into the RTC
 
-        if (RTCFlagBits.hoursChanged && LC2CONTROL.flags.LoggingStartTime) //if the user entered new hour info for Start Logging
+        if (RTCFlagBits.hoursChanged && LC2CONTROL.flags.LoggingStartTime)      //if the user entered new hour info for Start Logging
         {
-            setClock(RTCAlarm1HoursAddress, RTChours); //load it into the RTC
+            setClock(RTCAlarm1HoursAddress, RTChours);                          //load it into the RTC
             enableAlarm(Alarm1);
         }
 
-        if (RTCFlagBits.minutesChanged && !LC2CONTROL.flags.LoggingStartTime) //if the user entered new minute info
-            setClock(RTCMinutesAddress, RTCminutes); //load it into the RTC
+        if (RTCFlagBits.minutesChanged && !LC2CONTROL.flags.LoggingStartTime)   //if the user entered new minute info
+            setClock(RTCMinutesAddress, RTCminutes);                            //load it into the RTC
 
         if (RTCFlagBits.minutesChanged && LC2CONTROL.flags.LoggingStartTime) {
             setClock(RTCAlarm1MinutesAddress, RTCminutes);
             enableAlarm(Alarm1);
         }
 
-        if (RTCFlagBits.secondsChanged) //if the user entered new seconds info
-            setClock(RTCSecondsAddress, RTCseconds); //load it into the RTC
+        if (RTCFlagBits.secondsChanged)                                         //if the user entered new seconds info
+            setClock(RTCSecondsAddress, RTCseconds);                            //load it into the RTC
 
         crlf();
 
-        putsUART1(Date); //Date:
+        putsUART1(Date);                                                        //Date:
         while (BusyUART1());
 
-        RTCdata = readClock(RTCMonthsAddress); //get the month from the RTC
-        displayClock(RTCdata); //display it
+        RTCdata = readClock(RTCMonthsAddress);                                  //get the month from the RTC
+        displayClock(RTCdata);                                                  //display it
 
-        putcUART1(slash); // '/'
+        putcUART1(slash);                                                       // '/'
         while (BusyUART1());
 
-        RTCdata = readClock(RTCDaysAddress); //get the day from the RTC
-        displayClock(RTCdata); //display it
+        RTCdata = readClock(RTCDaysAddress);                                    //get the day from the RTC
+        displayClock(RTCdata);                                                  //display it
 
-        putcUART1(slash); // '/'
+        putcUART1(slash);                                                       // '/'
         while (BusyUART1());
 
-        RTCdata = readClock(RTCYearsAddress); //get the year from the RTC
-        displayClock(RTCdata); //display it
+        RTCdata = readClock(RTCYearsAddress);                                   //get the year from the RTC
+        displayClock(RTCdata);                                                  //display it
 
-        putsUART1(Time); //Time:
+        putsUART1(Time);                                                        //Time:
         while (BusyUART1());
 
-        RTCdata = readClock(RTCHoursAddress); //get the hour from the RTC
-        displayClock(RTCdata); //display it
+        RTCdata = readClock(RTCHoursAddress);                                   //get the hour from the RTC
+        displayClock(RTCdata);                                                  //display it
 
-        putcUART1(colon); // ':'
+        putcUART1(colon);                                                       // ':'
         while (BusyUART1());
 
-        RTCdata = readClock(RTCMinutesAddress); //get the minute from the RTC
-        displayClock(RTCdata); //display it
+        RTCdata = readClock(RTCMinutesAddress);                                 //get the minute from the RTC
+        displayClock(RTCdata);                                                  //display it
 
-        putcUART1(colon); // ':'
+        putcUART1(colon);                                                       // ':'
         while (BusyUART1());
 
-        RTCdata = readClock(RTCSecondsAddress); //get the second from the RTC
-        displayClock(RTCdata); //display it
+        RTCdata = readClock(RTCSecondsAddress);                                 //get the second from the RTC
+        displayClock(RTCdata);                                                  //display it
     }
 }
 
