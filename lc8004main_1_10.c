@@ -1210,7 +1210,7 @@ unsigned long Buffer2Decimal(char buffer[], unsigned int i, unsigned int x) {
     unsigned int index = 0;
     unsigned long temp;
     unsigned int loopcount = 0;
-    unsigned int comp = 0; //compensation for 2 letter command "SC" and "NA"
+    unsigned int comp = 0;                                                      //compensation for 2 letter command "SC" and "NA"
 
     //unsigned int i is # of char in buffer
     //unsigned int x is switch: x=0 for pointer value
@@ -1218,65 +1218,58 @@ unsigned long Buffer2Decimal(char buffer[], unsigned int i, unsigned int x) {
     //							x=2 for Network Address value
 
 
-    if (buffer[index] == capB && i == 2) //just 'B' was entered
-        return 1; //so backup user position by 1
+    if (buffer[index] == capB && i == 2)                                        //just 'B' was entered
+        return 1;                                                               //so backup user position by 1
 
-    if (x == 1 | x == 2) //adjust for "SC" or "NA" in buffer
+    if (x == 1 | x == 2)                                                        //adjust for "SC" or "NA" in buffer
         comp = 1;
 
     for (index = i - 2; index > comp; index--) {
-        if (x == 0) //pointer information being entered
+        if (x == 0)                                                             //pointer information being entered
         {
             if (index > 5)
-                return; //99999 maximum!
+                return;                                                         //99999 maximum!
         }
 
-        if (x == 1) //scan interval being entered
+        if (x == 1)                                                             //scan interval being entered
         {
             if (index > 6) {
-                return 86400; //86400 maximum!
+                return 86400;                                                   //86400 maximum!
             }
         }
 
-        //REM REV CH:
-        //if (x == 2) //network address being entered
-        //{
-        //    if (index > 4)
-        //        return 0; //ERROR 256 maximum!
-        //}
-
-        temp = buffer[index]; //parse the buffer
+        temp = buffer[index];                                                   //parse the buffer
 
         if (!isdigit(temp)) {
-            LC2CONTROL.flags.ScanError = 1; //set the error flag
-            return; //return if not valid digit
+            LC2CONTROL.flags.ScanError = 1;                                     //set the error flag
+            return;                                                             //return if not valid digit
         }
 
-        if (index == 2 && (x == 1 | x == 2)) //SC0, NA0 is invalid
+        if (index == 2 && (x == 1 | x == 2))                                    //SC0, NA0 is invalid
         {
             if (temp == 0x30)
-                return 0; //ERROR
+                return 0;                                                       //ERROR
         }
 
         switch (loopcount) {
-            case 0: //ones
+            case 0:                                                             //ones
                 num = temp - 0x30;
                 break;
 
             case 1:
-                num += 10 * (temp - 0x30); //tens
+                num += 10 * (temp - 0x30);                                      //tens
                 break;
 
             case 2:
-                num += 100 * (temp - 0x30); //hundreds
+                num += 100 * (temp - 0x30);                                     //hundreds
                 break;
 
             case 3:
-                num += 1000 * (temp - 0x30); //thousands
+                num += 1000 * (temp - 0x30);                                    //thousands
                 break;
 
             case 4:
-                num += 10000 * (temp - 0x30); //ten-thousands
+                num += 10000 * (temp - 0x30);                                   //ten-thousands
                 break;
 
             default:
@@ -1286,18 +1279,13 @@ unsigned long Buffer2Decimal(char buffer[], unsigned int i, unsigned int x) {
         loopcount++;
     }
 
-    //if(buffer[0]==capP && (num>15999|num==0))	//invalid pointer positions REM VER 6.0.3
-    if (buffer[0] == capP && (num > (maxSingleVW - 1) | num == 0)) //invalid pointer positions    VER 6.0.3
-        return; //so ignore
+    if (buffer[0] == capP && (num > (maxSingleVW - 1) | num == 0))              //invalid pointer positions    
+        return;                                                                 //so ignore
 
-    if (num > 86400) //Scan Interval greater than 1 day?
-        return 86400; //limit it to 1 day
+    if (num > 86400)                                                            //Scan Interval greater than 1 day?
+        return 86400;                                                           //limit it to 1 day
 
-    //if (x == 2 && num > 256) //Network Address >256                           REM REV CH
-    //    return 0; //ERROR                                                     REM REV CH
-
-    return num; //return the decimal value
-
+    return num;                                                                 //return the decimal value
 }
 
 void Buf2GageData(char buffer[]) {
