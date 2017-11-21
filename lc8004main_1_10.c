@@ -11823,52 +11823,51 @@ int getGageType(int channel)
 {
     int gageOnes = 0;
 
-    if (channel < 10) //channels 1-9
+    if (channel < 10)                                                           //channels 1-9
     {
-        if (buffer[5] == '/') //forces skipping the gage type
+        if (buffer[5] == '/')                                                   //forces skipping the gage type
             return -1;
 
-        if (!isdigit(buffer[5])) //illegal entry
+        if (!isdigit(buffer[5]))                                                //illegal entry
             return -2;
 
-        if (isdigit(buffer[5])) //examine the first gage type char
-            gageOnes = buffer[5]; //store to gageOnes if digit
+        if (isdigit(buffer[5]))                                                 //examine the first gage type char
+            gageOnes = buffer[5];                                               //store to gageOnes if digit
 
         if (buffer[6] == '/') {
-            gageOnes -= 0x30; //convert to int
-            if (gageOnes >= 0 && gageOnes <= 6)                                 //REV I
+            gageOnes -= 0x30;                                                   //convert to int
+            if (gageOnes >= 0 && gageOnes <= 6)                                 
             {
-                return gageOnes; //return the single digit gage type from 0 to 5
+                return gageOnes;                                                //return the single digit gage type from 0 to 5
             } else {
-                return -2; //illegal entry
+                return -2;                                                      //illegal entry
             }
         } else {
-            return -2; //illegal entry
+            return -2;                                                          //illegal entry
         }
     }
 
-    //if(channel>=10 && channel<=16)		//channels 10-16                REM VER 6.0.13
-    if (channel >= 10 && channel <= 32) //channels 10-32                VER 6.0.13
+    if (channel >= 10 && channel <= 32)                                         //channels 10-32                
     {
-        if (buffer[6] == '/') //forces skipping the gage type
+        if (buffer[6] == '/')                                                   //forces skipping the gage type
             return -1;
 
-        if (!isdigit(buffer[6])) //illegal entry
+        if (!isdigit(buffer[6]))                                                //illegal entry
             return -2;
 
-        if (isdigit(buffer[6])) //examine the first gage type char
-            gageOnes = buffer[6]; //store to gageOnes if digit
+        if (isdigit(buffer[6]))                                                 //examine the first gage type char
+            gageOnes = buffer[6];                                               //store to gageOnes if digit
 
         if (buffer[7] == '/') {
-            gageOnes -= 0x30; //convert to int
-            if (gageOnes >= 0 && gageOnes <= 6)                                 //REV I
+            gageOnes -= 0x30;                                                   //convert to int
+            if (gageOnes >= 0 && gageOnes <= 6)                                 
             {
-                return gageOnes; //return the single digit gage type from 0 to 5
+                return gageOnes;                                                //return the single digit gage type from 0 to 5
             } else {
-                return -2; //illegal entry
+                return -2;                                                      //illegal entry
             }
         } else {
-            return -2; //illegal entry
+            return -2;                                                          //illegal entry
         }
     }
 
@@ -11878,34 +11877,29 @@ int getLogInterval(void) {
     int LogInt;
 
 
-    LogInt = buffer[1]; //examine the first Interval char
+    LogInt = buffer[1];                                                         //examine the first Interval char
 
-    if (!isdigit(buffer[1])) //illegal entry
+    if (!isdigit(buffer[1]))                                                    //illegal entry
         return -2;
 
-    LogInt -= 0x30; //convert ascii to decimal
+    LogInt -= 0x30;                                                             //convert ascii to decimal
 
-    if (LogInt < 1 | LogInt > 6) //illegal Log Interval
+    if (LogInt < 1 | LogInt > 6)                                                //illegal Log Interval
         return -2;
 
 
-    if (buffer[2] == cr) //display Log Interval value and iterations
+    if (buffer[2] == cr)                                                        //display Log Interval value and iterations
     {
         displayLogInterval(LogInt);
-        return -2; //go back to * prompt after displaying Log Interval value and iterations
+        return -2;                                                              //go back to * prompt after displaying Log Interval value and iterations
     }
 
 
     if (buffer[2] == '/')
-        return LogInt; //return the single digit Interval
+        return LogInt;                                                          //return the single digit Interval
 }
 
 void getLogIntLength(void) {
-    //int IntOnes = 0;
-    //int IntTens = 0;
-    //int IntHundreds = 0;
-    //int IntThousands = 0;
-    //int IntTenThousands = 0;
     int i = 0;
     int Length = 0;
     int slashcounter = 0;
@@ -11913,103 +11907,103 @@ void getLogIntLength(void) {
     int stopindex = 0;
 
 
-    if (buffer[2] == '/' && buffer[3] == '/') //forces skipping to Log Iterations
+    if (buffer[2] == '/' && buffer[3] == '/')                                   //forces skipping to Log Iterations
     {
         LogIntLength = -1;
         return;
     }
 
-    for (i = 0; i < 13; i++) //locate the first and last digit of the interval length
+    for (i = 0; i < 13; i++)                                                    //locate the first and last digit of the interval length
     {
         if (buffer[i] == slash && slashcounter == 0) {
-            startindex = i + 1; //location in buffer of first interval length digit
+            startindex = i + 1;                                                 //location in buffer of first interval length digit
             slashcounter = 1;
-            continue; //go to next buffer index
+            continue;                                                           //go to next buffer index
         }
 
         if (buffer[i] == slash && slashcounter == 1) {
-            stopindex = i - 1; //location in buffer of last interval length digit
-            break; //break out of for loop
+            stopindex = i - 1;                                                  //location in buffer of last interval length digit
+            break;                                                              //break out of for loop
         }
     }
 
     Length = stopindex - startindex;
 
-    if (Length > 4) //>#####
+    if (Length > 4) 
     {
-        LogIntLength = -1; //error
+        LogIntLength = -1;                                                      //error
         return;
     }
 
-    switch (Length) //compute the integer value of the interval length
+    switch (Length)                                                             //compute the integer value of the interval length
     {
         case 0:
-            if (!isdigit(buffer[startindex])) //not a digit
+            if (!isdigit(buffer[startindex]))                                   //not a digit
             {
-                LogIntLength = -1; //error
+                LogIntLength = -1;                                              //error
                 return;
             }
 
-            LogIntLength = buffer[startindex] - 0x30; //ones
+            LogIntLength = buffer[startindex] - 0x30;                           //ones
 
             if (LogIntLength < 1) {
-                LogIntLength = -2; //error
+                LogIntLength = -2;                                              //error
                 return;
             }
 
             break;
 
-        case 1: //return the value that's between 10 and 99
+        case 1:                                                                 //return the value that's between 10 and 99
             if (!isdigit(buffer[startindex]) |
-                    !isdigit(buffer[startindex + 1])) //not a digit
+                    !isdigit(buffer[startindex + 1]))                           //not a digit
             {
-                LogIntLength = -1; //error
+                LogIntLength = -1;                                              //error
                 return;
             }
 
 
             LogIntLength = ((buffer[startindex] - 0x30)*10.0)+
-                    (buffer[startindex + 1] - 0x30); //tens + ones
+                    (buffer[startindex + 1] - 0x30);                            //tens + ones
             break;
 
-        case 2: //return the value that's between 100 and 999
+        case 2:                                                                 //return the value that's between 100 and 999
             if (!isdigit(buffer[startindex]) |
                     !isdigit(buffer[startindex + 1]) |
-                    !isdigit(buffer[startindex + 2])) //not a digit
+                    !isdigit(buffer[startindex + 2]))                           //not a digit
             {
-                LogIntLength = -1; //error
+                LogIntLength = -1;                                              //error
                 return;
             }
 
             LogIntLength = ((buffer[startindex] - 0x30)*100.0)+
                     ((buffer[startindex + 1] - 0x30)*10.0)+
-                    (buffer[startindex + 2] - 0x30); //hundreds + tens + ones
+                    (buffer[startindex + 2] - 0x30);                            //hundreds + tens + ones
             break;
 
-        case 3: //return the value that's between 1000 and 9999
+        case 3:                                                                 //return the value that's between 1000 and 9999
             if (!isdigit(buffer[startindex]) |
                     !isdigit(buffer[startindex + 1]) |
                     !isdigit(buffer[startindex + 2]) |
-                    !isdigit(buffer[startindex + 3])) //not a digit
+                    !isdigit(buffer[startindex + 3]))                           //not a digit
             {
-                LogIntLength = -1; //error
+                LogIntLength = -1;                                              //error
                 return;
             }
 
             LogIntLength = ((buffer[startindex] - 0x30)*1000.0)+
                     ((buffer[startindex + 1] - 0x30)*100.0)+
                     ((buffer[startindex + 2] - 0x30)*10.0)+
-                    (buffer[startindex + 3] - 0x30); //thousands + hundreds + tens + ones
+                    (buffer[startindex + 3] - 0x30);                            //thousands + hundreds + tens + ones
             break;
 
-        case 4: //return the value that's between 10000 and 99999
+        case 4:                                                                 //return the value that's between 10000 and 99999
             if (!isdigit(buffer[startindex]) |
                     !isdigit(buffer[startindex + 1]) |
                     !isdigit(buffer[startindex + 2]) |
                     !isdigit(buffer[startindex + 3]) |
-                    !isdigit(buffer[startindex + 4])) //not a digit
+                    !isdigit(buffer[startindex + 4]))                           //not a digit
             {
-                LogIntLength = -1; //error
+                LogIntLength = -1;                                              //error
                 return;
             }
 
@@ -12017,9 +12011,9 @@ void getLogIntLength(void) {
                     ((buffer[startindex + 1] - 0x30)*1000.0)+
                     ((buffer[startindex + 2] - 0x30)*100.0)+
                     ((buffer[startindex + 3] - 0x30)*10.0)+
-                    (buffer[startindex + 4] - 0x30); //ten-thousands + thousands + hundreds + tens + ones
+                    (buffer[startindex + 4] - 0x30);                            //ten-thousands + thousands + hundreds + tens + ones
 
-            if (LogIntLength > 86400) //error
+            if (LogIntLength > 86400)                                           //error
             {
                 LogIntLength = -1;
                 return;
@@ -12028,15 +12022,12 @@ void getLogIntLength(void) {
             break;
 
         default:
-            LogIntLength = -1; //error
+            LogIntLength = -1;                                                  //error
     }
 
 }
 
 int getLogIterations(void) {
-    //int IntOnes = 0;
-    //int IntTens = 0;
-    //int IntHundreds = 0;
     int i = 0;
     int iterations = 0;
     int Length = 0;
@@ -12045,76 +12036,76 @@ int getLogIterations(void) {
     int stopindex = 0;
 
 
-    for (i = 0; i < 13; i++) //locate the first and last digit of the iterations
+    for (i = 0; i < 13; i++)                                                    //locate the first and last digit of the iterations
     {
         if (buffer[i] == slash && slashcounter == 0) {
-            slashcounter = 1; //first '/'
+            slashcounter = 1;                                                   //first '/'
             continue;
         }
 
         if (buffer[i] == slash && slashcounter == 1) {
-            startindex = i + 1; //location in buffer of first iterations digit
+            startindex = i + 1;                                                 //location in buffer of first iterations digit
             slashcounter = 2;
-            continue; //go to next buffer index
+            continue;                                                           //go to next buffer index
         }
 
         if (buffer[i] == cr && slashcounter == 2) {
-            stopindex = i - 1; //location in buffer of last iterations digit
-            break; //break out of for loop
+            stopindex = i - 1;                                                  //location in buffer of last iterations digit
+            break;                                                              //break out of for loop
         }
     }
 
     Length = stopindex - startindex;
 
-    if (Length > 2) //>999
-        return -1; //error
+    if (Length > 2)                                                             //>999
+        return -1;                                                              //error
 
 
-    switch (Length) //compute the integer value of the iterations
+    switch (Length)                                                             //compute the integer value of the iterations
     {
         case 0:
-            if (!isdigit(buffer[startindex])) //not a digit
+            if (!isdigit(buffer[startindex]))                                   //not a digit
             {
-                iterations = -1; //error
+                iterations = -1;                                                //error
                 break;
             }
 
-            iterations = buffer[startindex] - 0x30; //ones
+            iterations = buffer[startindex] - 0x30;                             //ones
             break;
 
-        case 1: //return the value that's between 10 and 99
+        case 1:                                                                 //return the value that's between 10 and 99
             if (!isdigit(buffer[startindex]) |
-                    !isdigit(buffer[startindex + 1])) //not a digit
+                    !isdigit(buffer[startindex + 1]))                           //not a digit
             {
-                iterations = -1; //error
+                iterations = -1;                                                //error
                 break;
             }
 
 
             iterations = ((buffer[startindex] - 0x30)*10.0)+
-                    (buffer[startindex + 1] - 0x30); //tens + ones
+                    (buffer[startindex + 1] - 0x30);                            //tens + ones
             break;
 
-        case 2: //return the value that's between 100 and 999
+        case 2:                                                                 //return the value that's between 100 and 999
             if (!isdigit(buffer[startindex]) |
                     !isdigit(buffer[startindex + 1]) |
-                    !isdigit(buffer[startindex + 2])) //not a digit
+                    !isdigit(buffer[startindex + 2]))                           //not a digit
             {
-                iterations = -1; //error
+                iterations = -1;                                                //error
                 break;
             }
 
             iterations = ((buffer[startindex] - 0x30)*100.0)+
                     ((buffer[startindex + 1] - 0x30)*10.0)+
-                    (buffer[startindex + 2] - 0x30); //hundreds + tens + ones
+                    (buffer[startindex + 2] - 0x30);                            //hundreds + tens + ones
 
-            if (iterations >= 256) //error
+            if (iterations >= 256)                                              //error
                 return -1;
 
             break;
 
         default:
-            iterations = -1; //error
+            iterations = -1;                                                    //error
     }
 
     return iterations;
@@ -12122,149 +12113,6 @@ int getLogIterations(void) {
 }
 
 
-/*REM REV M:
-//***************************************************************************
-//						getPeriod()
-//
-//	Capture frequency input to IC8
-//
-//	Parameters received: none
-//	Returns: float
-//
-//	Called from: main()
-//
-//***************************************************************************
-
-float getPeriod(unsigned char gageType) {
-    unsigned int VW_period_low_word = 0;
-    float VW_period = 0.0; //computed and returned VW period value
-    unsigned long VW_period_buffer_buffer = 0;
-
-    IFS0bits.T1IF = 0; //clear TMR1 & TMR3 interrupt flag
-    IFS0bits.T3IF = 0;
-    timer23_value = 0;
-
-    OpenTimer1(T1_ON & T1_GATE_OFF & T1_PS_1_8 & T1_SOURCE_INT, 0xFFFF); //setup Timer 1
-
-    ConfigIntTimer23(T3_INT_PRIOR_1 & T3_INT_OFF);
-    ConfigIntCapture8(IC_INT_ON & IC_INT_PRIOR_6); //Configure input capture interrupt
-
-    //while(VW_SQ && !IFS0bits.T1IF);		//synch edge for F capture
-    //while(!VW_SQ && !IFS0bits.T1IF);
-
-    if (!IFS0bits.T1IF) {
-        OpenTimer23(T2_ON & T2_GATE_OFF & T2_PS_1_1 & T2_32BIT_MODE_ON & T2_SOURCE_INT, 0xFFFFFFFF);
-
-        if (gageType != 3)
-            OpenCapture8(IC_IDLE_STOP & IC_TIMER2_SRC & IC_INT_1CAPTURE & IC_EVERY_16_RISE_EDGE);
-        else
-            OpenCapture8(IC_IDLE_STOP & IC_TIMER2_SRC & IC_INT_1CAPTURE & IC_EVERY_4_RISE_EDGE);
-
-        while (!IFS0bits.T1IF && !CaptureFlag); //wait for capture interrupt
-        CaptureFlag = 0; //clear the capture flag
-
-        CloseCapture8(); //reset the capture and timer registers
-        CloseTimer1(); //and disable their interrupts
-
-        CloseTimer23();
-        WriteTimer23(0); //clear Timer23
-    }
-
-    VW_period = timer23_value - fudgeFactor;
-    return VW_period;
-
-}
-*/
-
-/*
-//TEST REV AF:
-//***************************************************************************
-//						getFrequency()
-//
-//	
-//	Parameters received: none
-//	Returns: float
-//
-//	Called from: main()
-//
-//***************************************************************************
-float getFrequency(void)
-{
-	unsigned long VWcount=0;    
-    unsigned long frequencyINT=0;                                               //REV AF
-    unsigned long frequencyTotalINT=0;                                          //REV AF
-	float frequency=0.0;                                               
-	float frequencyTotal=0.0;                                          
-	unsigned int i=0;                                                           //VER 5.8.1.3
-	//unsigned int loopsTotal=1;                                                  //REM REV AF
-    unsigned int loopsTotal=3;                                                  //REV AF
-	
-    clockSwitch(0);                                                             //Switch to HS oscillator (Fcy=7.3728MHz)   REV AF
-    testPoint(1,1);                                                             //TEST REV AE
-	configTimers();    
-   
-	for(i=0;i<loopsTotal;i++)
-	{
-        
-		IFS0bits.T1IF=0;                                                        //clear TMR1,TMR5,TMR7 interrupt flags	
-		IFS1bits.T5IF=0;
-        IFS3bits.T7IF=0;
-        
-        TMR7=0;                                                                 //clear the TMR7 register   REV AF
-        VWcount=0;                                                              //clear the VWcount register    REV AF
-		VWcountMSW=0;                                                           //clear the counter MSW register  REV O
-		VWcountLSW=0;                                                           //clear the counter LSW register	
-        PR7=0xFFFF;                                                             //load PR7 with max count    
-		PR4=mS256LSW;                                                           //load PR4 with LSW	REM VER 5.8.1.3
-		PR5=mS256MSW;                                                           //load PR5 with MSW	REM VER 5.8.1.3
-        T7CONbits.TCS=1;                                                        //set to count external T7CKI clocks
-		IEC1bits.T5IE=1;                                                        //enable 256mS interrupt
-
-		OpenTimer1(T1_ON & T1_GATE_OFF & T1_PS_1_64 & T1_SOURCE_INT, 0x7900);	//setup Timer 1	 for 300mS timeout REV AF
-        //OpenTimer1(T1_ON & T1_GATE_OFF & T1_PS_1_256 & T1_SOURCE_INT, 0x7900);	//setup Timer 1	 for 300mS timeout REM REV AF
-        INTCON1bits.NSTDIS=0;                                                   //enable interrupt nesting REV AF
-        IPC7bits.T5IP=6;                                                        //set INT5 priority to 6  REV AF
-        IPC12bits.T7IP=7;                                                       //Set TMR7 interrupt priority to 7  REV AF
-        IEC3bits.T7IE=1;                                                        //Enable TMR7 interrupt REV AF
-		//Synchronize to VW:
-		while(!VW100 && !IFS0bits.T1IF);                                        //wait while VW(100) is low
-		while(VW100 && !IFS0bits.T1IF);                                         //wait while VW(100) is high
-		while(!VW100 && !IFS0bits.T1IF);                                        //wait while VW(100) is low
-        //INTCON1bits.NSTDIS=0;                                                   //enable interrupt nesting REM REV AF
-        //IPC7bits.T5IP=6;                                                        //set INT5 priority to 6  REM REV AF
-        //IPC12bits.T7IP=7;                                                       //Set TMR7 interrupt priority to 7  REM REV AF
-        //IEC3bits.T7IE=1;                                                        //Enable TMR7 interrupt REM REV AF
-		//T7CONbits.TON=1;                                                        //start VW100 counter	REM REV AF
-		if(!IFS0bits.T1IF)                                                      //Capture frequency				
-		{
-			T4CONbits.TON=1;                                                    //start 256mS timer	
-            T7CONbits.TON=1;                                                    //start VW100 counter   REV AF
-			while(!IFS0bits.T1IF && CaptureFlag==0);                            //TEST REM REV N
-
-			if(IFS0bits.T1IF)
-				return 0;                                                       //timeout waiting for VW_100
-            T7CONbits.TON=0;                                                    //shut off counter
-			T4CONbits.TON=0;                                                    //shut off timer
-			CaptureFlag=0;                                                      //Reset captureFlag		
-			VWcount=(VWcountMSW*65536)+VWcountLSW;                              //Totalize counter  
-            //frequency=(VWcount/mS256)*10.0;                                     //convert to frequency	REM REV AF
-            frequencyINT=(VWcount/mS256);                                       //convert to frequency	REV AF
-			//frequencyTotal=frequencyTotal+frequency;                            //VER 5.8.1.3 REM REV AF
-            if(i)                                                               //Throw out first reading REV AF
-                frequencyTotalINT=frequencyTotalINT+frequencyINT;                   //REV AF
-		}
-	}
-	//frequency=frequencyTotal/(loopsTotal*1.0);                                  //VER 5.8.1.3 REM REV AF
-    frequency=(frequencyTotalINT/(loopsTotal-1))*10.0;                           //REV AF
-	//shutdownTimer(TimeOut);                                                     //Reset 15S timer	REM REV Z
-    disableTimers();
-    clockSwitch(1);                                                             //Return to HSPLL oscillator (Fcy=29.4912MHz)   REV AF
-    testPoint(1,2);                                                             //TEST REV AE
-	return frequency;
-}
-*/
-
-//REV M:
 //***************************************************************************
 //						getFrequency()
 //
