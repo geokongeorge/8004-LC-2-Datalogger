@@ -15763,237 +15763,232 @@ unsigned long storeReading(int ch) {
 
 
     
-    memoryStatus=read_Int_FRAM(MemoryStatusaddress);                           //get the memory status
-    outputPosition=read_Int_FRAM(OutputPositionaddress);                       //get the memory pointer
-    userPosition=read_Int_FRAM(UserPositionaddress);                           //get the user position
-    FRAM_MEMORY.memory=read_Int_FRAM(FRAM_MEMORYflagsaddress);             //get max # of arrays
+    memoryStatus=read_Int_FRAM(MemoryStatusaddress);                            //get the memory status
+    outputPosition=read_Int_FRAM(OutputPositionaddress);                        //get the memory pointer
+    userPosition=read_Int_FRAM(UserPositionaddress);                            //get the user position
+    FRAM_MEMORY.memory=read_Int_FRAM(FRAM_MEMORYflagsaddress);                  //get max # of arrays
     
-    //VER 6.0.10:
-    if (MUX4_ENABLE.mflags.mux16_4 == Single) //if Single Channel VW
-        baseAddress = SingleVWBytes; //external FRAM base address (Single channel)
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4) //if 4 channel VW MUX
-        baseAddress = VW4Bytes; //external FRAM base address (4 channel)
-    if (MUX4_ENABLE.mflags.mux16_4 == VW8) //if 8 channel VW MUX
-        baseAddress = VW8Bytes; //external FRAM base address (8 channel)
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16) //if 16 channel VW MUX
-        baseAddress = VW16Bytes; //external FRAM base address (16 channel)
-    if (MUX4_ENABLE.mflags.mux16_4 == VW32) //if 32 channel VW MUX
-        baseAddress = VW32Bytes; //external FRAM base address (4 channel)
-    if (MUX4_ENABLE.mflags.mux16_4 == TH8) //if 8 channel Thermistor MUX
-        baseAddress = TH8Bytes; //external FRAM base address (8 channel Thermistor)
-    if (MUX4_ENABLE.mflags.mux16_4 == TH32) //if 32 channel Thermistor MUX
-        baseAddress = TH32Bytes; //external FRAM base address (32 channel Thermistor)
-    FRAMaddress = (baseAddress * (outputPosition - 1)); //calculate the external FRAM address
+    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //if Single Channel VW
+        baseAddress = SingleVWBytes;                                            //external FRAM base address (Single channel)
+    if (MUX4_ENABLE.mflags.mux16_4 == VW4)                                      //if 4 channel VW MUX
+        baseAddress = VW4Bytes;                                                 //external FRAM base address (4 channel)
+    if (MUX4_ENABLE.mflags.mux16_4 == VW8)                                      //if 8 channel VW MUX
+        baseAddress = VW8Bytes;                                                 //external FRAM base address (8 channel)
+    if (MUX4_ENABLE.mflags.mux16_4 == VW16)                                     //if 16 channel VW MUX
+        baseAddress = VW16Bytes;                                                //external FRAM base address (16 channel)
+    if (MUX4_ENABLE.mflags.mux16_4 == VW32)                                     //if 32 channel VW MUX
+        baseAddress = VW32Bytes;                                                //external FRAM base address (4 channel)
+    if (MUX4_ENABLE.mflags.mux16_4 == TH8)                                      //if 8 channel Thermistor MUX
+        baseAddress = TH8Bytes;                                                 //external FRAM base address (8 channel Thermistor)
+    if (MUX4_ENABLE.mflags.mux16_4 == TH32)                                     //if 32 channel Thermistor MUX
+        baseAddress = TH32Bytes;                                                //external FRAM base address (32 channel Thermistor)
+    FRAMaddress = (baseAddress * (outputPosition - 1));                         //calculate the external FRAM address
 
     write_Int_FRAM(FRAMaddress, year);                                          //store the year data
-    write_Int_FRAM(FRAMaddress + 2, julian); //store the decimal date
+    write_Int_FRAM(FRAMaddress + 2, julian);                                    //store the decimal date
 
 
-    //write_Flt_FRAM(FRAMaddress + 4, seconds_since_midnight); //store the current time (absolute)  REM REV BH
-    write_longFRAM(seconds_since_midnight,FRAMaddress + 4);                     //store the current time in seconds REV BH
-    write_Int_FRAM(FRAMaddress + 8, mainBatreading); //store the 3V battery voltage 12bit ADC value
-    write_Int_FRAM(FRAMaddress + 10, intThermreading); //store the internal thermistor reading 12bit ADC value
+    write_longFRAM(seconds_since_midnight,FRAMaddress + 4);                     //store the current time in seconds 
+    write_Int_FRAM(FRAMaddress + 8, mainBatreading);                            //store the 3V battery voltage 12bit ADC value
+    write_Int_FRAM(FRAMaddress + 10, intThermreading);                          //store the internal thermistor reading 12bit ADC value
 
     //VER 6.0.3:
-    if (MUX4_ENABLE.mflags.mux16_4 == Single) //single channel VW selected   VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //single channel VW selected   
     {
         if (gageType == 95)
             write_Flt_FRAM(FRAMaddress + 12, Lithiumreading + 0.19);
         else
             write_Flt_FRAM(FRAMaddress + 12, VWreadingProcessed);
-        write_Int_FRAM(FRAMaddress + 16, extThermreading); //store the external thermistor reading 12bit ADC value
+        write_Int_FRAM(FRAMaddress + 16, extThermreading);                      //store the external thermistor reading 12bit ADC value
 
-        if (memoryStatus < maxSingleVW) //if memory has not become full VER 6.0.3
-            memoryStatus += 1; //add 1 to the memory status register
-            write_Int_FRAM(MemoryStatusaddress,memoryStatus);           //store memoryStatus and userPosition in internal FRAM   
+        if (memoryStatus < maxSingleVW)                                         //if memory has not become full 
+            memoryStatus += 1;                                                  //add 1 to the memory status register
+            write_Int_FRAM(MemoryStatusaddress,memoryStatus);                   //store memoryStatus and userPosition in internal FRAM   
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4) //if 4 channel VW MUX  VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == VW4)                                      //if 4 channel VW MUX  
     {
-        if (memoryStatus < maxFourVW) //if memory has not become full
-            memoryStatus += 1; //add 1 to the memory status register
-        write_Int_FRAM(MemoryStatusaddress,memoryStatus);           //store memoryStatus and userPosition in internal FRAM    
+        if (memoryStatus < maxFourVW)                                           //if memory has not become full
+            memoryStatus += 1;                                                  //add 1 to the memory status register
+        write_Int_FRAM(MemoryStatusaddress,memoryStatus);                       //store memoryStatus and userPosition in internal FRAM    
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW8) //if 8 channel VW MUX  VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == VW8)                                      //if 8 channel VW MUX  
     {
-        if (memoryStatus < maxEightVW) //if memory has not become full
-            memoryStatus += 1; //add 1 to the memory status register
-        write_Int_FRAM(MemoryStatusaddress,memoryStatus);           //store memoryStatus and userPosition in internal FRAM   
+        if (memoryStatus < maxEightVW)                                          //if memory has not become full
+            memoryStatus += 1;                                                  //add 1 to the memory status register
+        write_Int_FRAM(MemoryStatusaddress,memoryStatus);                       //store memoryStatus and userPosition in internal FRAM   
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16) //if 16 channel VW MUX VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == VW16)                                     //if 16 channel VW MUX 
     {
-        if (memoryStatus < maxSixteenVW) //if memory has not become full
-            memoryStatus += 1; //add 1 to the memory status register
-        write_Int_FRAM(MemoryStatusaddress,memoryStatus);           //store memoryStatus and userPosition in internal FRAM   
+        if (memoryStatus < maxSixteenVW)                                        //if memory has not become full
+            memoryStatus += 1;                                                  //add 1 to the memory status register
+        write_Int_FRAM(MemoryStatusaddress,memoryStatus);                       //store memoryStatus and userPosition in internal FRAM   
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW32) //if 32 channel VW MUX  VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == VW32)                                     //if 32 channel VW MUX  
     {
-        if (memoryStatus < maxThirtytwoVW) //if memory has not become full
-            memoryStatus += 1; //add 1 to the memory status register
-        write_Int_FRAM(MemoryStatusaddress,memoryStatus);           //store memoryStatus and userPosition in internal FRAM   
+        if (memoryStatus < maxThirtytwoVW)                                      //if memory has not become full
+            memoryStatus += 1;                                                  //add 1 to the memory status register
+        write_Int_FRAM(MemoryStatusaddress,memoryStatus);                       //store memoryStatus and userPosition in internal FRAM   
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == TH8) //if 8 channel MUX VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == TH8)                                      //if 8 channel MUX 
     {
-        if (memoryStatus < maxEightTH) //if memory has not become full
-            memoryStatus += 1; //add 1 to the memory status register
-        write_Int_FRAM(MemoryStatusaddress,memoryStatus);           //store memoryStatus and userPosition in internal FRAM   
+        if (memoryStatus < maxEightTH)                                          //if memory has not become full
+            memoryStatus += 1;                                                  //add 1 to the memory status register
+        write_Int_FRAM(MemoryStatusaddress,memoryStatus);                       //store memoryStatus and userPosition in internal FRAM   
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == TH32) //if 32 channel MUX VER 6.0.9
+    if (MUX4_ENABLE.mflags.mux16_4 == TH32)                                     //if 32 channel MUX 
     {
-        if (memoryStatus < maxThirtytwoTH) //if memory has not become full
-            memoryStatus += 1; //add 1 to the memory status register
-        write_Int_FRAM(MemoryStatusaddress,memoryStatus);           //store memoryStatus and userPosition in internal FRAM   
+        if (memoryStatus < maxThirtytwoTH)                                      //if memory has not become full
+            memoryStatus += 1;                                                  //add 1 to the memory status register
+        write_Int_FRAM(MemoryStatusaddress,memoryStatus);                       //store memoryStatus and userPosition in internal FRAM   
     }
 
-    outputPosition += 1; //increment the output position pointer
+    outputPosition += 1;                                                        //increment the output position pointer
 
 
-    if (MUX4_ENABLE.mflags.mux16_4 == Single) //Single Channel VW VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //Single Channel VW 
     {
-        if (outputPosition > maxSingleVW) //if memory is full VER 6.0.3
-            wrap_stop(); //VER 6.0.12
+        if (outputPosition > maxSingleVW)                                       //if memory is full 
+            wrap_stop(); 
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4) //if 4 channel VW MUX  VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == VW4)                                      //if 4 channel VW MUX  
     {
-        if (outputPosition > maxFourVW) //if memory is full
-            wrap_stop(); //VER 6.0.12
+        if (outputPosition > maxFourVW)                                         //if memory is full
+            wrap_stop(); 
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW8) //if 8 channel VW MUX  VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == VW8)                                      //if 8 channel VW MUX  
     {
-        if (outputPosition > maxEightVW) //if memory is full
-            wrap_stop(); //VER 6.0.12
+        if (outputPosition > maxEightVW)                                        //if memory is full
+            wrap_stop(); 
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16) //if 16 channel VW MUX VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == VW16)                                     //if 16 channel VW MUX 
     {
-        if (outputPosition > maxSixteenVW) //if memory is full
-            wrap_stop(); //VER 6.0.12
+        if (outputPosition > maxSixteenVW)                                      //if memory is full
+            wrap_stop(); 
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW32) //if 32 channel VW MUX VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == VW32)                                     //if 32 channel VW MUX 
     {
-        if (outputPosition > maxThirtytwoVW) //if memory is full
-            wrap_stop(); //VER 6.0.12
+        if (outputPosition > maxThirtytwoVW)                                    //if memory is full
+            wrap_stop(); 
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == TH8) //if 8 channel MUX VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == TH8)                                      //if 8 channel TH MUX 
     {
-        if (outputPosition > maxEightTH) //if memory is full
-            wrap_stop(); //VER 6.0.12
+        if (outputPosition > maxEightTH)                                        //if memory is full
+            wrap_stop(); 
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == TH32) //if 32 channel MUX VER 6.0.9
+    if (MUX4_ENABLE.mflags.mux16_4 == TH32)                                     //if 32 channel TH MUX 
     {
-        if (outputPosition > maxThirtytwoTH) //if memory is full
-            wrap_stop(); //VER 6.0.12
+        if (outputPosition > maxThirtytwoTH)                                    //if memory is full
+            wrap_stop(); 
     }
-
-    //if(!DISPLAY_CONTROL.flags.WrapMemory)                                       //is logging to stop when memory is full?   TEST REM REV O
-      //stopLogging();                                                            //YES   TEST REM REV O
 
     write_Int_FRAM(OutputPositionaddress,outputPosition);                       //store outputPosition pointer in internal FRAM  
 
-    if (MUX4_ENABLE.mflags.mux16_4 == Single) //Single Channel VW  VER 6.0.7
-    { //User Position = Memory Status until Memory is full
-        if (memoryStatus < maxSingleVW) //VER 6.0.3
+    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //Single Channel VW  
+    {                                                                           //User Position = Memory Status until Memory is full
+        if (memoryStatus < maxSingleVW) 
             userPosition = memoryStatus;
 
-        if (memoryStatus >= maxSingleVW && outputPosition == 1) //VER 6.0.3
+        if (memoryStatus >= maxSingleVW && outputPosition == 1) 
             userPosition = outputPosition;
         else
-            userPosition = outputPosition - 1; //after that User Position equals Output Position - 1
+            userPosition = outputPosition - 1;                                  //after that User Position equals Output Position - 1
 
-        if (userPosition == (maxSingleVW + 1)) //VER 6.0.3
+        if (userPosition == (maxSingleVW + 1)) 
             userPosition = 1;
     }
 
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4) //if 4 channel VW MUX  VER 6.0.7
-    { //User Position = Memory Status until Memory is full
+    if (MUX4_ENABLE.mflags.mux16_4 == VW4)                                      //if 4 channel VW MUX  
+    {                                                                           //User Position = Memory Status until Memory is full
         if (memoryStatus < maxFourVW)
             userPosition = memoryStatus;
-        //User Position = Output Position for first reading
+                                                                                //User Position = Output Position for first reading
         if (memoryStatus >= maxFourVW && outputPosition == 1)
             userPosition = outputPosition;
         else
-            userPosition = outputPosition - 1; //after that User Position equals Output Position - 1
+            userPosition = outputPosition - 1;                                  //after that User Position equals Output Position - 1
 
         if (userPosition == (maxFourVW + 1))
             userPosition = 1;
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW8) //if 8 channel VW MUX  VER 6.0.7
-    { //User Position = Memory Status until Memory is full
+    if (MUX4_ENABLE.mflags.mux16_4 == VW8)                                      //if 8 channel VW MUX  
+    {                                                                           //User Position = Memory Status until Memory is full
         if (memoryStatus < maxEightVW)
             userPosition = memoryStatus;
-        //User Position = Output Position for first reading
+                                                                                //User Position = Output Position for first reading
         if (memoryStatus >= maxEightVW && outputPosition == 1)
             userPosition = outputPosition;
         else
-            userPosition = outputPosition - 1; //after that User Position equals Output Position - 1
+            userPosition = outputPosition - 1;                                  //after that User Position equals Output Position - 1
 
         if (userPosition == (maxEightVW + 1))
             userPosition = 1;
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16) //do same for 16 channel VW MUX    VER 6.0.7
-    { //User Position = Memory Status until Memory is full
+    if (MUX4_ENABLE.mflags.mux16_4 == VW16)                                     //do same for 16 channel VW MUX    
+    {                                                                           //User Position = Memory Status until Memory is full
         if (memoryStatus < maxSixteenVW)
             userPosition = memoryStatus;
-        //User Position = Output Position for first reading
+                                                                                //User Position = Output Position for first reading
         if (memoryStatus >= maxSixteenVW && outputPosition == 1)
             userPosition = outputPosition;
         else
-            userPosition = outputPosition - 1; //after that User Position equals Output Position - 1
+            userPosition = outputPosition - 1;                                  //after that User Position equals Output Position - 1
 
         if (userPosition == (maxSixteenVW + 1))
             userPosition = 1;
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW32) //do same for 32 channel VW MUX    VER 6.0.7
-    { //User Position = Memory Status until Memory is full
+    if (MUX4_ENABLE.mflags.mux16_4 == VW32)                                     //do same for 32 channel VW MUX    
+    {                                                                           //User Position = Memory Status until Memory is full
         if (memoryStatus < maxThirtytwoVW)
             userPosition = memoryStatus;
-        //User Position = Output Position for first reading
+                                                                                //User Position = Output Position for first reading
         if (memoryStatus >= maxThirtytwoVW && outputPosition == 1)
             userPosition = outputPosition;
         else
-            userPosition = outputPosition - 1; //after that User Position equals Output Position - 1
+            userPosition = outputPosition - 1;                                  //after that User Position equals Output Position - 1
 
         if (userPosition == (maxThirtytwoVW + 1))
             userPosition = 1;
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == TH8) //do same for 8 channel MUX    VER 6.0.7
-    { //User Position = Memory Status until Memory is full
+    if (MUX4_ENABLE.mflags.mux16_4 == TH8)                                      //do same for 8 channel TH MUX    
+    {                                                                           //User Position = Memory Status until Memory is full
         if (memoryStatus < maxEightTH)
             userPosition = memoryStatus;
-        //User Position = Output Position for first reading
+                                                                                //User Position = Output Position for first reading
         if (memoryStatus >= maxEightTH && outputPosition == 1)
             userPosition = outputPosition;
         else
-            userPosition = outputPosition - 1; //after that User Position equals Output Position - 1
+            userPosition = outputPosition - 1;                                  //after that User Position equals Output Position - 1
 
         if (userPosition == 12801)
             userPosition = 1;
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == TH32) //do same for 32 channel MUX    VER 6.0.9
-    { //User Position = Memory Status until Memory is full
+    if (MUX4_ENABLE.mflags.mux16_4 == TH32)                                     //do same for 32 channel TH MUX    
+    {                                                                           //User Position = Memory Status until Memory is full
         if (memoryStatus < maxThirtytwoTH)
             userPosition = memoryStatus;
-        //User Position = Output Position for first reading
+                                                                                //User Position = Output Position for first reading
         if (memoryStatus >= maxThirtytwoTH && outputPosition == 1)
             userPosition = outputPosition;
         else
-            userPosition = outputPosition - 1; //after that User Position equals Output Position - 1
+            userPosition = outputPosition - 1;                                  //after that User Position equals Output Position - 1
 
         if (userPosition == 4801)
             userPosition = 1;
@@ -16001,91 +15996,90 @@ unsigned long storeReading(int ch) {
 
     write_Int_FRAM(UserPositionaddress,userPosition);  
 
-    if (MUX4_ENABLE.mflags.mux16_4 == Single) //Single Channel VW  VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //Single Channel VW  
     {
-        if (outputPosition == 1) //memory has rolled over
-            outputPosition = maxSingleVW; //point to last array for displayReading() VER 6.0.3
+        if (outputPosition == 1)                                                //memory has rolled over
+            outputPosition = maxSingleVW;                                       //point to last array for displayReading() 
         else
-            outputPosition -= 1; //otherwise point to the reading just stored
+            outputPosition -= 1;                                                //otherwise point to the reading just stored
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4) //if 4 channel VW MUX  VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == VW4)                                      //if 4 channel VW MUX  
     {
-        if (outputPosition == 1) //memory has rolled over
-            outputPosition = maxFourVW; //point to last array for displayReading()
+        if (outputPosition == 1)                                                //memory has rolled over
+            outputPosition = maxFourVW;                                         //point to last array for displayReading()
         else
-            outputPosition -= 1; //otherwise point to the reading just stored
+            outputPosition -= 1;                                                //otherwise point to the reading just stored
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW8) //if 8 channel VW MUX  VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == VW8)                                      //if 8 channel VW MUX  
     {
-        if (outputPosition == 1) //memory has rolled over
-            outputPosition = maxEightVW; //point to last array for displayReading()
+        if (outputPosition == 1)                                                //memory has rolled over
+            outputPosition = maxEightVW;                                        //point to last array for displayReading()
         else
-            outputPosition -= 1; //otherwise point to the reading just stored
+            outputPosition -= 1;                                                //otherwise point to the reading just stored
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16) //if 16 channel VW MUX VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == VW16)                                     //if 16 channel VW MUX 
     {
-        if (outputPosition == 1) //memory has rolled over
-            outputPosition = maxSixteenVW; //point to last array for displayReading()
+        if (outputPosition == 1)                                                //memory has rolled over
+            outputPosition = maxSixteenVW;                                      //point to last array for displayReading()
         else
-            outputPosition -= 1; //otherwise point to the reading just stored
+            outputPosition -= 1;                                                //otherwise point to the reading just stored
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW32) //if 32 channel VW MUX VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == VW32)                                     //if 32 channel VW MUX 
     {
-        if (outputPosition == 1) //memory has rolled over
-            outputPosition = maxThirtytwoVW; //point to last array for displayReading()
+        if (outputPosition == 1)                                                //memory has rolled over
+            outputPosition = maxThirtytwoVW;                                    //point to last array for displayReading()
         else
-            outputPosition -= 1; //otherwise point to the reading just stored
+            outputPosition -= 1;                                                //otherwise point to the reading just stored
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == TH8) //if 8 channel MUX VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == TH8)                                      //if 8 channel TH MUX 
     {
-        if (outputPosition == 1) //memory has rolled over
-            outputPosition = maxEightTH; //point to last array for displayReading()
+        if (outputPosition == 1)                                                //memory has rolled over
+            outputPosition = maxEightTH;                                        //point to last array for displayReading()
         else
-            outputPosition -= 1; //otherwise point to the reading just stored
+            outputPosition -= 1;                                                //otherwise point to the reading just stored
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == TH32) //if 32 channel MUX VER 6.0.9
+    if (MUX4_ENABLE.mflags.mux16_4 == TH32)                                     //if 32 channel TH MUX 
     {
-        if (outputPosition == 1) //memory has rolled over
-            outputPosition = maxThirtytwoTH; //point to last array for displayReading()
+        if (outputPosition == 1)                                                //memory has rolled over
+            outputPosition = maxThirtytwoTH;                                    //point to last array for displayReading()
         else
-            outputPosition -= 1; //otherwise point to the reading just stored
+            outputPosition -= 1;                                                //otherwise point to the reading just stored
     }
 
 
-    FRAM_MEMORY.flags.memEmpty = 0; //clear the memory empty flag
-    write_Int_FRAM(FRAM_MEMORYflagsaddress,FRAM_MEMORY.memory);	//store flag in FRAM 
+    FRAM_MEMORY.flags.memEmpty = 0;                                             //clear the memory empty flag
+    write_Int_FRAM(FRAM_MEMORYflagsaddress,FRAM_MEMORY.memory);                 //store flag in FRAM 
 
-    return outputPosition; //return the pointer for use in displayReading()
+    return outputPosition;                                                      //return the pointer for use in displayReading()
 }
 
 void storeTempChannelReading(int ch)                                            //Store 'X' command readings to FRAM
 {
     unsigned long TempFRAMaddress;
-    unsigned int DEC_Thermreading=0;                                            //REV T
+    unsigned int DEC_Thermreading=0;                                            
 
     if (MUX4_ENABLE.mflags.mux16_4 == Single | 
             MUX4_ENABLE.mflags.mux16_4 == VW4 |
             MUX4_ENABLE.mflags.mux16_4 == VW16) 
     {
         TempFRAMaddress = (XmemStart+0xC) + (6 * (ch - 1));                     //compute memory location for external thermistor   
-        //write_Int_FRAM(TempFRAMaddress,extThermreading);                        //store the external thermistor reading 12bit ADC value REM REV T
-        DEC_Thermreading=DEC_TEMP.decimaltemp;                                          //REV T
-        write_Int_FRAM(TempFRAMaddress,DEC_Thermreading);                          //store the float converted to int value    REV T
+        DEC_Thermreading=DEC_TEMP.decimaltemp;                                          
+        write_Int_FRAM(TempFRAMaddress,DEC_Thermreading);                       //store the float converted to int value    
         TempFRAMaddress = (XmemStart+0xE) + (6 * (ch - 1));                     //compute memory location for VW reading  
-        write_Flt_FRAM(TempFRAMaddress,VWreadingProcessed);                     //store the processed VW reading  REV B
+        write_Flt_FRAM(TempFRAMaddress,VWreadingProcessed);                     //store the processed VW reading  
     }
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW8 | 
             MUX4_ENABLE.mflags.mux16_4 == VW32) 
     {
-        TempFRAMaddress = (XmemStart+0xC) + (4 * (ch - 1));                     //compute memory location for VW reading            REV B
-        write_Flt_FRAM(TempFRAMaddress,VWreadingProcessed);                     //store the processed VW reading     REV B
+        TempFRAMaddress = (XmemStart+0xC) + (4 * (ch - 1));                     //compute memory location for VW reading            
+        write_Flt_FRAM(TempFRAMaddress,VWreadingProcessed);                     //store the processed VW reading     
     }
 
 }
@@ -16094,14 +16088,14 @@ void storeTempChannelTHReading(int ch)
 {
     unsigned long TempFRAMaddress;
 
-    TempFRAMaddress = (XmemStart+0xC) + (2 * (ch - 1));                         //compute memory location for external thermistor    REV B
+    TempFRAMaddress = (XmemStart+0xC) + (2 * (ch - 1));                         //compute memory location for external thermistor    
     write_Int_FRAM(TempFRAMaddress,extThermreading);                            //store the external thermistor reading 12bit ADC value 
 }
 
 void storeTempReading(int ch) 
 {
-    write_Int_FRAM(XmemStart,year);                                              //store the year data 
-    write_Int_FRAM(XmemStart+2,julian);                                          //store the decimal date 
+    write_Int_FRAM(XmemStart,year);                                             //store the year data 
+    write_Int_FRAM(XmemStart+2,julian);                                         //store the decimal date 
     write_longFRAM(seconds_since_midnight,XmemStart+4);                         //store the current time (absolute) 
     write_Int_FRAM(XmemStart+8,mainBatreading);                                 //store the 3V battery voltage 12bit ADC value 
     write_Int_FRAM(XmemStart+10,intThermreading);                               //store the internal thermistor reading 12bit ADC value 
@@ -16109,7 +16103,7 @@ void storeTempReading(int ch)
 
 unsigned long synch(unsigned long currenttimeseconds, unsigned long scaninterval) 
 {
-    unsigned int scanintmul = 0; //scan interval multiplier
+    unsigned int scanintmul = 0;                                                //scan interval multiplier
 
     for (scanintmul = 1; scaninterval * scanintmul < currenttimeseconds; scanintmul++) 
     {
@@ -16121,11 +16115,11 @@ unsigned long synch(unsigned long currenttimeseconds, unsigned long scaninterval
     return (scaninterval * scanintmul);
 }                                                                               //close synch()
 
-void synch_one(void)                                                            //REV CC
+void synch_one(void)                                                            
 {
     DISPLAY_CONTROL.flags.Synch = 1;                                            //set the Synch flag
     write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);        //store flags in FRAM 
-    S_1.status1flags._Sync=1;                                                     //set the MODBUS status flag    
+    S_1.status1flags._Sync=1;                                                   //set the MODBUS status flag    
     write_Int_FRAM(MODBUS_STATUS1address,S_1.status1); 
     
     if(!LC2CONTROL2.flags2.Modbus)                                              //If command line interface
@@ -16148,11 +16142,11 @@ void synch_one(void)                                                            
 }
 
 
-void synch_zero(void)                                                           //REV CC
+void synch_zero(void)                                                           
 {
     DISPLAY_CONTROL.flags.Synch = 0;                                            //clear the Synch flag
     write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);        //store flags in FRAM 
-    S_1.status1flags._Sync=0;                                                    //clear the MODBUS status flag    
+    S_1.status1flags._Sync=0;                                                   //clear the MODBUS status flag    
     write_Int_FRAM(MODBUS_STATUS1address,S_1.status1); 
     
     if(!LC2CONTROL2.flags2.Modbus)                                              //If command line interface
@@ -16174,104 +16168,99 @@ void synch_zero(void)                                                           
     }
 }
 
-unsigned int take_analog_reading(unsigned char gt)                              //REV K Change u.c. gageType to u,c, gt & and return unsigned int
+unsigned int take_analog_reading(unsigned char gt)                              
 {
-    unsigned int analog;                                                        //REM REV K
+    unsigned int analog;                                                        
     unsigned int *ADC16Ptr;
     unsigned int count;
-    int internalTemperature=0;                                                  //REV K
+    int internalTemperature=0;                                                  
         
-    
-    //TRISB=0x013D;                                                               //Configure PORTB   REM REV DA
-    TRISB=0x033D;                                                               //Configure PORTB   REV DA
+    TRISB=0x033D;                                                               //Configure PORTB   
     LATB=0;
 
-    if (gt >= 85 && gt <= 98)                                                   //REV DA        
+    if (gt >= 85 && gt <= 98)                                                           
     {
-        if (gt == 86)                                                           //read the internal temperature REV K
+        if (gt == 86)                                                           //read the internal temperature 
         {
             internalTemperature=readDS3231temperature();                        //get the temp reading from the DS3231 RTC
             return internalTemperature;
         }
 
-        IPC5bits.INT1IP=0;                                                      //disable the INT1 interrupt    REV Z
+        IPC5bits.INT1IP=0;                                                      //disable the INT1 interrupt    
         //Enable ADC:
-        AD1CON1bits.AD12B=1;                                                    //configure ADC for 12 bit operation    REV J
-        IFS1bits.INT1IF=0;                                                      //REV Z
-        PMD1bits.AD1MD=0;                                                       //Enable the ADC1 module    REV J
+        AD1CON1bits.AD12B=1;                                                    //configure ADC for 12 bit operation    
+        IFS1bits.INT1IF=0;                                                      
+        PMD1bits.AD1MD=0;                                                       //Enable the ADC1 module    
 
-        if(gt!=98)                                                              //3VX already on    REV DA
+        if(gt!=98)                                                              //3VX already on    
             _3VX_on();                                                          //power-up analog circuitry 
 
         //Setup 12 bit DAC:
         AD1PCFGH = 0xFFFF;                                                      //AN31..AN16 configured as digital I/O
-        AD1PCFGL = 0xFCC2;                                                      //AN9,8,5,4,3,2,0 configured as analog inputs REV DA
+        AD1PCFGL = 0xFCC2;                                                      //AN9,8,5,4,3,2,0 configured as analog inputs 
 
         //REV K:
         AD1CON1bits.ADSIDL=1;                                                   //Discontinue in Idle
         AD1CON1bits.AD12B=1;                                                    //12bit
         AD1CON1bits.FORM=0;                                                     //integer format
         AD1CON1bits.SSRC=7;                                                      //Autoconvert
-        AD1CON1bits.ASAM=0;                                                      //manual sampling  REV Q
+        AD1CON1bits.ASAM=0;                                                      //manual sampling  
         AD1CON2bits.VCFG=1;                                                     //External VREF+,AVss
         AD1CON2bits.SMPI=0xF;                                                   //interrupt after every 16th sample
-        AD1CON3bits.ADRC=0;                                                     //REV Q
-        AD1CON3bits.SAMC=0x1F;                                                  //Autosample time = 1 Tad   TEST REV Q
-        AD1CON3bits.ADCS=0x0F;                                                  //Conversion clock select   TEST REV Q
+        AD1CON3bits.ADRC=0;                                                     
+        AD1CON3bits.SAMC=0x1F;                                                  //Autosample time = 1 Tad   
+        AD1CON3bits.ADCS=0x0F;                                                  //Conversion clock select   
         
                                                                                 //integer output
-        if (gt == 85)                                                           //read the external thermistor REV K
+        if (gt == 85)                                                           //read the external thermistor 
             AD1CHS0 = 0x0004;                                                   //connect AN4 as CH0 positive input
-        if (gt == 87)                                                           //read the main 12V battery REV K
+        if (gt == 87)                                                           //read the main 12V battery 
             AD1CHS0 = 0x0003;                                                   //connect AN3 as CH0 input
-        if (gt == 95)                                                           //read the 3V lithium cell REV K
+        if (gt == 95)                                                           //read the 3V lithium cell 
         {
             AD1CHS0 = 0x0005;                                                   //connect AN5 as CH0 input
             SAMPLE_LITHIUM = 1;                                                 //sample the lithium battery
         }
-        if (gt == 97)                                                           //read the main 3V battery REV K
+        if (gt == 97)                                                           //read the main 3V battery 
             AD1CHS0 = 0x0002;                                                   //connect AN2 as CH0 input
-        if (gt==98)                                                              //read V_AGC    REV DA
+        if (gt==98)                                                              //read V_AGC    
             AD1CHS0=0x0009;                                                     //connect AN9 as CH0 input
 
         analog = 0;                                                             //clear the value
-        ADC16Ptr = &ADC1BUF0;                                                   //intialize ADCBUF pointer
+        ADC16Ptr = &ADC1BUF0;                                                   //initialize ADCBUF pointer
         IFS0bits.AD1IF = 0;                                                     //clear ADC interrupt flag
 
-        AD1CON1bits.ADON = 1;                                                   //turn ADC on     TEST REV Q
-        //delay(8000);                                                            //REM REV 1.7
-        delay(32000);                                                           //REV 1.7
+        AD1CON1bits.ADON = 1;                                                   //turn ADC on     
+        delay(32000);                                                           
 
-        //REV J:
         for(count=0;count<16;count++)
         {
-           AD1CON1bits.DONE=0;                                                  //REV Q
-           AD1CON1bits.SAMP=1;                                                  //begin sampling    REV Q
-           while(!IFS0bits.AD1IF);                                              //TEST REM REV K
-           AD1CON1bits.SAMP=0;                                                  //stop sampling REV Q
-           IFS0bits.AD1IF=0;                                                    //TEST REM REV K
+           AD1CON1bits.DONE=0;                                                  
+           AD1CON1bits.SAMP=1;                                                  //begin sampling    
+           while(!IFS0bits.AD1IF);                                              
+           AD1CON1bits.SAMP=0;                                                  //stop sampling 
+           IFS0bits.AD1IF=0;                                                    
            analog=analog+*ADC16Ptr;                                           
         }
-        AD1CON1bits.ADON = 0;                                                   //turn ADC off      REV Q
+        AD1CON1bits.ADON = 0;                                                   //turn ADC off      
         SAMPLE_LITHIUM = 0;                                                     //turn off lithium battery sampling if on
         
-        if(gt!=98)                                                              //REV DA
-            _3VX_off();                                                             //power-down analog circuitry   
+        if(gt!=98)                                                              
+            _3VX_off();                                                         //power-down analog circuitry   
 
-        analog = analog >> 4;                                                 //average the result TEST REM REV J   
+        analog = analog >> 4;                                                   //average the result    
         if(gt==85)
-            analog-=24;                                                             //REV Q CORRECT FOR READING ERROR
-        IFS1bits.INT1IF=0;                                                      //clear the interrupt flag  REV Z
-        IPC5bits.INT1IP=7;                                                      //re-enable INT1 at priority level 7 (HIGHEST)    REV Z
-        return analog;                                                          //return the averaged 12 bit value	TEST REM REV K
+            analog-=24;                                                         //CORRECT FOR READING ERROR
+        IFS1bits.INT1IF=0;                                                      //clear the interrupt flag  
+        IPC5bits.INT1IP=7;                                                      //re-enable INT1 at priority level 7 (HIGHEST)    
+        return analog;                                                          //return the averaged 12 bit value	
     }
 
 }
 
-unsigned int take_fast_analog_reading(void)                                     //REV 1.3
+unsigned int take_fast_analog_reading(void)                                     
 {
-    //volatile unsigned int dataBUF[16];                                                   //REM REV 1.6
-    volatile unsigned int dataBUF[20];                                                   //REV 1.6
+    volatile unsigned int dataBUF[20];                                                   
     unsigned char i=0;
     volatile unsigned int data=0;
     unsigned int *ADC16Ptr;
@@ -16282,10 +16271,10 @@ unsigned int take_fast_analog_reading(void)                                     
     AD1CON1bits.AD12B=1;                                                        //12bit
     AD1CON1bits.FORM=0;                                                         //integer format
     AD1CON1bits.SSRC=7;                                                         //Autoconvert
-    AD1CON1bits.ASAM=0;                                                         //manual sampling  REV Q
+    AD1CON1bits.ASAM=0;                                                         //manual sampling  
     AD1CON2bits.VCFG=1;                                                         //External VREF+,AVss
     AD1CON2bits.SMPI=0xF;                                                       //interrupt after every 16th sample
-    AD1CON3bits.ADRC=0;                                                         //REV Q    
+    AD1CON3bits.ADRC=0;                                                             
     AD1CON3bits.SAMC=0x03;                                                      //sampling clock = 3 Tad
     AD1CON3bits.ADCS=0x0D;                                                      //conversion clock = 14 Tad (ADCS value +1)
     AD1CHS0=0x0004;                                                             //AN4 is positive input
@@ -16297,23 +16286,22 @@ unsigned int take_fast_analog_reading(void)                                     
     ADC16Ptr = &ADC1BUF0;                                                       //point to the ADC buffer0 address
 
     IFS0bits.AD1IF=0;                                                           //clear the interrupt flag
-    //for(i=0;i<16;i++)                                                         //REM REV 1.6
-    for(i=0;i<20;i++)                                                           //REV 1.6    
+
+    for(i=0;i<20;i++)                                                              
     {
         AD1CON1bits.DONE=0;                                                  
         AD1CON1bits.SAMP=1;                                                     //begin sampling   
-        //testPoint(1,1);
-        while(!IFS0bits.AD1IF && !IFS3bits.T8IF);                               //REV 1.4                                      
+        while(!IFS0bits.AD1IF && !IFS3bits.T8IF);                                                                    
         AD1CON1bits.SAMP=0;                                                     //stop sampling 
         IFS0bits.AD1IF=0;                                                    
-        dataBUF[i]=*ADC16Ptr;                                                   //store value in array  REV 1.4
+        dataBUF[i]=*ADC16Ptr;                                                   //store value in array  
     }
     //Turn off the ADC:
     AD1CON1bits.ADON=0;                                                         
     PMD1bits.AD1MD=1;                                                           //Disable the ADC
     
-    //5 point Moving average filter the readings                                //REV 1.4
-    data=filterArray(dataBUF);                                                  //REV 1.4
+    //5 point Moving average filter the readings                                
+    data=filterArray(dataBUF);                                                  
     return data;                                                                //return the data
 }
 
