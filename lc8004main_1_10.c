@@ -11430,380 +11430,320 @@ void getGageInfo(unsigned char info, int channel) {
 
             return;
 
-        case 21: //CHANNEL 21
+        case 21:                                                                //CHANNEL 21
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION17_32.c2flags.CH21) {
-                        //write_longFRAM(whole,CH21ZRaddress);                 //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH21ZRaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH21ZRaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH21PolyCoAaddress);            //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH21PolyCoAaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH21PolyCoAaddress,whole);               
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION17_32.c2flags.CH21) {
-                        //write_longFRAM(whole,CH21GFaddress);                 //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH21GFaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH21GFaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH21PolyCoBaddress);            //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH21PolyCoBaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH21PolyCoBaddress,whole);               
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION17_32.c2flags.CH21) {
-                        //write_longFRAM(whole,CH21GOaddress);                 //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH21GOaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH21GOaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH21PolyCoCaddress);            //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH21PolyCoCaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH21PolyCoCaddress,whole);               
                     }
                     break;
             }
 
             return;
 
-        case 22: //CHANNEL 22
+        case 22:                                                                //CHANNEL 22
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION17_32.c2flags.CH22) {
-                        //write_longFRAM(whole,CH22ZRaddress);                 //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH22ZRaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH22ZRaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH22PolyCoAaddress);            //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH22PolyCoAaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH22PolyCoAaddress,whole);               
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION17_32.c2flags.CH22) {
-                        //write_longFRAM(whole,CH22GFaddress);                 //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH22GFaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH22GFaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH22PolyCoBaddress);            //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH22PolyCoBaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH22PolyCoBaddress,whole);               
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION17_32.c2flags.CH22) {
-                        //write_longFRAM(whole,CH22GOaddress);                 //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH22GOaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH22GOaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH22PolyCoCaddress);            //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH22PolyCoCaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH22PolyCoCaddress,whole);               
                     }
                     break;
             }
 
             return;
 
-        case 23: //CHANNEL 23
+        case 23:                                                                //CHANNEL 23
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION17_32.c2flags.CH23) {
-                        //write_longFRAM(whole,CH23ZRaddress);                 //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH23ZRaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH23ZRaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH23PolyCoAaddress);            //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH23PolyCoAaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH23PolyCoAaddress,whole);               
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION17_32.c2flags.CH23) {
-                        //write_longFRAM(whole,CH23GFaddress);                 //store the gage factor   REM REV CN
                         write_Flt_FRAM(CH23GFaddress,whole);                    //REV CN
                     } else {
-                        //write_longFRAM(whole,CH23PolyCoBaddress);            //store the Polynomial coefficient B  REM REV CN
                         write_Flt_FRAM(CH23PolyCoBaddress,whole);               //REV CN
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION17_32.c2flags.CH23) {
-                        //write_longFRAM(whole,CH23GOaddress);                 //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH23GOaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH23GOaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH23PolyCoCaddress);            //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH23PolyCoCaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH23PolyCoCaddress,whole);               
                     }
                     break;
             }
 
             return;
 
-        case 24: //CHANNEL 24
+        case 24:                                                                //CHANNEL 24
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION17_32.c2flags.CH24) {
-                        //write_longFRAM(whole,CH24ZRaddress);                 //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH24ZRaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH24ZRaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH24PolyCoAaddress);            //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH24PolyCoAaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH24PolyCoAaddress,whole);               
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION17_32.c2flags.CH24) {
-                        //write_longFRAM(whole,CH24GFaddress);                 //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH24GFaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH24GFaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH24PolyCoBaddress);            //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH24PolyCoBaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH24PolyCoBaddress,whole);               
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION17_32.c2flags.CH24) {
-                        //write_longFRAM(whole,CH24GOaddress);                 //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH24GOaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH24GOaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH24PolyCoCaddress);            //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH24PolyCoCaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH24PolyCoCaddress,whole);               
                     }
                     break;
             }
 
             return;
 
-        case 25: //CHANNEL 25
+        case 25:                                                                //CHANNEL 25
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION17_32.c2flags.CH25) {
-                        //write_longFRAM(whole,CH25ZRaddress);                 //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH25ZRaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH25ZRaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH25PolyCoAaddress);            //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH25PolyCoAaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH25PolyCoAaddress,whole);               
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION17_32.c2flags.CH25) {
-                        //write_longFRAM(whole,CH25GFaddress);                 //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH25GFaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH25GFaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH25PolyCoBaddress);            //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH25PolyCoBaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH25PolyCoBaddress,whole);               
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION17_32.c2flags.CH25) {
-                        //write_longFRAM(whole,CH25GOaddress);                 //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH25GOaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH25GOaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH25PolyCoCaddress);            //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH25PolyCoCaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH25PolyCoCaddress,whole);               
                     }
                     break;
             }
 
             return;
 
-        case 26: //CHANNEL 26
+        case 26:                                                                //CHANNEL 26
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION17_32.c2flags.CH26) {
-                        //write_longFRAM(whole,CH26ZRaddress);                 //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH26ZRaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH26ZRaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH26PolyCoAaddress);            //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH26PolyCoAaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH26PolyCoAaddress,whole);               
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION17_32.c2flags.CH26) {
-                        //write_longFRAM(whole,CH26GFaddress);                 //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH26GFaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH26GFaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH26PolyCoBaddress);            //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH26PolyCoBaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH26PolyCoBaddress,whole);               
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION17_32.c2flags.CH26) {
-                        //write_longFRAM(whole,CH26GOaddress);                 //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH26GOaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH26GOaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH26PolyCoCaddress);            //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH26PolyCoCaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH26PolyCoCaddress,whole);               
                     }
                     break;
             }
 
             return;
 
-        case 27: //CHANNEL 27
+        case 27:                                                                //CHANNEL 27
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION17_32.c2flags.CH27) {
-                        //write_longFRAM(whole,CH27ZRaddress);                 //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH27ZRaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH27ZRaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH27PolyCoAaddress);            //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH27PolyCoAaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH27PolyCoAaddress,whole);               
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION17_32.c2flags.CH27) {
-                        //write_longFRAM(whole,CH27GFaddress);                 //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH27GFaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH27GFaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH27PolyCoBaddress);            //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH27PolyCoBaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH27PolyCoBaddress,whole);               
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION17_32.c2flags.CH27) {
-                        //write_longFRAM(whole,CH27GOaddress);                 //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH27GOaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH27GOaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH27PolyCoCaddress);            //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH27PolyCoCaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH27PolyCoCaddress,whole);               
                     }
                     break;
             }
 
             return;
 
-        case 28: //CHANNEL 28
+        case 28:                                                                //CHANNEL 28
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION17_32.c2flags.CH28) {
-                        //write_longFRAM(whole,CH28ZRaddress);                 //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH28ZRaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH28ZRaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH28PolyCoAaddress);            //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH28PolyCoAaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH28PolyCoAaddress,whole);               
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION17_32.c2flags.CH28) {
-                        //write_longFRAM(whole,CH28GFaddress);                 //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH28GFaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH28GFaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH28PolyCoBaddress);            //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH28PolyCoBaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH28PolyCoBaddress,whole);               
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION17_32.c2flags.CH28) {
-                        //write_longFRAM(whole,CH28GOaddress);                 //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH28GOaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH28GOaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH28PolyCoCaddress);            //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH28PolyCoCaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH28PolyCoCaddress,whole);               
                     }
                     break;
             }
 
             return;
 
-        case 29: //CHANNEL 29
+        case 29:                                                                //CHANNEL 29
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION17_32.c2flags.CH29) {
-                        //write_longFRAM(whole,CH29ZRaddress);                 //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH29ZRaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH29ZRaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH29PolyCoAaddress);            //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH29PolyCoAaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH29PolyCoAaddress,whole);               
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION17_32.c2flags.CH29) {
-                        //write_longFRAM(whole,CH29GFaddress);                 //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH29GFaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH29GFaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH29PolyCoBaddress);            //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH29PolyCoBaddress,whole);               //REV CN                       
+                        write_Flt_FRAM(CH29PolyCoBaddress,whole);                                      
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION17_32.c2flags.CH29) {
-                        //write_longFRAM(whole,CH29GOaddress);                 //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH29GOaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH29GOaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH29PolyCoCaddress);            //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH29PolyCoCaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH29PolyCoCaddress,whole);               
                     }
                     break;
             }
 
             return;
 
-        case 30: //CHANNEL 30
+        case 30:                                                                //CHANNEL 30
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION17_32.c2flags.CH30) {
-                        //write_longFRAM(whole,CH30ZRaddress);                 //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH30ZRaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH30ZRaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH30PolyCoAaddress);            //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH30PolyCoAaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH30PolyCoAaddress,whole);               
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION17_32.c2flags.CH30) {
-                        //write_longFRAM(whole,CH30GFaddress);                 //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH30GFaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH30GFaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH30PolyCoBaddress);            //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH30PolyCoBaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH30PolyCoBaddress,whole);               
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION17_32.c2flags.CH30) {
-                        //write_longFRAM(whole,CH30GOaddress);                 //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH30GOaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH30GOaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH30PolyCoCaddress);            //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH30PolyCoCaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH30PolyCoCaddress,whole);               
                     }
                     break;
             }
@@ -11811,38 +11751,32 @@ void getGageInfo(unsigned char info, int channel) {
             return;
 
 
-        case 31: //CHANNEL 31
+        case 31:                                                                //CHANNEL 31
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION17_32.c2flags.CH31) {
-                        //write_longFRAM(whole,CH31ZRaddress);                 //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH31ZRaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH31ZRaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH31PolyCoAaddress);            //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH31PolyCoAaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH31PolyCoAaddress,whole);               
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION17_32.c2flags.CH31) {
-                        //write_longFRAM(whole,CH31GFaddress);                 //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH31GFaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH31GFaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH31PolyCoBaddress);            //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH31PolyCoBaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH31PolyCoBaddress,whole);               
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION17_32.c2flags.CH31) {
-                        //write_longFRAM(whole,CH31GOaddress);                 //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH31GOaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH31GOaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH31PolyCoCaddress);            //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH31PolyCoCaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH31PolyCoCaddress,whole);               
                     }
                     break;
             }
@@ -11850,38 +11784,32 @@ void getGageInfo(unsigned char info, int channel) {
             return;
 
 
-        case 32: //CHANNEL 32
+        case 32:                                                                //CHANNEL 32
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION17_32.c2flags.CH32) {
-                        //write_longFRAM(whole,CH32ZRaddress);                 //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH32ZRaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH32ZRaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH32PolyCoAaddress);            //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH32PolyCoAaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH32PolyCoAaddress,whole);               
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION17_32.c2flags.CH32) {
-                        //write_longFRAM(whole,CH32GFaddress);                 //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH32GFaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH32GFaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH32PolyCoBaddress);            //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH32PolyCoBaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH32PolyCoBaddress,whole);               
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION17_32.c2flags.CH32) {
-                        //write_longFRAM(whole,CH32GOaddress);                 //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH32GOaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH32GOaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH32PolyCoCaddress);            //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH32PolyCoCaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH32PolyCoCaddress,whole);               
                     }
                     break;
             }
