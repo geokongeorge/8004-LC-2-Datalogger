@@ -16,9 +16,9 @@
 //	DATE:		11/20/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   1.10
-//	CHECKSUM:	0x8aa3 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0xa1d0 (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8800/30720   29%
-//	PGM(FLASH)MEM:  184275/261888 70%
+//	PGM(FLASH)MEM:  184284/261888 70%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -221,6 +221,7 @@
 //                                  32 bit result stored in memory locations 0x7FF74(MSW)(Modbus register 0x7FBA) and 0x7FF76(LSW) (Modbus register 0x7FBB)
 //      1.10    11/20/17            Debug LOG Table
 //                                  Cleanup (remove) rem'd out code
+//                                  Add back WDT enable when start logging
 //                                  
 //
 //
@@ -15030,53 +15031,48 @@ void setClock(unsigned char address,unsigned char data)                         
                             I2C1_STOP_DIS & I2C1_RESTART_DIS &
                             I2C1_START_DIS);
 
-    //unsigned int config3=0x10;                                                  //d64 value for I2CBRG at 400KHz   REV M  REM REV AE
-    unsigned int config3=0x44;                                                  //d64 value for I2CBRG at 400KHz    REV AE
+    unsigned int config3=0x44;                                                  //d64 value for I2CBRG at 400KHz    
  
-    //SCL IS RUNNING AT 1MHz!
-
-    OpenI2C1(config1, config3);							//open the I2C1 module
-    IdleI2C1();									//make sure bus is idle
+    OpenI2C1(config1, config3);                                                 //open the I2C1 module
+    IdleI2C1();                                                                 //make sure bus is idle
     StartI2C1();
-    while(I2C1CONbits.SEN);							//wait till start sequence is complete
+    while(I2C1CONbits.SEN);                                                     //wait till start sequence is complete
 
-    MasterWriteI2C1(0xD0);							//DS3231 RTC Slave address write byte
-    while(I2C1STATbits.TBF);							//wait till address is transmitted and ACK'd
+    MasterWriteI2C1(0xD0);                                                      //DS3231 RTC Slave address write byte
+    while(I2C1STATbits.TBF);                                                    //wait till address is transmitted and ACK'd
     while(I2C1STATbits.ACKSTAT);
 
     IdleI2C1();
     while(I2C1STATbits.ACKSTAT);
 
-    //delay(2);                                                                 REM REV AE
-    delay(8);                                                                   //REV AE
+    delay(8);                                                                   
 
-    MasterWriteI2C1(address);							//select the appropriate DS3231 register
-    while(I2C1STATbits.TBF);							//wait till address is transmitted and ACK'd
+    MasterWriteI2C1(address);                                                   //select the appropriate DS3231 register
+    while(I2C1STATbits.TBF);                                                    //wait till address is transmitted and ACK'd
     while(I2C1STATbits.ACKSTAT);
 
     IdleI2C1();
     while(I2C1STATbits.ACKSTAT);
 
-    //delay(2);                                                                 REM REV AE
-    delay(8);                                                                   //REV AE
+    delay(8);                                                                   
 
-    if(address!=RTCControlAddress && address!=RTCStatusAddress)                  //REV D
+    if(address!=RTCControlAddress && address!=RTCStatusAddress)                  
     {
-        toBCD(data);								//convert to BCD
-        data=0;									//clear the data
+        toBCD(data);                                                            //convert to BCD
+        data=0;                                                                 //clear the data
 
-        switch(BCDtens)								//setup DS3231 register bits
+        switch(BCDtens)                                                         //setup DS3231 register bits
         {
-            case 9:                                                             //REV CQ
+            case 9:                                                             
                 data=0x90;
                 break;  
-            case 8:                                                             //REV CQ
+            case 8:                                                             
                 data=0x80;
                 break;  
-            case 7:                                                             //REV CQ
+            case 7:                                                             
                 data=0x70;
                 break;  
-            case 6:                                                             //REV CQ
+            case 6:                                                             
                 data=0x60;
                 break;                  
             case 5:
@@ -15098,34 +15094,33 @@ void setClock(unsigned char address,unsigned char data)                         
                 break;
         }
 
-        data+=BCDones;								//add the lower nybble
+        data+=BCDones;                                                          //add the lower nybble
 	
-        if((address==0x0A)|(address==0x0D))						//Set A1M4/A2M4 in RTC address 0A by OR'ing data with 10000000	VER b
+        if((address==0x0A)|(address==0x0D))                                     //Set A1M4/A2M4 in RTC address 0A by OR'ing data with 10000000	
             data|=0x80;
     }
 
-    MasterWriteI2C1(data);							//write the data to the DS3231
-    while(I2C1STATbits.TBF);							//wait till data is transmitted and ACK'd
+    MasterWriteI2C1(data);                                                      //write the data to the DS3231
+    while(I2C1STATbits.TBF);                                                    //wait till data is transmitted and ACK'd
     while(I2C1STATbits.ACKSTAT);
 
     IdleI2C1();
     while(I2C1STATbits.ACKSTAT);
 
-    //delay(2);                                                                 REM REV AE
-    delay(8);                                                                   //REV AE
+    delay(8);                                                                   
 	
     StopI2C1();
-    while(I2C1CONbits.PEN);							//wait till stop sequence is complete
+    while(I2C1CONbits.PEN);                                                     //wait till stop sequence is complete
 
-    CloseI2C1();									//close the I2C1 module
+    CloseI2C1();                                                                //close the I2C1 module
 
 }
 
 
-void setup(void)                                                                //REV CA
+void setup(void)                                                                
 {
-    //Indicate uC clock set for HSPLL:                                          //REV 1.7
-    LC2CONTROL2.flags2.uCclock=1;                                               //REV 1.7
+    //Indicate uC clock set for HSPLL:                                          
+    LC2CONTROL2.flags2.uCclock=1;                                               
     
     //Configure ADC for Digital I/O & Analog inputs:
     AD2PCFGLbits.PCFG15=1;                                                      //AN15 cfg as digital pin   
@@ -15161,7 +15156,6 @@ void setup(void)                                                                
     AD1PCFGLbits.PCFG2=0;                                                       //AN2 cfg as analog input   (3V_SENSE)
     AD1PCFGLbits.PCFG1=1;                                                       //AN1 cfg as digital pin
     AD1PCFGLbits.PCFG0=0;                                                       //AN0 cfg as analog input   (VW)    
-    //AD1PCFGL=0xFEC2;                                                            //all else digital
 
     AD1PCFGHbits.PCFG16=1;                                                      //Set AN16-32 as digital pins    
     AD1PCFGHbits.PCFG17=1;                                                      
@@ -15299,41 +15293,23 @@ void setup(void)                                                                
     LATGbits.LATG14=0;                                                          //C
     LATGbits.LATG15=0;                                                          //D
     
-    //PMD1=0x0000;                                                                //ENABLE ALL MODULES
-    //PMD2=0x0000;
-    //PMD3=0x0000;
 }
 
 
 
 void shutdown(void) 
 {
-    //unsigned int BT_ON_TIME=0x8f8a;                                             //2 Seconds REV AE    REM REV BH
-    //unsigned int BT_OFF_TIME=0x8f8a;                                            //2 Seconds REV AE    REM REV BH
-    
-    //mainBatreading = take_analog_reading(87); //test the 12V_SENSE input      //TEST REM REV D
-    //if (mainBatreading < 820) //12V_SENSE <0.5V, so not connected
-    //{
-    //    DISPLAY_CONTROL.flags.PS12V = 0; //clear the 12V battery flag
-    //} else {
-    //    DISPLAY_CONTROL.flags.PS12V = 1; //set the 12V battery flag
-    //}
-
-    _3VX_off(); //make sure analog +3VX is off
-    INTCON1bits.NSTDIS = 1; //disable interrupt nesting                         //TEST REV O
-    CORCONbits.IPL3 = 0; //make sure IPL3 is not set                             //TEST REM REV O
-    //netTest = 0; //clear the netTest register                                 REM REV CH
-
-    //if (DISPLAY_CONTROL.flags.PS12V) //powered by 12V?
-      //  SLEEP12V = 1; //set regulator into linear LDO mode
+    _3VX_off();                                                                 //make sure analog +3VX is off
+    INTCON1bits.NSTDIS = 1;                                                     //disable interrupt nesting                         
+    CORCONbits.IPL3 = 0;                                                        //make sure IPL3 is not set                             
 
     _232SHDN=0;                                                                 //shut down the RS-232 Port 
-    sleepFRAM();                                                                //REV D   TEST REM REV X
+    sleepFRAM();                                                                
     setADCsleep();                                                                 
-    TRISGbits.TRISG2=0;                                                         //Make sure RG2 is configured as an output  REV H
-    TRISGbits.TRISG3=0;                                                         //Make sure RG3 is configured as an output  REV H
-    LATGbits.LATG2=1;                                                           //Set RG2 high  REV H
-    LATGbits.LATG3=1;                                                           //Set RG3 high  REV H
+    TRISGbits.TRISG2=0;                                                         //Make sure RG2 is configured as an output  
+    TRISGbits.TRISG3=0;                                                         //Make sure RG3 is configured as an output  
+    LATGbits.LATG2=1;                                                           //Set RG2 high  
+    LATGbits.LATG3=1;                                                           //Set RG3 high  
 
     //shutdown modules except UART1 & I2C1  (and TMR6 if BT enabled)                                           
     PMD1=0xFF5F;                                                                //1111 1111 0101 1111   
@@ -15341,19 +15317,19 @@ void shutdown(void)
     PMD3=0xFFFF;                                                                //1111 1111 1111 1111
     U1MODEbits.WAKE=1;     
 
-    IFS1bits.INT1IF=0;                                                          //Make sure INT1 flag is clear  REV O
-    if(LC2CONTROL2.flags2.Modbus)                                               //REV CH
-        IFS0bits.U1RXIF=0;                                                      //Clear the UART1 interrupt flag if set REV CH
-    LC2CONTROL.flags.Unlock=0;                                                  //Write protect MODBUS registers    REV CP
-    Sleep();                                                                    //SLEEP & continue with next command after wakeup - no vector TEST REM REV AE
+    IFS1bits.INT1IF=0;                                                          //Make sure INT1 flag is clear  
+    if(LC2CONTROL2.flags2.Modbus)                                               
+        IFS0bits.U1RXIF=0;                                                      //Clear the UART1 interrupt flag if set 
+    LC2CONTROL.flags.Unlock=0;                                                  //Write protect MODBUS registers    
+    Sleep();                                                                    //SLEEP & continue with next command after wakeup - no vector 
         
-    SLEEP12V = 0; //set regulator into switchmode when wake from sleep
-    _232SHDN=1;                                                                 //enable the RS-232 Port REV D
+    SLEEP12V = 0;                                                               //set regulator into switchmode when wake from sleep
+    _232SHDN=1;                                                                 //enable the RS-232 Port 
     setADCwake();
     PMD1=0x7F5F;                                                                //re-enable TMR5
     PMD3=0x3FFF;                                                                //re-enable TMR8 & TMR9
 
-    if(LC2CONTROL2.flags2.Modbus)                                               //15mS delay if MODBUS comms    REV CQ
+    if(LC2CONTROL2.flags2.Modbus)                                               //15mS delay if MODBUS comms    
     {
         __delay32(mS15);                                                        //15mS delay
         if(U1STAbits.FERR | U1STAbits.PERR | U1STAbits.OERR) 
@@ -15361,28 +15337,19 @@ void shutdown(void)
     }
 }
 
-//void shutdownNetworked(void) {                                                REM REV CH
-//    _3VX_off(); //make sure analog +3VX is off
-//    Sleep(); //continue with next command after wakeup - no vector
-//    SLEEP12V = 0; //set regulator into switchmode when wake from sleep
-//}
-
-
-
-
 
 void start32KHz(void)
 {
     unsigned char temp;
 
-    temp=readClock(RTCStatusAddress);						//read the value of the status register
-    temp=(temp|0x08);										//OR it with 0x08 to set the EN32kHz bit
-    setClock(RTCStatusAddress,temp);						//load it to the RTC
+    temp=readClock(RTCStatusAddress);                                           //read the value of the status register
+    temp=(temp|0x08);                                                           //OR it with 0x08 to set the EN32kHz bit
+    setClock(RTCStatusAddress,temp);                                            //load it to the RTC
 }
 
 
 void startLogging(void) {
-    //WDTSWEnable;                                                                //TEST REM REV CF
+    WDTSWEnable;                                                                
 
     if (LC2CONTROL.flags.LogInterval) 
     {
@@ -15401,9 +15368,9 @@ void startLogging(void) {
         write_Int_FRAM(LogItRemain6address,LogItRemain6);  
     }
 
-    if (!DISPLAY_CONTROL.flags.Shutup && !LC2CONTROL2.flags2.Modbus)            //REV CF
+    if (!DISPLAY_CONTROL.flags.Shutup && !LC2CONTROL2.flags2.Modbus)            
     {
-        putsUART1(Loggingstarted); //Logging started
+        putsUART1(Loggingstarted);                                              //Logging started
         while (BusyUART1());
         putcUART1(cr);
         while (BusyUART1());
@@ -15413,46 +15380,42 @@ void startLogging(void) {
         while (BusyUART1());
     }
 
-    //if (!LC2CONTROL.flags.NetEnabled && (USB_PWR | !_232 | BT_CONNECT))         //REV AF  REM REV CH
-    if (USB_PWR | !_232 | BT_CONNECT)                                           //REV CH
-        T4CONbits.TON = 1; //Turn timer back on
-    LC2CONTROL.flags.Logging = 1; //Set Logging flag
+    if (USB_PWR | !_232 | BT_CONNECT)                                           
+        T4CONbits.TON = 1;                                                      //Turn timer back on
+    LC2CONTROL.flags.Logging = 1;                                               //Set Logging flag
     LC2CONTROL.flags.LoggingStartTime = 0;
-    write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flags in FRAM 
+    write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);                     //store flags in FRAM 
     
-    S_1.status1flags._Logging=1;                                                   //Set the MODBUS status flag    REV BF
+    S_1.status1flags._Logging=1;                                                //Set the MODBUS status flag    
     write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
 
-    DISPLAY_CONTROL.flags.monitorWasEnabled = 0; //clear the BPD flags
+    DISPLAY_CONTROL.flags.monitorWasEnabled = 0;                                //clear the BPD flags
     DISPLAY_CONTROL.flags.newPointer = 0;
     DISPLAY_CONTROL.flags.BPD = 0;
     DISPLAY_CONTROL.flags.Backup = 0;
     DISPLAY_CONTROL.flags.Scan = 0;
-    write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//store flags in FRAM`
+    write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);        //store flags in FRAM`
 
-    if(!LC2CONTROL2.flags2.Modbus)                                              //REV CF
+    if(!LC2CONTROL2.flags2.Modbus)                                              
         crlf();
 
-    LC2CONTROL2.flags2.Waiting = 0; //Clear the Waiting flag
-    write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);	//store flag in FRAM`
+    LC2CONTROL2.flags2.Waiting = 0;                                             //Clear the Waiting flag
+    write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);                  //store flag in FRAM`
 
-    //ConfigIntCapture8(IC_INT_ON & IC_INT_PRIOR_6); //Configure input capture interrupt    REM REV M
-
-    VWflagsbits.firstReading=1;                                                 //REV 1.1
-    take_One_Complete_Reading(STORE); //take a reading    VER 6.0.13
-    VWflagsbits.firstReading=0;                                                 //REV 1.1
+    VWflagsbits.firstReading=1;                                                 
+    take_One_Complete_Reading(STORE);                                           //take a reading    
+    VWflagsbits.firstReading=0;                                                 
 
     enableAlarm(Alarm1);
-    enableINT1(); //enable INT1 (take a reading on interrupt)
-    //configUARTnormal();   REM REV D
-    INTCON1bits.NSTDIS = 0; //Reset nesting of interrupts                     //TEST REM REV N
-    IFS3bits.T9IF=1;                                                            //set the T9 interrupt flag to force shutdown   REV CH
-    //ClrWdt();                                                                 TEST REM REV CF
-    //WDTSWDisable;                                                             TEST REM REV CF
+    enableINT1();                                                               //enable INT1 (take a reading on interrupt)
+    INTCON1bits.NSTDIS = 0;                                                     //Reset nesting of interrupts                     
+    IFS3bits.T9IF=1;                                                            //set the T9 interrupt flag to force shutdown   
+    ClrWdt();                                                                 
+    WDTSWDisable;                                                             
 }
 
 
-unsigned int START(void)                                                        //REV CF
+unsigned int START(void)                                                        
 {
 
     if (USB_PWR)
@@ -15469,9 +15432,9 @@ unsigned int START(void)                                                        
     if(!LC2CONTROL2.flags2.Modbus)                                              //only if command line
         crlf();
     
-    testScanInterval = 0;                                                           //set ScanInterval to 0
+    testScanInterval = 0;                                                       //set ScanInterval to 0
     ScanInterval = hms2s();                                                     //get the stored scan interval
-    testScanInterval = checkScanInterval();                                         //test for minimum allowable Scan Interval
+    testScanInterval = checkScanInterval();                                     //test for minimum allowable Scan Interval
 
     if (testScanInterval)                                                       //if error
     {
@@ -15528,64 +15491,63 @@ void stop32KHz(void)
 {
     unsigned char temp;
 
-    temp=readClock(RTCStatusAddress);						//read the value of the status register
-    temp=(temp&&0xFE);										//AND it with 0xFE to clear the EN32kHz bit
-    setClock(RTCStatusAddress,temp);						//load it to the RTC
+    temp=readClock(RTCStatusAddress);                                           //read the value of the status register
+    temp=(temp&&0xFE);                                                          //AND it with 0xFE to clear the EN32kHz bit
+    setClock(RTCStatusAddress,temp);                                            //load it to the RTC
 }
 
 
 
 void stopLogging(void) 
 {
-    LC2CONTROL2.full2=read_Int_FRAM(LC2CONTROL2flagsaddress);                   //restore flags from FRAM REV W
+    LC2CONTROL2.full2=read_Int_FRAM(LC2CONTROL2flagsaddress);                   //restore flags from FRAM 
     
     PORT_CONTROL.control=read_Int_FRAM(CONTROL_PORTflagsaddress);    
     if (!PORT_CONTROL.flags.Alarm2Enabled)
         disableINT1();
     disableAlarm(Alarm1);
-    LC2CONTROL.flags.Logging = 0; //Clear Logging flag
-    LC2CONTROL.flags.LoggingStartTime = 0; //Clear Start Logging flag
-    LC2CONTROL.flags.LoggingStopTime = 0; //Clear Stop Logging flag
-    write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM 
+    LC2CONTROL.flags.Logging = 0;                                               //Clear Logging flag
+    LC2CONTROL.flags.LoggingStartTime = 0;                                      //Clear Start Logging flag
+    LC2CONTROL.flags.LoggingStopTime = 0;                                       //Clear Stop Logging flag
+    write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);                     //store flag in FRAM 
     
-    S_1.status1flags._Logging=0;                                                //Clear the MODBUS status flag    REV BF
-    S_1.status1flags._ST=0;                                                     //REV CL
+    S_1.status1flags._Logging=0;                                                //Clear the MODBUS status flag    
+    S_1.status1flags._ST=0;                                                     
     write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
 
 
-    LC2CONTROL2.flags2.Waiting = 0; //Clear the Waiting flag
-    LC2CONTROL2.flags2.SetStopTime = 0; //clear the set stop time flag
-    write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);	//store flag in FRAM  
+    LC2CONTROL2.flags2.Waiting = 0;                                             //Clear the Waiting flag
+    LC2CONTROL2.flags2.SetStopTime = 0;                                         //clear the set stop time flag
+    write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);                  //store flag in FRAM  
 
-    DISPLAY_CONTROL.flags.Synch = 1; //set the Synch flag
-    write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//store flags in FRAM
+    DISPLAY_CONTROL.flags.Synch = 1;                                            //set the Synch flag
+    write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);        //store flags in FRAM
     
     
-    if(LC2CONTROL2.flags2.scheduled)                                            //REV W
-    {                                                                           //REV W
-        disableINT1();                                                          //REV W
-        disableAlarm(Alarm1);                                                   //REV W
-        //************Reload the start logging times************************    //REV W
-        RTChours=read_Int_FRAM(startHoursaddress);                              //Get the Start Time Hours from FRAM            REV W
-        RTCminutes=read_Int_FRAM(startMinutesaddress);                          //Get the Start Time Minutes from FRAM          REV W
-        RTCseconds=read_Int_FRAM(startSecondsaddress);                          //Get the Start Time Seconds from FRAM          REV W
-        setClock(RTCAlarm1HoursAddress,RTChours);                               //reload the Start Time hours into the RTC      REV W
-        setClock(RTCAlarm1MinutesAddress, RTCminutes);                          //reload the Start Time Minutes into the RTC    REV W
-        setClock(RTCAlarm1SecondsAddress, RTCseconds);                          //reload the Start Time Seconds into the RTC    REV W
-        LC2CONTROL.flags.Logging = 1; //set the Logging flag	
-        LC2CONTROL.flags.LoggingStartTime = 0; //clear the Logging Start Time flag	
+    if(LC2CONTROL2.flags2.scheduled)                                            
+    {                                                                           
+        disableINT1();                                                          
+        disableAlarm(Alarm1);                                                   
+        //************Reload the start logging times************************    
+        RTChours=read_Int_FRAM(startHoursaddress);                              //Get the Start Time Hours from FRAM            
+        RTCminutes=read_Int_FRAM(startMinutesaddress);                          //Get the Start Time Minutes from FRAM          
+        RTCseconds=read_Int_FRAM(startSecondsaddress);                          //Get the Start Time Seconds from FRAM          
+        setClock(RTCAlarm1HoursAddress,RTChours);                               //reload the Start Time hours into the RTC      
+        setClock(RTCAlarm1MinutesAddress, RTCminutes);                          //reload the Start Time Minutes into the RTC    
+        setClock(RTCAlarm1SecondsAddress, RTCseconds);                          //reload the Start Time Seconds into the RTC    
+        LC2CONTROL.flags.Logging = 1;                                           //set the Logging flag	
+        LC2CONTROL.flags.LoggingStartTime = 0;                                  //clear the Logging Start Time flag	
         LC2CONTROL.flags.LoggingStopTime=1;                                   
-        //LC2CONTROL.flags.LoggingStopTime=0;                                     
-        write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flags in FRAM     
+        write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);                 //store flags in FRAM     
 
-        LC2CONTROL2.flags2.Waiting = 1; //Set the Waiting flag	
-        LC2CONTROL2.flags2.scheduled=1;                                         //REV W
+        LC2CONTROL2.flags2.Waiting = 1;                                         //Set the Waiting flag	
+        LC2CONTROL2.flags2.scheduled=1;                                         
         write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);              //store flags in FRAM   
                         
-        enableAlarm(Alarm1);                                                    //  REV W    
-        enableINT1();                                                           //enable INT1 (take a reading on interrupt) REV W
-        INTCON1bits.NSTDIS = 0;                                                 //reset nesting of interrupts   REV W	   
-    }                                                                           //REV W
+        enableAlarm(Alarm1);                                                        
+        enableINT1();                                                           //enable INT1 (take a reading on interrupt) 
+        INTCON1bits.NSTDIS = 0;                                                 //reset nesting of interrupts   	   
+    }                                                                           
     
     
     //RESET the Log Interval Table: 
@@ -15615,13 +15577,12 @@ void stopLogging(void)
     write_Int_FRAM(LogItRemain6address,LogItRemain6);  
 }
 
-unsigned int STOP(void)                                                         //REV CF
+unsigned int STOP(void)                                                         
 {
     if(!LC2CONTROL2.flags2.Modbus)
         crlf();
 
-    //if (!LC2CONTROL.flags.Logging && !LC2CONTROL.flags.LoggingStopTime &&!LC2CONTROL.flags.LoggingStartTime)  REM REV CR
-    if (!LC2CONTROL.flags.Logging && !LC2CONTROL.flags.LoggingStopTime &&!LC2CONTROL.flags.LoggingStartTime && !S_1.status1flags._Logging)  //REV CR     
+    if (!LC2CONTROL.flags.Logging && !LC2CONTROL.flags.LoggingStopTime &&!LC2CONTROL.flags.LoggingStartTime && !S_1.status1flags._Logging)       
     {
         if(!LC2CONTROL2.flags2.Modbus)
         {
@@ -15631,34 +15592,31 @@ unsigned int STOP(void)                                                         
         return 0;
     }
 
-    //if (LC2CONTROL.flags.Logging | LC2CONTROL.flags.LoggingStartTime | LC2CONTROL.flags.LoggingStopTime) //is a logging flag set?
-    //{
-        LC2CONTROL.flags.Logging=0;                                             //REV CM
-        LC2CONTROL.flags.LoggingStopTime=0;                                     //REV CM
-        write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);                 //REV CM
-        LC2CONTROL2.flags2.scheduled=0;                                         //clear the scheduled flag  REV W
-        write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);              //store in FRAM REV W
-        S_1.status1flags._Logging=0;                                            //clear the MODBUS lOGGING flag     REV CM
-        S_1.status1flags._SP=0;                                                 //clear the MODBUS Enable Stop Logging Time flag    REV CM
-        S_1.status1flags._ST=0;                                                 //clear the MODBUS Enable Start Logging Time flag   REV CM
-        write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
-        stopLogging();
-        if(!LC2CONTROL2.flags2.Modbus)
+    LC2CONTROL.flags.Logging=0;                                             
+    LC2CONTROL.flags.LoggingStopTime=0;                                     
+    write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);                 
+    LC2CONTROL2.flags2.scheduled=0;                                             //clear the scheduled flag  
+    write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);                  //store in FRAM 
+    S_1.status1flags._Logging=0;                                                //clear the MODBUS lOGGING flag     
+    S_1.status1flags._SP=0;                                                     //clear the MODBUS Enable Stop Logging Time flag    
+    S_1.status1flags._ST=0;                                                     //clear the MODBUS Enable Start Logging Time flag   
+    write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
+    stopLogging();
+    if(!LC2CONTROL2.flags2.Modbus)
+    {
+        if (!DISPLAY_CONTROL.flags.Shutup) 
         {
-            if (!DISPLAY_CONTROL.flags.Shutup) 
-            {
-                putsUART1(Loggingstopped);                                      //Logging stopped
-                while (BusyUART1());
-            }
+            putsUART1(Loggingstopped);                                          //Logging stopped
+            while (BusyUART1());
         }
-        LC2CONTROL2.flags2.Waiting=0;
-        write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);              //REV CM
-        return 1;
-    //}
+    }
+    LC2CONTROL2.flags2.Waiting=0;
+    write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);              
+    return 1;
 }
 
 
-void STOPTIME(void)                                                             //REV CM
+void STOPTIME(void)                                                             
 {
     LC2CONTROL.flags.LoggingStopTime = 1;                                       //set the LoggingStopTime flag		
     write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);                     //store flag in FRAM 
@@ -15715,11 +15673,10 @@ void STOPTIME(void)                                                             
 
 
 void storeGageType(int channel, int gageType) {
-    unsigned long address;                                                      //REV L
+    unsigned long address;                                                      
 
     //calculate indexed address for gage type                                   
-    //address = CH1GTaddress + (0x1A * (channel - 1));                          REM REV BE
-    address = CH1GTaddress + (2 * (channel - 1));                               //REV BE
+    address = CH1GTaddress + (2 * (channel - 1));                               
 
     //write the gage type to the calculated address
     write_Int_FRAM(address,gageType);                                           //store gage type in FRAM 
@@ -15732,45 +15689,44 @@ void storeLogInterval(int interval, int iterations)
     
     if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //if Single Channel  
     {
-        write_longFRAM(LogIntLength,(SingleLogIntLength1address+(interval*4)));	//store the interval  REV CI
-        write_longFRAM(LogIntLength,(SingleLogIntLength1MASTERaddress+(interval*4)));   //store as the MASTER   REV CI
-        write_Int_FRAM((SingleLogIt1address+(interval*2)), iterations);         //store the iterations  REV CI
-        write_Int_FRAM((SingleLogIt1MASTERaddress+(interval*2)),iterations);    //store as the MASTER   REV CI
-        write_Int_FRAM((SingleLogItRemain1address+(interval*2)), iterations);	//store the remaining iterations   REV CI
-        write_Int_FRAM((SingleLogItRemain1MASTERaddress+(interval*2)), iterations); //store as the MASTER   REV CI
+        write_longFRAM(LogIntLength,(SingleLogIntLength1address+(interval*4)));	//store the interval  
+        write_longFRAM(LogIntLength,(SingleLogIntLength1MASTERaddress+(interval*4)));   //store as the MASTER   
+        write_Int_FRAM((SingleLogIt1address+(interval*2)), iterations);         //store the iterations  
+        write_Int_FRAM((SingleLogIt1MASTERaddress+(interval*2)),iterations);    //store as the MASTER   
+        write_Int_FRAM((SingleLogItRemain1address+(interval*2)), iterations);	//store the remaining iterations   
+        write_Int_FRAM((SingleLogItRemain1MASTERaddress+(interval*2)), iterations); //store as the MASTER   
     }
     else
     {
-        write_longFRAM(LogIntLength,(LogIntLength1address+(interval*4)));       //store the interval  REV CI
-        write_longFRAM(LogIntLength,(LogIntLength1MASTERaddress+(interval*4))); //store as the MASTER   REV CI
-        write_Int_FRAM((LogIt1address+(interval*2)), iterations);               //store the iterations  REV CI
-        write_Int_FRAM((LogIt1MASTERaddress+(interval*2)),iterations);          //store as the MASTER   REV CI
-        write_Int_FRAM((LogItRemain1address+(interval*2)), iterations);         //store the remaining iterations   REV CI        
-        write_Int_FRAM((LogItRemain1MASTERaddress+(interval*2)),iterations);    //store as the MASTER   REV CI
+        write_longFRAM(LogIntLength,(LogIntLength1address+(interval*4)));       //store the interval  
+        write_longFRAM(LogIntLength,(LogIntLength1MASTERaddress+(interval*4))); //store as the MASTER   
+        write_Int_FRAM((LogIt1address+(interval*2)), iterations);               //store the iterations  
+        write_Int_FRAM((LogIt1MASTERaddress+(interval*2)),iterations);          //store as the MASTER   
+        write_Int_FRAM((LogItRemain1address+(interval*2)), iterations);         //store the remaining iterations           
+        write_Int_FRAM((LogItRemain1MASTERaddress+(interval*2)),iterations);    //store as the MASTER   
     }
     
 }
 
 void storeChannelReading(int ch) {
     unsigned long FRAMaddress;
-    unsigned char baseAddress = 0; //VER 6.0.10
+    unsigned char baseAddress = 0; 
 
-    outputPosition=read_Int_FRAM(OutputPositionaddress);                       //get the memory pointer  
+    outputPosition=read_Int_FRAM(OutputPositionaddress);                        //get the memory pointer  
 
-    //VER 6.0.10:***************************************************************
-    if (MUX4_ENABLE.mflags.mux16_4 == Single) //if Single Channel  VER 6.0.10
+    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //if Single Channel  
         baseAddress = SingleVWBytes;
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4) //if 4 channel MUX  VER 6.0.10
+    if (MUX4_ENABLE.mflags.mux16_4 == VW4)                                      //if 4 channel MUX  
         baseAddress = VW4Bytes;
-    if (MUX4_ENABLE.mflags.mux16_4 == VW8) //if 8 channel MUX  VER 6.0.10
+    if (MUX4_ENABLE.mflags.mux16_4 == VW8)                                      //if 8 channel MUX  
         baseAddress = VW8Bytes;
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16) //if 16 channel MUX  VER 6.0.10
+    if (MUX4_ENABLE.mflags.mux16_4 == VW16)                                     //if 16 channel MUX  
         baseAddress = VW16Bytes;
-    if (MUX4_ENABLE.mflags.mux16_4 == VW32) //if 32 channel MUX  VER 6.0.10
+    if (MUX4_ENABLE.mflags.mux16_4 == VW32)                                     //if 32 channel MUX  
         baseAddress = VW32Bytes;
-    if (MUX4_ENABLE.mflags.mux16_4 == TH8) //if 8 channel Thermistor MUX  VER 6.0.10
+    if (MUX4_ENABLE.mflags.mux16_4 == TH8)                                      //if 8 channel Thermistor MUX  
         baseAddress = TH8Bytes;
-    if (MUX4_ENABLE.mflags.mux16_4 == TH32) //if 32 channel Thermistor MUX  VER 6.0.10
+    if (MUX4_ENABLE.mflags.mux16_4 == TH32)                                     //if 32 channel Thermistor MUX  
         baseAddress = TH32Bytes;
 
     if (MUX4_ENABLE.mflags.mux16_4 == TH8 | MUX4_ENABLE.mflags.mux16_4 == TH32) //8 or 32 Channel Thermistor
@@ -15779,31 +15735,31 @@ void storeChannelReading(int ch) {
         Nop();
     }
     else
-        if (MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW32) //8 or 32 Channel VW    VER 6.0.13
+        if (MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW32) //8 or 32 Channel VW    
         FRAMaddress = (baseAddress * (outputPosition - 1))+(4 * (ch - 1) + 12);
     else
         FRAMaddress = (baseAddress * (outputPosition - 1))+(6 * (ch - 1) + 12); //calculate the external FRAM address
 
-    if (MUX4_ENABLE.mflags.mux16_4 == Single | MUX4_ENABLE.mflags.mux16_4 == VW4 | MUX4_ENABLE.mflags.mux16_4 == VW16) //VER 6.0.13
+    if (MUX4_ENABLE.mflags.mux16_4 == Single | MUX4_ENABLE.mflags.mux16_4 == VW4 | MUX4_ENABLE.mflags.mux16_4 == VW16) 
     {
-        write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading
-        write_Int_FRAM(FRAMaddress + 4, extThermreading); //store the external thermistor reading 12bit ADC value
+        write_Flt_FRAM(FRAMaddress, VWreadingProcessed);                        //store the processed VW reading
+        write_Int_FRAM(FRAMaddress + 4, extThermreading);                       //store the external thermistor reading 12bit ADC value
     } 
     else
-    if (MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW32) //VER 6.0.13
+    if (MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW32) 
     {
-        write_Flt_FRAM(FRAMaddress, VWreadingProcessed); //store the processed VW reading
+        write_Flt_FRAM(FRAMaddress, VWreadingProcessed);                        //store the processed VW reading
     } 
     else 
     {
-        write_Int_FRAM(FRAMaddress, extThermreading); //8 or 32 channel therm mux: store the external thermistor reading 12bit ADC value
+        write_Int_FRAM(FRAMaddress, extThermreading);                           //8 or 32 channel therm mux: store the external thermistor reading 12bit ADC value
     }
 
 }
 
 unsigned long storeReading(int ch) {
     unsigned long FRAMaddress;
-    unsigned char baseAddress = 0; //VER 6.0.10
+    unsigned char baseAddress = 0; 
 
 
     
