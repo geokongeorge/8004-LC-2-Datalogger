@@ -16,9 +16,9 @@
 //	DATE:		11/20/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   1.10
-//	CHECKSUM:	0xffc6 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0xd8d4 (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8800/30720   29%
-//	PGM(FLASH)MEM:  184422/261888 70%
+//	PGM(FLASH)MEM:  184374/261888 70%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -1610,9 +1610,6 @@ void CMDcomm(void)
     long i;                                                                     
     int LogInt = 0;
     int LogIntIt = 0;
-    int ones = 0;
-    int tens = 0;
-    int hundreds = 0;
     int SR_SAVE;
     int TBLPAG_SAVE;
     int tensScanInterval = 0;
@@ -2221,19 +2218,19 @@ void CMDcomm(void)
                     if (buffer[1] == capL && buffer[2] == cr)                   //DL<CR> received
                     {
                         if (MUX4_ENABLE.mflags.mux16_4 == Single)               //Single Channel    
-                            putsUART1(LCtwo);
+                            putsUART1(LCfour);
                         if (MUX4_ENABLE.mflags.mux16_4 == VW4)                  //4 channel mux 
-                            putsUART1(LCtwobyfour);
+                            putsUART1(LCfourbyfour);
                         if (MUX4_ENABLE.mflags.mux16_4 == VW8)                  //8 channel VW mux 
-                            putsUART1(LCtwobyeightVW);
+                            putsUART1(LCfourbyeightVW);
                         if (MUX4_ENABLE.mflags.mux16_4 == VW16)                 //16 channel mux
-                            putsUART1(LCtwobysixteen);                          
+                            putsUART1(LCfourbysixteen);                          
                         if (MUX4_ENABLE.mflags.mux16_4 == VW32)                 //32 channel VW mux 
-                            putsUART1(LCtwobythirtytwoVW);
+                            putsUART1(LCfourbythirtytwoVW);
                         if (MUX4_ENABLE.mflags.mux16_4 == TH8)                  //8 channel Therm    
-                            putsUART1(LCtwobyeightTH);
+                            putsUART1(LCfourbyeightTH);
                         if (MUX4_ENABLE.mflags.mux16_4 == TH32)                 //32 channel Therm    
-                            putsUART1(LCtwobythirtytwoTH);
+                            putsUART1(LCfourbythirtytwoTH);
                         while (BusyUART1());
                         break;
                     }
@@ -10428,10 +10425,8 @@ int getChannel(void) {
 unsigned char getSNbytes(unsigned int logicthreshold)                           //using the ADC as a halfassed UART    
 {                                                                               
     unsigned int databit=0;                                                     //value of bit received
-    unsigned char i=0;                                                          //loop index                                            
     unsigned char b=0;                                                          //loop index
     unsigned char s=0;                                                          //loop index
-    unsigned int *ADC16Ptr;                                                     //pointer to ADC result buffer
 
     //Configure Timer 6/7 as 32-bit timer:
     INTCON2bits.ALTIVT=1;                                                       //set to use alternate interrupt vectors
@@ -12228,12 +12223,12 @@ float getFrequency(void)
 unsigned char getSerialNumber(void)
 {
     csum crc;
-    unsigned char i=0;
+    //unsigned char i=0;
     unsigned char result=0;
     unsigned int logicthreshold=0;
     unsigned int therm=0;
     unsigned int Vmax=0;                                                        //value of max V at TH (Rth = 0)       
-    unsigned int *ADC16Ptr;                                                     //pointer to ADC result buffer
+    //unsigned int *ADC16Ptr;                                                     //pointer to ADC result buffer
     
 
     
@@ -12757,15 +12752,15 @@ void MODBUScomm(void)
     unsigned int modbusaddressvalue;
     unsigned int testvalue=0;                                                   
     unsigned int i=0;                                                           
-    unsigned int bytecount=0;                                                   
+    //unsigned int bytecount=0;                                                   
     unsigned int ECHO=0;
     unsigned int testHours=0;                                                   
     unsigned int testMinutes=0;                                                 
-    unsigned int testSeconds=0;                                                 
+    //unsigned int testSeconds=0;                                                 
     csum       csumdata;                                                        //csumdata[1] is MSB, csumdata[0] is LSB
     csum       value;                                                           //value[1] is MSB, value[0] is LSB]
     csum       registers;                                                       //registers[1] is MSB, registers [0] is LSB
-    csum       startingRegister;                                                //Starting register for write multiple registers    
+    //csum       startingRegister;                                                //Starting register for write multiple registers    
     xFRAMul    ulregister;                                                      //32 bit register for unsigned ints 
     xFRAMflt   fltregister;                                                     //32 bit register for floats     
     s1flags   tempStatusValue;                                                  //temporary register for comparison 
@@ -14289,7 +14284,6 @@ void R(void)                                                                    
 void READ_TIME(void)                                                            
 {
     unsigned char clockdata=0;                                                  
-    unsigned int RTCvalue=0;                                                        
     unsigned int RTCYEAR=0;                                                     
     unsigned int RTCMONTH=0;                                                    
     unsigned int RTCDAY=0;                                                      
