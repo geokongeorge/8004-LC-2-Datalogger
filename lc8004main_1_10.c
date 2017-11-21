@@ -16,9 +16,9 @@
 //	DATE:		11/20/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   1.10
-//	CHECKSUM:	0x6d4e  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x8aa3 (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8800/30720   29%
-//	PGM(FLASH)MEM:  184233/261888 70%
+//	PGM(FLASH)MEM:  184275/261888 70%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -13635,7 +13635,7 @@ void MX1(void)
 }
 
 
-void MX4(void)                                                                  //REV CD
+void MX4(void)                                                                  
 {
     MUX4_ENABLE.mflags.mux16_4 = VW4;                                           //4 channel VW/TH mux selected  
     write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);                    //store flag in FRAM  
@@ -13646,7 +13646,7 @@ void MX4(void)                                                                  
 }
 
 
-void MX8(void)                                                                  //REV CD
+void MX8(void)                                                                  
 {
     MUX4_ENABLE.mflags.mux16_4 = VW8;                                           //8 channel VW mux selected
     write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);                    //store flag in FRAM 
@@ -13657,7 +13657,7 @@ void MX8(void)                                                                  
 }
 
 
-void MX8T(void)                                                                 //REV CD
+void MX8T(void)                                                                 
 {
     MUX4_ENABLE.mflags.mux16_4 = TH8;                                           //8 channel thermistor mux selected 
     write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);                    //store flag in FRAM 
@@ -13668,7 +13668,7 @@ void MX8T(void)                                                                 
 }
 
 
-void MX16(void)                                                                 //REV CD
+void MX16(void)                                                                 
 {
     MUX4_ENABLE.mflags.mux16_4 = VW16;                                          //16 channel VW/TH mux selected 
     write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);                    //store flag in FRAM 
@@ -13679,7 +13679,7 @@ void MX16(void)                                                                 
 }
 
 
-void MX32(void)                                                                 //REV CD
+void MX32(void)                                                                 
 {
     MUX4_ENABLE.mflags.mux16_4 = VW32;                                          //32 channel VW mux selected
     write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);                    //store flag in FRAM 
@@ -13690,7 +13690,7 @@ void MX32(void)                                                                 
 }
 
 
-void MX32T(void)                                                                //REV CD
+void MX32T(void)                                                                
 {
     MUX4_ENABLE.mflags.mux16_4 = TH32;                                          //32 channel thermistor mux selected
     write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);                    //store flag in FRAM
@@ -13700,7 +13700,7 @@ void MX32T(void)                                                                
     hms(minScanThirtytwoTH, 0);                                                 //load minimum scan interval for 32 channel thermistor mode    
 }
 
-void O_D(void)                                                                  //REV CJ
+void O_D(void)                                                                  
 {
     PORT_CONTROL.flags.PortTimerEN = 0;                                         //clear Port Timer enable flag
     write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);              //store flag in FRAM`
@@ -13709,7 +13709,7 @@ void O_D(void)                                                                  
     disableAlarm(Alarm2);                                                       //disable the Alarm2 interrupt	
 }
 
-void O_E(void)                                                                  //REV CJ
+void O_E(void)                                                                  
 {
     PORT_CONTROL.flags.PortTimerEN = 1;                                         //set Port Timer enable flag
     PORT_CONTROL.flags.BluetoothTimerEN = 0;                                    //clear Bluetooth Timer enable flag 
@@ -13718,18 +13718,18 @@ void O_E(void)                                                                  
     S_1.status1flags._OP_Timer=1;                                                //set the MODBUS status flag    
     write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                        
     delay(4000);                                                                //delay required? 
-    enableAlarm(Alarm2); //enable the Alarm2 interrupt    
+    enableAlarm(Alarm2);                                                        //enable the Alarm2 interrupt    
 }
 
 
 unsigned int pack(unsigned char Hbyte, unsigned char Lbyte) {
     unsigned int packedword;
 
-    packedword = Hbyte; //load Hbyte
-    packedword *= 256; //left shift 8
-    packedword += Lbyte; //add Lbyte
+    packedword = Hbyte;                                                         //load Hbyte
+    packedword *= 256;                                                          //left shift 8
+    packedword += Lbyte;                                                        //add Lbyte
 
-    return packedword; //return packed 16 bit word
+    return packedword;                                                          //return packed 16 bit word
 }
 
 
@@ -13759,8 +13759,8 @@ void pluck(unsigned int _Fstart, unsigned int _Fstop, unsigned int _cycles) {
     float step = (Fstart_tcy_halfperiod - Fstop_tcy_halfperiod) / (_cycles / 2);//compute step
     unsigned int timer_value = 65536 - Fstart_tcy_halfperiod;
     
-    pluckON();                                                                  //REV CB
-    PMD1bits.T3MD=0;                                                            //enable TMR3   REV L
+    pluckON();                                                                  
+    PMD1bits.T3MD=0;                                                            //enable TMR3   
 
     T2CONbits.T32 = 0;                                                          //make sure 32 bit mode is off
     OpenTimer3(T3_ON & T3_GATE_OFF & T3_PS_1_1 & T3_SOURCE_INT, 0xFFFF);
@@ -13770,69 +13770,66 @@ void pluck(unsigned int _Fstart, unsigned int _Fstop, unsigned int _cycles) {
         IFS0bits.T3IF = 0;                                                      //clear TMR3 interrupt flag
         VWflagsbits.pluckflag = 1;                                              //set computation flag
         WriteTimer3(timer_value);                                               //setup TMR3
-        pluckPOS();                                                             //set pluck high    REV L
+        pluckPOS();                                                             //set pluck high    
         while (!IFS0bits.T3IF)                                                  //wait till TMR3 overflows
         {
-            if (VWflagsbits.pluckflag) //compute timer value once
+            if (VWflagsbits.pluckflag)                                          //compute timer value once
             {
                 timer_value = 65536 - Fstart_tcy_halfperiod;
             }
-            VWflagsbits.pluckflag = 0; //clear computation flag & wait for TMR3IF
+            VWflagsbits.pluckflag = 0;                                          //clear computation flag & wait for TMR3IF
         }
-        IFS0bits.T3IF = 0; //clear TMR3 interrupt flag		
+        IFS0bits.T3IF = 0;                                                      //clear TMR3 interrupt flag		
 
-        VWflagsbits.pluckflag = 1; //set computation flag
-        WriteTimer3(timer_value); //setup TMR3
-        pluckNEG();                                                             //set pluck low REV L
-        while (!IFS0bits.T3IF) //wait till TMR3 overflows
+        VWflagsbits.pluckflag = 1;                                              //set computation flag
+        WriteTimer3(timer_value);                                               //setup TMR3
+        pluckNEG();                                                             //set pluck low 
+        while (!IFS0bits.T3IF)                                                  //wait till TMR3 overflows
         {
-            if (VWflagsbits.pluckflag) //compute new timer value once
+            if (VWflagsbits.pluckflag)                                          //compute new timer value once
             {
                 Fstart_tcy_halfperiod = Fstart_tcy_halfperiod - step;
                 timer_value = 65536 - Fstart_tcy_halfperiod;
             }
-            VWflagsbits.pluckflag = 0; //clear computation flag and wait for TMR3IF
+            VWflagsbits.pluckflag = 0;                                          //clear computation flag and wait for TMR3IF
         }
 
-    } //end of for loop
+    }                                                                           //end of for loop
 
-    IFS0bits.T3IF = 0; //clear TMR3 interrupt flag
-    CloseTimer3(); //close the TMR3
-    TMR3 = 0; //clear TMR3
-    pluckOFF();                                                                 //disable the pluck driver  REV L
-    PMD1bits.T3MD=1;                                                            //disable TMR3   REV L
+    IFS0bits.T3IF = 0;                                                          //clear TMR3 interrupt flag
+    CloseTimer3();                                                              //close the TMR3
+    TMR3 = 0;                                                                   //clear TMR3
+    pluckOFF();                                                                 //disable the pluck driver  
+    PMD1bits.T3MD=1;                                                            //disable TMR3   
 }
 
-void pluckOFF(void)                                                             //REV CB
+void pluckOFF(void)                                                             
 {
     IN1=0;
     IN2=0;
     EXC_EN=0;                                                                   //Disable H-Bridge
-    V9_EXC=0;                                                                   //9V TEST REV CB
+    V9_EXC=0;                                                                   //9V TEST 
     _EXC_EN=1;                                                                  //Turn off Excitation supply
 }
 
-void pluckON(void)                                                              //REV CB
+void pluckON(void)                                                              
 {
     IN1=0;                                                                      //Make sure H-Bridge outputs are off
     IN2=0;
-    //EXC_EN=1;                                                                 //Enable H-Bridge   REV CB    TEST REM
     _EXC_EN=0;                                                                  //Turn on Excitation supply
-    delay(4000);                                                                //delay for stabilization REV CB
-    EXC_EN=1;                                                                   //Enable H-Bridge   REV CB
-    //V9_EXC=1;                                                                   //9V TEST REV CB
+    delay(4000);                                                                //delay for stabilization 
+    EXC_EN=1;                                                                   //Enable H-Bridge   
     delay(4000);                                                                //delay for stabilization
-    Nop();                                                                      //TEST POINT
 }
 
-void pluckPOS(void)                                                             //REV CB
+void pluckPOS(void)                                                             
 {
     IN1=1;                                                                      //DRV8839 OUT1 = 1
     IN2=0;                                                                      //DRV8839 OUT2 = 0
 }
 
 
-void pluckNEG(void)                                                             //REV CB
+void pluckNEG(void)                                                             
 {
     IN1=0;                                                                      //DRV8839 OUT1 = 0
     IN2=1;                                                                      //DRV8839 OUT2 = 1
@@ -13847,16 +13844,16 @@ void processDS3231Temperature(int x)
 }
 
 void processReading(float VWreading, int channel) {
-    float VWreading_1000; //VWreading/1000
+    float VWreading_1000;                                                       //VWreading/1000
 
     switch (channel) 
     {
         case 1:
 
             if (!MUX_CONVERSION1_16.c1flags.CH1) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0;                                //Linear Conversion
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1;                                //Polynomial Conversion
             }
             break;
 
@@ -13864,9 +13861,9 @@ void processReading(float VWreading, int channel) {
         case 2:
 
             if (!MUX_CONVERSION1_16.c1flags.CH2) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
@@ -13874,9 +13871,9 @@ void processReading(float VWreading, int channel) {
         case 3:
 
             if (!MUX_CONVERSION1_16.c1flags.CH3) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
@@ -13884,9 +13881,9 @@ void processReading(float VWreading, int channel) {
         case 4:
 
             if (!MUX_CONVERSION1_16.c1flags.CH4) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
@@ -13894,117 +13891,117 @@ void processReading(float VWreading, int channel) {
         case 5:
 
             if (!MUX_CONVERSION1_16.c1flags.CH5) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
         case 6:
 
             if (!MUX_CONVERSION1_16.c1flags.CH6) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
         case 7:
 
             if (!MUX_CONVERSION1_16.c1flags.CH7) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
         case 8:
 
             if (!MUX_CONVERSION1_16.c1flags.CH8) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
         case 9:
 
             if (!MUX_CONVERSION1_16.c1flags.CH9) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
         case 10:
 
             if (!MUX_CONVERSION1_16.c1flags.CH10) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
         case 11:
 
             if (!MUX_CONVERSION1_16.c1flags.CH11) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
         case 12:
 
             if (!MUX_CONVERSION1_16.c1flags.CH12) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
         case 13:
 
             if (!MUX_CONVERSION1_16.c1flags.CH13) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
         case 14:
 
             if (!MUX_CONVERSION1_16.c1flags.CH14) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
         case 15:
 
             if (!MUX_CONVERSION1_16.c1flags.CH15) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
         case 16:
 
             if (!MUX_CONVERSION1_16.c1flags.CH16) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
         case 17:
 
             if (!MUX_CONVERSION17_32.c2flags.CH17) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
@@ -14012,9 +14009,9 @@ void processReading(float VWreading, int channel) {
         case 18:
 
             if (!MUX_CONVERSION17_32.c2flags.CH18) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
@@ -14022,9 +14019,9 @@ void processReading(float VWreading, int channel) {
         case 19:
 
             if (!MUX_CONVERSION17_32.c2flags.CH19) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
@@ -14032,9 +14029,9 @@ void processReading(float VWreading, int channel) {
         case 20:
 
             if (!MUX_CONVERSION17_32.c2flags.CH20) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
@@ -14042,125 +14039,125 @@ void processReading(float VWreading, int channel) {
         case 21:
 
             if (!MUX_CONVERSION17_32.c2flags.CH21) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
         case 22:
 
             if (!MUX_CONVERSION17_32.c2flags.CH22) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
         case 23:
 
             if (!MUX_CONVERSION17_32.c2flags.CH23) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
         case 24:
 
             if (!MUX_CONVERSION17_32.c2flags.CH24) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
         case 25:
 
             if (!MUX_CONVERSION17_32.c2flags.CH25) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
         case 26:
 
             if (!MUX_CONVERSION17_32.c2flags.CH26) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
         case 27:
 
             if (!MUX_CONVERSION17_32.c2flags.CH27) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
         case 28:
 
             if (!MUX_CONVERSION17_32.c2flags.CH28) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
         case 29:
 
             if (!MUX_CONVERSION17_32.c2flags.CH29) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
         case 30:
 
             if (!MUX_CONVERSION17_32.c2flags.CH30) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
         case 31:
 
             if (!MUX_CONVERSION17_32.c2flags.CH31) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
 
         case 32:
 
             if (!MUX_CONVERSION17_32.c2flags.CH32) {
-                LC2CONTROL.flags.Conversion = 0; //Linear Conversion
+                LC2CONTROL.flags.Conversion = 0; 
             } else {
-                LC2CONTROL.flags.Conversion = 1; //Polynomial Conversion
+                LC2CONTROL.flags.Conversion = 1; 
             }
             break;
     }
 
-    if (LC2CONTROL.flags.Conversion) //polynomial conversion
+    if (LC2CONTROL.flags.Conversion)                                            //polynomial conversion
     {
-        VWreading_1000 = VWreading * 0.001; //multiply digits by .001 for polynomial conversions
+        VWreading_1000 = VWreading * 0.001;                                     //multiply digits by .001 for polynomial conversions
         VWreadingProcessed = (VWreading_1000 * VWreading_1000 * polyCoA)+(VWreading_1000 * polyCoB) + polyCoC;
         return;
     }
 
-    //VWreadingProcessed = ((VWreading - zeroReading) * gageFactor) + gageOffset;   TEST REM REV 1.4
-    VWreadingProcessed=VWreading;                                               //TEST REV 1.4
+    VWreadingProcessed = ((VWreading - zeroReading) * gageFactor) + gageOffset;   //TEST REM REV 1.4
+    //VWreadingProcessed=VWreading;                                               //TEST REV 1.4
     return;
 }
 
-void prompt(void) //transmit <CR><LF>
+void prompt(void)                                                               //transmit <CR><LF>
 {
     putcUART1(cr);
     while (BusyUART1());
@@ -14170,114 +14167,8 @@ void prompt(void) //transmit <CR><LF>
     while (BusyUART1());
 }
 
-/*REM REV CH:
-int qualifyNetAddress(void) {
-    unsigned int NetAddress = 0;
-    unsigned int StoredNetAddress = 0;
-    char RxData = 0; //holds value of UART1 receive buffer
-    int i = 0;
-    //int x = 0;
-    int ones = 0;
-    int tens = 0;
-    int hundreds = 0;
-    char buffer[4];
 
-    for (i = 0; i < 4; i++) //clear the buffer
-    {
-        buffer[i] = 0;
-    }
-
-    i = 1; //set buffer index to 1
-
-    shutdownTimer(3); //3S timeout if networked
-
-    while (!IFS3bits.T9IF) //wait for "#" - timeout if 15 seconds of inactivity
-    {
-        shutdownTimer(3); //Reset 3S timer
-
-        while (!DataRdyUART1() && !U1STAbits.FERR && !U1STAbits.PERR && !U1STAbits.OERR && !IFS3bits.T9IF);
-
-        if (IFS3bits.T9IF)
-            return 0;
-
-        if (U1STAbits.FERR | U1STAbits.PERR | U1STAbits.OERR)
-            handleCOMError();
-
-        RxData = ReadUART1();
-        if (RxData == pound)
-            break; //"#" received
-    }
-
-    if (IFS3bits.T9IF)
-        return 0;
-
-    while (!IFS3bits.T9IF) {
-        while (!DataRdyUART1() && !U1STAbits.FERR && !U1STAbits.PERR && !U1STAbits.OERR && !IFS3bits.T9IF);
-        if (U1STAbits.FERR | U1STAbits.PERR | U1STAbits.OERR)
-            handleCOMError();
-
-        RxData = ReadUART1(); //get the char from the USART buffer
-        if (RxData == 0x08) //decrement buffer index if backspace is received
-            i--;
-
-        if (i < 1) //don't let buffer index go below one
-            i = 1;
-
-        if (RxData != 0x08) //as long as char is not backspace
-        {
-            buffer[i] = RxData; //store the received char in the buffer
-            i++;
-        }
-
-        if (RxData == cr) //CR received - buffer is ready
-        {
-            RxData = 0; //clear the receive buffer
-            break;
-        }
-    }
-
-    if (IFS3bits.T9IF)
-        return 0;
-
-    for (i = 1; buffer[i] != cr; i++) {
-        if (!isdigit(buffer[i]))
-            return 0; //ERROR - buffer[i] is not a digit
-    }
-
-    i--; //# of digits in network address
-
-    switch (i) {
-        case 1:
-            NetAddress = buffer[1] - 0x30; //address 1-9
-            break;
-        case 2:
-            tens = (buffer[1] - 0x30)*10; //address 10-99
-            ones = buffer[2] - 0x30;
-            NetAddress = tens + ones;
-            break;
-        case 3:
-            hundreds = (buffer[1] - 0x30)*100; //address 100-256
-            tens = (buffer[2] - 0x30)*10;
-            ones = buffer[3] - 0x30;
-            NetAddress = hundreds + tens + ones;
-            break;
-        default:
-            break;
-    }
-
-    if (NetAddress <= 0 | NetAddress > 256) //invalid addresses
-        return 0;
-
-    StoredNetAddress=read_Int_FRAM(Netaddress);  
-
-    if (NetAddress != StoredNetAddress) //address doesn't match
-        return 0;
-
-    return 1; //addresses match
-}
-*/
-
-unsigned char readClock(unsigned char address)				//Receive timekeeping data from the DS3231 via I2C1 interface
+unsigned char readClock(unsigned char address)                                  //Receive timekeeping data from the DS3231 via I2C1 interface
 {
     unsigned int config1 = (I2C1_ON & I2C1_IDLE_CON & I2C1_CLK_HLD &
                             I2C1_IPMI_DIS & I2C1_7BIT_ADD &
@@ -14287,85 +14178,72 @@ unsigned char readClock(unsigned char address)				//Receive timekeeping data fro
                             I2C1_STOP_DIS & I2C1_RESTART_DIS &
                             I2C1_START_DIS);
 
-    //unsigned int config2=0x10;                                                //d64 value for I2CBRG at 400KHz    REV A   REM REV AE
-    //unsigned int config2=0x07;                                                //I2C1BRG value for 400KHz   REV D
-    unsigned int config2=0x44;                                                  //d64 value for I2CBRG at 400KHz    REV AE
-    //unsigned char data;                                                       //data read from DS3231     REM REV P
+    unsigned int config2=0x44;                                                  //d64 value for I2CBRG at 400KHz    
     unsigned char clkdata=0;
 
-    OpenI2C1(config1, config2);								//open the I2C1 module
-    IdleI2C1();												//make sure bus is idle
+    OpenI2C1(config1, config2);                                                 //open the I2C1 module
+    IdleI2C1();                                                                 //make sure bus is idle
     StartI2C1();
-    while(I2C1CONbits.SEN);									//wait till start sequence is complete
+    while(I2C1CONbits.SEN);                                                     //wait till start sequence is complete
 
-    //delay(2);                                                                 //VER b REM REV AE
-    delay(8);                                                                   //REV AE
+    delay(8);                                                                   
 
-    MasterWriteI2C1(0xD0);									//DS3231 RTC Slave address write byte
-    while(I2C1STATbits.TBF);									//wait till address is transmitted and ACK'd
+    MasterWriteI2C1(0xD0);                                                      //DS3231 RTC Slave address write byte
+    while(I2C1STATbits.TBF);                                                    //wait till address is transmitted and ACK'd
     while(I2C1STATbits.ACKSTAT);
 
     IdleI2C1();
     while(I2C1STATbits.ACKSTAT);
 
-    //delay(2);                                                                 //VER b REM REV AE
-    delay(8);                                                                   //REV AE
+    delay(8);                                                                   
 
-    MasterWriteI2C1(address);								//select the appropriate DS3231 register
-    while(I2C1STATbits.TBF);									//wait till address is transmitted and ACK'd
+    MasterWriteI2C1(address);                                                   //select the appropriate DS3231 register
+    while(I2C1STATbits.TBF);                                                    //wait till address is transmitted and ACK'd
     while(I2C1STATbits.ACKSTAT);
 
     IdleI2C1();
     while(I2C1STATbits.ACKSTAT);
 
-    //delay(2);                                                                 //VER b REM REV AE
-    delay(8);                                                                   //REV AE
+    delay(8);                                                                   
 
     StopI2C1();
 
-    //delay(2);                                                                 //VER b REM REV AE
-    delay(8);                                                                   //REV AE
+    delay(8);                                                                   
 
     IdleI2C1();
     while(I2C1STATbits.ACKSTAT);
 
     StartI2C1();
-    while(I2C1CONbits.SEN);									//wait till start sequence is complete
+    while(I2C1CONbits.SEN);                                                     //wait till start sequence is complete
 
-    //delay(2);                                                                 //VER b REM REV AE
-    delay(8);                                                                   //REV AE
+    delay(8);                                                                   
 
-    MasterWriteI2C1(0xD1);									//DS3231 RTC Slave address read byte
-    while(I2C1STATbits.TBF);									//wait till address is transmitted and ACK'd
+    MasterWriteI2C1(0xD1);                                                      //DS3231 RTC Slave address read byte
+    while(I2C1STATbits.TBF);                                                    //wait till address is transmitted and ACK'd
     while(I2C1STATbits.ACKSTAT);
 
-    //delay(2);                                                                 //VER b REM REV AE
-    delay(8);                                                                   //REV AE
+    delay(8);                                                                   
 
-    //data = MasterReadI2C1();									//read the data from the DS3231 REM REV P
-    clkdata = MasterReadI2C1();									//read the data from the DS3231
-    while(I2C1STATbits.TBF);									//wait till data is transmitted and ACK'd
+    clkdata = MasterReadI2C1();                                                 //read the data from the DS3231
+    while(I2C1STATbits.TBF);                                                    //wait till data is transmitted and ACK'd
     while(I2C1STATbits.ACKSTAT);
 
-    //delay(2);                                                                 //VER b REM REV AE
-    delay(8);                                                                   //REV AE
+    delay(8);                                                                   
 
-    NotAckI2C1();											//NACK the DS3231
+    NotAckI2C1();                                                               //NACK the DS3231
 
-    //delay(2);                                                                 //VER b REM REV AE
-    delay(8);                                                                   //REV AE
+    delay(8);                                                                   
 
     StopI2C1();
-    while(I2C1CONbits.PEN);									//wait till stop sequence is complete
+    while(I2C1CONbits.PEN);                                                     //wait till stop sequence is complete
 
 
-    CloseI2C1();												//close the I2C1 module
+    CloseI2C1();                                                                //close the I2C1 module
     
-    //return data;											//return the integer DS3231 data    REM REV P
-    return clkdata;											//return the integer DS3231 data    REV P
+    return clkdata;                                                             //return the integer DS3231 data    
 }
 
-//REV K:
+
 //***************************************************************************
 //			readDS3231temperature()
 //
@@ -14396,7 +14274,7 @@ int readDS3231temperature(void)
 }
 
 
-void R(void)                                                                    //Reset memory pointers REV CH
+void R(void)                                                                    //Reset memory pointers 
 {
     FRAM_MEMORY.flags.memEmpty = 1;                                             //set the memory empty flag
     write_Int_FRAM(FRAM_MEMORYflagsaddress,FRAM_MEMORY.memory);                 //store flag in FRAM  
@@ -14407,17 +14285,17 @@ void R(void)                                                                    
     setClock(0x0F, 0);                                                          //Clear the RTC Alarm flags    
 }
 
-void READ_TIME(void)                                                            //REV CG
+void READ_TIME(void)                                                            
 {
-    unsigned char clockdata=0;                                                  //REV CL
-    unsigned int RTCvalue=0;                                                    //REV CG    
-    unsigned int RTCYEAR=0;                                                     //REV CL
-    unsigned int RTCMONTH=0;                                                    //REV CL
-    unsigned int RTCDAY=0;                                                      //REV CL
-    unsigned int RTCHOUR=0;                                                     //REV CL
-    unsigned int RTCMINUTE=0;                                                   //REV CL
-    unsigned int RTCSECOND=0;                                                   //REV CL
-    unsigned long decimalValue=0;                                               //REV CL
+    unsigned char clockdata=0;                                                  
+    unsigned int RTCvalue=0;                                                        
+    unsigned int RTCYEAR=0;                                                     
+    unsigned int RTCMONTH=0;                                                    
+    unsigned int RTCDAY=0;                                                      
+    unsigned int RTCHOUR=0;                                                     
+    unsigned int RTCMINUTE=0;                                                   
+    unsigned int RTCSECOND=0;                                                   
+    unsigned long decimalValue=0;                                               
     
     if(!LC2CONTROL2.flags2.Modbus)                          
     {
@@ -14427,105 +14305,105 @@ void READ_TIME(void)                                                            
     }
     else
     {
-        __delay32(uS300);                                                        //300uS delay for RTC   REV CQ
+        __delay32(uS300);                                                       //300uS delay for RTC   
     }    
 
     clockdata = readClock(RTCMonthsAddress);                                    //get the month from the RTC
-    decimalValue=bcd2d(clockdata);                                              //convert BCD to decimal for MODBUS REV CL
+    decimalValue=bcd2d(clockdata);                                              //convert BCD to decimal for MODBUS 
     RTCMONTH=decimalValue;    
     if(!LC2CONTROL2.flags2.Modbus)
     {
-        displayClock(clockdata);                                                  //display it
+        displayClock(clockdata);                                                //display it
         putcUART1(slash);                                                       // '/'
         while (BusyUART1());
     }
     else
     {
-        __delay32(uS300);                                                        //300uS delay for RTC   REV CQ
+        __delay32(uS300);                                                       //300uS delay for RTC   
     }
 
     clockdata = readClock(RTCDaysAddress);                                      //get the day from the RTC
-    decimalValue=bcd2d(clockdata);                                              //convert BCD to decimal for MODBUS REV CL 
+    decimalValue=bcd2d(clockdata);                                              //convert BCD to decimal for MODBUS  
     RTCDAY=decimalValue;    
     
     if(!LC2CONTROL2.flags2.Modbus)
     {
-        displayClock(clockdata);                                                  //display it
+        displayClock(clockdata);                                                //display it
         putcUART1(slash);                                                       // '/'
         while (BusyUART1());
     }
     else
     {
-        __delay32(uS300);                                                        //300uS delay for RTC   REV CQ
+        __delay32(uS300);                                                       //300uS delay for RTC   
     }
 
 
     clockdata = readClock(RTCYearsAddress);                                     //get the year from the RTC
-    decimalValue=bcd2d(clockdata);                                              //convert BCD to decimal for MODBUS REV CL    
+    decimalValue=bcd2d(clockdata);                                              //convert BCD to decimal for MODBUS     
     RTCYEAR=decimalValue;    
 
     if(!LC2CONTROL2.flags2.Modbus)
     {
-        displayClock(clockdata); //display it
+        displayClock(clockdata);                                                //display it
         putcUART1(tab);
         while(BusyUART1());
     }
     else
     {
-        __delay32(uS300);                                                        //300uS delay for RTC   REV CQ
+        __delay32(uS300);                                                       //300uS delay for RTC   
     }    
 
     if(!LC2CONTROL2.flags2.Modbus)                          
     {
-        putsUART1(Time); //Time:
+        putsUART1(Time);                                                        //Time:
         while (BusyUART1());
     }
     else
     {
-        __delay32(uS300);                                                        //300uS delay for RTC   REV CQ
+        __delay32(uS300);                                                       //300uS delay for RTC   
     }
 
     clockdata = readClock(RTCHoursAddress);                                     //get the hours from the RTC
-    decimalValue=bcd2d(clockdata);                                              //convert BCD to decimal for MODBUS REV CL    
+    decimalValue=bcd2d(clockdata);                                              //convert BCD to decimal for MODBUS     
     RTCHOUR=decimalValue;    
  
     if(!LC2CONTROL2.flags2.Modbus)
     {
-        displayClock(clockdata);                                                  //display it
+        displayClock(clockdata);                                                //display it
         putcUART1(colon);                                                       // ':'
         while (BusyUART1());
     }
     else
     {
-        __delay32(uS300);                                                        //300uS delay for RTC   REV CQ
+        __delay32(uS300);                                                       //300uS delay for RTC   
     }    
 
     clockdata = readClock(RTCMinutesAddress);                                   //get the minutes from the RTC
-    decimalValue=bcd2d(clockdata);                                              //convert BCD to decimal for MODBUS REV CL    
+    decimalValue=bcd2d(clockdata);                                              //convert BCD to decimal for MODBUS     
     RTCMINUTE=decimalValue;    
     
     if(!LC2CONTROL2.flags2.Modbus)
     {
-        displayClock(clockdata);                                                  //display it
+        displayClock(clockdata);                                                //display it
         putcUART1(colon);                                                       // ':'
         while (BusyUART1());
     }
     else
     {
-        __delay32(uS300);                                                        //300uS delay for RTC   REV CQ
+        __delay32(uS300);                                                       //300uS delay for RTC   
     }    
 
     clockdata = readClock(RTCSecondsAddress);                                   //get the seconds from the RTC
-    decimalValue=bcd2d(clockdata);                                              //convert BCD to decimal for MODBUS REV CL    
+    decimalValue=bcd2d(clockdata);                                              //convert BCD to decimal for MODBUS     
     RTCSECOND=decimalValue;    
  
     if(!LC2CONTROL2.flags2.Modbus)
     {
-        displayClock(clockdata);                                                  //display it   
+        displayClock(clockdata);                                                //display it   
     }
     else
     {
-        __delay32(uS300);                                                        //300uS delay for RTC   REV CQ
+        __delay32(uS300);                                                       //300uS delay for RTC   
     }    
     
     write_Int_FRAM(RTCYearsaddress,RTCYEAR);
@@ -14537,7 +14415,7 @@ void READ_TIME(void)                                                            
     
 }
 
-void ReadSN(void)                                                               //REV 1.9
+void ReadSN(void)                                                               
 {
     char SNBUF[8];                                                              
     unsigned long   SerialNumber;
@@ -14594,78 +14472,13 @@ void ReadSN(void)                                                               
 
 
 
-void RST(void)                                                                  //REV CH
+void RST(void)                                                                  
 {
-    LC2CONTROL.flags.Reset = 1; //Set the Reset flag
-    write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM  
+    LC2CONTROL.flags.Reset = 1;                                                 //Set the Reset flag
+    write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);                     //store flag in FRAM  
     asm("RESET");    
 }
 
-/*REM REV M:
-//***************************************************************************
-//			read_vw()
-//
-//	capture and process VW frequency
-//
-//	Parameters received: none
-//	Returns: floating-point frequency
-//
-//	Called from: main()
-//
-//***************************************************************************
-
-float read_vw(unsigned char gageType) {
-    int samples; //VW reading loop iterations
-    unsigned int j = 0;
-    float period = 0.0;
-    float period_total = 0;
-    float frequency = 0.0;
-    float avg_period = 0.0;
-    float digits = 0.0;
-
-    //**************Adaptive Multiple Period Averaging***********************
-    period = getPeriod(gageType);
-    if (period == -999999) //no gage connected
-        return -999999; //return error code
-
-    if (gageType != 3) {
-        period = (period * tcy) / 16.0; //determine period with every 16 cycle capture
-        samples = (0.6 / period) / 32; //determine maximum samples for 800mS reading window
-    } else {
-        period = (period * tcy) / 4.0; //determine period with every 4 cycle capture
-        samples = (0.6 / period) / 16;
-    }
-
-    for (j = 0; j < samples; j++) {
-        period = getPeriod(gageType);
-        if (IFS0bits.T1IF) //exit loop if VW drops out
-            break;
-        period_total += period;
-    }
-
-    if (!IFS0bits.T1IF) //only if VW is valid
-    {
-        avg_period = (period_total / samples); //determine average period
-
-        if (gageType != 3)
-            period = (avg_period * tcy) / 16.0; //determine period with every 16 cycle capture
-        else
-            period = (avg_period * tcy) / 4.0; //determine period with every 4 cycle capture
-
-        frequency = 1 / period; //test
-    } else {
-        VWflagsbits.VWerror = 1; //set reading error flag
-    }
-
-    IFS0bits.T1IF = 0; //reset TMR1IF
-    digits = (frequency * frequency)*.001; //digits = F^2x10E-3 if linear conversion
-
-    return digits; //return the digits
-}
-*/
-
-
-//REV M:
 //***************************************************************************
 //								read_vw()
 //
@@ -14684,31 +14497,27 @@ float read_vw(void)
 
 	frequency=getFrequency();
     
-    //REV 1.1:******************************************************************
     F=vwf32toINT16(frequency);
     
-    //**************************************************************************
-
 	if(frequency==0.0)
-		VWflagsbits.VWerror=1;						//set reading error flag if timeout occurs
+		VWflagsbits.VWerror=1;                                                  //set reading error flag if timeout occurs
 
-	IFS0bits.T1IF=0;								//reset TMR1IF
+	IFS0bits.T1IF=0;                                                            //reset TMR1IF
 
-	if(LC2CONTROL.flags.Conversion)					//convert to digits
+	if(LC2CONTROL.flags.Conversion)                                             //convert to digits
 	{
-		digits=(frequency*frequency)*.000001;		//digits = F^2x10E-6 if polynomial conversion
+		digits=(frequency*frequency)*.000001;                                   //digits = F^2x10E-6 if polynomial conversion
 	}
 	else
 	{
-		digits=(frequency*frequency)*.001;			//digits = F^2x10E-3 if linear conversion
+		digits=(frequency*frequency)*.001;                                      //digits = F^2x10E-3 if linear conversion
 	}
 
-	return digits;							 		//return the digits	TEST REM REV 1.4
-	//return frequency;								//TEST REV 1.4
+	return digits;                                                              //return the digits	
 }
 
 
-void reloadLogTable(void)                                                       //REV CI
+void reloadLogTable(void)                                                       
 {
    unsigned long    index;
    unsigned int     val;
@@ -14728,7 +14537,7 @@ void resetMemory(void)
     data = 0;                                                                   //reset memory pointers                                         
     write_Int_FRAM(MemoryStatusaddress,data);                                   
 
-    data = 1;                                                                   //TEST REM REV V
+    data = 1;                                                                   
     write_Int_FRAM(OutputPositionaddress,data);    
     write_Int_FRAM(UserPositionaddress,data);  
 
@@ -14758,12 +14567,12 @@ void restoreSettings(void)
     outputPosition=read_Int_FRAM(OutputPositionaddress);                        //get the memory pointer
     userPosition=read_Int_FRAM(UserPositionaddress);                            //get the user position
     TotalStopSeconds=read_longFRAM(TotalStopSecondsaddress);                    //get the stored stop time
-    S_1.status1=read_Int_FRAM(MODBUS_STATUS1address);                           //REV BC
+    S_1.status1=read_Int_FRAM(MODBUS_STATUS1address);                           
 }
 
-unsigned long RTChms2s(unsigned char x) //returns total seconds in RTC register
-{ //x=0:return total in Alarm1 registers
-    unsigned long total = 0; //x=1:return total in RTC registers
+unsigned long RTChms2s(unsigned char x)                                         //returns total seconds in RTC register
+{                                                                               //x=0:return total in Alarm1 registers
+    unsigned long total = 0;                                                    //x=1:return total in RTC registers
     unsigned char hours = 0;
     unsigned char minutes = 0;
     unsigned char seconds = 0;
@@ -14775,8 +14584,8 @@ unsigned long RTChms2s(unsigned char x) //returns total seconds in RTC register
         hours = readClock(RTCHoursAddress);
     else
         hours = readClock(RTCAlarm1HoursAddress);
-    decimalhours = bcd2d(hours); //convert RTC 2 digit BCD hours to decimal
-    decimalhours *= 3600; //convert result to seconds
+    decimalhours = bcd2d(hours);                                                //convert RTC 2 digit BCD hours to decimal
+    decimalhours *= 3600;                                                       //convert result to seconds
 
     if (x)
         minutes = readClock(RTCMinutesAddress);
@@ -14799,25 +14608,25 @@ unsigned long RTChms2s(unsigned char x) //returns total seconds in RTC register
 
 unsigned int RTCtoDecimal(unsigned char data)
 {
-    BCDone=0;												//initialize
+    BCDone=0;                                                                   //initialize
     BCDten=0;
     BCDtwenty=0;
     BCDthirty=0;
     BCDforty=0;
     BCDfifty=0;
 
-    if(data>=0x50) BCDfifty=1;		//extract BCDfifty
-    if(data>=0x40) BCDforty=1;		//extract BCDforty
-    if(data>=0x30) BCDthirty=1;		//extract BCDthirty
-    if(data>=0x20) BCDtwenty=1;		//extract BCDtwenty
-    if(data>=0x10) BCDten=1;		//extract BCDten
-    BCDten=BCDten+BCDtwenty+BCDthirty+BCDforty+BCDfifty;	//sum them in BCDten
+    if(data>=0x50) BCDfifty=1;                                                  //extract BCDfifty
+    if(data>=0x40) BCDforty=1;                                                  //extract BCDforty
+    if(data>=0x30) BCDthirty=1;                                                 //extract BCDthirty
+    if(data>=0x20) BCDtwenty=1;                                                 //extract BCDtwenty
+    if(data>=0x10) BCDten=1;                                                    //extract BCDten
+    BCDten=BCDten+BCDtwenty+BCDthirty+BCDforty+BCDfifty;                        //sum them in BCDten
 
-    BCDten*=10;						//multiply BCDten by ten
-    BCDone=data&0x0F;				//mask off upper nybble of RTCdata
+    BCDten*=10;                                                                 //multiply BCDten by ten
+    BCDone=data&0x0F;                                                           //mask off upper nybble of RTCdata
 	
-    decimalRTC=BCDten+BCDone;		//add tens and ones
-    return decimalRTC;				//return value
+    decimalRTC=BCDten+BCDone;                                                   //add tens and ones
+    return decimalRTC;                                                          //return value
 }
 
 
@@ -14828,27 +14637,21 @@ void seconds2hms(unsigned long s) {
 
     while (1) {
         if (s < 60) {
-            second = s; //extract seconds and return
+            second = s;                                                         //extract seconds and return
             break;
         }
 
         if (s > 3599) {
-            hour += 1; //increment hours
+            hour += 1;                                                          //increment hours
             s -= 3600;
         } else {
-            minute += 1; //increment minutes
+            minute += 1;                                                        //increment minutes
             s -= 60;
         }
     }
 }
 
-void setADCnormal()                                                             //Configure ADC inputs for normal operation REV D
-{
-    Nop();
-}
-
-
-void setADCsleep()                                                              //Configure ADC inputs as digital I/O REV D
+void setADCsleep()                                                              //Configure ADC inputs as digital I/O 
 {
     //CONFIGURE PORTB:   
     AD1PCFGH=0xFFFF;                                                            
@@ -14858,396 +14661,362 @@ void setADCsleep()                                                              
     //Configure PORTC:
     AD1PCFGL=0xFFFF;
     AD2PCFGL=0xFFFF;
-    TRISC=0x9000;                                                               //Configure PORTC   REV CA
+    TRISC=0x9000;                                                               //Configure PORTC   
     LATC=0x0000;
 }
 
 
 void setADCwake(void)
 {
-     //Configure ADC for Digital I/O & Analog inputs:                            //REV E
-    AD2PCFGL=0xFCC2;                                                            //AN0,2,3,4,5,8,9 are analog  REV CA
-    AD1PCFGL=0xFCC2;                                                            //all else digital  REV CA
+     //Configure ADC for Digital I/O & Analog inputs:                            
+    AD2PCFGL=0xFCC2;                                                            //AN0,2,3,4,5,8,9 are analog  
+    AD1PCFGL=0xFCC2;                                                            //all else digital  
     AD1PCFGH=0xFFFF;   
 }
 
 void setChannelConversion(int channel, int conversion) {
-    switch (channel) //assign the proper conversion type per channel
+    switch (channel)                                                            //assign the proper conversion type per channel
     {
         case 1:
-            MUX_CONVERSION1_16.c1flags.CH1 = 0; //linear conversion
+            MUX_CONVERSION1_16.c1flags.CH1 = 0;                                 //linear conversion
             if (conversion == 1)
-                MUX_CONVERSION1_16.c1flags.CH1 = 1; //polynomial conversion
+                MUX_CONVERSION1_16.c1flags.CH1 = 1;                             //polynomial conversion
             break;
 
         case 2:
-            MUX_CONVERSION1_16.c1flags.CH2 = 0; //linear conversion
+            MUX_CONVERSION1_16.c1flags.CH2 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION1_16.c1flags.CH2 = 1; //polynomial conversion
+                MUX_CONVERSION1_16.c1flags.CH2 = 1; 
             break;
 
         case 3:
-            MUX_CONVERSION1_16.c1flags.CH3 = 0; //linear conversion
+            MUX_CONVERSION1_16.c1flags.CH3 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION1_16.c1flags.CH3 = 1; //polynomial conversion
+                MUX_CONVERSION1_16.c1flags.CH3 = 1; 
             break;
 
         case 4:
-            MUX_CONVERSION1_16.c1flags.CH4 = 0; //linear conversion
+            MUX_CONVERSION1_16.c1flags.CH4 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION1_16.c1flags.CH4 = 1; //polynomial conversion
+                MUX_CONVERSION1_16.c1flags.CH4 = 1; 
             break;
 
         case 5:
-            MUX_CONVERSION1_16.c1flags.CH5 = 0; //linear conversion
+            MUX_CONVERSION1_16.c1flags.CH5 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION1_16.c1flags.CH5 = 1; //polynomial conversion
+                MUX_CONVERSION1_16.c1flags.CH5 = 1; 
             break;
 
         case 6:
-            MUX_CONVERSION1_16.c1flags.CH6 = 0; //linear conversion
+            MUX_CONVERSION1_16.c1flags.CH6 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION1_16.c1flags.CH6 = 1; //polynomial conversion
+                MUX_CONVERSION1_16.c1flags.CH6 = 1; 
             break;
 
         case 7:
-            MUX_CONVERSION1_16.c1flags.CH7 = 0; //linear conversion
+            MUX_CONVERSION1_16.c1flags.CH7 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION1_16.c1flags.CH7 = 1; //polynomial conversion
+                MUX_CONVERSION1_16.c1flags.CH7 = 1; 
             break;
 
         case 8:
-            MUX_CONVERSION1_16.c1flags.CH8 = 0; //linear conversion
+            MUX_CONVERSION1_16.c1flags.CH8 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION1_16.c1flags.CH8 = 1; //polynomial conversion
+                MUX_CONVERSION1_16.c1flags.CH8 = 1; 
             break;
 
         case 9:
-            MUX_CONVERSION1_16.c1flags.CH9 = 0; //linear conversion
+            MUX_CONVERSION1_16.c1flags.CH9 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION1_16.c1flags.CH9 = 1; //polynomial conversion
+                MUX_CONVERSION1_16.c1flags.CH9 = 1; 
             break;
 
         case 10:
-            MUX_CONVERSION1_16.c1flags.CH10 = 0; //linear conversion
+            MUX_CONVERSION1_16.c1flags.CH10 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION1_16.c1flags.CH10 = 1; //polynomial conversion
+                MUX_CONVERSION1_16.c1flags.CH10 = 1; 
             break;
 
         case 11:
-            MUX_CONVERSION1_16.c1flags.CH11 = 0; //linear conversion
+            MUX_CONVERSION1_16.c1flags.CH11 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION1_16.c1flags.CH11 = 1; //polynomial conversion
+                MUX_CONVERSION1_16.c1flags.CH11 = 1; 
             break;
 
         case 12:
-            MUX_CONVERSION1_16.c1flags.CH12 = 0; //linear conversion
+            MUX_CONVERSION1_16.c1flags.CH12 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION1_16.c1flags.CH12 = 1; //polynomial conversion
+                MUX_CONVERSION1_16.c1flags.CH12 = 1; 
             break;
 
         case 13:
-            MUX_CONVERSION1_16.c1flags.CH13 = 0; //linear conversion
+            MUX_CONVERSION1_16.c1flags.CH13 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION1_16.c1flags.CH13 = 1; //polynomial conversion
+                MUX_CONVERSION1_16.c1flags.CH13 = 1; 
             break;
 
         case 14:
-            MUX_CONVERSION1_16.c1flags.CH14 = 0; //linear conversion
+            MUX_CONVERSION1_16.c1flags.CH14 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION1_16.c1flags.CH14 = 1; //polynomial conversion
+                MUX_CONVERSION1_16.c1flags.CH14 = 1; 
             break;
 
         case 15:
-            MUX_CONVERSION1_16.c1flags.CH15 = 0; //linear conversion
+            MUX_CONVERSION1_16.c1flags.CH15 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION1_16.c1flags.CH15 = 1; //polynomial conversion
+                MUX_CONVERSION1_16.c1flags.CH15 = 1; 
             break;
 
         case 16:
-            MUX_CONVERSION1_16.c1flags.CH16 = 0; //linear conversion
+            MUX_CONVERSION1_16.c1flags.CH16 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION1_16.c1flags.CH16 = 1; //polynomial conversion
+                MUX_CONVERSION1_16.c1flags.CH16 = 1; 
             break;
 
         case 17:
-            MUX_CONVERSION17_32.c2flags.CH17 = 0; //linear conversion
+            MUX_CONVERSION17_32.c2flags.CH17 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION17_32.c2flags.CH17 = 1; //polynomial conversion
+                MUX_CONVERSION17_32.c2flags.CH17 = 1; 
             break;
 
         case 18:
-            MUX_CONVERSION17_32.c2flags.CH18 = 0; //linear conversion
+            MUX_CONVERSION17_32.c2flags.CH18 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION17_32.c2flags.CH18 = 1; //polynomial conversion
+                MUX_CONVERSION17_32.c2flags.CH18 = 1; 
             break;
 
         case 19:
-            MUX_CONVERSION17_32.c2flags.CH19 = 0; //linear conversion
+            MUX_CONVERSION17_32.c2flags.CH19 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION17_32.c2flags.CH19 = 1; //polynomial conversion
+                MUX_CONVERSION17_32.c2flags.CH19 = 1; 
             break;
 
         case 20:
-            MUX_CONVERSION17_32.c2flags.CH20 = 0; //linear conversion
+            MUX_CONVERSION17_32.c2flags.CH20 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION17_32.c2flags.CH20 = 1; //polynomial conversion
+                MUX_CONVERSION17_32.c2flags.CH20 = 1; 
             break;
 
         case 21:
-            MUX_CONVERSION17_32.c2flags.CH21 = 0; //linear conversion
+            MUX_CONVERSION17_32.c2flags.CH21 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION17_32.c2flags.CH21 = 1; //polynomial conversion
+                MUX_CONVERSION17_32.c2flags.CH21 = 1; 
             break;
 
         case 22:
-            MUX_CONVERSION17_32.c2flags.CH22 = 0; //linear conversion
+            MUX_CONVERSION17_32.c2flags.CH22 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION17_32.c2flags.CH22 = 1; //polynomial conversion
+                MUX_CONVERSION17_32.c2flags.CH22 = 1; 
             break;
 
         case 23:
-            MUX_CONVERSION17_32.c2flags.CH23 = 0; //linear conversion
+            MUX_CONVERSION17_32.c2flags.CH23 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION17_32.c2flags.CH23 = 1; //polynomial conversion
+                MUX_CONVERSION17_32.c2flags.CH23 = 1; 
             break;
 
         case 24:
-            MUX_CONVERSION17_32.c2flags.CH24 = 0; //linear conversion
+            MUX_CONVERSION17_32.c2flags.CH24 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION17_32.c2flags.CH24 = 1; //polynomial conversion
+                MUX_CONVERSION17_32.c2flags.CH24 = 1; 
             break;
 
         case 25:
-            MUX_CONVERSION17_32.c2flags.CH25 = 0; //linear conversion
+            MUX_CONVERSION17_32.c2flags.CH25 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION17_32.c2flags.CH25 = 1; //polynomial conversion
+                MUX_CONVERSION17_32.c2flags.CH25 = 1; 
             break;
 
         case 26:
-            MUX_CONVERSION17_32.c2flags.CH26 = 0; //linear conversion
+            MUX_CONVERSION17_32.c2flags.CH26 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION17_32.c2flags.CH26 = 1; //polynomial conversion
+                MUX_CONVERSION17_32.c2flags.CH26 = 1; 
             break;
 
         case 27:
-            MUX_CONVERSION17_32.c2flags.CH27 = 0; //linear conversion
+            MUX_CONVERSION17_32.c2flags.CH27 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION17_32.c2flags.CH27 = 1; //polynomial conversion
+                MUX_CONVERSION17_32.c2flags.CH27 = 1; 
             break;
 
         case 28:
-            MUX_CONVERSION17_32.c2flags.CH28 = 0; //linear conversion
+            MUX_CONVERSION17_32.c2flags.CH28 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION17_32.c2flags.CH28 = 1; //polynomial conversion
+                MUX_CONVERSION17_32.c2flags.CH28 = 1; 
             break;
 
         case 29:
-            MUX_CONVERSION17_32.c2flags.CH29 = 0; //linear conversion
+            MUX_CONVERSION17_32.c2flags.CH29 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION17_32.c2flags.CH29 = 1; //polynomial conversion
+                MUX_CONVERSION17_32.c2flags.CH29 = 1; 
             break;
 
         case 30:
-            MUX_CONVERSION17_32.c2flags.CH30 = 0; //linear conversion
+            MUX_CONVERSION17_32.c2flags.CH30 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION17_32.c2flags.CH30 = 1; //polynomial conversion
+                MUX_CONVERSION17_32.c2flags.CH30 = 1; 
             break;
 
         case 31:
-            MUX_CONVERSION17_32.c2flags.CH31 = 0; //linear conversion
+            MUX_CONVERSION17_32.c2flags.CH31 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION17_32.c2flags.CH31 = 1; //polynomial conversion
+                MUX_CONVERSION17_32.c2flags.CH31 = 1; 
             break;
 
         case 32:
-            MUX_CONVERSION17_32.c2flags.CH32 = 0; //linear conversion
+            MUX_CONVERSION17_32.c2flags.CH32 = 0; 
             if (conversion == 1)
-                MUX_CONVERSION17_32.c2flags.CH32 = 1; //polynomial conversion
+                MUX_CONVERSION17_32.c2flags.CH32 = 1; 
             break;
 
         default:
             return;
 
     }
-    write_Int_FRAM(MUX_CONV1_16flagsaddress,MUX_CONVERSION1_16.MUXconv1_16);              //store flag in FRAM 
-    write_Int_FRAM(MUX_CONV17_32flagsaddress,MUX_CONVERSION17_32.MUXconv17_32);              //store flag in FRAM  
+    write_Int_FRAM(MUX_CONV1_16flagsaddress,MUX_CONVERSION1_16.MUXconv1_16);    //store flag in FRAM 
+    write_Int_FRAM(MUX_CONV17_32flagsaddress,MUX_CONVERSION17_32.MUXconv17_32); //store flag in FRAM  
 }
 
 
-//REV T:
 void setChannelThermtype(int channel,char Thermtype)                            
 {
 	switch(channel)                                                             //assign the proper thermistor type per channel
 	{
 		case 1:
             write_Int_FRAM(CH1THaddress,Thermtype);                             //store Thermistor type in EEPROM
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 2:
 			write_Int_FRAM(CH2THaddress,Thermtype);                             
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 3:
 			write_Int_FRAM(CH3THaddress,Thermtype);                             
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 4:
 			write_Int_FRAM(CH4THaddress,Thermtype);                             
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 5:
 			write_Int_FRAM(CH5THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 6:
 			write_Int_FRAM(CH6THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 7:
 			write_Int_FRAM(CH7THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 8:		
 			write_Int_FRAM(CH8THaddress,Thermtype);	
-			//return;                                                           REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 9:
 			write_Int_FRAM(CH9THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 10:
 			write_Int_FRAM(CH10THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 11:
 			write_Int_FRAM(CH11THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 12:
 			write_Int_FRAM(CH12THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 13:
 			write_Int_FRAM(CH13THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 14:
 			write_Int_FRAM(CH14THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 15:
 			write_Int_FRAM(CH15THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 16:
 			write_Int_FRAM(CH16THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
             
         case 17:
 			write_Int_FRAM(CH17THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 18:
 			write_Int_FRAM(CH18THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 19:
 			write_Int_FRAM(CH19THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 20:
 			write_Int_FRAM(CH20THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8 
+            break;                                                               
             
         case 21:
 			write_Int_FRAM(CH21THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 22:
 			write_Int_FRAM(CH22THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 23:
 			write_Int_FRAM(CH23THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 24:
 			write_Int_FRAM(CH24THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
             
         case 25:
 			write_Int_FRAM(CH25THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 26:
 			write_Int_FRAM(CH26THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 27:
 			write_Int_FRAM(CH27THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 28:
 			write_Int_FRAM(CH28THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8   
+            break;                                                                 
             
         case 29:
 			write_Int_FRAM(CH29THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 30:
 			write_Int_FRAM(CH30THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 31:
 			write_Int_FRAM(CH31THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 
 		case 32:
 			write_Int_FRAM(CH32THaddress,Thermtype);	
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8    
+            break;                                                                 
 
 		default:
-			//return;                                                           //REM REV 1.8
-            break;                                                              //REV 1.8
+            break;                                                              
 	}
-    if(Thermtype==0)                                                            //REV 1.8
-        disableTHChannel(channel);                                              //REV 1.8
-    else                                                                        //REV 1.8
-        enableTHChannel(channel);                                               //REV 1.8
+    if(Thermtype==0)                                                            
+        disableTHChannel(channel);                                              
+    else                                                                        
+        enableTHChannel(channel);                                               
 }
 
 
