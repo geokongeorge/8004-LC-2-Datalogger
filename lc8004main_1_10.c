@@ -16,9 +16,9 @@
 //	DATE:		11/20/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   1.10
-//	CHECKSUM:	0x7e7d  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x6d4e  (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8800/30720   29%
-//	PGM(FLASH)MEM:  184242/261888 70%
+//	PGM(FLASH)MEM:  184233/261888 70%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -8189,7 +8189,7 @@ void displayTempReading(void) {
     restoreSettings();                                                          //load the flags from internal FRAM
     _232SHDN=1;                                                                
 
-    if (LC2CONTROL.flags.ID) //Display ID if flag is set
+    if (LC2CONTROL.flags.ID)                                                    //Display ID if flag is set
     {
 
         for (i = IDaddress; i < CH1GTaddress; i += 2)                           //parse the buffer and extract the ID character   
@@ -8423,16 +8423,7 @@ void displayTempReading(void) {
 
                     case 1:
 
-                        //REM REV 1.8:
-                        //if (MUX4_ENABLE.mflags.mux16_4 == Single)               //Single Channel    
-                        //{
-                        //    putsUART1(BUF);                                     //display reading
-                        //    break;
-                        //}
-
-
-                        //if (!MUX_ENABLE1_16.e1flags.CH1)                      //Channel 1 disabled? REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 1 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 1 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8451,8 +8442,7 @@ void displayTempReading(void) {
 
                     case 2:
 
-                        //if (!MUX_ENABLE1_16.e1flags.CH2)                        //Channel 2 disabled? REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 2 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 2 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8471,8 +8461,7 @@ void displayTempReading(void) {
 
                     case 3:
 
-                        //if (!MUX_ENABLE1_16.e1flags.CH3)                        //Channel 3 disabled? REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 3 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 3 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8492,8 +8481,7 @@ void displayTempReading(void) {
 
                     case 4:
 
-                        //if (!MUX_ENABLE1_16.e1flags.CH4)                        //Channel 4 disabled? REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 4 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 4 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8513,8 +8501,7 @@ void displayTempReading(void) {
 
                     case 5:
 
-                        //if (!MUX_ENABLE1_16.e1flags.CH5)                        //Channel 5 disabled? REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 5 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 5 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8533,8 +8520,7 @@ void displayTempReading(void) {
 
                     case 6:
 
-                        //if (!MUX_ENABLE1_16.e1flags.CH6)                        //Channel 6 disabled? REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 6 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 6 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8553,8 +8539,7 @@ void displayTempReading(void) {
 
                     case 7:
 
-                        //if (!MUX_ENABLE1_16.e1flags.CH7)                        //Channel 7 disabled? REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 7 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 7 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8574,8 +8559,7 @@ void displayTempReading(void) {
 
                     case 8:
 
-                        //if (!MUX_ENABLE1_16.e1flags.CH8)                        //Channel 8 disabled? REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 8 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 8 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8595,8 +8579,7 @@ void displayTempReading(void) {
 
                     case 9:
 
-                        //if (!MUX_ENABLE1_16.e1flags.CH9)                        //Channel 9 disabled? REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 9 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 9 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8616,8 +8599,7 @@ void displayTempReading(void) {
 
                     case 10:
 
-                        //if (!MUX_ENABLE1_16.e1flags.CH10)                       //Channel 10 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 10 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 10 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8637,8 +8619,7 @@ void displayTempReading(void) {
 
                     case 11:
 
-                        //if (!MUX_ENABLE1_16.e1flags.CH11)                       //Channel 11 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 11 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 11 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8658,8 +8639,7 @@ void displayTempReading(void) {
 
                     case 12:
 
-                        //if (!MUX_ENABLE1_16.e1flags.CH12)                       //Channel 12 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 12 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 12 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8679,8 +8659,7 @@ void displayTempReading(void) {
 
                     case 13:
 
-                        //if (!MUX_ENABLE1_16.e1flags.CH13)                       //Channel 13 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 13 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 13 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8700,8 +8679,7 @@ void displayTempReading(void) {
 
                     case 14:
 
-                        //if (!MUX_ENABLE1_16.e1flags.CH14)                       //Channel 14 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 14 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 14 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8721,8 +8699,7 @@ void displayTempReading(void) {
 
                     case 15:
 
-                        //if (!MUX_ENABLE1_16.e1flags.CH15)                       //Channel 15 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 15 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 15 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8742,8 +8719,7 @@ void displayTempReading(void) {
 
                     case 16:
 
-                        //if (!MUX_ENABLE1_16.e1flags.CH16)                       //Channel 16 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 16 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 16 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8763,8 +8739,7 @@ void displayTempReading(void) {
 
                     case 17:
 
-                        //if (!MUX_ENABLE17_32.e2flags.CH17)                      //Channel 17 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 17 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 17 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8784,8 +8759,7 @@ void displayTempReading(void) {
 
                     case 18:
 
-                        //if (!MUX_ENABLE17_32.e2flags.CH18)                      //Channel 18 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 18 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 18 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8804,8 +8778,7 @@ void displayTempReading(void) {
 
                     case 19:
 
-                        //if (!MUX_ENABLE17_32.e2flags.CH19)                      //Channel 19 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 19 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 19 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8824,8 +8797,7 @@ void displayTempReading(void) {
 
                     case 20:
 
-                        //if (!MUX_ENABLE17_32.e2flags.CH20)                      //Channel 20 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 20 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 20 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8844,8 +8816,7 @@ void displayTempReading(void) {
 
                     case 21:
 
-                        //if (!MUX_ENABLE17_32.e2flags.CH21)                      //Channel 21 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 21 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 21 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8864,8 +8835,7 @@ void displayTempReading(void) {
 
                     case 22:
 
-                        //if (!MUX_ENABLE17_32.e2flags.CH22)                      //Channel 22 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 22 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 22 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8884,8 +8854,7 @@ void displayTempReading(void) {
 
                     case 23:
 
-                        //if (!MUX_ENABLE17_32.e2flags.CH23)                      //Channel 23 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 23 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 23 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8904,8 +8873,7 @@ void displayTempReading(void) {
 
                     case 24:
 
-                        //if (!MUX_ENABLE17_32.e2flags.CH24)                      //Channel 24 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 24 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 24 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8924,8 +8892,7 @@ void displayTempReading(void) {
 
                     case 25:
 
-                        //if (!MUX_ENABLE17_32.e2flags.CH25)                      //Channel 25 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 25 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 25 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8944,8 +8911,7 @@ void displayTempReading(void) {
 
                     case 26:
 
-                        //if (!MUX_ENABLE17_32.e2flags.CH26)                      //Channel 26 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 26 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 26 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8964,8 +8930,7 @@ void displayTempReading(void) {
 
                     case 27:
 
-                        //if (!MUX_ENABLE17_32.e2flags.CH27)                      //Channel 27 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 27 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 27 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -8984,8 +8949,7 @@ void displayTempReading(void) {
 
                     case 28:
 
-                        //if (!MUX_ENABLE17_32.e2flags.CH28)                      //Channel 28 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 28 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 28 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9004,8 +8968,7 @@ void displayTempReading(void) {
 
                     case 29:
 
-                        //if (!MUX_ENABLE17_32.e2flags.CH29)                      //Channel 29 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 29 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 29 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9024,8 +8987,7 @@ void displayTempReading(void) {
 
                     case 30:
 
-                        //if (!MUX_ENABLE17_32.e2flags.CH30)                      //Channel 30 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 30 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 30 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9044,8 +9006,7 @@ void displayTempReading(void) {
 
                     case 31:
 
-                        //if (!MUX_ENABLE17_32.e2flags.CH31)                      //Channel 31 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 31 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 31 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9064,8 +9025,7 @@ void displayTempReading(void) {
 
                     case 32:
 
-                        //if (!MUX_ENABLE17_32.e2flags.CH32)                      //Channel 32 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 32 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 32 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9092,8 +9052,7 @@ void displayTempReading(void) {
         }                                                                       //end of 1st for(displayChannel) loop
     }
 
-    //if (MUX4_ENABLE.mflags.mux16_4 != VW8 && MUX4_ENABLE.mflags.mux16_4 != VW32)            REM REV 1.8
-    //{                                                                                       REM REV 1.8
+
     for (displayChannel = 1; displayChannel < maxchannelplusone; displayChannel++) {
         putcUART1(comma);                                                       // , DELIMITER
         while (BusyUART1());
@@ -9120,16 +9079,7 @@ void displayTempReading(void) {
 
                 case 1:
 
-                    //REM REV 1.8:
-                    //if (MUX4_ENABLE.mflags.mux16_4 == Single)                   //Single Channel   
-                    //{
-                    //    putsUART1(BUF);                                         //display reading
-                    //    break;
-                    //}
-
-
-                    //if (!MUX_ENABLE1_16.e1flags.CH1)                            //Channel 1 disabled? REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 1 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 1 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9149,8 +9099,7 @@ void displayTempReading(void) {
 
                 case 2:
 
-                    //if (!MUX_ENABLE1_16.e1flags.CH2)                            //Channel 2 disabled? REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 2 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 2 disabled   
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9170,8 +9119,7 @@ void displayTempReading(void) {
 
                 case 3:
 
-                    //if (!MUX_ENABLE1_16.e1flags.CH3)                            //Channel 3 disabled? REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 3 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 3 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9191,8 +9139,7 @@ void displayTempReading(void) {
 
                 case 4:
 
-                    //if (!MUX_ENABLE1_16.e1flags.CH4)                            //Channel 4 disabled? REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 4 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 4 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9212,8 +9159,7 @@ void displayTempReading(void) {
 
                 case 5:
 
-                    //if (!MUX_ENABLE1_16.e1flags.CH5)                            //Channel 5 disabled? REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 5 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 5 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9233,8 +9179,7 @@ void displayTempReading(void) {
 
                 case 6:
 
-                    //if (!MUX_ENABLE1_16.e1flags.CH6)                            //Channel 6 disabled? REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 6 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 6 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9254,8 +9199,7 @@ void displayTempReading(void) {
 
                 case 7:
 
-                    //if (!MUX_ENABLE1_16.e1flags.CH7)                            //Channel 7 disabled? REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 7 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 7 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9275,8 +9219,7 @@ void displayTempReading(void) {
 
                 case 8:
 
-                    //if (!MUX_ENABLE1_16.e1flags.CH8)                            //Channel 8 disabled? REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 8 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 8 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9296,8 +9239,7 @@ void displayTempReading(void) {
 
                 case 9:
 
-                    //if (!MUX_ENABLE1_16.e1flags.CH9)                            //Channel 9 disabled? REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 9 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 9 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9317,8 +9259,7 @@ void displayTempReading(void) {
 
                 case 10:
 
-                    //if (!MUX_ENABLE1_16.e1flags.CH10)                           //Channel 10 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 10 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 10 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9338,8 +9279,7 @@ void displayTempReading(void) {
 
                 case 11:
 
-                    //if (!MUX_ENABLE1_16.e1flags.CH11)                           //Channel 11 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 11 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 11 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9359,8 +9299,7 @@ void displayTempReading(void) {
 
                 case 12:
 
-                    //if (!MUX_ENABLE1_16.e1flags.CH12)                           //Channel 12 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 12 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 12 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9380,8 +9319,7 @@ void displayTempReading(void) {
 
                 case 13:
 
-                    //if (!MUX_ENABLE1_16.e1flags.CH13)                           //Channel 13 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 13 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 13 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9401,8 +9339,7 @@ void displayTempReading(void) {
 
                 case 14:
 
-                    //if (!MUX_ENABLE1_16.e1flags.CH14)                           //Channel 14 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 14 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 14 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9422,8 +9359,7 @@ void displayTempReading(void) {
 
                 case 15:
 
-                    //if (!MUX_ENABLE1_16.e1flags.CH15)                           //Channel 15 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 15 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 15 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9443,8 +9379,7 @@ void displayTempReading(void) {
 
                 case 16:
 
-                    //if (!MUX_ENABLE1_16.e1flags.CH16)                           //Channel 16 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 16 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 16 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9464,8 +9399,7 @@ void displayTempReading(void) {
 
                 case 17:
 
-                    //if (!MUX_ENABLE17_32.e2flags.CH17)                          //Channel 17 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 17 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 17 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9485,8 +9419,7 @@ void displayTempReading(void) {
 
                 case 18:
 
-                    //if (!MUX_ENABLE17_32.e2flags.CH18)                          //Channel 18 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 18 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 18 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9505,8 +9438,7 @@ void displayTempReading(void) {
 
                 case 19:
 
-                    //if (!MUX_ENABLE17_32.e2flags.CH19)                          //Channel 19 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 19 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 19 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9525,8 +9457,7 @@ void displayTempReading(void) {
 
                 case 20:
 
-                    //if (!MUX_ENABLE17_32.e2flags.CH20)                          //Channel 20 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 20 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 20 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9545,8 +9476,7 @@ void displayTempReading(void) {
 
                 case 21:
 
-                    //if (!MUX_ENABLE17_32.e2flags.CH21)                          //Channel 21 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 21 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 21 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9565,8 +9495,7 @@ void displayTempReading(void) {
 
                 case 22:
 
-                    //if (!MUX_ENABLE17_32.e2flags.CH22)                          //Channel 22 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 22 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 22 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9585,8 +9514,7 @@ void displayTempReading(void) {
 
                 case 23:
 
-                    //if (!MUX_ENABLE17_32.e2flags.CH23)                          //Channel 23 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 23 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 23 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9605,8 +9533,7 @@ void displayTempReading(void) {
 
                 case 24:
 
-                    //if (!MUX_ENABLE17_32.e2flags.CH24)                          //Channel 24 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 24 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 24 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9625,8 +9552,7 @@ void displayTempReading(void) {
 
                 case 25:
 
-                    //if (!MUX_ENABLE17_32.e2flags.CH25)                          //Channel 25 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 25 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 25 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9645,8 +9571,7 @@ void displayTempReading(void) {
 
                 case 26:
 
-                    //if (!MUX_ENABLE17_32.e2flags.CH26)                          //Channel 26 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 26 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 26 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9665,8 +9590,7 @@ void displayTempReading(void) {
 
                 case 27:
 
-                    //if (!MUX_ENABLE17_32.e2flags.CH27)                          //Channel 27 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 27 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 27 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9685,8 +9609,7 @@ void displayTempReading(void) {
 
                 case 28:
 
-                    //if (!MUX_ENABLE17_32.e2flags.CH28)                          //Channel 28 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 28 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 28 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9705,8 +9628,7 @@ void displayTempReading(void) {
 
                 case 29:
 
-                    //if (!MUX_ENABLE17_32.e2flags.CH29)                          //Channel 29 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 29 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 29 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9725,8 +9647,7 @@ void displayTempReading(void) {
 
                 case 30:
 
-                    //if (!MUX_ENABLE17_32.e2flags.CH30)                          //Channel 30 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 30 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 30 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9745,8 +9666,7 @@ void displayTempReading(void) {
 
                 case 31:
 
-                    //if (!MUX_ENABLE17_32.e2flags.CH31)                          //Channel 31 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 31 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 31 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9765,8 +9685,7 @@ void displayTempReading(void) {
 
                 case 32:
 
-                    //if (!MUX_ENABLE17_32.e2flags.CH32)                          //Channel 32 disabled?    REM REV 1.8
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 32 disabled    REV 1.8
+                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 32 disabled    
                             MUX4_ENABLE.mflags.mux16_4==VW4     |
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
                             MUX4_ENABLE.mflags.mux16_4==VW16    |  
@@ -9793,23 +9712,22 @@ void displayTempReading(void) {
             }
 
             while (BusyUART1());
-            Nop();                                                              
         }
-    //}                                                                         REM REV 1.8
+                                                                 
     crlf();
 
 }
 
 void displayTemporaryStatus(int tempUserPosition) {
-    char BUF[6]; //temporary storage for display
+    char BUF[6];                                                                //temporary storage for display
     unsigned int pointer = 0;
     crlf();
 
-    putsUART1(MS); //MS:
-    while (BusyUART1()); //Display Memory Status
-    pointer=read_Int_FRAM(MemoryStatusaddress);//get Memory Status (MS) pointer  
-    sprintf(BUF, "%d", pointer); //format it
-    putsUART1(BUF); //display it
+    putsUART1(MS);                                                              //MS:
+    while (BusyUART1());                                                        //Display Memory Status
+    pointer=read_Int_FRAM(MemoryStatusaddress);                                 //get Memory Status (MS) pointer  
+    sprintf(BUF, "%d", pointer);                                                //format it
+    putsUART1(BUF);                                                             //display it
     while (BusyUART1());
     putcUART1(space);
     while (BusyUART1());
@@ -9818,11 +9736,11 @@ void displayTemporaryStatus(int tempUserPosition) {
     putcUART1(space);
     while (BusyUART1());
 
-    putsUART1(OP); //OP:
-    while (BusyUART1()); //Display Output Position
-    pointer=read_Int_FRAM(OutputPositionaddress);//get Output Position (OP) pointer  
-    sprintf(BUF, "%d", pointer); //format it
-    putsUART1(BUF); //display it
+    putsUART1(OP);                                                              //OP:
+    while (BusyUART1());                                                        //Display Output Position
+    pointer=read_Int_FRAM(OutputPositionaddress);                               //get Output Position (OP) pointer  
+    sprintf(BUF, "%d", pointer);                                                //format it
+    putsUART1(BUF);                                                             //display it
     while (BusyUART1());
     putcUART1(space);
     while (BusyUART1());
@@ -9831,16 +9749,15 @@ void displayTemporaryStatus(int tempUserPosition) {
     putcUART1(space);
     while (BusyUART1());
 
-    putsUART1(UP); //UP:
-    while (BusyUART1()); //Display Temporary User Position
+    putsUART1(UP);                                                              //UP:
+    while (BusyUART1());                                                        //Display Temporary User Position
     pointer = tempUserPosition;
 
-    //if(pointer==16001)							//restore pointer to 1  REM VER 6.0.3
-    if (pointer == (maxSingleVW + 1)) //restore pointer to 1  VER 6.0.3
+    if (pointer == (maxSingleVW + 1))                                           //restore pointer to 1  
         pointer = 1;
 
     sprintf(BUF, "%d", pointer);
-    putsUART1(BUF); //display it
+    putsUART1(BUF);                                                             //display it
     while (BusyUART1());
     putcUART1(space);
     while (BusyUART1());
@@ -9854,44 +9771,44 @@ void displayTestMenu(void) {
     crlf();
     crlf();
 
-    putsUART1(TM1); //LC-2x4 TEST MENU
+    putsUART1(TM1);                                                             //LC-2x4 TEST MENU
     while (BusyUART1());
     crlf();
     crlf();
 
-    putsUART1(TM2); //SELECTION         TEST
+    putsUART1(TM2);                                                             //SELECTION         TEST
     while (BusyUART1());
     crlf();
     crlf();
 
-    putsUART1(TM9); //    1         ALL FRAM
+    putsUART1(TM9);                                                             //    1         ALL FRAM
     while (BusyUART1());
     crlf();
 
-    putsUART1(TM10); //    2         +3V_X
+    putsUART1(TM10);                                                            //    2         +3V_X
     while (BusyUART1());
     crlf();
 
-    putsUART1(TM11); //    3         RTC 32KHz
+    putsUART1(TM11);                                                            //    3         RTC 32KHz
     while (BusyUART1());
     crlf();
     
-    putsUART1(TM4); //      4         EXCITATION
+    putsUART1(TM4);                                                             //      4         EXCITATION
     while (BusyUART1());
     crlf();
     
-    putsUART1(TM5); //      5         TEST VW CHANNEL
+    putsUART1(TM5);                                                             //      5         TEST VW CHANNEL
     while (BusyUART1());
     crlf();
 
-    putsUART1(TM13); //    <ESC>     EXIT TEST MENU
+    putsUART1(TM13);                                                            //    <ESC>     EXIT TEST MENU
     while (BusyUART1());
     crlf();
 
     crlf();
     crlf();
 
-    putsUART1(TM12); //ENTER SELECTION:
+    putsUART1(TM12);                                                            //ENTER SELECTION:
     while (BusyUART1());
 }
 
@@ -9899,14 +9816,12 @@ void displayTestMenu(void) {
 void enableAlarm(unsigned char alarm)
 {
     unsigned char temp;
-    //char tempBUF[10];
 	
     if(alarm==1)                                                                //RTC Alarm 1 (Reading)
     {
         setClock(0x0A,0x80);                                                    //Alarm1 when hours,minutes & seconds match
-    //    IEC1bits.INT1IE=1;                                                      //enable the INT1 interrupt TEST REM REV 1.0
-        PORT_CONTROL.flags.Alarm1Enabled=1;                                     //Set the Alarm1 enabled flag   REV V
-        write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);          //store flag in EEPROM  REV V
+        PORT_CONTROL.flags.Alarm1Enabled=1;                                     //Set the Alarm1 enabled flag   
+        write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);          //store flag in EEPROM  
 		
         temp=readClock(RTCControlAddress);                                      //get the value in the RTC Control Register
         temp|=0x05;                                                             //OR it with 00000101 to set A1E=1,INTCN=1
@@ -9920,7 +9835,7 @@ void enableAlarm(unsigned char alarm)
     if(alarm==2)                                                                //RTC Alarm 2 (Control Port)
     {
         setClock(0x0D,0x80);                                                    //Alarm2 when hours & minutes match
-        IEC1bits.INT1IE=1;                                                      //enable the INT1 interrupt 8004 REV B
+        IEC1bits.INT1IE=1;                                                      //enable the INT1 interrupt 
         PORT_CONTROL.flags.Alarm2Enabled=1;                                     //Set the Alarm2 enabled flag
         write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);          //store flag in EEPROM
         temp=readClock(RTCControlAddress);                                      //get the value in the RTC Control Register
@@ -9932,34 +9847,26 @@ void enableAlarm(unsigned char alarm)
         enableINT1();                                                           //enable INT1 (respond to RTC interrupt) 
     }
 
-    setClock(0x0F,0);									//Clear the RTC Alarm flags
+    setClock(0x0F,0);                                                           //Clear the RTC Alarm flags
 
 }
 
 
-void enableBT(void)                                                      //REV AD
+void enableBT(void)                                                      
 {
    //TURN ON BLUETOOTH:
-    BT_ENABLE=1;                                                                //Powerup Bluetooth     REV AD
-    _BT_RESET=1;                                                                //Release from RESET    REV AD
-    BT_BAUD=0;                                                                  //Set baudrate to 115.2k    REV AD
+    BT_ENABLE=1;                                                                //Powerup Bluetooth     
+    _BT_RESET=1;                                                                //Release from RESET    
+    BT_BAUD=0;                                                                  //Set baudrate to 115.2k    
     DISPLAY_CONTROL.flags.BT=1;                                                 //set the BT flag
     write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);        //store flags in FRAM  
-    S_1.status1flags._BT=1;                                                        //set the MODBUS status flag    REV BF
+    S_1.status1flags._BT=1;                                                     //set the MODBUS status flag    
     write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
-    PMD3bits.T6MD=0;                                                            //Enable Timer 6   REV AE
-    //crlf();                                                                   REM REV AG
-    //putsUART1(BTEnabled);                                                      //Display "Bluetooth Disabled."    REM REV AG
-    //while(BusyUART1());                                                       REM REV AG
+    PMD3bits.T6MD=0;                                                            //Enable Timer 6   
 }
 
 void enableChannel(int channel) 
 {
-    //if(channel<17)     
-    //REM REV R
-    //    MUX_ENABLE1_16.MUXen1_16=read_Int_FRAM(MUX_ENABLE1_16flagsaddress);     //REM REV R       
-    //else                                                                        //REM REV R
-    //    MUX_ENABLE17_32.MUXen17_32=read_Int_FRAM(MUX_ENABLE17_32flagsaddress);  //REM REV R        
 
     switch (channel) 
     {
@@ -10095,18 +10002,18 @@ void enableChannel(int channel)
             return;
     }
 
-    if(channel<17)                                                              //REV R
+    if(channel<17)                                                              
     {
         write_Int_FRAM(MUX_ENABLE1_16flagsaddress,MUX_ENABLE1_16.MUXen1_16);    //store flag in FRAM 
     }
-    else                                                                        //REV R
+    else                                                                        
     {
         write_Int_FRAM(MUX_ENABLE17_32flagsaddress,MUX_ENABLE17_32.MUXen17_32); //store flag in FRAM  
     }
 }
 
 
-void enableTHChannel(int channel)                                               //REV 1.8    
+void enableTHChannel(int channel)                                                  
 {
     switch (channel) 
     {
@@ -10254,37 +10161,37 @@ void enableTHChannel(int channel)                                               
 
 void enableINT1(void)
 {
-    ConfigINT1(FALLING_EDGE_INT & EXT_INT_PRI_5 & EXT_INT_ENABLE & GLOBAL_INT_ENABLE);  //Set IP to 5   REV O
+    ConfigINT1(FALLING_EDGE_INT & EXT_INT_PRI_5 & EXT_INT_ENABLE & GLOBAL_INT_ENABLE);  //Set IP to 5   
 }
 
 
-void ENLOGINT(void)                                                             //REV CI
+void ENLOGINT(void)                                                             
 {
-    LC2CONTROL.flags.LogInterval = 1; //Set Log intervals flag
-    write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);	//store flag in FRAM  VER 6.0.13  
+    LC2CONTROL.flags.LogInterval = 1;                                           //Set Log intervals flag
+    write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);                     //store flag in FRAM    
                             
-    S_1.status1flags._Logint=1;                            //Set the MODBUS status flag    REV BF
+    S_1.status1flags._Logint=1;                                                 //Set the MODBUS status flag    
     write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
 
-    DISPLAY_CONTROL.flags.Synch = 0; //clear the Synch flag
-    write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//store flags in FRAM     
+    DISPLAY_CONTROL.flags.Synch = 0;                                            //clear the Synch flag
+    write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);        //store flags in FRAM     
 }
 
-//REV CC:
+
 void enableOP(void)
 {
     CONTROL = 1;                                                                //turn on control port
     _READ=0;                                                                    //LED ON    
-    S_1.status1flags._OP=1;                                                      //set the MODBUS status flag    
+    S_1.status1flags._OP=1;                                                     //set the MODBUS status flag    
     write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
     PORT_CONTROL.flags.ControlPortON = 1;
     PORT_CONTROL.flags.O0issued = 0;                                            //clear O0issued flag
     write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);              //store flag in FRAM  
-    if(!LC2CONTROL2.flags2.Modbus)                                              //Only if command line interface    REV CC
+    if(!LC2CONTROL2.flags2.Modbus)                                              //Only if command line interface    
         controlPortStatus(1);                                                   //display control port status      
 }
 
-unsigned int f32toINT16(float value)                                            //REV J
+unsigned int f32toINT16(float value)                                            
 {
 	int chars=0;
 	char decBUF[6];                                                           
@@ -10309,15 +10216,14 @@ unsigned int f32toINT16(float value)                                            
     
 	DEC_TEMP.temp.whole=100*hundreds+10*tens+ones;                              //store whole number value in DEC_TEMP  
 
-	return DEC_TEMP.decimaltemp;					//return the 16 bit value
+	return DEC_TEMP.decimaltemp;                                                //return the 16 bit value
 }
 
 
 
-void enableVWchannel(unsigned char gageType)                                    //REV H
+void enableVWchannel(unsigned char gageType)                                    
 {
     unsigned int timeHigh=0;
-    //REV 1.1:
     unsigned char gainGT1=0x80;                                               
     unsigned char gainGT2=0x80;                                               
     unsigned char gainGT3=0x80;                                                 
@@ -10325,13 +10231,13 @@ void enableVWchannel(unsigned char gageType)                                    
     unsigned char gainGT5=0x80;                                                 
     unsigned char gainGT6=0x80;
     
-    _AMP_SHDN=1;                                                                //Enable the AGC amp    REV CF
+    _AMP_SHDN=1;                                                                //Enable the AGC amp    
     switch(gageType)
     {
         case 1:                                                                 //Set Fco for 4.770 KHz
             write_AD5241(gainGT1);                                              //Set initial gain
 
-            if(LC2CONTROL2.flags2.uCclock)                                      //if HSPLL osc  REV CF
+            if(LC2CONTROL2.flags2.uCclock)                                      //if HSPLL osc  
                 timeHigh=31;                                                    //Fco=4.770KHz
             else
                 timeHigh=7;                                                     //HS osc  
@@ -10345,7 +10251,7 @@ void enableVWchannel(unsigned char gageType)                                    
         case 2:                                                                 //Set Fco for 6.370 KHz
             write_AD5241(gainGT2);                                              //Set initial gain
             
-            if(LC2CONTROL2.flags2.uCclock)                                      //if HSPLL  REV CF
+            if(LC2CONTROL2.flags2.uCclock)                                      //if HSPLL  
                 timeHigh=23;                                                    //Fco=6.370KHz
             else
                 timeHigh=5;                                                       
@@ -10359,7 +10265,7 @@ void enableVWchannel(unsigned char gageType)                                    
         case 3:                                                                 //Set Fco for 1.603 KHz
             write_AD5241(gainGT3);                                              //Set initial gain
             
-            if(LC2CONTROL2.flags2.uCclock)                                      //if HSPLL  REV CF
+            if(LC2CONTROL2.flags2.uCclock)                                      //if HSPLL  
                 timeHigh=92;                                                    //Fco=1.603KHZ
             else
                 timeHigh=23;                                                    //Fco=1.603 KHz  
@@ -10373,7 +10279,7 @@ void enableVWchannel(unsigned char gageType)                                    
         case 4:                                                                 //Set Fco for 3.820 KHz
             write_AD5241(gainGT4);                                              //Set initial gain
             
-            if(LC2CONTROL2.flags2.uCclock)                                      //if HSPLL  REV CF
+            if(LC2CONTROL2.flags2.uCclock)                                      //if HSPLL  
                 timeHigh=38;                                                    //Fco=3.820KHz
             else
                 timeHigh=9;                                                     //Fco=3.820KHz  
@@ -10387,7 +10293,7 @@ void enableVWchannel(unsigned char gageType)                                    
         case 5:                                                                 //Set Fco for 6.370 KHz
             write_AD5241(gainGT5);                                              //Set initial gain
             
-            if(LC2CONTROL2.flags2.uCclock)                                      //if HSPLL  REV CF
+            if(LC2CONTROL2.flags2.uCclock)                                      //if HSPLL  
                 timeHigh=23;                                                    //Fco=6.370KHz
             else
                 timeHigh=5;                                                     //Fco=6.370KHz     
@@ -10401,7 +10307,7 @@ void enableVWchannel(unsigned char gageType)                                    
         case 6:                                                                 //Set Fco for 2.168 KHz
             write_AD5241(gainGT6);                                              //Set initial gain
             
-            if(LC2CONTROL2.flags2.uCclock)                                      //if HSPLL  REV CF
+            if(LC2CONTROL2.flags2.uCclock)                                      //if HSPLL  
                 timeHigh=68;                                                    //2.168KHz
             else
                 timeHigh=17;                                                    //2.168KHz  
@@ -10415,7 +10321,7 @@ void enableVWchannel(unsigned char gageType)                                    
         default:
             write_AD5241(gainGT5);                                              //Set initial gain
             
-            if(LC2CONTROL2.flags2.uCclock)                                      //if HSPLL  REV CF
+            if(LC2CONTROL2.flags2.uCclock)                                      //if HSPLL  
                 timeHigh=23;                                                    //Fco=6.370KHz
             else
                 timeHigh=5;                                                     //Fco=6.370KHz  
@@ -10443,7 +10349,7 @@ void enableVWchannel(unsigned char gageType)                                    
 }
 
 
-unsigned int filterArray(unsigned int unfiltered[])                             //REV 1.4
+unsigned int filterArray(unsigned int unfiltered[])                             
 {
     unsigned int filtered[16];                                                  //filtered array
     unsigned int result=0;                                                      //final filtered value
@@ -10465,96 +10371,60 @@ unsigned int filterArray(unsigned int unfiltered[])                             
 
 
 void formatandDisplayGageInfo(float TEMPVAL) {
-    char BUF[8]; //temporary storage for gage info
+    char BUF[8];                                                                //temporary storage for gage info
 
     if ((TEMPVAL >= 0.0 && TEMPVAL < 1.0) | (TEMPVAL >= -1.0 && TEMPVAL < 0.0))
-        sprintf(BUF, "%.5f", TEMPVAL); //format it
+        sprintf(BUF, "%.5f", TEMPVAL);                                          //format it
 
     if ((TEMPVAL >= 1.0 && TEMPVAL < 10.0) | (TEMPVAL >= -10.0 && TEMPVAL<-1.0))
-        sprintf(BUF, "%.5f", TEMPVAL); //format it
+        sprintf(BUF, "%.5f", TEMPVAL);                                          //format it
 
     if ((TEMPVAL >= 10.0 && TEMPVAL < 100.0) | (TEMPVAL >= -100.0 && TEMPVAL<-10.0))
-        sprintf(BUF, "%.5f", TEMPVAL); //format it
+        sprintf(BUF, "%.5f", TEMPVAL);                                          //format it
 
     if ((TEMPVAL >= 100.0 && TEMPVAL < 1000.0) | (TEMPVAL >= -1000.0 && TEMPVAL<-100.0))
-        sprintf(BUF, "%.4f", TEMPVAL); //format it
+        sprintf(BUF, "%.4f", TEMPVAL);                                          //format it
 
     if ((TEMPVAL >= 1000.0 && TEMPVAL < 10000.0) | (TEMPVAL >= -10000.0 && TEMPVAL<-1000.0))
-        sprintf(BUF, "%.3f", TEMPVAL); //format it
+        sprintf(BUF, "%.3f", TEMPVAL);                                          //format it
 
     if ((TEMPVAL >= 10000.0 && TEMPVAL < 100000.0) | (TEMPVAL >= -100000.0 && TEMPVAL<-10000.0))
-        sprintf(BUF, "%.2f", TEMPVAL); //format it
+        sprintf(BUF, "%.2f", TEMPVAL);                                          //format it
 
     if ((TEMPVAL >= 100000.0 && TEMPVAL < 1000000.0) | (TEMPVAL>-1000000.0 && TEMPVAL<-100000.0))
-        sprintf(BUF, "%.1f", TEMPVAL); //format it
+        sprintf(BUF, "%.1f", TEMPVAL);                                          //format it
 
     if (TEMPVAL >= 1000000.0 | TEMPVAL<-1000000.0)
-        sprintf(BUF, "%.0f", TEMPVAL); //format it
+        sprintf(BUF, "%.0f", TEMPVAL);                                          //format it
 
 
-    putsUART1(BUF); //display it
+    putsUART1(BUF);                                                             //display it
     while (BusyUART1());
 }
 
-/*  REM VER 6.0.10
-void Fout(unsigned char gageType)
-{
-    float frequency=0.0;
-    float halfperiod=0.0;
-    unsigned int timer5load=0;
-
-    switch(gageType)				//determine frequency to output
-    {
-        case 30:
-            frequency=400.0;
-            break;
-    case 31:
-            frequency=1000.0;
-            break;
-    case 32:
-            frequency=2000.0;
-            break;
-        case 33:
-            frequency=3000.0;
-            break;
-    case 34:
-            frequency=4000.0;
-            break;
-    case 35:
-            frequency=5000.0;
-            break;
-    default:
-            break;
-    }
-
-    halfperiod=((1.0/frequency)/tcy)/2.0;	//compute # of tcy for 1/2 cycle
-    timer5load=65536-halfperiod;			//compute Timer5 load value
-
-}
- */
 
 int getChannel(void) {
     int channelOnes = 0;
     int channelTens = 0;
 
-    if (isdigit(buffer[1])) //examine the first channel char
+    if (isdigit(buffer[1]))                                                     //examine the first channel char
         channelOnes = buffer[1] - 0x30;
 
     if (buffer[2] == '/')
-        return channelOnes; //return the single digit channel #
+        return channelOnes;                                                     //return the single digit channel #
 
-    channelTens = channelOnes; //shift first digit into 10's place
+    channelTens = channelOnes;                                                  //shift first digit into 10's place
 
     if (isdigit(buffer[2]))
-        channelOnes = buffer[2] - 0x30; //get the 1's digit
+        channelOnes = buffer[2] - 0x30;                                         //get the 1's digit
 
-    channelTens *= 10; //multiply 10's by 10
-    channelTens = channelTens + channelOnes; //add the ones
-    return channelTens; //return the 2 digit channel #
+    channelTens *= 10;                                                          //multiply 10's by 10
+    channelTens = channelTens + channelOnes;                                    //add the ones
+    return channelTens;                                                         //return the 2 digit channel #
 }
 
 
-unsigned char getSNbytes(unsigned int logicthreshold)                              //using the ADC as a halfassed UART    REV 1.3
+unsigned char getSNbytes(unsigned int logicthreshold)                           //using the ADC as a halfassed UART    
 {                                                                               
     unsigned int databit=0;                                                     //value of bit received
     unsigned char i=0;                                                          //loop index                                            
@@ -10575,8 +10445,8 @@ unsigned char getSNbytes(unsigned int logicthreshold)                           
     
     for(b=0;b<6;b++)                                                            //will be receiving 6 bytes
     {
-        PR6=mS1_5LSW;                                                           //Load TMR6 period register with 1.5mS least significant word   REV 1.4
-        PR7=mS1_5MSW;                                                           //Load TMR7 period register with 1.5mS most significant word    REV 1.4
+        PR6=mS1_5LSW;                                                           //Load TMR6 period register with 1.5mS least significant word   
+        PR7=mS1_5MSW;                                                           //Load TMR7 period register with 1.5mS most significant word    
         IFS3bits.T7IF=0;                                                        //clear the TMR7 interrupt flag
         IEC3bits.T7IE=1;                                                        //Enable TMR7 interrupt  
         IPC12bits.T7IP=6;                                                       //Set TMR7 interrupt priority to 6    
@@ -10586,10 +10456,9 @@ unsigned char getSNbytes(unsigned int logicthreshold)                           
 
         
         //wait for start bit:    
-        //while(databit<logicthreshold)                                           //wait for the start bit  REM REV 1.4
-        while((databit<logicthreshold) && !IFS3bits.T8IF)                       //wait for the start bit    REV 1.4
+        while((databit<logicthreshold) && !IFS3bits.T8IF)                       //wait for the start bit    
         {
-            databit=take_fast_analog_reading();                                 //REV 1.3
+            databit=take_fast_analog_reading();                                 
         } 
         
         if(IFS3bits.T8IF)                                                       //0.5S timeout?
@@ -10611,7 +10480,7 @@ unsigned char getSNbytes(unsigned int logicthreshold)                           
         VWflagsbits.timeout=0;                                                  //reset the timeout flag
         
         //Sample start bit:
-        databit=take_fast_analog_reading();                                     //REV 1.3
+        databit=take_fast_analog_reading();                                     
         
         if(databit<logicthreshold)
         {
@@ -10625,8 +10494,8 @@ unsigned char getSNbytes(unsigned int logicthreshold)                           
         for(s=0;s<9;s++)                                                        //get the bits of the byte
         {
             databit=0;
-            PR6=mS3_15LSW;                                                      //Load TMR6 period register with 3.15mS least significant word  REV 1.4
-            PR7=mS3_15MSW;                                                      //Load TMR7 period register with 3.15mS most significant word   REV 1.4
+            PR6=mS3_15LSW;                                                      //Load TMR6 period register with 3.15mS least significant word  
+            PR7=mS3_15MSW;                                                      //Load TMR7 period register with 3.15mS most significant word   
             TMR6=0;                                                             //clear the TMR6 register
             TMR7=0;                                                             //clear the TMR7 register       
             T6CONbits.TON=1;                                                    //Start the 3.33mS timer        
@@ -10634,7 +10503,7 @@ unsigned char getSNbytes(unsigned int logicthreshold)                           
             T6CONbits.TON=0;                                                    //Turn off timer
             VWflagsbits.timeout=0;                                              //reset the timeout flag 
 
-            databit=take_fast_analog_reading();                                 //REV 1.3
+            databit=take_fast_analog_reading();                                 
             
             if(s==8 && (databit>logicthreshold))                                //stop bit not detected
             {
@@ -10709,8 +10578,7 @@ unsigned char getSNbytes(unsigned int logicthreshold)                           
             }
         }
     
-        //MODBUS_RXbuf[b]=SN_BITS.sn;                                             //store the received byte REM REV 1.9
-        _SNbuf[b]=SN_BITS.sn;                                                   //REV 1.9
+        _SNbuf[b]=SN_BITS.sn;                                                   
 
     }
 
@@ -10723,30 +10591,30 @@ unsigned char getSNbytes(unsigned int logicthreshold)                           
 
 int getConversion(void) {
     if ((buffer[2] == slash && buffer[3] == capL && buffer[4] == slash)
-            | (buffer[3] == slash && buffer[4] == capL && buffer[5] == slash)) //linear conversion?
+            | (buffer[3] == slash && buffer[4] == capL && buffer[5] == slash))  //linear conversion?
         return 0;
 
     if ((buffer[2] == slash && buffer[3] == capP && buffer[4] == slash)
-            | (buffer[3] == slash && buffer[4] == capP && buffer[5] == slash)) //polynomial conversion?
+            | (buffer[3] == slash && buffer[4] == capP && buffer[5] == slash))  //polynomial conversion?
         return 1;
 
-    return 2; //illegal entry
+    return 2;                                                                   //illegal entry
 }
 
 void getGageInfo(unsigned char info, int channel) {
-    unsigned char i = 0; //buffer index
-    unsigned char dp = 0; //decimal point location
-    unsigned char x; //location in buffer of beginning of ZR slash
-    unsigned char y; //location in buffer of beginning of GF slash
-    unsigned char z; //location in buffer of beginning of GO slash
-    unsigned char negative = 0; //switch for negative number
-    float whole = 0.0; //whole number portion of floating point value
-    float fractional = 0.0; //fractional portion of floating point value
-    float mul = 1.0; //decimal weight multiplier
-    float div = 0.1; //decimal weight multiplier
+    unsigned char i = 0;                                                        //buffer index
+    unsigned char dp = 0;                                                       //decimal point location
+    unsigned char x;                                                            //location in buffer of beginning of ZR slash
+    unsigned char y;                                                            //location in buffer of beginning of GF slash
+    unsigned char z;                                                            //location in buffer of beginning of GO slash
+    unsigned char negative = 0;                                                 //switch for negative number
+    float whole = 0.0;                                                          //whole number portion of floating point value
+    float fractional = 0.0;                                                     //fractional portion of floating point value
+    float mul = 1.0;                                                            //decimal weight multiplier
+    float div = 0.1;                                                            //decimal weight multiplier
 
 
-    for (i; buffer[i] != slash; i++) //parse buffer for location of first '/'
+    for (i; buffer[i] != slash; i++)                                            //parse buffer for location of first '/'
     {
         if (buffer[i] == cr)
             return;
@@ -10754,7 +10622,7 @@ void getGageInfo(unsigned char info, int channel) {
 
     ++i;
 
-    for (i; buffer[i] != slash; i++) //parse buffer for location of second '/'
+    for (i; buffer[i] != slash; i++)                                            //parse buffer for location of second '/'
     {
         if (buffer[i] == cr)
             return;
@@ -10762,150 +10630,148 @@ void getGageInfo(unsigned char info, int channel) {
 
     ++i;
 
-    for (i; buffer[i] != slash; i++) //parse buffer for location of third '/'
+    for (i; buffer[i] != slash; i++)                                            //parse buffer for location of third '/'
     {
         if (buffer[i] == cr)
             return;
     }
 
-    for (i; buffer[i] != slash && buffer[i] != cr; i++)//parse buffer for location of 4th '/'
+    for (i; buffer[i] != slash && buffer[i] != cr; i++)                         //parse buffer for location of 4th '/'
     {
         if (buffer[i] == cr)
             return;
     }
 
-    for (i; buffer[i] != slash && buffer[i] != cr; i++)//parse buffer for location of 5th '/'
+    for (i; buffer[i] != slash && buffer[i] != cr; i++)                         //parse buffer for location of 5th '/'
     {
         if (buffer[i] == cr)
             return;
     }
 
-    x = i; //x=index of this location
-    i++; //increment to next buffer location
+    x = i;                                                                      //x=index of this location
+    i++;                                                                        //increment to next buffer location
 
 
-    for (i; buffer[i] != slash && buffer[i] != cr; i++) //parse buffer for location of 6th '/'
+    for (i; buffer[i] != slash && buffer[i] != cr; i++)                         //parse buffer for location of 6th '/'
     {
         if (buffer[i - 1] == cr)
-            return; //break out of loop if 6th '/' is not found
+            return;                                                             //break out of loop if 6th '/' is not found
     }
 
-    y = i; //y=index of this location
-    i++; //increment to next buffer location
+    y = i;                                                                      //y=index of this location
+    i++;                                                                        //increment to next buffer location
 
-    if (info != 1) //don't go here if zero reading
+    if (info != 1)                                                              //don't go here if zero reading
     {
-        for (i; buffer[i] != slash && buffer[i] != cr; i++) //parse buffer for location of 7th '/'
+        for (i; buffer[i] != slash && buffer[i] != cr; i++)                     //parse buffer for location of 7th '/'
         {
             if (buffer[i - 1] == cr)
-                return; //break out of loop if 7th '/' is not found
+                return;                                                         //break out of loop if 7th '/' is not found
         }
 
-        z = i; //z=index of this location
+        z = i;                                                                  //z=index of this location
     }
 
 
-    switch (info) //determine information to extract
+    switch (info)                                                               //determine information to extract
     {
-        case 1: //zero reading or polynomial coefficient A
-            break; //x&y already determined
+        case 1:                                                                 //zero reading or polynomial coefficient A
+            break;                                                              //x&y already determined
 
-        case 2: //gage factor or polynomial coefficient B
+        case 2:                                                                 //gage factor or polynomial coefficient B
             x = y;
             y = z;
             break;
 
-        case 3: //gage offset or polynomial coefficient C
+        case 3:                                                                 //gage offset or polynomial coefficient C
             x = z;
-            y = cr; //<CR> = end of buffer
+            y = cr;                                                             //<CR> = end of buffer
             break;
 
         default:
             break;
     }
 
-    if (info == 3) //<CR> indicates end of buffer
+    if (info == 3)                                                              //<CR> indicates end of buffer
     {
-        for (i = x + 1; buffer[i] != cr; i++) //locate decimal point
+        for (i = x + 1; buffer[i] != cr; i++)                                   //locate decimal point
         {
             if (buffer[i] == decimal)
-                dp = i; //store index of decimal point
+                dp = i;                                                         //store index of decimal point
         }
     } else {
-        for (i = x + 1; i < y; i++) //locate decimal point
+        for (i = x + 1; i < y; i++)                                             //locate decimal point
         {
             if (buffer[i] == decimal)
-                dp = i; //store index of decimal point
+                dp = i;                                                         //store index of decimal point
         }
     }
 
-    if (dp) //if a decimal point was found
+    if (dp)                                                                     //if a decimal point was found
     {
         while (buffer[dp - 1] != slash) {
-            if (buffer[dp - 1] == minus) //determine if value is negative
+            if (buffer[dp - 1] == minus)                                        //determine if value is negative
             {
-                negative = 1; //turn on negative switch
+                negative = 1;                                                   //turn on negative switch
                 break;
             }
 
-            whole += (buffer[dp - 1] - 0x30) * mul; //extract the whole number
-            dp -= 1; //decrement the pointer
-            mul *= 10; //increment the power of ten
+            whole += (buffer[dp - 1] - 0x30) * mul;                             //extract the whole number
+            dp -= 1;                                                            //decrement the pointer
+            mul *= 10;                                                          //increment the power of ten
         }
 
         for (dp; buffer[dp] != decimal; dp++) {
-        } //go back to the decimal point
+        }                                                                       //go back to the decimal point
 
-        while (buffer[dp + 1] != slash && buffer[dp + 1] != cr) //get the fractional part
+        while (buffer[dp + 1] != slash && buffer[dp + 1] != cr)                 //get the fractional part
         {
-            fractional += (buffer[dp + 1] - 0x30) * div; //extract the fractional part
-            dp += 1; //increment the pointer
-            div /= 10; //decrement the power of ten
+            fractional += (buffer[dp + 1] - 0x30) * div;                        //extract the fractional part
+            dp += 1;                                                            //increment the pointer
+            div /= 10;                                                          //decrement the power of ten
         }
 
-        whole += fractional; //return the final floating point number	
+        whole += fractional;                                                    //return the final floating point number	
         if (negative)
             whole *= -1.0;
-    } else //no decimal point in value
+    } else                                                                      //no decimal point in value
     {
         while (buffer[i - 1] != slash) {
-            if (buffer[i - 1] == minus) //determine if value is negative
+            if (buffer[i - 1] == minus)                                         //determine if value is negative
             {
-                whole *= -1.00; //negate
+                whole *= -1.00;                                                 //negate
                 break;
             }
 
-            whole += (buffer[i - 1] - 0x30) * mul; //extract the whole number
-            i -= 1; //decrement the pointer
-            mul *= 10; //increment the power of ten
+            whole += (buffer[i - 1] - 0x30) * mul;                              //extract the whole number
+            i -= 1;                                                             //decrement the pointer
+            mul *= 10;                                                          //increment the power of ten
         }
 
     }
 
-    Nop(); //breakpoint for debugging
-
-    switch (info) //determine information to extract
+    switch (info)                                                               //determine information to extract
     {
-        case 1: //zero reading or polynomial coefficient A
-            if (y != x + 1) //make sure user entered a value here
+        case 1:                                                                 //zero reading or polynomial coefficient A
+            if (y != x + 1)                                                     //make sure user entered a value here
             {
-                zeroReading = whole; //zero reading was entered
-                polyCoA = whole; //polynomial coefficient A was entered
+                zeroReading = whole;                                            //zero reading was entered
+                polyCoA = whole;                                                //polynomial coefficient A was entered
             }
             break;
 
-        case 2: //gage factor or polynomial coefficient B
-            if (y != x + 1) //make sure user entered a value here
+        case 2:                                                                 //gage factor or polynomial coefficient B
+            if (y != x + 1)                                                     //make sure user entered a value here
             {
-                gageFactor = whole; //gage factor was entered
-                polyCoB = whole; //polynomial coefficient B was entered
+                gageFactor = whole;                                             //gage factor was entered
+                polyCoB = whole;                                                //polynomial coefficient B was entered
             }
             break;
 
-        case 3: //gage offset or polynomial coefficient C 
+        case 3:                                                                 //gage offset or polynomial coefficient C 
             if (buffer[z] == slash && buffer[z + 1] != cr) {
-                gageOffset = whole; //gage offset was entered
-                polyCoC = whole; //polynomial coefficient C was entered
+                gageOffset = whole;                                             //gage offset was entered
+                polyCoC = whole;                                                //polynomial coefficient C was entered
             }
             break;
 
@@ -10917,39 +10783,33 @@ void getGageInfo(unsigned char info, int channel) {
 
     //VER 6.0.12:
     switch (channel) {
-        case 1: //CHANNEL 1
+        case 1:                                                                 //CHANNEL 1
 
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION1_16.c1flags.CH1) {
-                        //write_longFRAM(whole,CH1ZRaddress);                     //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH1ZRaddress,whole);                     //store the zero reading    REV CN
+                        write_Flt_FRAM(CH1ZRaddress,whole);                     //store the zero reading    
                     } else {
-                        //write_longFRAM(whole,CH1PolyCoAaddress);                //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH1PolyCoAaddress,whole);                //store the Polynomial coefficient A    REV CN
+                        write_Flt_FRAM(CH1PolyCoAaddress,whole);                //store the Polynomial coefficient A    
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION1_16.c1flags.CH1) {
-                        //write_longFRAM(whole,CH1GFaddress);                     //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH1GFaddress,whole);                     //store the gage factor REV CN
+                        write_Flt_FRAM(CH1GFaddress,whole);                     //store the gage factor 
                     } else {
-                        //write_longFRAM(whole,CH1PolyCoBaddress);                //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH1PolyCoBaddress,whole);                //store the Polynomial coefficient B    REV CN
+                        write_Flt_FRAM(CH1PolyCoBaddress,whole);                //store the Polynomial coefficient B    
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION1_16.c1flags.CH1) {
-                        //write_longFRAM(whole,CH1GOaddress);                  //store the gage offset   REM REv CN
-                        write_Flt_FRAM(CH1GOaddress,whole);                     //store the gage offset REV CN
+                        write_Flt_FRAM(CH1GOaddress,whole);                     //store the gage offset 
                     } else {
-                        //write_longFRAM(whole,CH1PolyCoCaddress);             //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH1PolyCoCaddress,whole);                //store the Polynomial coefficient C    REV CN
+                        write_Flt_FRAM(CH1PolyCoCaddress,whole);                //store the Polynomial coefficient C    
                     }
                     break;
             }
@@ -10957,37 +10817,31 @@ void getGageInfo(unsigned char info, int channel) {
             return;
 
 
-        case 2: //CHANNEL 2
+        case 2:                                                                 //CHANNEL 2
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION1_16.c1flags.CH2) {
-                        //write_longFRAM(whole,CH2ZRaddress);                  //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH2ZRaddress,whole);                     //REV CN
+                        write_Flt_FRAM(CH2ZRaddress,whole);                     
                     } else {
-                        //write_longFRAM(whole,CH2PolyCoAaddress);             //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH2PolyCoAaddress,whole);                //REV CN
+                        write_Flt_FRAM(CH2PolyCoAaddress,whole);                
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION1_16.c1flags.CH2) {
-                        //write_longFRAM(whole,CH2GFaddress);                  //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH2GFaddress,whole);                     //REV CN
+                        write_Flt_FRAM(CH2GFaddress,whole);                     
                     } else {
-                        //write_longFRAM(whole,CH2PolyCoBaddress);             //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH2PolyCoBaddress,whole);                //REV CN
+                        write_Flt_FRAM(CH2PolyCoBaddress,whole);                
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION1_16.c1flags.CH2) {
-                        //write_longFRAM(whole,CH2GOaddress);                  //store the gage offset   REM REV CN
                         write_Flt_FRAM(CH2GOaddress,whole);                     //REV CN
                     } else {
-                        //write_longFRAM(whole,CH2PolyCoCaddress);             //store the Polynomial coefficient C  REM REV CN
                         write_Flt_FRAM(CH2PolyCoCaddress,whole);                //REV CN
                     }
                     break;
@@ -10996,190 +10850,160 @@ void getGageInfo(unsigned char info, int channel) {
             return;
 
 
-        case 3: //CHANNEL 3
+        case 3:                                                                 //CHANNEL 3
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION1_16.c1flags.CH3) {
-                        //write_longFRAM(whole,CH3ZRaddress);                  //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH3ZRaddress,whole);                     //REV CN
+                        write_Flt_FRAM(CH3ZRaddress,whole);                     
                     } else {
-                        //write_longFRAM(whole,CH3PolyCoAaddress);             //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH3PolyCoAaddress,whole);                //REV CN
+                        write_Flt_FRAM(CH3PolyCoAaddress,whole);                
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION1_16.c1flags.CH3) {
-                        //write_longFRAM(whole,CH3GFaddress);                  //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH3GFaddress,whole);                     //REV CN
+                        write_Flt_FRAM(CH3GFaddress,whole);                     
                     } else {
-                        //write_longFRAM(whole,CH3PolyCoBaddress);             //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH3PolyCoBaddress,whole);                //REV CN
+                        write_Flt_FRAM(CH3PolyCoBaddress,whole);                
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION1_16.c1flags.CH3) {
-                        //write_longFRAM(whole,CH3GOaddress);                  //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH3GOaddress,whole);                     //REV CN
+                        write_Flt_FRAM(CH3GOaddress,whole);                     
                     } else {
-                        //write_longFRAM(whole,CH3PolyCoCaddress);             //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH3PolyCoCaddress,whole);                //REV CN
+                        write_Flt_FRAM(CH3PolyCoCaddress,whole);                
                     }
                     break;
             }
 
             return;
 
-        case 4: //CHANNEL 4
+        case 4:                                                                 //CHANNEL 4
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION1_16.c1flags.CH4) {
-                        //write_longFRAM(whole,CH4ZRaddress);                  //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH4ZRaddress,whole);                     //REV CN
+                        write_Flt_FRAM(CH4ZRaddress,whole);                     
                     } else {
-                        //write_longFRAM(whole,CH4PolyCoAaddress);             //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH4PolyCoAaddress,whole);                //REV CN
+                        write_Flt_FRAM(CH4PolyCoAaddress,whole);                
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION1_16.c1flags.CH4) {
-                        //write_longFRAM(whole,CH4GFaddress);                  //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH4GFaddress,whole);                     //REV CN
+                        write_Flt_FRAM(CH4GFaddress,whole);                     
                     } else {
-                        //write_longFRAM(whole,CH4PolyCoBaddress);             //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH4PolyCoBaddress,whole);                //REV CN
+                        write_Flt_FRAM(CH4PolyCoBaddress,whole);                
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION1_16.c1flags.CH4) {
-                        //write_longFRAM(whole,CH4GOaddress);                  //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH4GOaddress,whole);                     //REV CN
+                        write_Flt_FRAM(CH4GOaddress,whole);                     
                     } else {
-                        //write_longFRAM(whole,CH4PolyCoCaddress);             //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH4PolyCoCaddress,whole);                //REV CN
+                        write_Flt_FRAM(CH4PolyCoCaddress,whole);                
                     }
                     break;
             }
 
             return;
 
-        case 5: //CHANNEL 5
+        case 5:                                                                 //CHANNEL 5
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION1_16.c1flags.CH5) {
-                        //write_longFRAM(whole,CH5ZRaddress);                  //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH5ZRaddress,whole);                     //REV CN
+                        write_Flt_FRAM(CH5ZRaddress,whole);                     
                     } else {
-                        //write_longFRAM(whole,CH5PolyCoAaddress);             //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH5PolyCoAaddress,whole);                //REV CN
+                        write_Flt_FRAM(CH5PolyCoAaddress,whole);                
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION1_16.c1flags.CH5) {
-                        //write_longFRAM(whole,CH5GFaddress);                  //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH5GFaddress,whole);                     //REV CN
+                        write_Flt_FRAM(CH5GFaddress,whole);                     
                     } else {
-                        //write_longFRAM(whole,CH5PolyCoBaddress);             //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH5PolyCoBaddress,whole);                //REV CN
+                        write_Flt_FRAM(CH5PolyCoBaddress,whole);                
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION1_16.c1flags.CH5) {
-                        //write_longFRAM(whole,CH5GOaddress);                  //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH5GOaddress,whole);                     //REV CN
+                        write_Flt_FRAM(CH5GOaddress,whole);                     
                     } else {
-                        //write_longFRAM(whole,CH5PolyCoCaddress);             //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH5PolyCoCaddress,whole);                //REV CN
+                        write_Flt_FRAM(CH5PolyCoCaddress,whole);                
                     }
                     break;
             }
 
             return;
 
-        case 6: //CHANNEL 6
+        case 6:                                                                 //CHANNEL 6
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION1_16.c1flags.CH6) {
-                        //write_longFRAM(whole,CH6ZRaddress);                  //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH6ZRaddress,whole);                     //REV CN
+                        write_Flt_FRAM(CH6ZRaddress,whole);                     
                     } else {
-                        //write_longFRAM(whole,CH6PolyCoAaddress);             //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH6PolyCoAaddress,whole);                //REV CN
+                        write_Flt_FRAM(CH6PolyCoAaddress,whole);                
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION1_16.c1flags.CH6) {
-                        //write_longFRAM(whole,CH6GFaddress);                  //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH6GFaddress,whole);                     //REV CN
+                        write_Flt_FRAM(CH6GFaddress,whole);                     
                     } else {
-                        //write_longFRAM(whole,CH6PolyCoBaddress);             //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH6PolyCoBaddress,whole);                //REV CN
+                        write_Flt_FRAM(CH6PolyCoBaddress,whole);                
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION1_16.c1flags.CH6) {
-                        //write_longFRAM(whole,CH6GOaddress);                  //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH6GOaddress,whole);                     //REV CN
+                        write_Flt_FRAM(CH6GOaddress,whole);                     
                     } else {
-                        //write_longFRAM(whole,CH6PolyCoCaddress);             //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH6PolyCoCaddress,whole);                //REV CN
+                        write_Flt_FRAM(CH6PolyCoCaddress,whole);                
                     }
                     break;
             }
 
             return;
 
-        case 7: //CHANNEL 7
+        case 7:                                                                 //CHANNEL 7
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION1_16.c1flags.CH7) {
-                        //write_longFRAM(whole,CH7ZRaddress);                  //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH7ZRaddress,whole);                     //REV CN
+                        write_Flt_FRAM(CH7ZRaddress,whole);                     
                     } else {
-                        //write_longFRAM(whole,CH7PolyCoAaddress);             //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH7PolyCoAaddress,whole);                //REV CN
+                        write_Flt_FRAM(CH7PolyCoAaddress,whole);                
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION1_16.c1flags.CH7) {
-                        //write_longFRAM(whole,CH7GFaddress);                  //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH7GFaddress,whole);                     //REV CN
+                        write_Flt_FRAM(CH7GFaddress,whole);                     
                     } else {
-                        //write_longFRAM(whole,CH7PolyCoBaddress);             //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH7PolyCoBaddress,whole);                //REV CN
+                        write_Flt_FRAM(CH7PolyCoBaddress,whole);                
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION1_16.c1flags.CH7) {
-                        //write_longFRAM(whole,CH7GOaddress);                  //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH7GOaddress,whole);                     //REV CN
+                        write_Flt_FRAM(CH7GOaddress,whole);                     
                     } else {
-                        //write_longFRAM(whole,CH7PolyCoCaddress);             //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH7PolyCoCaddress,whole);                //REV CN
+                        write_Flt_FRAM(CH7PolyCoCaddress,whole);                
                     }
                     break;
             }
@@ -11187,76 +11011,64 @@ void getGageInfo(unsigned char info, int channel) {
             return;
 
 
-        case 8: //CHANNEL 8
+        case 8:                                                                 //CHANNEL 8
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION1_16.c1flags.CH8) {
-                        //write_longFRAM(whole,CH8ZRaddress);                  //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH8ZRaddress,whole);                     //REV CN
+                        write_Flt_FRAM(CH8ZRaddress,whole);                     
                     } else {
-                        //write_longFRAM(whole,CH8PolyCoAaddress);             //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH8PolyCoAaddress,whole);                //REV CN
+                        write_Flt_FRAM(CH8PolyCoAaddress,whole);                
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION1_16.c1flags.CH8) {
-                        //write_longFRAM(whole,CH8GFaddress);                  //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH8GFaddress,whole);                     //REV CN
+                        write_Flt_FRAM(CH8GFaddress,whole);                     
                     } else {
-                        //write_longFRAM(whole,CH8PolyCoBaddress);             //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH8PolyCoBaddress,whole);                //REV CN
+                        write_Flt_FRAM(CH8PolyCoBaddress,whole);                
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION1_16.c1flags.CH8) {
-                        //write_longFRAM(whole,CH8GOaddress);                  //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH8GOaddress,whole);                     //REV CN
+                        write_Flt_FRAM(CH8GOaddress,whole);                     
                     } else {
-                        //write_longFRAM(whole,CH8PolyCoCaddress);             //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH8PolyCoCaddress,whole);                //REV CN
+                        write_Flt_FRAM(CH8PolyCoCaddress,whole);                
                     }
                     break;
             }
 
             return;
 
-        case 9: //CHANNEL 9
+        case 9:                                                                 //CHANNEL 9
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION1_16.c1flags.CH9) {
-                        //write_longFRAM(whole,CH9ZRaddress);                  //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH9ZRaddress,whole);                     //REV CN
+                        write_Flt_FRAM(CH9ZRaddress,whole);                     
                     } else {
-                        //write_longFRAM(whole,CH9PolyCoAaddress);             //store the Polynomial coefficient A  
-                        write_Flt_FRAM(CH9PolyCoAaddress,whole);                //REV CN
+                        write_Flt_FRAM(CH9PolyCoAaddress,whole);                
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION1_16.c1flags.CH9) {
-                        //write_longFRAM(whole,CH9GFaddress);                  //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH9GFaddress,whole);                     //REV CN
+                        write_Flt_FRAM(CH9GFaddress,whole);                     
                     } else {
-                        //write_longFRAM(whole,CH9PolyCoBaddress);             //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH9PolyCoBaddress,whole);                //REV CN
+                        write_Flt_FRAM(CH9PolyCoBaddress,whole);                
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION1_16.c1flags.CH9) {
-                        //write_longFRAM(whole,CH9GOaddress);                  //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH9GOaddress,whole);                     //REV CN
+                        write_Flt_FRAM(CH9GOaddress,whole);                     
                     } else {
-                        //write_longFRAM(whole,CH9PolyCoCaddress);             //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH9PolyCoCaddress,whole);                //REV CN
+                        write_Flt_FRAM(CH9PolyCoCaddress,whole);                
                     }
                     break;
             }
@@ -11264,38 +11076,32 @@ void getGageInfo(unsigned char info, int channel) {
             return;
 
 
-        case 10: //CHANNEL 10
+        case 10:                                                                //CHANNEL 10
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION1_16.c1flags.CH10) {
-                        //write_longFRAM(whole,CH10ZRaddress);                  //store the zero reading REM REV CN
-                        write_Flt_FRAM(CH10ZRaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH10ZRaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH10PolyCoAaddress);             //store the Polynomial coefficient A REM REV CN
-                        write_Flt_FRAM(CH10PolyCoAaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH10PolyCoAaddress,whole);               
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION1_16.c1flags.CH10) {
-                        //write_longFRAM(whole,CH10GFaddress);                  //store the gage factor  REM REV CN
-                        write_Flt_FRAM(CH10GFaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH10GFaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH10PolyCoBaddress);             //store the Polynomial coefficient B REM REV CN
-                        write_Flt_FRAM(CH10PolyCoBaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH10PolyCoBaddress,whole);               
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION1_16.c1flags.CH10) {
-                        //write_longFRAM(whole,CH10GOaddress);                  //store the gage offset  REM REV CN
-                        write_Flt_FRAM(CH10GOaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH10GOaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH10PolyCoCaddress);             //store the Polynomial coefficient C REM REV CN
-                        write_Flt_FRAM(CH10PolyCoCaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH10PolyCoCaddress,whole);               
                     }
                     break;
             }
@@ -11303,190 +11109,160 @@ void getGageInfo(unsigned char info, int channel) {
             return;
 
 
-        case 11: //CHANNEL 11
+        case 11:                                                                //CHANNEL 11
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION1_16.c1flags.CH11) {
-                        //write_longFRAM(whole,CH11ZRaddress);                  //store the zero reading REM REV CN
-                        write_Flt_FRAM(CH11ZRaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH11ZRaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH11PolyCoAaddress);             //store the Polynomial coefficient A REM REV CN
-                        write_Flt_FRAM(CH11PolyCoAaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH11PolyCoAaddress,whole);               
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION1_16.c1flags.CH11) {
-                        //write_longFRAM(whole,CH11GFaddress);                  //store the gage factor  REM REV CN
-                        write_Flt_FRAM(CH11GFaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH11GFaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH11PolyCoBaddress);             //store the Polynomial coefficient B REM REV CN
-                        write_Flt_FRAM(CH11PolyCoBaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH11PolyCoBaddress,whole);               
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION1_16.c1flags.CH11) {
-                        //write_longFRAM(whole,CH11GOaddress);                  //store the gage offset  REM REV CN
-                        write_Flt_FRAM(CH11GOaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH11GOaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH11PolyCoCaddress);             //store the Polynomial coefficient C REM REV CN
-                        write_Flt_FRAM(CH11PolyCoCaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH11PolyCoCaddress,whole);               
                     }
                     break;
             }
 
             return;
 
-        case 12: //CHANNEL 12
+        case 12:                                                                //CHANNEL 12
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION1_16.c1flags.CH12) {
-                        //write_longFRAM(whole,CH12ZRaddress);                 //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH12ZRaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH12ZRaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH12PolyCoAaddress);            //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH12PolyCoAaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH12PolyCoAaddress,whole);               
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION1_16.c1flags.CH12) {
-                        //write_longFRAM(whole,CH12GFaddress);                 //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH12GFaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH12GFaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH12PolyCoBaddress);            //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH12PolyCoBaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH12PolyCoBaddress,whole);               
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION1_16.c1flags.CH12) {
-                        //write_longFRAM(whole,CH12GOaddress);                 //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH12GOaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH12GOaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH12PolyCoCaddress);            //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH12PolyCoCaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH12PolyCoCaddress,whole);               
                     }
                     break;
             }
 
             return;
 
-        case 13: //CHANNEL 13
+        case 13:                                                                //CHANNEL 13
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION1_16.c1flags.CH13) {
-                        //write_longFRAM(whole,CH13ZRaddress);                 //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH13ZRaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH13ZRaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH13PolyCoAaddress);            //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH13PolyCoAaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH13PolyCoAaddress,whole);               
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION1_16.c1flags.CH13) {
-                        //write_longFRAM(whole,CH13GFaddress);                 //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH13GFaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH13GFaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH13PolyCoBaddress);            //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH13PolyCoBaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH13PolyCoBaddress,whole);               
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION1_16.c1flags.CH13) {
-                        //write_longFRAM(whole,CH13GOaddress);                 //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH13GOaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH13GOaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH13PolyCoCaddress);            //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH13PolyCoCaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH13PolyCoCaddress,whole);               
                     }
                     break;
             }
 
             return;
 
-        case 14: //CHANNEL 14
+        case 14:                                                                //CHANNEL 14
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION1_16.c1flags.CH14) {
-                        //write_longFRAM(whole,CH14ZRaddress);                 //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH14ZRaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH14ZRaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH14PolyCoAaddress);            //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH14PolyCoAaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH14PolyCoAaddress,whole);               
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION1_16.c1flags.CH14) {
-                        //write_longFRAM(whole,CH14GFaddress);                 //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH14GFaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH14GFaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH14PolyCoBaddress);            //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH14PolyCoBaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH14PolyCoBaddress,whole);               
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION1_16.c1flags.CH14) {
-                        //write_longFRAM(whole,CH14GOaddress);                 //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH14GOaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH14GOaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH14PolyCoCaddress);            //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH14PolyCoCaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH14PolyCoCaddress,whole);               
                     }
                     break;
             }
 
             return;
 
-        case 15: //CHANNEL 15
+        case 15:                                                                //CHANNEL 15
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION1_16.c1flags.CH15) {
-                        //write_longFRAM(whole,CH15ZRaddress);                 //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH15ZRaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH15ZRaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH15PolyCoAaddress);            //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH15PolyCoAaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH15PolyCoAaddress,whole);               
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION1_16.c1flags.CH15) {
-                        //write_longFRAM(whole,CH15GFaddress);                 //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH15GFaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH15GFaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH15PolyCoBaddress);            //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH15PolyCoBaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH15PolyCoBaddress,whole);               
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION1_16.c1flags.CH15) {
-                        //write_longFRAM(whole,CH15GOaddress);                 //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH15GOaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH15GOaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH15PolyCoCaddress);            //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH15PolyCoCaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH15PolyCoCaddress,whole);               
                     }
                     break;
             }
@@ -11494,190 +11270,160 @@ void getGageInfo(unsigned char info, int channel) {
             return;
 
 
-        case 16: //CHANNEL 16
+        case 16:                                                                //CHANNEL 16
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION1_16.c1flags.CH16) {
-                        //write_longFRAM(whole,CH16ZRaddress);                 //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH16ZRaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH16ZRaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH16PolyCoAaddress);            //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH16PolyCoAaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH16PolyCoAaddress,whole);               
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION1_16.c1flags.CH16) {
-                        //write_longFRAM(whole,CH16GFaddress);                 //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH16GFaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH16GFaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH16PolyCoBaddress);            //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH16PolyCoBaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH16PolyCoBaddress,whole);               
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION1_16.c1flags.CH16) {
-                        //write_longFRAM(whole,CH16GOaddress);                 //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH16GOaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH16GOaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH16PolyCoCaddress);            //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH16PolyCoCaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH16PolyCoCaddress,whole);               
                     }
                     break;
             }
 
             return;
 
-        case 17: //CHANNEL 17
+        case 17:                                                                //CHANNEL 17
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION17_32.c2flags.CH17) {
-                        //write_longFRAM(whole,CH17ZRaddress);                 //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH17ZRaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH17ZRaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH17PolyCoAaddress);            //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH17PolyCoAaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH17PolyCoAaddress,whole);               
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION17_32.c2flags.CH17) {
-                        //write_longFRAM(whole,CH17GFaddress);                 //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH17GFaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH17GFaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH17PolyCoBaddress);            //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH17PolyCoBaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH17PolyCoBaddress,whole);               
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION17_32.c2flags.CH17) {
-                        //write_longFRAM(whole,CH17GOaddress);                 //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH17GOaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH17GOaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH17PolyCoCaddress);            //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH17PolyCoCaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH17PolyCoCaddress,whole);               
                     }
                     break;
             }
 
             return;
 
-        case 18: //CHANNEL 18
+        case 18:                                                                //CHANNEL 18
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION17_32.c2flags.CH18) {
-                        //write_longFRAM(whole,CH18ZRaddress);                 //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH18ZRaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH18ZRaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH18PolyCoAaddress);            //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH18PolyCoAaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH18PolyCoAaddress,whole);               
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION17_32.c2flags.CH18) {
-                        //write_longFRAM(whole,CH18GFaddress);                 //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH18GFaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH18GFaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH18PolyCoBaddress);            //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH18PolyCoBaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH18PolyCoBaddress,whole);               
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION17_32.c2flags.CH18) {
-                        //write_longFRAM(whole,CH18GOaddress);                 //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH18GOaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH18GOaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH18PolyCoCaddress);            //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH18PolyCoCaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH18PolyCoCaddress,whole);               
                     }
                     break;
             }
 
             return;
 
-        case 19: //CHANNEL 19
+        case 19:                                                                //CHANNEL 19
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION17_32.c2flags.CH19) {
-                        //write_longFRAM(whole,CH19ZRaddress);                 //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH19ZRaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH19ZRaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH19PolyCoAaddress);            //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH19PolyCoAaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH19PolyCoAaddress,whole);               
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION17_32.c2flags.CH19) {
-                        //write_longFRAM(whole,CH19GFaddress);                 //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH19GFaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH19GFaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH19PolyCoBaddress);            //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH19PolyCoBaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH19PolyCoBaddress,whole);               
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION17_32.c2flags.CH19) {
-                        //write_longFRAM(whole,CH19GOaddress);                 //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH19GOaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH19GOaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH19PolyCoCaddress);            //store the Polynomial coefficient C  REM REV CN
-                        write_Flt_FRAM(CH19PolyCoCaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH19PolyCoCaddress,whole);               
                     }
                     break;
             }
 
             return;
 
-        case 20: //CHANNEL 20
+        case 20:                                                                //CHANNEL 20
             switch (info) {
-                case 1: //ZERO READING
+                case 1:                                                         //ZERO READING
 
                     if (!MUX_CONVERSION17_32.c2flags.CH20) {
-                        //write_longFRAM(whole,CH20ZRaddress);                 //store the zero reading  REM REV CN
-                        write_Flt_FRAM(CH20ZRaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH20ZRaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH20PolyCoAaddress);            //store the Polynomial coefficient A  REM REV CN
-                        write_Flt_FRAM(CH20PolyCoAaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH20PolyCoAaddress,whole);               
                     }
                     break;
 
-                case 2: //GAGE FACTOR
+                case 2:                                                         //GAGE FACTOR
 
                     if (!MUX_CONVERSION17_32.c2flags.CH20) {
-                        //write_longFRAM(whole,CH20GFaddress);                 //store the gage factor   REM REV CN
-                        write_Flt_FRAM(CH20GFaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH20GFaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH20PolyCoBaddress);            //store the Polynomial coefficient B  REM REV CN
-                        write_Flt_FRAM(CH20PolyCoBaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH20PolyCoBaddress,whole);               
                     }
                     break;
 
-                case 3: //GAGE OFFSET
+                case 3:                                                         //GAGE OFFSET
 
                     if (!MUX_CONVERSION17_32.c2flags.CH20) {
-                        //write_longFRAM(whole,CH20GOaddress);                 //store the gage offset   REM REV CN
-                        write_Flt_FRAM(CH20GOaddress,whole);                    //REV CN
+                        write_Flt_FRAM(CH20GOaddress,whole);                    
                     } else {
-                        //write_longFRAM(whole,CH20PolyCoCaddress);            //store the Polynomial coefficient C  RERM REV CN
-                        write_Flt_FRAM(CH20PolyCoCaddress,whole);               //REV CN
+                        write_Flt_FRAM(CH20PolyCoCaddress,whole);               
                     }
                     break;
             }
