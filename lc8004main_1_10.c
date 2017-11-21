@@ -16,9 +16,9 @@
 //	DATE:		11/20/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   1.10
-//	CHECKSUM:	0xe9f7 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0xffc6 (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8800/30720   29%
-//	PGM(FLASH)MEM:  184413/261888 70%
+//	PGM(FLASH)MEM:  184422/261888 70%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -19236,47 +19236,47 @@ void __attribute__((__interrupt__)) _AltC2TxReqInterrupt(void)
 
 //***************************INTERRUPT SERVICE ROUTINES***********************************************
 
-void __attribute__((__interrupt__)) _U1RXInterrupt(void) //This is the UART1 Receive ISR VER 6.0.2
+void __attribute__((__interrupt__)) _U1RXInterrupt(void)                        //This is the UART1 Receive ISR 
 {
-    IFS0bits.U1RXIF = 0; //clear the UART1 interrupt flag
+    IFS0bits.U1RXIF = 0;                                                        //clear the UART1 interrupt flag
     U1STAbits.OERR = 0;
-    RxData = ReadUART1(); //get the char
+    RxData = ReadUART1();                                                       //get the char
 
     
-    if (RxData == xoff) //Xoff received
+    if (RxData == xoff)                                                         //Xoff received
     {
         wait();
     }
-    if (RxData == escape) //does the user want to stop the data download?
+    if (RxData == escape)                                                       //does the user want to stop the data download?
     {
-        DISPLAY_CONTROL.flags.bail = 1; //Set the bail flag
+        DISPLAY_CONTROL.flags.bail = 1;                                         //Set the bail flag
     }
 
 }
 
 void __attribute__((__interrupt__)) _AltU1RXInterrupt(void)                     //This is the UART1 ALTERNATE Receive ISR 
 {
-    IFS0bits.U1RXIF = 0; //clear the UART1 interrupt flag
+    IFS0bits.U1RXIF = 0;                                                        //clear the UART1 interrupt flag
     U1STAbits.OERR = 0;
-    RxData = ReadUART1(); //get the char
+    RxData = ReadUART1();                                                       //get the char
 
     
-    if (RxData == xoff) //Xoff received
+    if (RxData == xoff)                                                         //Xoff received
     {
         wait();
     }
-    if (RxData == escape) //does the user want to stop the data download?
+    if (RxData == escape)                                                       //does the user want to stop the data download?
     {
-        DISPLAY_CONTROL.flags.bail = 1; //Set the bail flag
+        DISPLAY_CONTROL.flags.bail = 1;                                         //Set the bail flag
     }
 
 }
 
-void __attribute__((__interrupt__)) _INT1Interrupt(void)                        //This is the RTC ISR when time to read occurs  REV B
+void __attribute__((__interrupt__)) _INT1Interrupt(void)                        //This is the RTC ISR when time to read occurs  
 {
-    unsigned char   tempRTC;                                                    //REV AH
+    unsigned char   tempRTC;                                                    
 
-    IFS1bits.INT1IF = 0; //clear the interrupt flag                             //REV B
+    IFS1bits.INT1IF = 0;                                                        //clear the interrupt flag                             
 
     INTCON1bits.NSTDIS = 0;
     if(SRbits.IPL==7)
@@ -19285,53 +19285,53 @@ void __attribute__((__interrupt__)) _INT1Interrupt(void)                        
     SLEEP12V = 0;
     validRTC = debounce();
     
-    if (validRTC) //if valid interrupt
+    if (validRTC)                                                               //if valid interrupt
     {
-        PORT_CONTROL.control=read_Int_FRAM(CONTROL_PORTflagsaddress);          //get the PORT_CONTROL flags  
-        intSource = readClock(0x0F); //get the RTC Alarm flags		
-        intSource &= 0x03; //strip off bits 7-2    VER 6.0.13
+        PORT_CONTROL.control=read_Int_FRAM(CONTROL_PORTflagsaddress);           //get the PORT_CONTROL flags  
+        intSource = readClock(0x0F);                                            //get the RTC Alarm flags		
+        intSource &= 0x03;                                                      //strip off bits 7-2    
         
-        if(intSource == 0x01 | intSource == 0x03)                               //Alarm 1 REV AH
+        if(intSource == 0x01 | intSource == 0x03)                               //Alarm 1 
         {
-            tempRTC=readClock(0x0f);                                            //clear the RTC A1F REV AH
-            tempRTC&=0xfe;                                                      //REV AH
-            setClock(0x0f,tempRTC);                                             //REV AH
-            LC2CONTROL2.flags2.Interrupt = 1; //set the INT2 interrupt flag
-            MUX_CLOCK = 0; //set the MUX_CLOCK line low
-            MUX_RESET = 0; //set the MUX_RESET line low
+            tempRTC=readClock(0x0f);                                            //clear the RTC A1F 
+            tempRTC&=0xfe;                                                      
+            setClock(0x0f,tempRTC);                                             
+            LC2CONTROL2.flags2.Interrupt = 1;                                   //set the INT2 interrupt flag
+            MUX_CLOCK = 0;                                                      //set the MUX_CLOCK line low
+            MUX_RESET = 0;                                                      //set the MUX_RESET line low
             disableAlarm(Alarm1);
-            LC2CONTROL2.flags2.Waiting = 0; //clear the Waiting flag
+            LC2CONTROL2.flags2.Waiting = 0;                                     //clear the Waiting flag
             write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);          //store flags in FRAM 
             T4CONbits.TON = 0;
             enableAlarm(Alarm1);
-            tempTMR4 = TMR4; //save TMR4/5 registers
+            tempTMR4 = TMR4;                                                    //save TMR4/5 registers
             tempTMR5 = TMR5HLD;
             take_One_Complete_Reading(STORE);
-            TMR5HLD = tempTMR5; //restore TMR4/5 registers
+            TMR5HLD = tempTMR5;                                                 //restore TMR4/5 registers
             TMR4 = tempTMR4;
-            if (LC2CONTROL.flags.USBpower)                                      //REV CH
-                T4CONbits.TON = 1; //turn Timer4/5 back on
-            U1STAbits.OERR = 0; //clear flag if overrun error
-            PMD3bits.T9MD=0;                                                    //Make sure TMR9 module is enabled  REV Z
+            if (LC2CONTROL.flags.USBpower)                                      
+                T4CONbits.TON = 1;                                              //turn Timer4/5 back on
+            U1STAbits.OERR = 0;                                                 //clear flag if overrun error
+            PMD3bits.T9MD=0;                                                    //Make sure TMR9 module is enabled  
             IFS3bits.T9IF = 1;
         }        
 
-        if(intSource == 0x02 | intSource == 0x03)                               //Alarm 2 REV AH
+        if(intSource == 0x02 | intSource == 0x03)                               //Alarm 2 
         {
-            tempRTC=readClock(0x0f);                                            //clear the RTC A2F REV AH
-            tempRTC&=0xfd;                                                      //REV AH
-            setClock(0x0f,tempRTC);                                             //REV AH
+            tempRTC=readClock(0x0f);                                            //clear the RTC A2F 
+            tempRTC&=0xfd;                                                      
+            setClock(0x0f,tempRTC);                                             
             disableAlarm(Alarm2);
 
-            if (PORT_CONTROL.flags.PortTimerEN && (!PORT_CONTROL.flags.ControlPortON | !PORT_CONTROL.flags.CPTime)) //PORT was OFF or O1 was previously issued    REV AG
+            if (PORT_CONTROL.flags.PortTimerEN && (!PORT_CONTROL.flags.ControlPortON | !PORT_CONTROL.flags.CPTime)) //PORT was OFF or O1 was previously issued    
             {
-                CONTROL = 1; //Turn PORT ON
-                _READ=0;                                                        //light LED TEST REV B
+                CONTROL = 1;                                                    //Turn PORT ON
+                _READ=0;                                                        //light LED 
                 Nop();
-                PORT_CONTROL.flags.ControlPortON = 1; //set flag
-                PORT_CONTROL.flags.CPTime = 1; //set flag
-                S_1.status1flags._OP=1;                                            //set the MODBUS status flag    REV BF
-                S_1.status1flags._OP_Timer=1;                                      //set the MODBUS status flag    REV BF
+                PORT_CONTROL.flags.ControlPortON = 1;                           //set flag
+                PORT_CONTROL.flags.CPTime = 1;                                  //set flag
+                S_1.status1flags._OP=1;                                         //set the MODBUS status flag    
+                S_1.status1flags._OP_Timer=1;                                   //set the MODBUS status flag    
                 write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);
 
                 PortOffHours=read_Int_FRAM(PortOffHoursaddress);                //write Port OFF hours to RTC 
@@ -19339,22 +19339,22 @@ void __attribute__((__interrupt__)) _INT1Interrupt(void)                        
                 PortOffMinutes=read_Int_FRAM(PortOffMinutesaddress);            //write Port OFF minutes to RTC   
                 setClock(RTCAlarm2MinutesAddress, PortOffMinutes);
             } else
-            if (PORT_CONTROL.flags.PortTimerEN &&(PORT_CONTROL.flags.ControlPortON | PORT_CONTROL.flags.O0issued | PORT_CONTROL.flags.CPTime)) //PORT was ON,O0 was previously issued or CPTime in process REV AG
+            if (PORT_CONTROL.flags.PortTimerEN &&(PORT_CONTROL.flags.ControlPortON | PORT_CONTROL.flags.O0issued | PORT_CONTROL.flags.CPTime)) //PORT was ON,O0 was previously issued or CPTime in process 
             {
                 CONTROL = 0;                                                    //Turn PORT OFF
-                _READ=1;                                                         //OFF LED TEST REV B
-                PORT_CONTROL.flags.ControlPortON = 0; //clear flag
-                PORT_CONTROL.flags.O0issued = 0; //clear flag
-                PORT_CONTROL.flags.CPTime = 0; //clear flag
-                S_1.status1flags._OP=0;                                            //clear the MODBUS status flag    REV BF
-                S_1.status1flags._OP_Timer=0;                                      //clear the MODBUS status flag    REV BF
+                _READ=1;                                                        //OFF LED 
+                PORT_CONTROL.flags.ControlPortON = 0;                           //clear flag
+                PORT_CONTROL.flags.O0issued = 0;                                //clear flag
+                PORT_CONTROL.flags.CPTime = 0;                                  //clear flag
+                S_1.status1flags._OP=0;                                         //clear the MODBUS status flag    
+                S_1.status1flags._OP_Timer=0;                                   //clear the MODBUS status flag    
                 write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                
                 PortOnHours=read_Int_FRAM(PortOnHoursaddress);                  //write Port ON hours to RTC  
                 setClock(RTCAlarm2HoursAddress, PortOnHours);
                 PortOnMinutes=read_Int_FRAM(PortOnMinutesaddress);              //write Port ON minutes to RTC    
                 setClock(RTCAlarm2MinutesAddress, PortOnMinutes);
             }
-            else                                                                //REV AG
+            else                                                                
             if (PORT_CONTROL.flags.BluetoothTimerEN && (!PORT_CONTROL.flags.BluetoothON | !PORT_CONTROL.flags.BTTime))   //Bluetooth was OFF or BT1 was previously issued
             {
                 enableBT();                                                     //Turn Bluetooth ON
@@ -19380,7 +19380,7 @@ void __attribute__((__interrupt__)) _INT1Interrupt(void)                        
 
             write_Int_FRAM(CONTROL_PORTflagsaddress,PORT_CONTROL.control);      //store flag in FRAM  
             enableAlarm(Alarm2);
-            PMD3bits.T9MD=0;                                                    //Make sure TMR9 module is enabled  REV AH
+            PMD3bits.T9MD=0;                                                    //Make sure TMR9 module is enabled  
             IFS3bits.T9IF = 1;
         }
 
@@ -19390,9 +19390,9 @@ void __attribute__((__interrupt__)) _INT1Interrupt(void)                        
 
 void __attribute__((__interrupt__)) _AltINT1Interrupt(void)                     //This is the RTC ALTERNATE ISR when time to read occurs
 {
-    unsigned char   tempRTC;                                                    //REV AH
+    unsigned char   tempRTC;                                                    
 
-    IFS1bits.INT1IF = 0; //clear the interrupt flag                             //REV B
+    IFS1bits.INT1IF = 0;                                                        //clear the interrupt flag                             
 
     INTCON1bits.NSTDIS = 0;
     if(SRbits.IPL==7)
@@ -19401,64 +19401,64 @@ void __attribute__((__interrupt__)) _AltINT1Interrupt(void)                     
     SLEEP12V = 0;
     validRTC = debounce();
     
-    if (validRTC) //if valid interrupt
+    if (validRTC)                                                               //if valid interrupt
     {
-        PORT_CONTROL.control=read_Int_FRAM(CONTROL_PORTflagsaddress);          //get the PORT_CONTROL flags  
-        intSource = readClock(0x0F); //get the RTC Alarm flags		
-        intSource &= 0x03; //strip off bits 7-2    VER 6.0.13
+        PORT_CONTROL.control=read_Int_FRAM(CONTROL_PORTflagsaddress);           //get the PORT_CONTROL flags  
+        intSource = readClock(0x0F);                                            //get the RTC Alarm flags		
+        intSource &= 0x03;                                                      //strip off bits 7-2    
         
-        if(intSource == 0x01 | intSource == 0x03)                               //Alarm 1 REV AH
+        if(intSource == 0x01 | intSource == 0x03)                               //Alarm 1 
         {
-            tempRTC=readClock(0x0f);                                            //clear the RTC A1F REV AH
-            tempRTC&=0xfe;                                                      //REV AH
-            setClock(0x0f,tempRTC);                                             //REV AH
-            LC2CONTROL2.flags2.Interrupt = 1; //set the INT2 interrupt flag
-            MUX_CLOCK = 0; //set the MUX_CLOCK line low
-            MUX_RESET = 0; //set the MUX_RESET line low
+            tempRTC=readClock(0x0f);                                            //clear the RTC A1F 
+            tempRTC&=0xfe;                                                      
+            setClock(0x0f,tempRTC);                                             
+            LC2CONTROL2.flags2.Interrupt = 1;                                   //set the INT2 interrupt flag
+            MUX_CLOCK = 0;                                                      //set the MUX_CLOCK line low
+            MUX_RESET = 0;                                                      //set the MUX_RESET line low
             disableAlarm(Alarm1);
-            LC2CONTROL2.flags2.Waiting = 0; //clear the Waiting flag
+            LC2CONTROL2.flags2.Waiting = 0;                                     //clear the Waiting flag
             write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);          //store flags in FRAM 
             T4CONbits.TON = 0;
             enableAlarm(Alarm1);
-            tempTMR4 = TMR4; //save TMR4/5 registers
+            tempTMR4 = TMR4;                                                    //save TMR4/5 registers
             tempTMR5 = TMR5HLD;
             take_One_Complete_Reading(STORE);
-            TMR5HLD = tempTMR5; //restore TMR4/5 registers
+            TMR5HLD = tempTMR5;                                                 //restore TMR4/5 registers
             TMR4 = tempTMR4;
-            if (LC2CONTROL.flags.USBpower)                                      //REV CH
-                T4CONbits.TON = 1; //turn Timer4/5 back on
-            U1STAbits.OERR = 0; //clear flag if overrun error
-            PMD3bits.T9MD=0;                                                    //Make sure TMR9 module is enabled  REV Z
+            if (LC2CONTROL.flags.USBpower)                                      
+                T4CONbits.TON = 1;                                              //turn Timer4/5 back on
+            U1STAbits.OERR = 0;                                                 //clear flag if overrun error
+            PMD3bits.T9MD=0;                                                    //Make sure TMR9 module is enabled  
             IFS3bits.T9IF = 1;
         }        
 
-        if(intSource == 0x02 | intSource == 0x03)                               //Alarm 2 REV AH
+        if(intSource == 0x02 | intSource == 0x03)                               //Alarm 2 
         {
-            tempRTC=readClock(0x0f);                                            //clear the RTC A2F REV AH
-            tempRTC&=0xfd;                                                      //REV AH
-            setClock(0x0f,tempRTC);                                             //REV AH
+            tempRTC=readClock(0x0f);                                            //clear the RTC A2F 
+            tempRTC&=0xfd;                                                      
+            setClock(0x0f,tempRTC);                                             
             disableAlarm(Alarm2);
 
-            if (PORT_CONTROL.flags.PortTimerEN && (!PORT_CONTROL.flags.ControlPortON | !PORT_CONTROL.flags.CPTime)) //PORT was OFF or O1 was previously issued    REV AG
+            if (PORT_CONTROL.flags.PortTimerEN && (!PORT_CONTROL.flags.ControlPortON | !PORT_CONTROL.flags.CPTime)) //PORT was OFF or O1 was previously issued    
             {
-                CONTROL = 1; //Turn PORT ON
-                _READ=0;                                                        //light LED TEST REV B
+                CONTROL = 1;                                                    //Turn PORT ON
+                _READ=0;                                                        //light LED 
                 Nop();
-                PORT_CONTROL.flags.ControlPortON = 1; //set flag
-                PORT_CONTROL.flags.CPTime = 1; //set flag
+                PORT_CONTROL.flags.ControlPortON = 1;                           //set flag
+                PORT_CONTROL.flags.CPTime = 1;                                  //set flag
 
                 PortOffHours=read_Int_FRAM(PortOffHoursaddress);                //write Port OFF hours to RTC 
                 setClock(RTCAlarm2HoursAddress, PortOffHours);
                 PortOffMinutes=read_Int_FRAM(PortOffMinutesaddress);            //write Port OFF minutes to RTC   
                 setClock(RTCAlarm2MinutesAddress, PortOffMinutes);
             } else
-            if (PORT_CONTROL.flags.PortTimerEN &&(PORT_CONTROL.flags.ControlPortON | PORT_CONTROL.flags.O0issued | PORT_CONTROL.flags.CPTime)) //PORT was ON,O0 was previously issued or CPTime in process REV AG
+            if (PORT_CONTROL.flags.PortTimerEN &&(PORT_CONTROL.flags.ControlPortON | PORT_CONTROL.flags.O0issued | PORT_CONTROL.flags.CPTime)) //PORT was ON,O0 was previously issued or CPTime in process 
             {
                 CONTROL = 0;                                                    //Turn PORT OFF
-                _READ=1;                                                         //OFF LED TEST REV B
-                PORT_CONTROL.flags.ControlPortON = 0; //clear flag
-                PORT_CONTROL.flags.O0issued = 0; //clear flag
-                PORT_CONTROL.flags.CPTime = 0; //clear flag
+                _READ=1;                                                        //OFF LED 
+                PORT_CONTROL.flags.ControlPortON = 0;                           //clear flag
+                PORT_CONTROL.flags.O0issued = 0;                                //clear flag
+                PORT_CONTROL.flags.CPTime = 0;                                  //clear flag
                 PortOnHours=read_Int_FRAM(PortOnHoursaddress);                  //write Port ON hours to RTC  
                 setClock(RTCAlarm2HoursAddress, PortOnHours);
                 PortOnMinutes=read_Int_FRAM(PortOnMinutesaddress);              //write Port ON minutes to RTC    
@@ -19497,7 +19497,6 @@ void __attribute__((__interrupt__)) _AltINT1Interrupt(void)                     
 
 }
 
-//REV AE:
 void __attribute__((__interrupt__)) _OscillatorFail(void)
 {
     asm("RESET");
@@ -19508,34 +19507,29 @@ void __attribute__((__interrupt__)) _AltOscillatorFail(void)
     asm("RESET");
 }
 
-//REV M:
 void __attribute__((__interrupt__)) _T5Interrupt(void)                          //This is the Timer 5 256mS interrupt
 {
-    VWcountLSW=TMR7+1;                                                          //read the counter value (/8)   REV DB
+    VWcountLSW=TMR7+1;                                                          //read the counter value (/8)   
     IFS1bits.T5IF=0;                                                            //clear the interrupt flag
     CaptureFlag=1;                                                              //set the capture flag	
 }
 
 void __attribute__((__interrupt__)) _AltT5Interrupt(void)                       //This is the ALTERNATE Timer 5 256mS interrupt
 {
-	VWcountLSW=TMR7;                                                            //read the counter value (/8)   REV 1.6
+	VWcountLSW=TMR7;                                                            //read the counter value (/8)   
     IFS1bits.T5IF=0;                                                            //clear the interrupt flag
-	//VWcountLSW=TMR7;                                                            //read the counter value (/8) REM REV 1.6
     CaptureFlag=1;                                                              //set the capture flag	
 }
 
 
 void __attribute__((__interrupt__)) _T7Interrupt(void)                          //This is the Timer 7 overflow interrupt
 {
-	VWcountMSW+=1;                                                              //increment the VWcountMSB register REV 1.6
+	VWcountMSW+=1;                                                              //increment the VWcountMSB register 
     IFS3bits.T7IF=0;                                                            //clear the interrupt flag
-    //VWcountMSW+=1;                                                              //increment the VWcountMSB register   REM REV 1.6
 }
 
-void __attribute__((__interrupt__)) _AltT7Interrupt(void)                       //REV 1.2 This is the ALTERNATE Timer 6/7 overflow interrupt
+void __attribute__((__interrupt__)) _AltT7Interrupt(void)                       //This is the ALTERNATE Timer 6/7 overflow interrupt
 {
-	VWflagsbits.timeout=1;                                                      //set the timeout flag  REV 1.6
+	VWflagsbits.timeout=1;                                                      //set the timeout flag  
     IFS3bits.T7IF=0;                                                            //clear the interrupt flag
-    //testPoint(1,1);                                                              
-    //VWflagsbits.timeout=1;                                                      //set the timeout flag    REM REV 1.6
 }
