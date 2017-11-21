@@ -16,9 +16,9 @@
 //	DATE:		11/20/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   1.10
-//	CHECKSUM:	0x9605 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0xe9f7 (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8800/30720   29%
-//	PGM(FLASH)MEM:  184278/261888 70%
+//	PGM(FLASH)MEM:  184413/261888 70%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -17279,119 +17279,110 @@ void take_One_Complete_Reading(unsigned char store)
 
         if (!store) 
         {
-            IEC1bits.INT1IE = 1; //re-enable the INT2 interrupt
+            IEC1bits.INT1IE = 1;                                                //re-enable the INT2 interrupt
             Nop();
             Nop();
             if (LC2CONTROL2.flags2.Interrupt)
             {
-                U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  REV CF
-                U1STAbits.UTXEN=1;                                                          //Re-enable the COM PORT    REV CF
+                U1MODEbits.UARTEN=1;                                            //Re-enable the COM PORT  
+                U1STAbits.UTXEN=1;                                              
                 return;
             }
         }
 
-        if (MUX4_ENABLE.mflags.skip) //skip channel
+        if (MUX4_ENABLE.mflags.skip)                                            //skip channel
         {
-            if (MUX4_ENABLE.mflags.mux16_4 == VW4 | MUX4_ENABLE.mflags.mux16_4 == VW16) //VER 6.0.7
+            if (MUX4_ENABLE.mflags.mux16_4 == VW4 | MUX4_ENABLE.mflags.mux16_4 == VW16) 
                 clockMux(10);
             if (MUX4_ENABLE.mflags.mux16_4 == TH8 | MUX4_ENABLE.mflags.mux16_4 == TH32 |
-                    MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW32) //if 8 or 32 channel mux  VER 6.0.9) //VER 6.0.9
-                clockThMux(10); //VER 6.0.6
-            continue; //return to beginning of for(ch)
+                    MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW32) //if 8 or 32 channel mux  
+                clockThMux(10); 
+            continue;                                                           //return to beginning of for(ch)
         }
 
         if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32) //VW logger
         {
-            if (gageType > 0 && gageType <= 6) //VW                             //REV J
+            if (gageType > 0 && gageType <= 6)                                  //VW                             
             {
                 Blink(1);
-                //enableVWchannel(gageType);                                      //configure the PLL and LPF REV M REM REV CF
-                if (!store)
-                    IEC1bits.INT1IE = 0; //temporarily disable the INT2 interrupt
-                //WDTSWEnable;                                                  //Start WDT TEST REM REV CF                          
-                //VWreading = take_reading(gageType);                             //take VW reading (or other gage type) REM REV 1.1
-                VWreading = take_reading(gageType,ch);                          //take VW reading (or other gage type) ADD ch AS ARGUEMENT  REV 1.1
-                if(!VWreading)                                                  //retry if no response  REV 1.1
-                {
-                    VWflagsbits.retry=1;                                        //REV 1.1
-                    VWreading=take_reading(gageType,ch);                        //REV 1.1
-                    VWflagsbits.retry=0;                                        //REV 1.1
-                }
-                disableVWchannel();                                             //REV X
 
-                //ClrWdt();                                                     //clear the WDT TEST REM REV CF
-                //WDTSWDisable;                                                 //Stop WDT TEST REM REV CF
+                if (!store)
+                    IEC1bits.INT1IE = 0;                                        //temporarily disable the INT2 interrupt
+                WDTSWEnable;                                                    //Start WDT                           
+                VWreading = take_reading(gageType,ch);                          //take VW reading (or other gage type) 
+                if(!VWreading)                                                  //retry if no response  
+                {
+                    VWflagsbits.retry=1;                                        
+                    VWreading=take_reading(gageType,ch);                        
+                    VWflagsbits.retry=0;                                        
+                }
+                disableVWchannel();                                             
+
+                ClrWdt();                                                       //clear the WDT 
+                WDTSWDisable;                                                   //Stop WDT 
                 if (!store) {
-                    IEC1bits.INT1IE = 1; //re-enable the INT2 interrupt
+                    IEC1bits.INT1IE = 1;                                        //re-enable the INT2 interrupt
                     Nop();
                     Nop();
                     if (LC2CONTROL2.flags2.Interrupt)
                     {
-                        U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  REV CF   
-                        U1STAbits.UTXEN=1;                                                          //Re-enable the COM PORT    REV CF
+                        U1MODEbits.UARTEN=1;                                    //Re-enable the COM PORT     
+                        U1STAbits.UTXEN=1;                                                          
                         return;
                     }
                 }
+                
                 if (VWreading == 0.0)
                     VWreadingProcessed = -999999;                               //error message
                 else
-                {                                                               //REV 1.1
+                {                                                               
                     processReading(VWreading, ch);                              //apply linear or polynomial conversion
-                    write_Int_FRAM(CH1Reading+(2*(ch-1)),F);                    //store the whole # portion of VWreading in FRAM  REV 1.1   
+                    write_Int_FRAM(CH1Reading+(2*(ch-1)),F);                    //store the whole # portion of VWreading in FRAM    
                 }
 
                 if (!store)
-                    IEC1bits.INT1IE = 0; //temporarily disable the INT2 interrupt
+                    IEC1bits.INT1IE = 0;                                        //temporarily disable the INT2 interrupt
                 
                 if (MUX4_ENABLE.mflags.mux16_4 == Single |
                         MUX4_ENABLE.mflags.mux16_4 == VW4 |
                         MUX4_ENABLE.mflags.mux16_4 == VW16)
                 {
 
-                    //REV AE:
-                    extThermreading = take_analog_reading(85); //take external thermistor reading
+                    extThermreading = take_analog_reading(85);                  //take external thermistor reading
                     if(extThermreading>5000)
                     {
                         extThermProcessed=-99.0;
                     }
                     else
                     {
-                        extThermRaw=((Vref*extThermreading)/4096);	//convert to float voltage	 REV J  TEST REM REV K
-                        extThermProcessed=V_HT2C(extThermRaw,ch);		//convert to float degrees C	REV J
+                        extThermRaw=((Vref*extThermreading)/4096);              //convert to float voltage	 
+                        extThermProcessed=V_HT2C(extThermRaw,ch);               //convert to float degrees C	
                     }
-                    extThermreading=f32toINT16(extThermProcessed);	//convert float to 16 bit	REV J
+                    extThermreading=f32toINT16(extThermProcessed);              //convert float to 16 bit	
                 }
 
                 if (store && MUX4_ENABLE.mflags.mux16_4 != Single)
-                    storeChannelReading(ch); //store the reading   
+                    storeChannelReading(ch);                                    //store the reading   
                 if (!store)
                     storeTempChannelReading(ch);
             }
         } 
-        else //Thermistor logger
+        else                                                                    //Thermistor logger
         {
             Blink(1);
-            /*REM REV AE:
-            extThermreading = take_analog_reading(85); //take external thermistor reading
-            extThermRaw=((Vref*extThermreading)/4096);	//convert to float voltage	 REV J
-            extThermProcessed=V_HT2C(extThermRaw,ch);		//convert to float degrees C	REV J
-            */
-            //REV AE:
-            extThermreading = take_analog_reading(85); //take external thermistor reading
+
+            extThermreading = take_analog_reading(85);                          //take external thermistor reading
             if(extThermreading>5000)
             {
-                //extThermreading=-99.9;
                 extThermProcessed=-99.0;
             }
             else
             {
-                extThermRaw=((Vref*extThermreading)/4096);	//convert to float voltage	 REV J  TEST REM REV K
-                extThermProcessed=V_HT2C(extThermRaw,ch);		//convert to float degrees C	REV J
+                extThermRaw=((Vref*extThermreading)/4096);                      //convert to float voltage	 
+                extThermProcessed=V_HT2C(extThermRaw,ch);                       //convert to float degrees C	
             }            
-            extThermreading=f32toINT16(extThermProcessed);	//convert float to 16 bit	REV J
+            extThermreading=f32toINT16(extThermProcessed);                      //convert float to 16 bit	
             
-            //if(ch==1)                                                           //TEST REV V
-            //    Nop();                                                          //TEST REV V
             if (store)
                 storeChannelReading(ch);
             else
@@ -17399,39 +17390,39 @@ void take_One_Complete_Reading(unsigned char store)
         }
 
         if (!store) {
-            IEC1bits.INT1IE = 1; //re-enable the INT1 interrupt
+            IEC1bits.INT1IE = 1;                                                //re-enable the INT1 interrupt
             Nop();
             Nop();
             if (LC2CONTROL2.flags2.Interrupt)
             {
                 U1MODEbits.UARTEN=1;                                            //Re-enable the COM PORT  
-                U1STAbits.UTXEN=1;                                              //Re-enable the COM PORT    REV CF
+                U1STAbits.UTXEN=1;                                              
                 return;
             }
         }
-    } //end of MUX loop for(ch)
+    }                                                                           //end of MUX loop for(ch)
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4 | MUX4_ENABLE.mflags.mux16_4 == VW16) //deactivate mux if multichannel  VER 6.0.7
-        MUX_RESET = 0; //bring the MUX_RESET line low
+    if (MUX4_ENABLE.mflags.mux16_4 == VW4 | MUX4_ENABLE.mflags.mux16_4 == VW16) //deactivate mux if multichannel  
+        MUX_RESET = 0;                                                          //bring the MUX_RESET line low
     if (MUX4_ENABLE.mflags.mux16_4 == TH8 | MUX4_ENABLE.mflags.mux16_4 == TH32 |
-            MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW32) //if 8 or 32 channel mux  VER 6.0.9)      //deactivate 8 or 32 channel mux  VER 6.0.9
+            MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW32) //if 8 or 32 channel mux        
         MUX_CLOCK = 0;
 
 
     // TAKE ANALOG READINGS:
 
     if (store) {
-        intThermreading = take_analog_reading(86); //take internal thermistor reading
+        intThermreading = take_analog_reading(86);                              //take internal thermistor reading
     } else {
-        IEC1bits.INT1IE = 0; //temporarily disable the INT1 interrupt
-        intThermreading = take_analog_reading(86); //take internal thermistor reading
-        IEC1bits.INT1IE = 1; //re-enable the INT1 interrupt
+        IEC1bits.INT1IE = 0;                                                    //temporarily disable the INT1 interrupt
+        intThermreading = take_analog_reading(86);                              //take internal thermistor reading
+        IEC1bits.INT1IE = 1;                                                    //re-enable the INT1 interrupt
         Nop();
         Nop();
         if (LC2CONTROL2.flags2.Interrupt)
         {
             U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  
-            U1STAbits.UTXEN=1;                                                          //Re-enable the COM PORT    REV CF
+            U1STAbits.UTXEN=1;                                                  
             return;
         }
     }
@@ -17439,23 +17430,23 @@ void take_One_Complete_Reading(unsigned char store)
     //Determine whether 3V or 12V battery is connected
 
     if (store) {
-        mainBatreading = take_analog_reading(87); //test the 12V_SENSE input
+        mainBatreading = take_analog_reading(87);                               //test the 12V_SENSE input
     } else {
-        IEC1bits.INT1IE = 0; //temporarily disable the INT1 interrupt
+        IEC1bits.INT1IE = 0;                                                    //temporarily disable the INT1 interrupt
         mainBatreading = take_analog_reading(87);
-        IEC1bits.INT1IE = 1; //re-enable the INT1 interrupt
+        IEC1bits.INT1IE = 1;                                                    //re-enable the INT1 interrupt
         Nop();
         Nop();
         if (LC2CONTROL2.flags2.Interrupt)
         {
             U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  
-            U1STAbits.UTXEN=1;                                                          //Re-enable the COM PORT    REV CF
+            U1STAbits.UTXEN=1;                                                  
             return;
         }
     }
 
 
-    if (mainBatreading < 820) //12V_SENSE <0.5V, so not connected
+    if (mainBatreading < 820)                                                   //12V_SENSE <0.5V, so not connected
     {
         DISPLAY_CONTROL.flags.PS12V = 0;                                        //clear the 12V battery flag
         if (store) 
@@ -17471,17 +17462,17 @@ void take_One_Complete_Reading(unsigned char store)
             Nop();
             if (LC2CONTROL2.flags2.Interrupt)
             {
-                U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  REV CF
-                U1STAbits.UTXEN=1;                                                          //Re-enable the COM PORT    REV CF
+                U1MODEbits.UARTEN=1;                                            //Re-enable the COM PORT  
+                U1STAbits.UTXEN=1;                                                          
                 return;
             }
         }
-        batteryVoltage = (((Vref * mainBatreading) / 4096) * mul3V);  //convert to voltage    REV Z
+        batteryVoltage = (((Vref * mainBatreading) / 4096) * mul3V);            //convert to voltage    
     } 
     else 
     {
         DISPLAY_CONTROL.flags.PS12V = 1;                                        //set the 12V battery flag
-        TEST12V = (((Vref * mainBatreading) / 4096) * mul12V);                  //convert to voltage for test  REV Z
+        TEST12V = (((Vref * mainBatreading) / 4096) * mul12V);                  //convert to voltage for test  
         mainBatreading *= -1;                                                   //convert to negative number
         batteryVoltage = (((Vref * mainBatreading) / 4096) * mul12V);           //convert to voltage   
         batteryVoltage = batteryVoltage*-1.0;                                   //convert batteryVoltage to positive for display  
@@ -17489,164 +17480,150 @@ void take_One_Complete_Reading(unsigned char store)
 
     if (!store) 
     {
-        storeTempReading(ch); //temporary storage for display only ('X' command)
+        storeTempReading(ch);                                                   //temporary storage for display only ('X' command)
         write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//save display flags`
-        IEC1bits.INT1IE = 1; //re-enable the INT1 interrupt
+        IEC1bits.INT1IE = 1;                                                    //re-enable the INT1 interrupt
         Nop();
         Nop();
-        if (LC2CONTROL2.flags2.Interrupt) //did INT2 interrupt occur during this period?
+        if (LC2CONTROL2.flags2.Interrupt)                                       //did INT2 interrupt occur during this period?
         {
-            U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  REV CF
-            U1STAbits.UTXEN=1;                                                          //Re-enable the COM PORT    REV CF
-            return; //abort reading if it did
+            U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  
+            U1STAbits.UTXEN=1;                                                          
+            return;                                                             //abort reading if it did
         }
 
-        _3VX_off(); //power-down the analog circuitry
-        //config_Ports_Low_Power();
+        _3VX_off();                                                             //power-down the analog circuitry
 
-        U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  REV CF
-        U1STAbits.UTXEN=1;                                                          //Re-enable the COM PORT    REV CF
-        if(!LC2CONTROL2.flags2.Modbus)                                          //If command line interface REV CE
+        U1MODEbits.UARTEN=1;                                                    //Re-enable the COM PORT  
+        U1STAbits.UTXEN=1;                                                          
+        if(!LC2CONTROL2.flags2.Modbus)                                          //If command line interface 
         {
-            IEC1bits.INT1IE = 0; //temporarily disable the INT1 interrupt
-            displayTempReading(); //Display the reading
-            IEC1bits.INT1IE = 1; //re-enable the INT1 interrupt
+            IEC1bits.INT1IE = 0;                                                //temporarily disable the INT1 interrupt
+            displayTempReading();                                               //Display the reading
+            IEC1bits.INT1IE = 1;                                                //re-enable the INT1 interrupt
         }
         return;
     }
 
-    //REV Z:
     if (((!USB_PWR | _232 | !BT_CONNECT) && DISPLAY_CONTROL.flags.PS12V && TEST12V < bat_12MIN) |   //if 12V battery < minimum V or 3V battery < minimum V  
-            ((!USB_PWR | _232 | !BT_CONNECT) && !DISPLAY_CONTROL.flags.PS12V && batteryVoltage < bat_3MIN))  //REV AF
+            ((!USB_PWR | _232 | !BT_CONNECT) && !DISPLAY_CONTROL.flags.PS12V && batteryVoltage < bat_3MIN))  
     {
-        disableINT1(); //stop logging and shutdown
+        disableINT1();                                                          //stop logging and shutdown
         disableAlarm(Alarm1);
         shutdown();
     }    
     
     
-    IEC1bits.INT1IE = 0; //temporarily disable the INT1 interrupt
-    outputPosition = storeReading(ch); //store the reading and return the outputPosition pointer
-    write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//save display flags    
+    IEC1bits.INT1IE = 0;                                                        //temporarily disable the INT1 interrupt
+    outputPosition = storeReading(ch);                                          //store the reading and return the outputPosition pointer
+    write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);        //save display flags    
 
-    IEC1bits.INT1IE = 1; //re-enable the INT1 interrupt
+    IEC1bits.INT1IE = 1;                                                        //re-enable the INT1 interrupt
     Nop();
 
-    _3VX_off(); //power-down the analog circuitry
-    //config_Ports_Low_Power();
-    U1MODEbits.UARTEN=1;                                                        //Re-enable the COM PORT    REV CF
-    U1STAbits.UTXEN=1;                                                          //Re-enable the COM PORT    REV CF
-    //if ((LC2CONTROL.flags.Monitor && (USB_PWR | !_232 | BT_CONNECT)) |        REM REV CE
-    //        (LC2CONTROL.flags.Monitor && (!USB_PWR | _232 | !BT_CONNECT) && LC2CONTROL.flags.NetEnabled && netTest == 1)) 
-    //if ((!LC2CONTROL2.flags2.Modbus && LC2CONTROL.flags.Monitor && (USB_PWR | !_232 | BT_CONNECT)) |  REM REV CH
-    //        (!LC2CONTROL2.flags2.Modbus && LC2CONTROL.flags.Monitor && (!USB_PWR | _232 | !BT_CONNECT) && LC2CONTROL.flags.NetEnabled && netTest == 1)) //REV CE  REM REV CH
-    if (!LC2CONTROL2.flags2.Modbus && LC2CONTROL.flags.Monitor && (USB_PWR | !_232 | BT_CONNECT))  //REV CH
+    _3VX_off();                                                                 //power-down the analog circuitry
+ 
+    U1MODEbits.UARTEN=1;                                                        //Re-enable the COM PORT    
+    U1STAbits.UTXEN=1;                                                          
+
+    if (!LC2CONTROL2.flags2.Modbus && LC2CONTROL.flags.Monitor && (USB_PWR | !_232 | BT_CONNECT))  
     {
-        IEC1bits.INT1IE = 0; //temporarily disable the INT1 interrupt
-        LC2CONTROL2.flags2.ID = 1; //set the ID flag                            //REM REV AA
-        displayReading(ch, outputPosition); //display the values stored in external FRAM
-        IEC1bits.INT1IE = 1; //re-enable the INT1 interrupt
+        IEC1bits.INT1IE = 0;                                                    //temporarily disable the INT1 interrupt
+        LC2CONTROL2.flags2.ID = 1;                                              //set the ID flag                            
+        displayReading(ch, outputPosition);                                     //display the values stored in external FRAM
+        IEC1bits.INT1IE = 1;                                                    //re-enable the INT1 interrupt
     }
 
-    DISPLAY_CONTROL.flags.TakingReading = 0; //clear the TakingReading flag
+    DISPLAY_CONTROL.flags.TakingReading = 0;                                    //clear the TakingReading flag
     write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);        //store flags in FRAM 
-    VWflagsbits.firstReading=0;                                                 //REV 1.1
-    //TEST REM REV 0 11/30:
-    //if ((LC2CONTROL.flags.LoggingStopTime && (TotalStopSeconds == seconds_since_midnight)) | //logging scheduled to stop?
-      //      (memoryStatus >= maxSingleVW && outputPosition == 1 && !DISPLAY_CONTROL.flags.WrapMemory)) //stop logging when memory full?
-        //stopLogging(); //yes
-
-    if(store)                                                                   //REV N
-        checkSynch(ReadingTimeSeconds); //adjust time of next scheduled reading if necessary
+    VWflagsbits.firstReading=0;                                                 
     
-    if(store)                                                                   //force shutdown after reading if logging   REV CH
+    if ((LC2CONTROL.flags.LoggingStopTime && (TotalStopSeconds == seconds_since_midnight)) | //logging scheduled to stop?
+            (memoryStatus >= maxSingleVW && outputPosition == 1 && !DISPLAY_CONTROL.flags.WrapMemory)) //stop logging when memory full?
+        stopLogging();                                                          //yes
+
+    if(store)                                                                   
+        checkSynch(ReadingTimeSeconds);                                         //adjust time of next scheduled reading if necessary
+    
+    if(store)                                                                   //force shutdown after reading if logging   
         IFS3bits.T9IF=1;
 }
 
-//float take_reading(unsigned char gageType)                                      //take a reading, x is gage type    REM REV 1.1
-float take_reading(unsigned char gageType,int ch)                               //take a reading,ch is channel    REV 1.1
+float take_reading(unsigned char gageType,int ch)                               //take a reading,ch is channel    
 {
     unsigned int *ADC16Ptr;
-    unsigned int count=0;                                                       //REV M
-    unsigned int lithtemp=0;                                                    //REV M
-    unsigned int F_start=0;                                                     //REV 1.1
-    unsigned int F_stop=0;                                                      //REV 1.1
+    unsigned int count=0;                                                       
+    unsigned int lithtemp=0;                                                    
+    unsigned int F_start=0;                                                     
+    unsigned int F_stop=0;                                                      
 
     float digits = 0.0;
     float lithium = 0.0;
 
-    _3VX_on(); //power-up analog circuitry VER 6.0.0
+    _3VX_on();                                                                  //power-up analog circuitry 
 
-    if (gageType == 95) //lithium coin cell reading
+    if (gageType == 95)                                                         //lithium coin cell reading
     {
-        ADPCFG = 0; //ALL INPUTS are analog channels
-        SAMPLE_LITHIUM = 1; //sample the lithium battery		
-        delay(2000);                                                            //REV AE
-        ADC16Ptr = &ADCBUF0; //intialize ADCBUF pointer
-        SAMPLE_LITHIUM = 0; //turn off lithium battery sampling if on
+        ADPCFG = 0;                                                             //ALL INPUTS are analog channels
+        SAMPLE_LITHIUM = 1;                                                     //sample the lithium battery		
+        delay(2000);                                                            
+        ADC16Ptr = &ADCBUF0;                                                    //intialize ADCBUF pointer
+        SAMPLE_LITHIUM = 0;                                                     //turn off lithium battery sampling if on
 
-        for (count = 0; count < 16; count++) //totalize the values from the buffer
+        for (count = 0; count < 16; count++)                                    //totalize the values from the buffer
         {
             lithtemp = lithtemp + *ADC16Ptr++;
         }
 
-        lithtemp /= 16; //average the result
-        lithium = ((5.0 * lithtemp) / 4096.0); //convert to voltage	
-        return lithium; //return the averaged 12 bit value		
+        lithtemp /= 16;                                                         //average the result
+        lithium = ((5.0 * lithtemp) / 4096.0);                                  //convert to voltage	
+        return lithium;                                                         //return the averaged 12 bit value		
     }
 
 	//Determine and initiate Swept Frequency VW pluck
-	//if(gageType==0 | (gageType>=7 && gageType<=8))                              //VER 5.6.1   REM REV 1.1
-	//	pluck(400,4500,384);                                                    //400-4500 Hz Sweep REM REV 1.1
-
-    //if(VWflagsbits.firstReading | VWflagsbits.retry)                            //REM REV 1.1
-    if(VWflagsbits.retry)                                                       //REV 1.1
+    if(VWflagsbits.retry)                                                       //wideband sweep
     {
         if (gageType == 1)
-            pluck(1400, 3500, 384);                                                 //1400-3500 Hz Sweep  
+            pluck(1400, 3500, 384);                                             //1400-3500 Hz Sweep  
 
         if (gageType == 2)
-            pluck(2800, 4500, 384);                                                 //2800-4500 Hz Sweep
+            pluck(2800, 4500, 384);                                             //2800-4500 Hz Sweep
 
         if (gageType == 3)
-            pluck(400, 1200, 384);                                                  //400-1200 Hz Sweep
+            pluck(400, 1200, 384);                                              //400-1200 Hz Sweep
 
         if (gageType == 4)
-            pluck(1200, 2800, 384);                                                 //1200-2800 Hz Sweep
+            pluck(1200, 2800, 384);                                             //1200-2800 Hz Sweep
 
         if (gageType == 5)
-            pluck(2500, 4500, 384);                                                 //2500-4500 Hz Sweep
+            pluck(2500, 4500, 384);                                             //2500-4500 Hz Sweep
     
         if (gageType == 6)                                                          
-            pluck(800, 1600, 384);                                                  //800-1600 Hz Sweep    
+            pluck(800, 1600, 384);                                              //800-1600 Hz Sweep    
     }
-    else
+    else                                                                        //Narrowband sweep
     {
-        F=read_Int_FRAM(CH1Reading+(2*(ch-1)));                                 //get the previous whole # reading from FRAM  REV 1.1  
-        F_start=0.9*F;                                                        //TEST REM REV 1.1
-        F_stop=1.1*F;                                                         //TEST REM REV 1.1
-        //F_start=0.8*F;                                                         //TEST REV 1.1
-        //F_stop=1.2*F;                                                          //TEST REV 1.1
-        pluck(F_start,F_stop,384);                                              //+/- 10% TEST ONLY
+        F=read_Int_FRAM(CH1Reading+(2*(ch-1)));                                 //get the previous whole # reading from FRAM    
+        F_start=0.9*F;                                                        
+        F_stop=1.1*F;                                                         
+        pluck(F_start,F_stop,384);                                              //+/- 10% 
     }
      
-    //VWflagsbits.firstReading=0;                                                 //REV 1.1
-    
-    delay(80000);                                                               //30mS delay for PLL settling REV AE
+    delay(80000);                                                               //30mS delay for PLL settling 
     digits = read_vw();                                                         //get the VW digits
-    _3VX_off();                                                                 //power-down analog circuitry   VER 6.0.0
+    _3VX_off();                                                                 //power-down analog circuitry   
     return digits;                                                              //give it to take_One_Complete_Reading()
 }
 
 
 void testPoint(unsigned char tp, unsigned char cycles)
 {
-    int i=0;							//delay loop index
-    int c=0;							//cycle loop index
+    int i=0;                                                                    //delay loop index
+    int c=0;                                                                    //cycle loop index
 
     for(c;c<cycles;c++)
     {
-        switch(tp)						//bring test point high
+        switch(tp)                                                              //bring test point high
         {
             case 1:
                 TEST1=1;
@@ -17659,9 +17636,9 @@ void testPoint(unsigned char tp, unsigned char cycles)
         }
 	
 
-        for(i=0;i<10;i++){}					//short delay
+        for(i=0;i<10;i++){}                                                     //short delay
 
-        switch(tp)						//bring test point low
+        switch(tp)                                                              //bring test point low
         {
             case 1:
                 TEST1=0;
@@ -17673,27 +17650,23 @@ void testPoint(unsigned char tp, unsigned char cycles)
                 break;
         }
 
-        for(i=0;i<10;i++){}					//short delay
+        for(i=0;i<10;i++){}                                                     //short delay
     }
 
-    for(i=0;i<5;i++){}					//spacing between test points
+    for(i=0;i<5;i++){}                                                          //spacing between test points
 
 }
 
 
 void testPoint2(unsigned char cycles) {
-    //int i=0;							//delay loop index  REM VER 6.0.10
+
     int c = 0; //cycle loop index
 
     for (c; c < cycles; c++) {
-        _READ = 0; //bring testpoint low
-        //for(i=0;i<10;i++){}					//short delay   REM VER 6.0.10
-        //delay(100);                                                           //VER 6.0.10    REM REV AE
-        delay(400);                                                             //REV AE
-        _READ = 1; //bring testpoint high
-        //for(i=0;i<10;i++){}					//short delay   REM VER 6.0.10
-        //delay(100);                                                           //VER 6.0.10    REM REV AE
-        delay(400);                                                             //REV AE
+        _READ = 0;                                                              //bring testpoint low
+        delay(400);                                                             
+        _READ = 1;                                                              //bring testpoint high
+        delay(400);                                                             
     }
 
 }
@@ -17702,13 +17675,12 @@ void testReset(void)
 {
     _232SHDN=1;
     
-    //delay(1000);                                                              //REV D REM REV AE
-    delay(4000);                                                                //REV AE
+    delay(4000);                                                                
     
     if (RCONbits.TRAPR) 
     {
         RCONbits.TRAPR = 0;                                                     //clear the flag if set
-        if(OSCCONbits.CF)                                                        //Clock failure REV AE
+        if(OSCCONbits.CF)                                                       //Clock failure 
         {
             OSCCONbits.CF=0;
             putsUART1(oscfail);                                                 //    "Oscillator Failure has occurred."
@@ -17723,56 +17695,56 @@ void testReset(void)
 
     if (RCONbits.IOPUWR) 
     {
-        RCONbits.IOPUWR = 0; //clear the flag if set
-        putsUART1(iopuwr); //    "An Illegal Opcode, Illegal Address or Uninitialized W has occurred."
+        RCONbits.IOPUWR = 0;                                                    //clear the flag if set
+        putsUART1(iopuwr);                                                      //    "An Illegal Opcode, Illegal Address or Uninitialized W has occurred."
         while (BusyUART1());
         crlf();
     }
 
     if (RCONbits.EXTR) 
     {
-        RCONbits.EXTR = 0; //clear the flag if set
-        putsUART1(extr); //    "A Master Clear (pin) Reset has occurred."
+        RCONbits.EXTR = 0;                                                      //clear the flag if set
+        putsUART1(extr);                                                        //    "A Master Clear (pin) Reset has occurred."
         while (BusyUART1());
         crlf();
     }
 
     if (RCONbits.SWR) 
     {
-        RCONbits.SWR = 0; //clear the flag if set
-        putsUART1(swr); //    "A RESET Instruction has been executed."
+        RCONbits.SWR = 0;                                                       //clear the flag if set
+        putsUART1(swr);                                                         //    "A RESET Instruction has been executed."
         while (BusyUART1());
         crlf();
     }
 
     if (RCONbits.WDTO) 
     {
-        RCONbits.WDTO = 0; //clear the flag if set
-        putsUART1(wdto); //    "WDT Timeout has occurred."
+        RCONbits.WDTO = 0;                                                      //clear the flag if set
+        putsUART1(wdto);                                                        //    "WDT Timeout has occurred."
         while (BusyUART1());
         crlf();
     }
 
     if (RCONbits.SLEEP) 
     {
-        RCONbits.SLEEP = 0; //clear the flag if set        
-        putsUART1(sleep); //    "Device has been in Sleep mode."
+        RCONbits.SLEEP = 0;                                                     //clear the flag if set        
+        putsUART1(sleep);                                                       //    "Device has been in Sleep mode."
         while (BusyUART1());
         crlf();
     }
 
     if (RCONbits.BOR) 
     {
-        RCONbits.BOR = 0; //clear the flag if set        
-        putsUART1(bor); //    "A Brown-out Reset has occurred."
+        RCONbits.BOR = 0;                                                       //clear the flag if set        
+        putsUART1(bor);                                                         //    "A Brown-out Reset has occurred."
         while (BusyUART1());
         crlf();
     }
 
     if (RCONbits.POR) 
     {
-        RCONbits.POR = 0; //clear the flag if set        
-        putsUART1(por); //    "A Power-up Reset has occurred."
+        RCONbits.POR = 0;                                                       //clear the flag if set        
+        putsUART1(por);                                                         //    "A Power-up Reset has occurred."
         while (BusyUART1());
         crlf();
     }
@@ -17781,70 +17753,70 @@ void testReset(void)
 }
 
 void toBCD(unsigned char value) {
-    if (value >= 0 && value <= 9) //convert values 0-9 to 2 digit BCD
+    if (value >= 0 && value <= 9)                                               //convert values 0-9 to 2 digit BCD
     {
         BCDtens = 0;
         BCDones = value;
         return;
     }
 
-    if (value >= 10 && value <= 19) //convert values 10-19 to 2 digit BCD
+    if (value >= 10 && value <= 19)                                             //convert values 10-19 to 2 digit BCD
     {
         BCDtens = 1;
         BCDones = value - 10;
         return;
     }
 
-    if (value >= 20 && value <= 29) //convert values 20-29 to 2 digit BCD
+    if (value >= 20 && value <= 29)                                             //convert values 20-29 to 2 digit BCD
     {
         BCDtens = 2;
         BCDones = value - 20;
         return;
     }
 
-    if (value >= 30 && value <= 39) //convert values 30-39 to 2 digit BCD
+    if (value >= 30 && value <= 39)                                             //convert values 30-39 to 2 digit BCD
     {
         BCDtens = 3;
         BCDones = value - 30;
         return;
     }
 
-    if (value >= 40 && value <= 49) //convert values 40-49 to 2 digit BCD
+    if (value >= 40 && value <= 49)                                             //convert values 40-49 to 2 digit BCD
     {
         BCDtens = 4;
         BCDones = value - 40;
         return;
     }
 
-    if (value >= 50 && value <= 59) //convert values 50-59 to 2 digit BCD
+    if (value >= 50 && value <= 59)                                             //convert values 50-59 to 2 digit BCD
     {
         BCDtens = 5;
         BCDones = value - 50;
         return;
     }
 
-    if (value >= 60 && value <= 69) //convert values 60-69 to 2 digit BCD
+    if (value >= 60 && value <= 69)                                             //convert values 60-69 to 2 digit BCD
     {
         BCDtens = 6;
         BCDones = value - 60;
         return;
     }
 
-    if (value >= 70 && value <= 79) //convert values 70-79 to 2 digit BCD
+    if (value >= 70 && value <= 79)                                             //convert values 70-79 to 2 digit BCD
     {
         BCDtens = 7;
         BCDones = value - 70;
         return;
     }
 
-    if (value >= 80 && value <= 89) //convert values 80-89 to 2 digit BCD
+    if (value >= 80 && value <= 89)                                             //convert values 80-89 to 2 digit BCD
     {
         BCDtens = 8;
         BCDones = value - 80;
         return;
     }
 
-    if (value >= 90 && value <= 99) //convert values 90-99 to 2 digit BCD
+    if (value >= 90 && value <= 99)                                             //convert values 90-99 to 2 digit BCD
     {
         BCDtens = 9;
         BCDones = value - 90;
@@ -17854,19 +17826,19 @@ void toBCD(unsigned char value) {
 
 }
 
-unsigned int toJulian(void) //convert mm/dd to day of year (julian) with 
-{ //leap year correction
+unsigned int toJulian(void)                                                     //convert mm/dd to day of year (julian) with 
+{                                                                               //leap year correction
     unsigned int DayOfYear;
     unsigned int offset;
 
 
-    LC2CONTROL.flags.LeapYear = 0; //clear the leap year flag
+    LC2CONTROL.flags.LeapYear = 0;                                              //clear the leap year flag
 
-    if (year % 4 == 0) //is It a leap year?
-        LC2CONTROL.flags.LeapYear = 1; //set flag if it is
+    if (year % 4 == 0)                                                          //is It a leap year?
+        LC2CONTROL.flags.LeapYear = 1;                                          //set flag if it is
 
     if (!LC2CONTROL.flags.LeapYear) {
-        switch (month) //determine day of year offset - not a leap year
+        switch (month)                                                          //determine day of year offset - not a leap year
         {
             case 1:
                 offset = 0;
@@ -17907,9 +17879,9 @@ unsigned int toJulian(void) //convert mm/dd to day of year (julian) with
             default:
                 return;
                 break;
-        } //end of switch(RTCmonths)
+        }                                                                       //end of switch(RTCmonths)
     } else {
-        switch (month) //determine day of year offset - leap year
+        switch (month)                                                          //determine day of year offset - leap year
         {
             case 1:
                 offset = 0;
@@ -17950,216 +17922,216 @@ unsigned int toJulian(void) //convert mm/dd to day of year (julian) with
             default:
                 return;
                 break;
-        } //end of switch(RTCmonths)
+        }                                                                       //end of switch(RTCmonths)
     }
 
     DayOfYear = day + offset;
-    return DayOfYear; //exit and return day of year
+    return DayOfYear;                                                           //exit and return day of year
 }
 
 unsigned char toMonthDay(unsigned int julian, unsigned int year, unsigned char x) //x:0=day,1=month
 {
 
-    if (year % 4 == 0) //leap year?
-        LC2CONTROL.flags.LeapYear = 1; //set the leap year flag
+    if (year % 4 == 0)                                                          //leap year?
+        LC2CONTROL.flags.LeapYear = 1;                                          //set the leap year flag
     else
-        LC2CONTROL.flags.LeapYear = 0; //if not, clear the leap year flag
+        LC2CONTROL.flags.LeapYear = 0;                                          //if not, clear the leap year flag
 
-    if (julian >= 1 && julian <= 31) //January
+    if (julian >= 1 && julian <= 31)                                            //January
     {
         if (x)
-            return 1; //return month
+            return 1;                                                           //return month
         else
-            return julian; //return day
+            return julian;                                                      //return day
     }
 
-    if (!LC2CONTROL.flags.LeapYear) //Not a Leap Year
+    if (!LC2CONTROL.flags.LeapYear)                                             //Not a Leap Year
     {
-        if (julian >= 32 && julian <= 59) //February
+        if (julian >= 32 && julian <= 59)                                       //February
         {
             if (x)
-                return 2; //return month
+                return 2;                                                       //return month
             else
-                return julian - 31; //return day
+                return julian - 31;                                             //return day
         }
 
-        if (julian >= 60 && julian <= 90) //March
+        if (julian >= 60 && julian <= 90)                                       //March
         {
             if (x)
-                return 3; //return month
+                return 3;                                                       //return month
             else
-                return julian - 59; //return day
+                return julian - 59;                                             //return day
         }
 
-        if (julian >= 91 && julian <= 120) //April
+        if (julian >= 91 && julian <= 120)                                      //April
         {
             if (x)
-                return 4; //return month
+                return 4;                                                       //return month
             else
-                return julian - 90; //return day
+                return julian - 90;                                             //return day
         }
 
-        if (julian >= 121 && julian <= 151) //May
+        if (julian >= 121 && julian <= 151)                                     //May
         {
             if (x)
-                return 5; //return month
+                return 5;                                                       //return month
             else
-                return julian - 120; //return day
+                return julian - 120;                                            //return day
         }
 
-        if (julian >= 152 && julian <= 181) //June
+        if (julian >= 152 && julian <= 181)                                     //June
         {
             if (x)
-                return 6; //return month
+                return 6;                                                       //return month
             else
-                return julian - 151; //return day
+                return julian - 151;                                            //return day
         }
 
-        if (julian >= 182 && julian <= 212) //July
+        if (julian >= 182 && julian <= 212)                                     //July
         {
             if (x)
-                return 7; //return month
+                return 7;                                                       //return month
             else
-                return julian - 181; //return day
+                return julian - 181;                                            //return day
         }
 
-        if (julian >= 213 && julian <= 243) //August
+        if (julian >= 213 && julian <= 243)                                     //August
         {
             if (x)
-                return 8; //return month
+                return 8;                                                       //return month
             else
-                return julian - 212; //return day
+                return julian - 212;                                            //return day
         }
 
-        if (julian >= 244 && julian <= 273) //September
+        if (julian >= 244 && julian <= 273)                                     //September
         {
             if (x)
-                return 9; //return month
+                return 9;                                                       //return month
             else
-                return julian - 243; //return day
+                return julian - 243;                                            //return day
         }
 
-        if (julian >= 274 && julian <= 304) //October
+        if (julian >= 274 && julian <= 304)                                     //October
         {
             if (x)
-                return 10; //return month
+                return 10;                                                      //return month
             else
-                return julian - 273; //return day
+                return julian - 273;                                            //return day
         }
 
-        if (julian >= 305 && julian <= 334) //November
+        if (julian >= 305 && julian <= 334)                                     //November
         {
             if (x)
-                return 11; //return month
+                return 11;                                                      //return month
             else
-                return julian - 304; //return day
+                return julian - 304;                                            //return day
         }
 
-        if (julian >= 335 && julian <= 365) //December
+        if (julian >= 335 && julian <= 365)                                     //December
         {
             if (x)
-                return 12; //return month
+                return 12;                                                      //return month
             else
-                return julian - 334; //return day
+                return julian - 334;                                            //return day
         }
 
-    } else //Leap Year
+    } else                                                                      //Leap Year
     {
-        if (julian >= 32 && julian <= 60) //February
+        if (julian >= 32 && julian <= 60)                                       //February
         {
             if (x)
-                return 2; //return month
+                return 2;                                                       //return month
             else
-                return julian - 31; //return day
+                return julian - 31;                                             //return day
         }
 
-        if (julian >= 61 && julian <= 91) //March
+        if (julian >= 61 && julian <= 91)                                       //March
         {
             if (x)
-                return 3; //return month
+                return 3;                                                       //return month
             else
-                return julian - 60; //return day
+                return julian - 60;                                             //return day
         }
 
-        if (julian >= 92 && julian <= 121) //April
+        if (julian >= 92 && julian <= 121)                                      //April
         {
             if (x)
-                return 4; //return month
+                return 4;                                                       //return month
             else
-                return julian - 91; //return day
+                return julian - 91;                                             //return day
         }
 
-        if (julian >= 122 && julian <= 152) //May
+        if (julian >= 122 && julian <= 152)                                     //May
         {
             if (x)
-                return 5; //return month
+                return 5;                                                       //return month
             else
-                return julian - 121; //return day
+                return julian - 121;                                            //return day
         }
 
-        if (julian >= 153 && julian <= 182) //June
+        if (julian >= 153 && julian <= 182)                                     //June
         {
             if (x)
-                return 6; //return month
+                return 6;                                                       //return month
             else
-                return julian - 152; //return day
+                return julian - 152;                                            //return day
         }
 
-        if (julian >= 183 && julian <= 213) //July
+        if (julian >= 183 && julian <= 213)                                     //July
         {
             if (x)
-                return 7; //return month
+                return 7;                                                       //return month
             else
-                return julian - 182; //return day
+                return julian - 182;                                            //return day
         }
 
-        if (julian >= 214 && julian <= 244) //August
+        if (julian >= 214 && julian <= 244)                                     //August
         {
             if (x)
-                return 8; //return month
+                return 8;                                                       //return month
             else
-                return julian - 213; //return day
+                return julian - 213;                                            //return day
         }
 
-        if (julian >= 245 && julian <= 274) //September
+        if (julian >= 245 && julian <= 274)                                     //September
         {
             if (x)
-                return 9; //return month
+                return 9;                                                       //return month
             else
-                return julian - 244; //return day
+                return julian - 244;                                            //return day
         }
 
-        if (julian >= 275 && julian <= 305) //October
+        if (julian >= 275 && julian <= 305)                                     //October
         {
             if (x)
-                return 10; //return month
+                return 10;                                                      //return month
             else
-                return julian - 274; //return day
+                return julian - 274;                                            //return day
         }
 
-        if (julian >= 306 && julian <= 335) //November
+        if (julian >= 306 && julian <= 335)                                     //November
         {
             if (x)
-                return 11; //return month
+                return 11;                                                      //return month
             else
-                return julian - 305; //return day
+                return julian - 305;                                            //return day
         }
 
-        if (julian >= 336 && julian <= 366) //December
+        if (julian >= 336 && julian <= 366)                                     //December
         {
             if (x)
-                return 12; //return month
+                return 12;                                                      //return month
             else
-                return julian - 335; //return day
+                return julian - 335;                                            //return day
         }
     }
 }
 
 void unpack(unsigned int data) {
-    Lbyte = data; //get LSB
-    data &= 0xFF00; //mask LSB
-    data /= 256; //right shift data 8 bits
-    Hbyte = data; //get MSB
+    Lbyte = data;                                                               //get LSB
+    data &= 0xFF00;                                                             //mask LSB
+    data /= 256;                                                                //right shift data 8 bits
+    Hbyte = data;                                                               //get MSB
 }
 
 void upD8RTCAlarm1(void) 
@@ -18225,7 +18197,6 @@ void upD8RTCAlarm1(void)
                 write_Int_FRAM(LogItRemain1address,LogItRemain1);               //store it to FRAM    
             if (MUX4_ENABLE.mflags.mux16_4 == Single) //VER 6.0.7
                 write_Int_FRAM(SingleLogItRemain1address,LogItRemain1);         //store it to FRAM    
-            //if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==TH8)       //if multichannel  
             if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
                 ScanInterval=read_longFRAM(LogIntLength1address);   
             if (MUX4_ENABLE.mflags.mux16_4 == Single) //VER 6.0.7
@@ -18251,7 +18222,6 @@ void upD8RTCAlarm1(void)
                 write_Int_FRAM(LogItRemain2address,LogItRemain2);               //store it to FRAM    
             if (MUX4_ENABLE.mflags.mux16_4 == Single) 
                 write_Int_FRAM(SingleLogItRemain2address,LogItRemain2);         //store it to FRAM    
-            //if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==TH8)       //if multichannel  REM VER 6.0.9
             if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
                 ScanInterval=read_longFRAM(LogIntLength2address);   
             if (MUX4_ENABLE.mflags.mux16_4 == Single) 
@@ -18262,7 +18232,6 @@ void upD8RTCAlarm1(void)
         //********************************LOG INTERVAL 3*****************************************
         while (LogIt3 == 0 && LogItRemain2 == -1 && LogItRemain1 == -1 && LogIt1 != 0 && LogIt2 != 0) //if 0, log indefinately at this Scan Interval	
         {
-            //if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==TH8)       //if multichannel  REM VER 6.0.9
             if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
                 ScanInterval=read_longFRAM(LogIntLength3address);    
             if (MUX4_ENABLE.mflags.mux16_4 == Single) 
@@ -18273,12 +18242,10 @@ void upD8RTCAlarm1(void)
         while (LogItRemain3>-1 && LogItRemain2 == -1 && LogItRemain1 == -1 && LogIt1 != 0 && LogIt2 != 0) //in interval 3?	
         {
             LogItRemain3 -= 1;                                                  //yes, so decrement the remaining intervals
-            //if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==TH8)       //if multichannel  REM VER 6.0.9
             if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
                 write_Int_FRAM(LogItRemain3address,LogItRemain3);               //store it to FRAM    
             if (MUX4_ENABLE.mflags.mux16_4 == Single) 
                 write_Int_FRAM(SingleLogItRemain3address,LogItRemain3);          //store it to FRAM    
-            //if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==TH8)       //if multichannel  REM VER 6.0.9
             if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
                 ScanInterval=read_longFRAM(LogIntLength3address);   
             if (MUX4_ENABLE.mflags.mux16_4 == Single) 
@@ -18289,7 +18256,6 @@ void upD8RTCAlarm1(void)
         //********************************LOG INTERVAL 4*****************************************
         while (LogIt4 == 0 && LogItRemain3 == -1 && LogItRemain2 == -1 && LogItRemain1 == -1 && LogIt1 != 0 && LogIt2 != 0 && LogIt3 != 0) //if 0, log indefinitely at this Scan Interval	
         {
-            //if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==TH8)       //if multichannel  REM VER 6.0.9
             if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
                 ScanInterval=read_longFRAM(LogIntLength4address);    
             if (MUX4_ENABLE.mflags.mux16_4 == Single) 
@@ -18300,12 +18266,10 @@ void upD8RTCAlarm1(void)
         while (LogItRemain4>-1 && LogItRemain3 == -1 && LogItRemain2 == -1 && LogItRemain1 == -1 && LogIt1 != 0 && LogIt2 != 0 && LogIt3 != 0)//in interval 4?	
         {
             LogItRemain4 -= 1;                                                  //yes, so decrement the remaining intervals
-            //if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==TH8)       //if multichannel  REM VER 6.0.9
             if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
                 write_Int_FRAM(LogItRemain4address,LogItRemain4);               //store it to FRAM    
             if (MUX4_ENABLE.mflags.mux16_4 == Single) 
-                write_Int_FRAM(SingleLogItRemain4address,LogItRemain4);          //store it to FRAM    
-                    //if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==TH8)       //if multichannel  REM VER 6.0.9
+                write_Int_FRAM(SingleLogItRemain4address,LogItRemain4);         //store it to FRAM    
             if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
                 ScanInterval=read_longFRAM(LogIntLength4address);   
             if (MUX4_ENABLE.mflags.mux16_4 == Single) 
@@ -18316,7 +18280,6 @@ void upD8RTCAlarm1(void)
         //********************************LOG INTERVAL 5*****************************************
         while (LogIt5 == 0 && LogItRemain4 == -1 && LogItRemain3 == -1 && LogItRemain2 == -1 && LogItRemain1 == -1 && LogIt1 != 0 && LogIt2 != 0 && LogIt3 != 0 && LogIt4 != 0) //if 0, log indefinately at this Scan Interval	
         {
-            //if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==TH8)       //if multichannel  REM VER 6.0.9
             if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
                 ScanInterval=read_longFRAM(LogIntLength5address);    
             if (MUX4_ENABLE.mflags.mux16_4 == Single) 
@@ -18327,12 +18290,10 @@ void upD8RTCAlarm1(void)
         while (LogItRemain5>-1 && LogItRemain4 == -1 && LogItRemain3 == -1 && LogItRemain2 == -1 && LogItRemain1 == -1 && LogIt1 != 0 && LogIt2 != 0 && LogIt3 != 0 && LogIt4 != 0) //in interval 5?	
         {
             LogItRemain5 -= 1;                                                  //yes, so decrement the remaining intervals
-            //if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==TH8)       //if multichannel  REM VER 6.0.9
             if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
                 write_Int_FRAM(LogItRemain5address,LogItRemain5);               //store it to FRAM`
             if (MUX4_ENABLE.mflags.mux16_4 == Single) 
                 write_Int_FRAM(SingleLogItRemain5address,LogItRemain5);          //store it to FRAM    
-            //if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==TH8)       //if multichannel  REM VER 6.0.9
             if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
                 ScanInterval=read_longFRAM(LogIntLength5address);   
             if (MUX4_ENABLE.mflags.mux16_4 == Single) 
@@ -18343,7 +18304,6 @@ void upD8RTCAlarm1(void)
         //********************************LOG INTERVAL 6*****************************************
         while (LogIt6 == 0 && LogItRemain5 == -1 && LogItRemain4 == -1 && LogItRemain3 == -1 && LogItRemain2 == -1 && LogItRemain1 == -1 && LogIt1 != 0 && LogIt2 != 0 && LogIt3 != 0 && LogIt4 != 0 && LogIt5 != 0) //if 0, log indefinately at this Scan Interval	 
         {
-            //if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==TH8)       //if multichannel  REM VER 6.0.9
             if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
                 ScanInterval=read_longFRAM(LogIntLength6address);    
             if (MUX4_ENABLE.mflags.mux16_4 == Single) 
@@ -18351,7 +18311,6 @@ void upD8RTCAlarm1(void)
             break;
         }
 
-        //if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==TH8)       //if multichannel  REM VER 6.0.9
         if (MUX4_ENABLE.mflags.mux16_4 != Single)                               //if multichannel   
             LogItRemain6=read_Int_FRAM(LogItRemain6address);                    //get the remaining intervals
         if (MUX4_ENABLE.mflags.mux16_4 == Single) 
@@ -18360,12 +18319,10 @@ void upD8RTCAlarm1(void)
         while (LogItRemain6>-1 && LogItRemain5 == -1 && LogItRemain4 == -1 && LogItRemain3 == -1 && LogItRemain2 == -1 && LogItRemain1 == -1 && LogIt1 != 0 && LogIt2 != 0 && LogIt3 != 0 && LogIt4 != 0 && LogIt5 != 0)//in interval 6?	
         {
             LogItRemain6 -= 1;                                                  //yes, so decrement the remaining intervals
-            //if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==TH8)       //if multichannel  REM VER 6.0.9
             if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
                 write_Int_FRAM(LogItRemain6address,LogItRemain6);               //store it to FRAM    
             if (MUX4_ENABLE.mflags.mux16_4 == Single) 
                 write_Int_FRAM(SingleLogItRemain6address,LogItRemain6);         //store it to FRAM    
-            //if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==TH8)       //if multichannel  REM VER 6.0.9
             if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
                 ScanInterval=read_longFRAM(LogIntLength6address);   
             if (MUX4_ENABLE.mflags.mux16_4 == Single) 
@@ -18378,110 +18335,78 @@ void upD8RTCAlarm1(void)
                 LogItRemain2 == -1 && LogItRemain1 == -1 && LogIt1 != 0 && LogIt2 != 0 && 
                 LogIt3 != 0 && LogIt4 != 0 && LogIt5 != 0 && LogIt6 != 0) 
         {
-            stopLogging(); //Stop Logging
-            reloadLogTable();                                                   //REV CI
+            stopLogging();                                                      //Stop Logging
+            reloadLogTable();                                                   
             return;
         }
 
     } 
     else 
-    { //no
+    {                                                                           //no
         ScanInterval = hms2s();
     }
 
     if (!(86400 % ScanInterval) && VWflagsbits.synch && DISPLAY_CONTROL.flags.Synch && !LC2CONTROL.flags.LoggingStartTime) //if scan interval is evenly divisible into
-    { //86400 and the first reading is being taken and the Synch flag is set
+    {                                                                           //86400 and the first reading is being taken and the Synch flag is set
         NewTime = synch(CurrentTimeSeconds, ScanInterval);
     } else {
         NewTime = CurrentTimeSeconds + ScanInterval;
     }
 
     if (NewTime <= CurrentTimeSeconds)
-        NewTime = CurrentTimeSeconds + ScanInterval; //In case synch'd time is current time or before current time
+        NewTime = CurrentTimeSeconds + ScanInterval;                            //In case synch'd time is current time or before current time
 
-    if (LC2CONTROL2.flags2.FirstReading) //is it the first reading?
+    if (LC2CONTROL2.flags2.FirstReading)                                        //is it the first reading?
     {
         if (MUX4_ENABLE.mflags.mux16_4 == VW32 | MUX4_ENABLE.mflags.mux16_4 == VW16) //32 or 16 channel mux    
         {
             if (NewTime <= (CurrentTimeSeconds + 20))
-                NewTime = NewTime + ScanInterval; //to make sure reading isn't skipped due to processing time
+                NewTime = NewTime + ScanInterval;                               //to make sure reading isn't skipped due to processing time
         }
 
-        if (MUX4_ENABLE.mflags.mux16_4 == VW4 | MUX4_ENABLE.mflags.mux16_4 == TH8) //4 or 8 channel mux     VER 6.0.7
+        if (MUX4_ENABLE.mflags.mux16_4 == VW4 | MUX4_ENABLE.mflags.mux16_4 == TH8) //4 or 8 channel mux     
         {
             if (NewTime <= (CurrentTimeSeconds + 6))
-                NewTime = NewTime + ScanInterval; //to make sure reading isn't skipped due to processing time
+                NewTime = NewTime + ScanInterval;                               //to make sure reading isn't skipped due to processing time
         }
 
-        if (MUX4_ENABLE.mflags.mux16_4 == TH32 | MUX4_ENABLE.mflags.mux16_4 == VW8) //8VW or 32TH channel mux    VER 6.0.9
+        if (MUX4_ENABLE.mflags.mux16_4 == TH32 | MUX4_ENABLE.mflags.mux16_4 == VW8) //8VW or 32TH channel mux    
         {
             if (NewTime <= (CurrentTimeSeconds + 10))
-                NewTime = NewTime + ScanInterval; //to make sure reading isn't skipped due to processing time
+                NewTime = NewTime + ScanInterval;                               //to make sure reading isn't skipped due to processing time
         }
 
-        if (MUX4_ENABLE.mflags.mux16_4 == Single) //single channel     VER 6.0.7
+        if (MUX4_ENABLE.mflags.mux16_4 == Single)                               //single channel     
         {
             if (NewTime == CurrentTimeSeconds)
-                NewTime = CurrentTimeSeconds + ScanInterval; //In case synch'd time is current time
+                NewTime = CurrentTimeSeconds + ScanInterval;                    //In case synch'd time is current time
 
-            if (NewTime == (CurrentTimeSeconds + 1)) //To make sure reading isn't skipped due
-                NewTime = NewTime + ScanInterval; //to processing time
+            if (NewTime == (CurrentTimeSeconds + 1))                            //To make sure reading isn't skipped due
+                NewTime = NewTime + ScanInterval;                               //to processing time
         }
 
-        LC2CONTROL2.flags2.FirstReading = 0; //clear the first reading flag 
-        write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);	//store flags in FRAM 
+        LC2CONTROL2.flags2.FirstReading = 0;                                    //clear the first reading flag 
+        write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);              //store flags in FRAM 
     }
 
 
-    if (NewTime >= 86400) //midnight rollover?
-        NewTime -= 86400; //compensate
+    if (NewTime >= 86400)                                                       //midnight rollover?
+        NewTime -= 86400;                                                       //compensate
 
-    hms(NewTime, 1); //update the RTC Alarm1 register
+    hms(NewTime, 1);                                                            //update the RTC Alarm1 register
 }
 
-
-
-//REM REv J
-/*
-//***************************************************************************
-//							V_T2C()
-//
-//	Converts thermistor voltage to degrees C via 5th order polynomial
-//
-//	Parameters received: thermistor voltage
-//	Returns: temperature in degrees C
-//
-//	Called from: 
-//
-//***************************************************************************
-
-float V_T2C(float V_T) {
-    float tempfloat;
-
-    tempfloat =
-            (C0 //do 5th order polynomial
-            + (C1 * V_T) //and return result
-            + (C2 * V_T * V_T)
-            + (C3 * V_T * V_T * V_T)
-            + (C4 * V_T * V_T * V_T * V_T)
-            + (C5 * V_T * V_T * V_T * V_T * V_T));
-
-    return tempfloat;
-}
-*/
-
-//REV J:
 //***************************************************************************
 //							V_HT2C()
 //
 //	Converts high temp thermistor voltage to degrees C via Steinhart-Hart Log Equation
 //
-//	Parameters received: thermistor voltage
+//	Parameters received: thermistor voltage, channel
 //	Returns: temperature in degrees C
 //
 //
 //***************************************************************************
-float V_HT2C(float V, unsigned int ch)                                          //REV J
+float V_HT2C(float V, unsigned int ch)                                          
 {
 	double a=0.0;						
 	double b=0.0;
@@ -18497,52 +18422,26 @@ float V_HT2C(float V, unsigned int ch)                                          
 	double Rht=0.0;
 	double LogRht=0.0;
 	float T32bit=0.0;
-    unsigned long Thermtypeaddress=0;                                           //REV K
+    unsigned long Thermtypeaddress=0;                                           
 
-    //REM REV U:
-    /*
-    switch(MUX4_ENABLE.mflags.mux16_4)                                          //Get the therm type address    REV K
-    {
-        case Single:
-            //Thermtypeaddress=_4CHMuxCH1THaddress;                             //REM REV T
-            Thermtypeaddress=CH1THaddress;                                      //REV T
-            break;
-        case VW4:
-            //Thermtypeaddress=_4CHMuxCH1THaddress + (2*(ch-1));                //REM REV T
-            Thermtypeaddress=CH1THaddress + (2*(ch-1));                         //REV T
-            break;
-        case VW16:
-            //Thermtypeaddress=_16CHMuxCH1THaddress + (2*(ch-1));               //REM REV T
-            Thermtypeaddress=CH1THaddress + (2*(ch-1));                         //REV T
-            break;
-        //will need to add other thermistor setups TH8 and TH32 here as well
-        default:
-            //Thermtypeaddress=_4CHMuxCH1THaddress;                             //REM REV T
-            Thermtypeaddress=CH1THaddress;                                      //REV T
-    }
-    */
-    
-    Thermtypeaddress=CH1THaddress + (2*(ch-1));                                 //REV U
+    Thermtypeaddress=CH1THaddress + (2*(ch-1));                                 
 	Thermtype=read_Int_FRAM(Thermtypeaddress);
 
-	//if(Thermtype==0)                                                          //REM REV 1.8
-    if(Thermtype==1)                                                            //REV 1.8
+    if(Thermtype==1)                                                            
 	{
 		a=1.4051E-3;                                                            //coefficients for standard therm
 		b=2.369E-4;
 		c=1.019E-7;
 	}
 	else
-	//if(Thermtype==1)                                                          //REM REV 1.8
-    if(Thermtype==2)                                                            //REV 1.8
+    if(Thermtype==2)                                                            
 	{
 		a=1.02569E-3;                                                           //coefficients for high temp BR55KA822J therm
 		b=2.478265E-4;
 		c=1.289498E-7;
 	}
 	else
-	//if(Thermtype==2)                                                          //REM REV 1.8
-    if(Thermtype==3)                                                            //REV 1.8    
+    if(Thermtype==3)                                                                
 	{
 		a=1.12766979300187E-3;                                                  //coefficients for high temp 103JL1A therm
 		b=2.34444184128213E-4;
@@ -18570,16 +18469,13 @@ float V_HT2C(float V, unsigned int ch)                                          
 //	Get the natural log of the Rht:
 	LogRht=log(Rht);
 
-//	
-	//if(Thermtype==0 | Thermtype==1)                                           //REM REV 1.8
-    if(Thermtype==1 | Thermtype==2)                                             //REV 1.8
+    if(Thermtype==1 | Thermtype==2)                                             
 	{
 	//	Plug LogRht into Steinhart-Hart Log Equation and return temperature(C):
 		T=(1/(a+(b*LogRht)+(c*(LogRht*LogRht*LogRht))))-273.2;
 	}
 
-	//if(Thermtype==2)                                                          //REM REV 1.8
-    if(Thermtype==3)                                                            //REV 1.8
+    if(Thermtype==3)                                                            
 	{
 	//	Plug LogRht into Steinhart-Hart Log Equation and return temperature(C):
 		T=(1/(a+(b*LogRht)+(c*(LogRht*LogRht*LogRht)+(d*(LogRht*LogRht*LogRht*LogRht*LogRht)))))-273.2;
@@ -18591,7 +18487,7 @@ float V_HT2C(float V, unsigned int ch)                                          
 		return T32bit;
 }
 
-unsigned int vwf32toINT16(float value)                                          //REV 1.1
+unsigned int vwf32toINT16(float value)                                          
 {
 	int chars=0;
 	char decBUF[8];
@@ -18607,7 +18503,7 @@ unsigned int vwf32toINT16(float value)                                          
         decBUF[chars]=0;                                                        //initialize buffer
     }
     
-	chars=sprintf(decBUF,"%.0f",value);                                          //convert float value to ascii string	
+	chars=sprintf(decBUF,"%.0f",value);                                         //convert float value to ascii string	
 
     if(chars==3)
     {
@@ -18632,15 +18528,15 @@ unsigned int vwf32toINT16(float value)                                          
     }    
 
 	DEC_VWF.vwf.whole=10000*tenthousands+1000*thousands+100*hundreds+10*tens+ones;	//store whole number value in DEC_TEMP
-	return DEC_VWF.decimalvw;					//return the 16 bit value
+	return DEC_VWF.decimalvw;                                                   //return the 16 bit value
 }
 
-void wait(void) //VER 6.0.2
+void wait(void) 
 {
     unsigned char t = 0;
 
-    //ClrWdt();                                                                 TEST REM REV CF
-    //WDTSWEnable;                                                               //Start WDT    TEST REM REV CF
+    ClrWdt();                                                                 
+    WDTSWEnable;                                                                //Start WDT    
 
     while (!t) {
         RxData = ReadUART1();
@@ -18648,97 +18544,95 @@ void wait(void) //VER 6.0.2
         if (RxData == xon)
             t = 1;
     }
-    //WDTSWDisable;                                                               //Stop WDT    TEST REM REV CF
+    WDTSWDisable;                                                               //Stop WDT    
 }
 
 void wait2S(void) 
 {
-    //unsigned long point1S = 73728;                                            //delay Tcy value for 0.1S  REM REV AE
-    unsigned long point1S = 294912;                                             //delay Tcy value for 0.1S  REV AE                  
+    unsigned long point1S = 294912;                                             //delay Tcy value for 0.1S                    
     unsigned int i = 0;
 
-    Blink(1);                                                                   //REV Z
-    for (i = 0; i < 20; i++) //delay 2S and blink LED
+    Blink(1);                                                                   
+    for (i = 0; i < 20; i++)                                                    //delay 2S and blink LED
     {
-        //Blink(1);                                                             //REM REV Z
         delay(point1S);
     }
 
 
 }
 
-void wrap_one(void)                                                             //REV CC
+void wrap_one(void)                                                             
 {
     shutdownTimer(TimeOut);                                                     //Reset 15S timer   
     DISPLAY_CONTROL.flags.WrapMemory = 1;                                       //set the wrap memory flag
-    write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);        //store flags in FRAM`
-    S_1.status1flags._Wrap=1;                                                    //Set the MODBUS status flag    F
+    write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);        //store flags in FRAM
+    S_1.status1flags._Wrap=1;                                                   //Set the MODBUS status flag    
     write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);          
 }
 
-void wrap_stop(void) //VER 6.0.12
+void wrap_stop(void) 
 {                                                                               //memory full
-    outputPosition = 1; //reset outputPosition pointer
-    if (!DISPLAY_CONTROL.flags.WrapMemory) //is logging to stop when memory is full
+    outputPosition = 1;                                                         //reset outputPosition pointer
+    if (!DISPLAY_CONTROL.flags.WrapMemory)                                      //is logging to stop when memory is full
     {
-        stopLogging(); //YES
+        stopLogging();                                                          //YES
     }
 }
 
-void wrap_zero(void)                                                            //REV CC
+void wrap_zero(void)                                                            
 {
     shutdownTimer(TimeOut);                                                     //Reset 15S timer   
     DISPLAY_CONTROL.flags.WrapMemory = 0;                                       //clear the wrap memory flag
     write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);        //store flags in FRAM 
-    S_1.status1flags._Wrap=0;                                                    //Clear the MODBUS status flag    
+    S_1.status1flags._Wrap=0;                                                   //Clear the MODBUS status flag    
     write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);    
 }
 
-void WRITE_TIME(void)                                                           //REV CG
+void WRITE_TIME(void)                                                           
 {
     unsigned int    clockdata=0;
     
-    clockdata=read_Int_FRAM(RTCYearsaddress);                                          //get the years
+    clockdata=read_Int_FRAM(RTCYearsaddress);                                   //get the years
     RTCyears=clockdata;
     setClock(RTCYearsAddress, RTCyears);                                        //load it into the RTC
     
-    clockdata=read_Int_FRAM(RTCMonthsaddress);                                         //get the months
+    clockdata=read_Int_FRAM(RTCMonthsaddress);                                  //get the months
     RTCmonths=clockdata;
     setClock(RTCMonthsAddress, RTCmonths);                                      //load it into the RTC
     
-    clockdata=read_Int_FRAM(RTCDaysaddress);                                           //get the days
+    clockdata=read_Int_FRAM(RTCDaysaddress);                                    //get the days
     RTCdays=clockdata;
     setClock(RTCDaysAddress, RTCdays);                                          //load it into the RTC
 
-    clockdata=read_Int_FRAM(RTCHoursaddress);                                          //get the hours
+    clockdata=read_Int_FRAM(RTCHoursaddress);                                   //get the hours
     RTChours=clockdata;
     setClock(RTCHoursAddress, RTChours);                                        //load it into the RTC
     
-    clockdata=read_Int_FRAM(RTCMinutesaddress);                                        //get the minutes
+    clockdata=read_Int_FRAM(RTCMinutesaddress);                                 //get the minutes
     RTCminutes=clockdata;
     setClock(RTCMinutesAddress, RTCminutes);                                    //load it into the RTC
     
-    clockdata=read_Int_FRAM(RTCSecondsaddress);                                        //get the seconds
+    clockdata=read_Int_FRAM(RTCSecondsaddress);                                 //get the seconds
     RTCseconds=clockdata;
     setClock(RTCSecondsAddress, RTCseconds);                                    //load it into the RTC
 }
 
-void X(void)                                                                    //REV CE
+void X(void)                                                                    
 {
-    LC2CONTROL2.flags2.X = 1; //set the 'X' flag
-    LC2CONTROL2.flags2.Interrupt = 0; //clear the INT2 interrupt flag	
-    VWflagsbits.firstReading=1;                                                 //REV 1.1
-    take_One_Complete_Reading(NOSTORE); //take a reading    VER 6.0.13
-    VWflagsbits.firstReading=0;                                                 //REV 1.1
-    LC2CONTROL2.flags2.X = 0; //clear the 'X' flag	
+    LC2CONTROL2.flags2.X = 1;                                                   //set the 'X' flag
+    LC2CONTROL2.flags2.Interrupt = 0;                                           //clear the INT2 interrupt flag	
+    VWflagsbits.firstReading=1;                                                 
+    take_One_Complete_Reading(NOSTORE);                                         //take a reading    
+    VWflagsbits.firstReading=0;                                                 
+    LC2CONTROL2.flags2.X = 0;                                                   //clear the 'X' flag	
 
-    INTCON1bits.NSTDIS = 0; //Reset nesting of interrupts 
+    INTCON1bits.NSTDIS = 0;                                                     //Reset nesting of interrupts 
 
-    RxData = ReadUART1(); //clear the UART buffer	
-    RxData = ReadUART1(); //clear the UART buffer	
-    RxData = ReadUART1(); //clear the UART buffer	
-    RxData = ReadUART1(); //clear the UART buffer
-    RxData = cr; //load <CR> into RxData	
+    RxData = ReadUART1();                                                       //clear the UART buffer	
+    RxData = ReadUART1();                                                       //clear the UART buffer	
+    RxData = ReadUART1();                                                       //clear the UART buffer	
+    RxData = ReadUART1();                                                       //clear the UART buffer
+    RxData = cr;                                                                //load <CR> into RxData	
 }
 
 
