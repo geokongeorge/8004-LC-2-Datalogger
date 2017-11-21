@@ -12127,27 +12127,24 @@ float getFrequency(void)
 {
 	unsigned long VWcount=0;
 	float frequency=0.0;
-	float frequencyTotal=0.0;                                                   //VER 5.8.1.3
-	unsigned int i=0;                                                           //VER 5.8.1.3
-	unsigned int loopsTotal=1;                                                  //TEST REM REV 1.6
-    //unsigned int loopsTotal=2;                                                 //REM REV 1.7
-    unsigned int AGC=0;                                                         //REV DA 
+	float frequencyTotal=0.0;                                                   
+	unsigned int i=0;                                                           
+	unsigned int loopsTotal=1;                                                  
+    unsigned int AGC=0;                                                          
 	
-    //clockSwitch(0);                                                             //Switch to HS oscillator (Fcy=7.3728MHz)   REM REV 1.7
-    enableVWchannel(gageType);                                                  //configure the PLL and LPF TEST REV CF
+    enableVWchannel(gageType);                                                  //configure the PLL and LPF 
     configTimers(); 
     
-    TRISB=0x033D;                                                               //Configure PORTB   REV DA
-    LATB=0;                                                                     //REV DA
+    TRISB=0x033D;                                                               //Configure PORTB   
+    LATB=0;                                                                     
 
-    __delay32(mS100);                                                           //100mS delay for Signal Level Measurement   REV DA
-    AGC=take_analog_reading(98);                                                //Check the VW signal level   REV DA   
+    __delay32(mS100);                                                           //100mS delay for Signal Level Measurement   
+    AGC=take_analog_reading(98);                                                //Check the VW signal level      
     
-    if(AGC<VAGC_MIN)                                                            //if less than 2.25V threshold  REV DB
+    if(AGC<VAGC_MIN)                                                            //if less than 2.25V threshold  
     {
         disableTimers();
-        //clockSwitch(1);                                                         //Return to HSPLL oscillator (Fcy=29.4912MHz)   REM REV 1.7
-        return 0.0;                                                             //REV DA
+        return 0.0;                                                             
     }
    
 	for(i=0;i<loopsTotal;i++)
@@ -12157,37 +12154,31 @@ float getFrequency(void)
 		IFS1bits.T5IF=0;
         IFS3bits.T7IF=0;
         
-        TMR7=0;                                                                 //REV DA
-        VWcount=0;                                                              //REV DA
-		VWcountMSW=0;                                                           //clear the counter MSW register  REV O
+        TMR7=0;                                                                 
+        VWcount=0;                                                              
+		VWcountMSW=0;                                                           //clear the counter MSW register  
 		VWcountLSW=0;                                                           //clear the counter LSW register	
         PR7=0xFFFF;                                                             //load PR7 with max count  
-        //if(VWflagsbits.firstReading | VWflagsbits.retry)                        //REM REV 1.1
-        if(VWflagsbits.retry)                                                   //REV 1.1
+
+        if(VWflagsbits.retry)                                                   
         {
             PR4=mS64LSW;                                                           
             PR5=mS64MSW;                                                                       
         }
         else
         {
-            //PR4=mS256LSW;                                                     //REM REV 1.7                                                           
-            //PR5=mS256MSW;                                                     //REM REV 1.7
             PR4=mS512LSW;                                                       //REV 1.7                                                           
             PR5=mS512MSW;                                                       //REV 1.7
         }
-        //PR4=mS256LSW;                                                           //load PR4 with LSW	REM VER 5.8.1.3 REM REV DB
-		//PR5=mS256MSW;                                                           //load PR5 with MSW	REM VER 5.8.1.3 REM REV DB
-        //PR4=mS512LSW;                                                            //load PR4 with LSW	REV DB
-		//PR5=mS512MSW;                                                            //load PR5 with MSW	REV DB
+
         T7CONbits.TCS=1;                                                        //set to count external T7CKI clocks
 		IEC1bits.T5IE=1;                                                        //enable 512mS interrupt
-        INTCON1bits.NSTDIS=0;                                                   //enable interrupt nesting REV DB 
-        IPC7bits.T5IP=6;                                                        //set INT5 priority to 6  REV DB
-        IPC12bits.T7IP=7;                                                       //Set TMR7 interrupt priority to 7  REV DBO
-        IEC3bits.T7IE=1;                                                        //Enable TMR7 interrupt REV DB        
+        INTCON1bits.NSTDIS=0;                                                   //enable interrupt nesting  
+        IPC7bits.T5IP=6;                                                        //set INT5 priority to 6  
+        IPC12bits.T7IP=7;                                                       //Set TMR7 interrupt priority to 7  
+        IEC3bits.T7IE=1;                                                        //Enable TMR7 interrupt         
 
 		//Synchronize to VW:
-		//while(!VW100 && !IFS0bits.T1IF);                                        //wait while VW(100) is low   REV REV 1.1
 		while(VW100 && !IFS0bits.T1IF);                                         //wait while VW(100) is high
 		while(!VW100 && !IFS0bits.T1IF);                                        //wait while VW(100) is low
 
@@ -12196,48 +12187,39 @@ float getFrequency(void)
 		{
 			T4CONbits.TON=1;                                                    //start 256mS timer	
             
-            //MONITOR V_AGC AND CONTROL GAIN OF AGC AMP DURING F CAPTURE
-			//while(!IFS0bits.T1IF && CaptureFlag==0);                            //wait for 256mS gate to terminate or 300mS time out to occur REM REV CP
-
-            while(!IFS0bits.T1IF && CaptureFlag==0);                            //wait for 256mS gate to terminate or 300mS time out to occur    REV CP
+            while(!IFS0bits.T1IF && CaptureFlag==0);                            //wait for 256mS gate to terminate or 300mS time out to occur    
 
 			if(IFS0bits.T1IF)
             {
-                disableTimers();                                                //REV DA
-                //clockSwitch(1);                                                 //Return to HSPLL oscillator (Fcy=29.4912MHz)   REM REV 1.7
+                disableTimers();                                                
                 return 0;                                                       //timeout waiting for VW_100
             }
 
             T7CONbits.TON=0;                                                    //shut off counter
 			T4CONbits.TON=0;                                                    //shut off timer
 			CaptureFlag=0;                                                      //Reset captureFlag		
-			VWcount=(VWcountMSW*65536)+VWcountLSW;                              //Totalize counter  REV O
-            VWcount-=1;                                                         //TEST REM REV 1.7
+			VWcount=(VWcountMSW*65536)+VWcountLSW;                              //Totalize counter  
+            VWcount-=1;                                                         
 
-            //if(VWflagsbits.firstReading | VWflagsbits.retry)                    //REM REV 1.1
-            if(VWflagsbits.retry)                                               //REV 1.1
-                frequency=(VWcount/mS64)*10.0;                                  //convert to frequency	TEST REV 1.0
+            if(VWflagsbits.retry)                                               
+                frequency=(VWcount/mS64)*10.0;                                  //convert to frequency	
             else
-                //frequency=(VWcount/mS256)*10.0;                                 //convert to frequency	REM REV 1.7
-                frequency=(VWcount/mS512)*10.0;                                 //convert to frequency	REV 1.7
-			frequencyTotal=frequencyTotal+frequency;                            //VER 5.8.1.3
+                frequency=(VWcount/mS512)*10.0;                                 //convert to frequency	
+			frequencyTotal=frequencyTotal+frequency;                            
 
 		}
 	}
     
-    AGC=take_analog_reading(98);                                                //Check the VW signal level again  REV DA   
+    AGC=take_analog_reading(98);                                                //Check the VW signal level again     
     
-    if(AGC<VAGC_MIN)                                                            //if less than 2.25V threshold  REV DB
+    if(AGC<VAGC_MIN)                                                            //if less than 2.25V threshold  
     {
         disableTimers();
-        //clockSwitch(1);                                                         //Return to HSPLL oscillator (Fcy=29.4912MHz)   REM REV 1.7
-        return 0.0;                                                             //REV DA
+        return 0.0;                                                             
     }
     
-	frequency=frequencyTotal/(loopsTotal*1.0);                                  //VER 5.8.1.3
-	//shutdownTimer(TimeOut);                                                     //Reset 15S timer	REM REV Z
+	frequency=frequencyTotal/(loopsTotal*1.0);                                  
     disableTimers();
-    //clockSwitch(1);                                                             //Return to HSPLL oscillator (Fcy=29.4912MHz)   REM REV 1.7
 	return frequency;
 }
 
