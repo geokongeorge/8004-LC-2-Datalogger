@@ -16,9 +16,9 @@
 //	DATE:		11/20/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   1.10
-//	CHECKSUM:	0xa1d0 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x9605 (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8800/30720   29%
-//	PGM(FLASH)MEM:  184284/261888 70%
+//	PGM(FLASH)MEM:  184278/261888 70%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -16309,91 +16309,90 @@ unsigned int take_fast_analog_reading(void)
 
 void take_One_Complete_Reading(unsigned char store) 
 {
-    int ch; //for loop index
+    int ch;                                                                     //for loop index
     int ch_max;
     unsigned long outputPosition;
     unsigned long ReadingTimeSeconds;
     float batteryVoltage = 0.0;                                                 
-    float TEST12V=0.0;                                                          //REV Z
-    float extThermRaw=0.0;                                                      //REV J
-	float extThermProcessed=0.0;                                                //REV J
+    float TEST12V=0.0;                                                          
+    float extThermRaw=0.0;                                                      
+	float extThermProcessed=0.0;                                                
 
     
     
-    _3VX_on();                                                                  //power-up analog circuitry TEST REV U
-    U1MODEbits.UARTEN=0;                                                        //Disable the COM PORT  REV CF
+    _3VX_on();                                                                  //power-up analog circuitry 
+    U1MODEbits.UARTEN=0;                                                        //Disable the COM PORT  
   
-    if (store) //VER 6.0.13
+    if (store) 
     {
-        SLEEP12V = 0; //set regulator into switchmode when wake from sleep
-        LC2CONTROL.flags.ScanError = 0; //clear the flag
-        setClock(0x0F, 0); //Clear the RTC Alarm flags
-        ReadingTimeSeconds = RTChms2s(1); //get the current time from the RTC
-        DISPLAY_CONTROL.flags.TakingReading = 1; //set the TakingReading flag
+        SLEEP12V = 0;                                                           //set regulator into switchmode when wake from sleep
+        LC2CONTROL.flags.ScanError = 0;                                         //clear the flag
+        setClock(0x0F, 0);                                                      //Clear the RTC Alarm flags
+        ReadingTimeSeconds = RTChms2s(1);                                       //get the current time from the RTC
+        DISPLAY_CONTROL.flags.TakingReading = 1;                                //set the TakingReading flag
     }
 
-    IEC1bits.INT1IE = 0; //temporarily disable the INT1 interrupt
-    seconds_since_midnight = RTChms2s(1); //get the total seconds from RTC
-    RTCdays = readClock(RTCDaysAddress); //get the day from the RTC
-    RTCmonths = readClock(RTCMonthsAddress); //get the month from the RTC
-    RTCyears = readClock(RTCYearsAddress); //get the year from the RTC
-    IEC1bits.INT1IE = 1; //re-enable the INT2 interrupt
-    Nop();
-    Nop();
+    IEC1bits.INT1IE = 0;                                                        //temporarily disable the INT1 interrupt
+    seconds_since_midnight = RTChms2s(1);                                       //get the total seconds from RTC
+    RTCdays = readClock(RTCDaysAddress);                                        //get the day from the RTC
+    RTCmonths = readClock(RTCMonthsAddress);                                    //get the month from the RTC
+    RTCyears = readClock(RTCYearsAddress);                                      //get the year from the RTC
+    IEC1bits.INT1IE = 1;                                                        //re-enable the INT2 interrupt
 
     //Need to test if current time = Logging Stop Time and Stop Time is enabled
     //If it is then need to set Next Time to Read to Logging Start Time
-    if (store) //VER 6.0.13
+    
+    if (store) 
     {
-        upD8RTCAlarm1(); //determine and load next reading time
+        upD8RTCAlarm1();                                                        //determine and load next reading time
     } else 
     {
-        if (LC2CONTROL2.flags2.Interrupt) //did INT2 interrupt occur during this period?
+        if (LC2CONTROL2.flags2.Interrupt)                                       //did INT2 interrupt occur during this period?
         {
-            U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  REV CF
-            U1STAbits.UTXEN=1;                                                          //Re-enable the COM PORT    REV CF
-            return; //abort if it did
+            U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  
+            U1STAbits.UTXEN=1;                                                  
+            return;                                                             //abort if it did
         }
     }
 
-    year = RTCtoDecimal(RTCyears); //convert BCD RTC data to decimal
+    year = RTCtoDecimal(RTCyears);                                              //convert BCD RTC data to decimal
     month = RTCtoDecimal(RTCmonths);
     day = RTCtoDecimal(RTCdays);
-    julian = toJulian(); //convert date to decimal date
+    julian = toJulian();                                                        //convert date to decimal date
 
     if (store)
         restoreSettings();
 
 
-    IEC1bits.INT1IE = 0; //temporarily disable the INT2 interrupt
-    TotalStopSeconds=read_longFRAM(TotalStopSecondsaddress);                 //get the stored stop time    
-    LoggingStartDay=read_Int_FRAM(LoggingStartDayaddress);                     //Get the Logging Start day from FRAM   
-    IEC1bits.INT1IE = 1; //re-enable the INT2 interrupt
+    IEC1bits.INT1IE = 0;                                                        //temporarily disable the INT2 interrupt
+    TotalStopSeconds=read_longFRAM(TotalStopSecondsaddress);                    //get the stored stop time    
+    LoggingStartDay=read_Int_FRAM(LoggingStartDayaddress);                      //Get the Logging Start day from FRAM   
+    IEC1bits.INT1IE = 1;                                                        //re-enable the INT2 interrupt
     Nop();
     Nop();
 
     if (!store && LC2CONTROL2.flags2.Interrupt)
     {
-        U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  REV CF
-        U1STAbits.UTXEN=1;                                                          //Re-enable the COM PORT    REV CF
+        U1MODEbits.UARTEN=1;                                                    //Re-enable the COM PORT  
+        U1STAbits.UTXEN=1;                                                      
         return;
     }
 
     if (store) 
     {
-        if (LoggingStartDay != day && TotalStopSeconds >= 86400) //Did midnight rollover occur?
+        if (LoggingStartDay != day && TotalStopSeconds >= 86400)                //Did midnight rollover occur?
         {
-            TotalStopSeconds -= 86400; //compensate TotalStopSeconds
-            write_longFRAM(TotalStopSeconds,TotalStopSecondsaddress);            //update FRAM   
+            TotalStopSeconds -= 86400;                                          //compensate TotalStopSeconds
+            write_longFRAM(TotalStopSeconds,TotalStopSecondsaddress);           //update FRAM   
         }
 
         if (LC2CONTROL.flags.LoggingStopTime && (TotalStopSeconds < seconds_since_midnight)) //if scheduled Stop Logging is enabled
         {   
-            DISPLAY_CONTROL.flags.TakingReading = 0; //Reset the Taking Reading flag  
-            write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);	//store flags in FRAM VER 6.0.13  
+            DISPLAY_CONTROL.flags.TakingReading = 0;                            //Reset the Taking Reading flag  
+            write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);//store flags in FRAM VER 6.0.13  
             stopLogging(); //and it's past the Stop Logging time
-            U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  REV CF
-            U1STAbits.UTXEN=1;                                                          //Re-enable the COM PORT    REV CF
+            U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  
+            U1STAbits.UTXEN=1;                                                  
             return;
         }
     } else 
@@ -16404,891 +16403,879 @@ void take_One_Complete_Reading(unsigned char store)
         }
     }
 
-    //Retrieve the settings from FRAM:                                          //REV K
-    MUX4_ENABLE.mux=read_Int_FRAM(MUX4_ENABLEflagsaddress);                     //REV K
-    MUX_ENABLE1_16.MUXen1_16=read_Int_FRAM(MUX_ENABLE1_16flagsaddress);         //REV K
-    MUX_ENABLE17_32.MUXen17_32=read_Int_FRAM(MUX_ENABLE17_32flagsaddress);      //REV K
-    MUX_CONVERSION1_16.MUXconv1_16=read_Int_FRAM(MUX_CONV1_16flagsaddress);     //REV K
-    MUX_CONVERSION17_32.MUXconv17_32=read_Int_FRAM(MUX_CONV17_32flagsaddress);  //REV K
+    //Retrieve the settings from FRAM:                                          
+    MUX4_ENABLE.mux=read_Int_FRAM(MUX4_ENABLEflagsaddress);                     
+    MUX_ENABLE1_16.MUXen1_16=read_Int_FRAM(MUX_ENABLE1_16flagsaddress);         
+    MUX_ENABLE17_32.MUXen17_32=read_Int_FRAM(MUX_ENABLE17_32flagsaddress);      
+    MUX_CONVERSION1_16.MUXconv1_16=read_Int_FRAM(MUX_CONV1_16flagsaddress);     
+    MUX_CONVERSION17_32.MUXconv17_32=read_Int_FRAM(MUX_CONV17_32flagsaddress);  
     
     
     
     // TAKE VW READINGS:
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4 | MUX4_ENABLE.mflags.mux16_4 == VW16) //activate mux if multichannel  VER 6.0.7
-        MUX_RESET = 1; //set the MUX_RESET line high
+    if (MUX4_ENABLE.mflags.mux16_4 == VW4 | MUX4_ENABLE.mflags.mux16_4 == VW16) //activate mux if multichannel  
+        MUX_RESET = 1;                                                          //set the MUX_RESET line high
     if (MUX4_ENABLE.mflags.mux16_4 == TH8 | MUX4_ENABLE.mflags.mux16_4 == TH32 |
-            MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW32) //if 8 or 32 channel mux  VER 6.0.9
-        MUX_CLOCK = 1; //set the MUX_CLOCK line High   VER 6.0.6
+            MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW32) //if 8 or 32 channel mux  
+        MUX_CLOCK = 1;                                                          //set the MUX_CLOCK line High   
     
-    delay(11000);                                                               //4mS delay between ENABLE & 1st CLOCK  REV DC
+    delay(11000);                                                               //4mS delay between ENABLE & 1st CLOCK  
 
-    if (MUX4_ENABLE.mflags.mux16_4 == Single) //single channel selected   VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //single channel selected   
         ch_max = 1;
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4) //4 channel mux selected    VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == VW4)                                      //4 channel mux selected    
         ch_max = 4;
-    if (MUX4_ENABLE.mflags.mux16_4 == VW8) //8 channel mux selected    VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == VW8)                                      //8 channel mux selected    
         ch_max = 8;
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16) //16 channel mux selected   VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == VW16)                                     //16 channel mux selected   
         ch_max = 16;
-    if (MUX4_ENABLE.mflags.mux16_4 == VW32) //32 channel mux selected    VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == VW32)                                     //32 channel mux selected    
         ch_max = 32;
-    if (MUX4_ENABLE.mflags.mux16_4 == TH8) //8 channel mux selected    VER 6.0.7
+    if (MUX4_ENABLE.mflags.mux16_4 == TH8)                                      //8 channel mux selected    
         ch_max = 8;
-    if (MUX4_ENABLE.mflags.mux16_4 == TH32) //32 channel mux selected    VER 6.0.9
+    if (MUX4_ENABLE.mflags.mux16_4 == TH32)                                     //32 channel mux selected    
         ch_max = 32;
 
-    for (ch = 1; ch <= ch_max; ch++) //mux loop
+    for (ch = 1; ch <= ch_max; ch++)                                            //mux loop
     {
-        if (MUX4_ENABLE.mflags.mux16_4 == VW4 | MUX4_ENABLE.mflags.mux16_4 == VW16) //activate mux if multichannel  VER 6.0.7
-            clockMux(10000); //double pulse clock the MUX
+        if (MUX4_ENABLE.mflags.mux16_4 == VW4 | MUX4_ENABLE.mflags.mux16_4 == VW16) //activate mux if multichannel  
+            clockMux(10000);                                                    //double pulse clock the MUX
         if (MUX4_ENABLE.mflags.mux16_4 == TH8 | MUX4_ENABLE.mflags.mux16_4 == TH32 |
-                MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW32) //if 8 or 32 channel mux  VER 6.0.9)  //8 or 32 channel mux VER 6.0.9
-            //clockThMux(10000); //REM REV DC
-            clockThMux(40000); //REV DC
-        MUX4_ENABLE.mflags.skip = 0; //clear channel skip flag
+                MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW32) //if 8 or 32 channel mux  
+            clockThMux(40000); 
+        MUX4_ENABLE.mflags.skip = 0;                                            //clear channel skip flag
 
         if (!store)
-            IEC1bits.INT1IE = 0; //temporarily disable the INT2 interrupt
+            IEC1bits.INT1IE = 0;                                                //temporarily disable the INT2 interrupt
         
-        VWreadingProcessed=-0.0;                                                //Store -0.0 to indicate channel is disabled    REV BI
-        extThermreading=0x0001;                                                 //Store -0.0 to indicate channel is disabled    REV BI
-        storeChannelReading(ch);                                                //store the reading REV BI
+        VWreadingProcessed=-0.0;                                                //Store -0.0 to indicate channel is disabled    
+        extThermreading=0x0001;                                                 //Store -0.0 to indicate channel is disabled    
+        storeChannelReading(ch);                                                //store the reading 
 
-        //if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32) //VER 6.0.9  REM REV 1.8
-        //{                                                                     REM REV 1.8
-        switch (ch) //load the channel parameters
+        switch (ch)                                                             //load the channel parameters
         {
-            case 1: //Channel 1
+            case 1:                                                             //Channel 1
                 
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                               //REV 1.8
-                        if(!THMUX_ENABLE1_16.t1flags.CH1)                           //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag REV 1.8
-                        break;                                                      //break out of switch(ch)   REV 1.8                            
-                    }                                                               //REV 1.8
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                               
+                        if(!THMUX_ENABLE1_16.t1flags.CH1)                       //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                               
 
-                    if (!MUX_ENABLE1_16.e1flags.CH1) //is channel disabled?
+                    if (!MUX_ENABLE1_16.e1flags.CH1)                            //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH1GTaddress);                  //load the gage type from internal FRAM
-                    /*REM REV CN:
-                    zeroReading=read_longFRAM(CH1ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_longFRAM(CH1GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_longFRAM(CH1GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_longFRAM(CH1PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_longFRAM(CH1PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_longFRAM(CH1PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
-                    */
-                    //REV CN:
-                    zeroReading=read_float(CH1ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH1GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH1GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH1PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH1PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH1PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH1GTaddress);                       //load the gage type from internal FRAM
+                    zeroReading=read_float(CH1ZRaddress);                       //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH1GFaddress);                        //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH1GOaddress);                        //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH1PolyCoAaddress);                      //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH1PolyCoBaddress);                      //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH1PolyCoCaddress);                      //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
 
-            case 2: //Channel 2
+            case 2:                                                             //Channel 2
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE1_16.t1flags.CH2)                       //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE1_16.t1flags.CH2)                       //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                               
 
-                    if (!MUX_ENABLE1_16.e1flags.CH2) //is channel disabled?
+                    if (!MUX_ENABLE1_16.e1flags.CH2)                            //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                     gageType=read_Int_FRAM(CH2GTaddress);                  //load the gage type from internal FRAM
-                     zeroReading=read_float(CH2ZRaddress);             //load the zero reading from internal FRAM
-                     gageFactor=read_float(CH2GFaddress);              //load the gage factor from internal FRAM
-                     gageOffset=read_float(CH2GOaddress);              //load the gage offset from internal FRAM
-                     polyCoA=read_float(CH2PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                     polyCoB=read_float(CH2PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                     polyCoC=read_float(CH2PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                     gageType=read_Int_FRAM(CH2GTaddress);                      //load the gage type from internal FRAM
+                     zeroReading=read_float(CH2ZRaddress);                      //load the zero reading from internal FRAM
+                     gageFactor=read_float(CH2GFaddress);                       //load the gage factor from internal FRAM
+                     gageOffset=read_float(CH2GOaddress);                       //load the gage offset from internal FRAM
+                     polyCoA=read_float(CH2PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                     polyCoB=read_float(CH2PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                     polyCoC=read_float(CH2PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
 
-                case 3: //Channel 3
+                case 3:                                                         //Channel 3
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE1_16.t1flags.CH3)                       //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                       
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE1_16.t1flags.CH3)                       //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                                 
 
-                    if (!MUX_ENABLE1_16.e1flags.CH3) //is channel disabled?
+                    if (!MUX_ENABLE1_16.e1flags.CH3)                            //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                     gageType=read_Int_FRAM(CH3GTaddress);                  //load the gage type from internal FRAM
-                     zeroReading=read_float(CH3ZRaddress);             //load the zero reading from internal FRAM
-                     gageFactor=read_float(CH3GFaddress);              //load the gage factor from internal FRAM
-                     gageOffset=read_float(CH3GOaddress);              //load the gage offset from internal FRAM
-                     polyCoA=read_float(CH3PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                     polyCoB=read_float(CH3PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                     polyCoC=read_float(CH3PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                     gageType=read_Int_FRAM(CH3GTaddress);                      //load the gage type from internal FRAM
+                     zeroReading=read_float(CH3ZRaddress);                      //load the zero reading from internal FRAM
+                     gageFactor=read_float(CH3GFaddress);                       //load the gage factor from internal FRAM
+                     gageOffset=read_float(CH3GOaddress);                       //load the gage offset from internal FRAM
+                     polyCoA=read_float(CH3PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                     polyCoB=read_float(CH3PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                     polyCoC=read_float(CH3PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
 
-                case 4: //Channel 4
+                case 4:                                                         //Channel 4
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE1_16.t1flags.CH4)                       //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                       
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE1_16.t1flags.CH4)                       //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                                  
 
-                    if (!MUX_ENABLE1_16.e1flags.CH4) //is channel disabled?
+                    if (!MUX_ENABLE1_16.e1flags.CH4)                            //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH4GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH4ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH4GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH4GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH4PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH4PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH4PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH4GTaddress);                       //load the gage type from internal FRAM
+                    zeroReading=read_float(CH4ZRaddress);                       //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH4GFaddress);                        //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH4GOaddress);                        //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH4PolyCoAaddress);                      //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH4PolyCoBaddress);                      //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH4PolyCoCaddress);                      //load the polynomial coefficient C from internal FRAM
                      
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
 
-                case 5:
+                case 5:                                                         //Channel 5
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE1_16.t1flags.CH5)                       //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                       
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE1_16.t1flags.CH5)                       //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                                 
 
-                    if (!MUX_ENABLE1_16.e1flags.CH5) //is channel disabled?
+                    if (!MUX_ENABLE1_16.e1flags.CH5)                            //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH5GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH5ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH5GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH5GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH5PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH5PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH5PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH5GTaddress);                       //load the gage type from internal FRAM
+                    zeroReading=read_float(CH5ZRaddress);                       //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH5GFaddress);                        //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH5GOaddress);                        //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH5PolyCoAaddress);                      //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH5PolyCoBaddress);                      //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH5PolyCoCaddress);                      //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
 
-                case 6: //Channel 6
+                case 6:                                                         //Channel 6
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE1_16.t1flags.CH6)                       //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                       
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE1_16.t1flags.CH6)                       //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                                  
 
-                    if (!MUX_ENABLE1_16.e1flags.CH6) //is channel disabled?
+                    if (!MUX_ENABLE1_16.e1flags.CH6)                            //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                     gageType=read_Int_FRAM(CH6GTaddress);                  //load the gage type from internal FRAM
-                     zeroReading=read_float(CH6ZRaddress);             //load the zero reading from internal FRAM
-                     gageFactor=read_float(CH6GFaddress);              //load the gage factor from internal FRAM
-                     gageOffset=read_float(CH6GOaddress);              //load the gage offset from internal FRAM
-                     polyCoA=read_float(CH6PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                     polyCoB=read_float(CH6PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                     polyCoC=read_float(CH6PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                     gageType=read_Int_FRAM(CH6GTaddress);                      //load the gage type from internal FRAM
+                     zeroReading=read_float(CH6ZRaddress);                      //load the zero reading from internal FRAM
+                     gageFactor=read_float(CH6GFaddress);                       //load the gage factor from internal FRAM
+                     gageOffset=read_float(CH6GOaddress);                       //load the gage offset from internal FRAM
+                     polyCoA=read_float(CH6PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                     polyCoB=read_float(CH6PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                     polyCoC=read_float(CH6PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                      
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
 
-                case 7: //Channel 7
+                case 7:                                                         //Channel 7
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE1_16.t1flags.CH7)                       //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                       
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE1_16.t1flags.CH7)                       //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                                  
 
-                    if (!MUX_ENABLE1_16.e1flags.CH7) //is channel disabled?
+                    if (!MUX_ENABLE1_16.e1flags.CH7)                            //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                    
-                    gageType=read_Int_FRAM(CH7GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH7ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH7GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH7GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH7PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH7PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH7PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH7GTaddress);                       //load the gage type from internal FRAM
+                    zeroReading=read_float(CH7ZRaddress);                       //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH7GFaddress);                        //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH7GOaddress);                        //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH7PolyCoAaddress);                      //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH7PolyCoBaddress);                      //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH7PolyCoCaddress);                      //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
 
-                case 8: //Channel 8
+                case 8:                                                         //Channel 8
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE1_16.t1flags.CH8)                       //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                       
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE1_16.t1flags.CH8)                       //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                                  
 
-                    if (!MUX_ENABLE1_16.e1flags.CH8) //is channel disabled?
+                    if (!MUX_ENABLE1_16.e1flags.CH8)                            //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH8GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH8ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH8GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH8GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH8PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH8PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH8PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH8GTaddress);                       //load the gage type from internal FRAM
+                    zeroReading=read_float(CH8ZRaddress);                       //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH8GFaddress);                        //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH8GOaddress);                        //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH8PolyCoAaddress);                      //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH8PolyCoBaddress);                      //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH8PolyCoCaddress);                      //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
 
-                case 9: //Channel 9
+                case 9:                                                         //Channel 9
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE1_16.t1flags.CH9)                       //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                       
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE1_16.t1flags.CH9)                       //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                                 
 
-                    if (!MUX_ENABLE1_16.e1flags.CH9) //is channel disabled?
+                    if (!MUX_ENABLE1_16.e1flags.CH9)                            //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH9GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH9ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH9GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH9GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH9PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH9PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH9PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH9GTaddress);                       //load the gage type from internal FRAM
+                    zeroReading=read_float(CH9ZRaddress);                       //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH9GFaddress);                        //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH9GOaddress);                        //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH9PolyCoAaddress);                      //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH9PolyCoBaddress);                      //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH9PolyCoCaddress);                      //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
-                case 10: //Channel 10
+                case 10:                                                        //Channel 10
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE1_16.t1flags.CH10)                      //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                       
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE1_16.t1flags.CH10)                      //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                                  
 
-                    if (!MUX_ENABLE1_16.e1flags.CH10) //is channel disabled?
+                    if (!MUX_ENABLE1_16.e1flags.CH10)                           //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH10GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH10ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH10GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH10GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH10PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH10PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH10PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH10GTaddress);                      //load the gage type from internal FRAM
+                    zeroReading=read_float(CH10ZRaddress);                      //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH10GFaddress);                       //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH10GOaddress);                       //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH10PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH10PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH10PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
-                case 11: //Channel 11
+                case 11:                                                        //Channel 11
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE1_16.t1flags.CH11)                      //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                       
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE1_16.t1flags.CH11)                      //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                                  
 
-                    if (!MUX_ENABLE1_16.e1flags.CH11) //is channel disabled?
+                    if (!MUX_ENABLE1_16.e1flags.CH11)                           //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH11GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH11ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH11GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH11GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH11PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH11PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH11PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH11GTaddress);                      //load the gage type from internal FRAM
+                    zeroReading=read_float(CH11ZRaddress);                      //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH11GFaddress);                       //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH11GOaddress);                       //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH11PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH11PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH11PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
-                case 12: //Channel 12
+                case 12:                                                        //Channel 12
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE1_16.t1flags.CH12)                      //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                       
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE1_16.t1flags.CH12)                      //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                                  
 
-                    if (!MUX_ENABLE1_16.e1flags.CH12) //is channel disabled?
+                    if (!MUX_ENABLE1_16.e1flags.CH12)                           //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH12GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH12ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH12GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH12GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH12PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH12PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH12PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH12GTaddress);                      //load the gage type from internal FRAM
+                    zeroReading=read_float(CH12ZRaddress);                      //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH12GFaddress);                       //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH12GOaddress);                       //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH12PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH12PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH12PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
-                case 13: //Channel 13
+                case 13:                                                        //Channel 13
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE1_16.t1flags.CH13)                      //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                       
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE1_16.t1flags.CH13)                      //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                              
+                    }                                                                                 
 
-                    if (!MUX_ENABLE1_16.e1flags.CH13) //is channel disabled?
+                    if (!MUX_ENABLE1_16.e1flags.CH13)                           //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH13GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH13ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH13GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH13GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH13PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH13PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH13PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH13GTaddress);                      //load the gage type from internal FRAM
+                    zeroReading=read_float(CH13ZRaddress);                      //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH13GFaddress);                       //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH13GOaddress);                       //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH13PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH13PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH13PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
-                case 14: //Channel 14
+                case 14:                                                        //Channel 14
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE1_16.t1flags.CH14)                      //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                       
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE1_16.t1flags.CH14)                      //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                                  
 
-                    if (!MUX_ENABLE1_16.e1flags.CH14) //is channel disabled?
+                    if (!MUX_ENABLE1_16.e1flags.CH14)                           //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH14GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH14ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH14GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH14GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH14PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH14PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH14PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH14GTaddress);                      //load the gage type from internal FRAM
+                    zeroReading=read_float(CH14ZRaddress);                      //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH14GFaddress);                       //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH14GOaddress);                       //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH14PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH14PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH14PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
-                case 15: //Channel 15
+                case 15:                                                        //Channel 15
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE1_16.t1flags.CH15)                      //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                       
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE1_16.t1flags.CH15)                      //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                                  
 
-                    if (!MUX_ENABLE1_16.e1flags.CH15) //is channel disabled?
+                    if (!MUX_ENABLE1_16.e1flags.CH15)                           //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH15GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH15ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH15GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH15GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH15PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH15PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH15PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH15GTaddress);                      //load the gage type from internal FRAM
+                    zeroReading=read_float(CH15ZRaddress);                      //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH15GFaddress);                       //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH15GOaddress);                       //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH15PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH15PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH15PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
-                case 16: //Channel 16
+                case 16:                                                        //Channel 16
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE1_16.t1flags.CH16)                      //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                       
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE1_16.t1flags.CH16)                      //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                                  
 
-                    if (!MUX_ENABLE1_16.e1flags.CH16) //is channel disabled?
+                    if (!MUX_ENABLE1_16.e1flags.CH16)                           //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH16GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH16ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH16GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH16GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH16PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH16PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH16PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH16GTaddress);                      //load the gage type from internal FRAM
+                    zeroReading=read_float(CH16ZRaddress);                      //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH16GFaddress);                       //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH16GOaddress);                       //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH16PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH16PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH16PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
 
-                case 17: //Channel 17
+                case 17:                                                        //Channel 17
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE17_32.t2flags.CH17)                     //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                       
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE17_32.t2flags.CH17)                     //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                                  
 
-                    if (!MUX_ENABLE17_32.e2flags.CH17) //is channel disabled?
+                    if (!MUX_ENABLE17_32.e2flags.CH17)                          //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH17GTaddress);                 //load the gage type from internal FRAM
-                    zeroReading=read_float(CH17ZRaddress);            //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH17GFaddress);             //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH17GOaddress);             //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH17PolyCoAaddress);           //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH17PolyCoBaddress);           //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH17PolyCoCaddress);           //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH17GTaddress);                      //load the gage type from internal FRAM
+                    zeroReading=read_float(CH17ZRaddress);                      //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH17GFaddress);                       //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH17GOaddress);                       //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH17PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH17PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH17PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
 
-                case 18: //Channel 18
+                case 18:                                                        //Channel 18
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE17_32.t2flags.CH18)                     //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE17_32.t2flags.CH18)                     //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                              
 
-                    if (!MUX_ENABLE17_32.e2flags.CH18) //is channel disabled?
+                    if (!MUX_ENABLE17_32.e2flags.CH18)                          //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH18GTaddress);                 //load the gage type from internal FRAM
-                    zeroReading=read_float(CH18ZRaddress);            //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH18GFaddress);             //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH18GOaddress);             //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH18PolyCoAaddress);           //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH18PolyCoBaddress);           //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH18PolyCoCaddress);           //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH18GTaddress);                      //load the gage type from internal FRAM
+                    zeroReading=read_float(CH18ZRaddress);                      //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH18GFaddress);                       //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH18GOaddress);                       //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH18PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH18PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH18PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
 
-                case 19: //Channel 19
+                case 19:                                                        //Channel 19
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE17_32.t2flags.CH19)                     //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE17_32.t2flags.CH19)                     //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                               
 
-                    if (!MUX_ENABLE17_32.e2flags.CH19) //is channel disabled?
+                    if (!MUX_ENABLE17_32.e2flags.CH19)                          //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH19GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH19ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH19GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH19GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH19PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH19PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH19PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH19GTaddress);                      //load the gage type from internal FRAM
+                    zeroReading=read_float(CH19ZRaddress);                      //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH19GFaddress);                       //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH19GOaddress);                       //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH19PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH19PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH19PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
 
-                case 20: //Channel 20
+                case 20:                                                        //Channel 20
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE17_32.t2flags.CH20)                     //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE17_32.t2flags.CH20)                     //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                               
 
-                    if (!MUX_ENABLE17_32.e2flags.CH20) //is channel disabled?
+                    if (!MUX_ENABLE17_32.e2flags.CH20)                          //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH20GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH20ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH20GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH20GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH20PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH20PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH20PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH20GTaddress);                      //load the gage type from internal FRAM
+                    zeroReading=read_float(CH20ZRaddress);                      //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH20GFaddress);                       //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH20GOaddress);                       //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH20PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH20PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH20PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
 
-                case 21: //Channel 21
+                case 21:                                                        //Channel 21
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE17_32.t2flags.CH21)                     //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE17_32.t2flags.CH21)                     //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                               
 
-                    if (!MUX_ENABLE17_32.e2flags.CH21) //is channel disabled?
+                    if (!MUX_ENABLE17_32.e2flags.CH21)                          //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                    
-                    gageType=read_Int_FRAM(CH21GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH21ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH21GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH21GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH21PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH21PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH21PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH21GTaddress);                      //load the gage type from internal FRAM
+                    zeroReading=read_float(CH21ZRaddress);                      //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH21GFaddress);                       //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH21GOaddress);                       //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH21PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH21PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH21PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
 
-                case 22: //Channel 22
+                case 22:                                                        //Channel 22
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE17_32.t2flags.CH22)                     //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE17_32.t2flags.CH22)                     //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                               
 
-                    if (!MUX_ENABLE17_32.e2flags.CH22) //is channel disabled?
+                    if (!MUX_ENABLE17_32.e2flags.CH22)                          //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH22GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH22ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH22GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH22GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH22PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH22PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH22PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH22GTaddress);                      //load the gage type from internal FRAM
+                    zeroReading=read_float(CH22ZRaddress);                      //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH22GFaddress);                       //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH22GOaddress);                       //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH22PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH22PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH22PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                      
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
 
-                case 23: //Channel 23
+                case 23:                                                        //Channel 23
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE17_32.t2flags.CH23)                     //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE17_32.t2flags.CH23)                     //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                               
 
-                    if (!MUX_ENABLE17_32.e2flags.CH23) //is channel disabled?
+                    if (!MUX_ENABLE17_32.e2flags.CH23)                          //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH23GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH23ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH23GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH23GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH23PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH23PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH23PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH23GTaddress);                      //load the gage type from internal FRAM
+                    zeroReading=read_float(CH23ZRaddress);                      //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH23GFaddress);                       //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH23GOaddress);                       //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH23PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH23PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH23PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
 
-                case 24: //Channel 24
+                case 24:                                                        //Channel 24
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE17_32.t2flags.CH24)                     //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE17_32.t2flags.CH24)                     //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                               
 
-                    if (!MUX_ENABLE17_32.e2flags.CH24) //is channel disabled?
+                    if (!MUX_ENABLE17_32.e2flags.CH24)                          //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH24GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH24ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH24GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH24GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH24PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH24PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH24PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH24GTaddress);                      //load the gage type from internal FRAM
+                    zeroReading=read_float(CH24ZRaddress);                      //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH24GFaddress);                       //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH24GOaddress);                       //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH24PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH24PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH24PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                    
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
 
-                case 25: //Channel 25
+                case 25:                                                        //Channel 25
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE17_32.t2flags.CH25)                     //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE17_32.t2flags.CH25)                     //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                               
 
-                    if (!MUX_ENABLE17_32.e2flags.CH25) //is channel disabled?
+                    if (!MUX_ENABLE17_32.e2flags.CH25)                          //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH25GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH25ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH25GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH25GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH25PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH25PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH25PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH25GTaddress);                      //load the gage type from internal FRAM
+                    zeroReading=read_float(CH25ZRaddress);                      //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH25GFaddress);                       //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH25GOaddress);                       //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH25PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH25PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH25PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
-                case 26: //Channel 26
+                case 26:                                                        //Channel 26
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE17_32.t2flags.CH26)                     //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE17_32.t2flags.CH26)                     //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                              
 
-                    if (!MUX_ENABLE17_32.e2flags.CH26) //is channel disabled?
+                    if (!MUX_ENABLE17_32.e2flags.CH26)                          //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH26GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH26ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH26GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH26GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH26PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH26PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH26PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH26GTaddress);                      //load the gage type from internal FRAM
+                    zeroReading=read_float(CH26ZRaddress);                      //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH26GFaddress);                       //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH26GOaddress);                       //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH26PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH26PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH26PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
-                case 27: //Channel 27
+                case 27:                                                        //Channel 27
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE17_32.t2flags.CH27)                     //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE17_32.t2flags.CH27)                     //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                               
 
-                    if (!MUX_ENABLE17_32.e2flags.CH27) //is channel disabled?
+                    if (!MUX_ENABLE17_32.e2flags.CH27)                          //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH27GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH27ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH27GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH27GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH27PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH27PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH27PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH27GTaddress);                      //load the gage type from internal FRAM
+                    zeroReading=read_float(CH27ZRaddress);                      //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH27GFaddress);                       //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH27GOaddress);                       //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH27PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH27PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH27PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
-                case 28: //Channel 28
+                case 28:                                                        //Channel 28
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE17_32.t2flags.CH28)                     //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE17_32.t2flags.CH28)                     //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                               
 
-                    if (!MUX_ENABLE17_32.e2flags.CH28) //is channel disabled?
+                    if (!MUX_ENABLE17_32.e2flags.CH28)                          //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH28GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH28ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH28GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH28GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH28PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH28PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH28PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH28GTaddress);                      //load the gage type from internal FRAM
+                    zeroReading=read_float(CH28ZRaddress);                      //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH28GFaddress);                       //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH28GOaddress);                       //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH28PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH28PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH28PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
-                case 29: //Channel 29
+                case 29:                                                        //Channel 29
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE17_32.t2flags.CH29)                     //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE17_32.t2flags.CH29)                     //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                               
 
-                    if (!MUX_ENABLE17_32.e2flags.CH29) //is channel disabled?
+                    if (!MUX_ENABLE17_32.e2flags.CH29)                          //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH29GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH29ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH29GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH29GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH29PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH29PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH29PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH29GTaddress);                      //load the gage type from internal FRAM
+                    zeroReading=read_float(CH29ZRaddress);                      //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH29GFaddress);                       //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH29GOaddress);                       //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH29PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH29PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH29PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
-                case 30: //Channel 30
+                case 30:                                                        //Channel 30
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE17_32.t2flags.CH30)                     //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE17_32.t2flags.CH30)                     //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                              
 
-                    if (!MUX_ENABLE17_32.e2flags.CH30) //is channel disabled?
+                    if (!MUX_ENABLE17_32.e2flags.CH30)                          //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH30GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH30ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH30GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH30GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH30PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH30PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH30PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH30GTaddress);                      //load the gage type from internal FRAM
+                    zeroReading=read_float(CH30ZRaddress);                      //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH30GFaddress);                       //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH30GOaddress);                       //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH30PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH30PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH30PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
-                case 31: //Channel 31
+                case 31:                                                        //Channel 31
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE17_32.t2flags.CH31)                     //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE17_32.t2flags.CH31)                     //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                               
 
-                    if (!MUX_ENABLE17_32.e2flags.CH31) //is channel disabled?
+                    if (!MUX_ENABLE17_32.e2flags.CH31)                          //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH31GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH31ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH31GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH31GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH31PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH31PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH31PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH31GTaddress);                      //load the gage type from internal FRAM
+                    zeroReading=read_float(CH31ZRaddress);                      //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH31GFaddress);                       //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH31GOaddress);                       //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH31PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH31PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH31PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
-                case 32: //Channel 32
+                case 32:                                                        //Channel 32
                     
-                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      //REV 1.8
-                    {                                                           //REV 1.8
-                        if(!THMUX_ENABLE17_32.t2flags.CH32)                     //Therm channel disabled    REV 1.8
-                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag REV 1.8
-                        break;                                                  //break out of switch(ch)   REV 1.8                            
-                    }                                                           //REV 1.8                    
+                    if(MUX4_ENABLE.mflags.mux16_4==TH8 | MUX4_ENABLE.mflags.mux16_4==TH32)      
+                    {                                                           
+                        if(!THMUX_ENABLE17_32.t2flags.CH32)                     //Therm channel disabled    
+                            MUX4_ENABLE.mflags.skip = 1;                        //set the skip flag 
+                        break;                                                  //break out of switch(ch)                               
+                    }                                                                               
 
-                    if (!MUX_ENABLE17_32.e2flags.CH32) //is channel disabled?
+                    if (!MUX_ENABLE17_32.e2flags.CH32)                          //is channel disabled?
                     {
-                        MUX4_ENABLE.mflags.skip = 1; //set the skip flag
-                        break; //break out of switch(ch)
+                        MUX4_ENABLE.mflags.skip = 1;                            //set the skip flag
+                        break;                                                  //break out of switch(ch)
                     }
                     
-                    gageType=read_Int_FRAM(CH32GTaddress);                  //load the gage type from internal FRAM
-                    zeroReading=read_float(CH32ZRaddress);             //load the zero reading from internal FRAM
-                    gageFactor=read_float(CH32GFaddress);              //load the gage factor from internal FRAM
-                    gageOffset=read_float(CH32GOaddress);              //load the gage offset from internal FRAM
-                    polyCoA=read_float(CH32PolyCoAaddress);            //load the polynomial coefficient A from internal FRAM
-                    polyCoB=read_float(CH32PolyCoBaddress);            //load the polynomial coefficient B from internal FRAM
-                    polyCoC=read_float(CH32PolyCoCaddress);            //load the polynomial coefficient C from internal FRAM
+                    gageType=read_Int_FRAM(CH32GTaddress);                      //load the gage type from internal FRAM
+                    zeroReading=read_float(CH32ZRaddress);                      //load the zero reading from internal FRAM
+                    gageFactor=read_float(CH32GFaddress);                       //load the gage factor from internal FRAM
+                    gageOffset=read_float(CH32GOaddress);                       //load the gage offset from internal FRAM
+                    polyCoA=read_float(CH32PolyCoAaddress);                     //load the polynomial coefficient A from internal FRAM
+                    polyCoB=read_float(CH32PolyCoBaddress);                     //load the polynomial coefficient B from internal FRAM
+                    polyCoC=read_float(CH32PolyCoCaddress);                     //load the polynomial coefficient C from internal FRAM
                     
-                    break; //break out of switch(ch)
+                    break;                                                      //break out of switch(ch)
 
                 default:
                     break;
 
-            } //end of switch(ch)
-        //}
+            }                                                                   //end of switch(ch)
+
 
         if (!store) 
         {
