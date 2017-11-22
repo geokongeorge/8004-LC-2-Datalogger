@@ -55,7 +55,7 @@ void shutdownTimer(unsigned int timerseconds)
 
     timerload=timerload-(timerseconds/tcy);                                     //compute value to count
 	
-    PMD3bits.T8MD=0;                                                            //Enable the module TEST REV B
+    PMD3bits.T8MD=0;                                                            //Enable the module 
     ConfigIntTimer89(T9_INT_PRIOR_1 & T9_INT_OFF);
     OpenTimer89(T8_ON & T8_GATE_OFF &                                           //Start Timer89
 		T8_PS_1_1 & T8_32BIT_MODE_ON & 
@@ -94,11 +94,6 @@ void shutdownTimerwithReset(unsigned int timerseconds)
 
 	timerload=timerload-(timerseconds/tcy);								//compute value to count
 	
-//	ConfigIntTimer45(T5_INT_PRIOR_7 & T5_INT_ON);
-//	OpenTimer45(T4_ON & T4_GATE_OFF & 						//Start Timer45
-//				T4_PS_1_1 & T4_32BIT_MODE_ON & 
-//				T4_SOURCE_INT, 0xFFFF);	
-//	WriteTimer45(timerload);								//load Timer45
 }
 
 
@@ -107,7 +102,6 @@ void shutdownTimerwithReset(unsigned int timerseconds)
 //***************************************************************************
 void StopshutdownTimer(void)
 {
-	//CloseTimer45();											//Stop Timer45
 }
 
 

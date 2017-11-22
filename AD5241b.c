@@ -30,8 +30,7 @@ unsigned char read_AD5241(void)
                             I2C2_STOP_DIS & I2C2_RESTART_DIS &
                             I2C2_START_DIS);
 
-    //unsigned int config2=0x44;                                                  //value for I2C2BRG at 400KHz    REM REV b
-    unsigned int config2=0x48;                                                  //value for I2C2BRG at 400KHz   REV b
+    unsigned int config2=0x48;                                                  //value for I2C2BRG at 400KHz   
     unsigned char potRead=0x59;                                                 //slave address for read
     unsigned char value=0;  
     
@@ -78,15 +77,12 @@ void write_AD5241(unsigned char tap)
                             I2C2_STOP_DIS & I2C2_RESTART_DIS &
                             I2C2_START_DIS);
 
-    //unsigned int config2=0x44;                                                  //value for I2C2BRG at 400KHz    REM REV b
-    unsigned int config2=0x48;                                                  //value for I2C2BRG at 400KHz   REV b
+    unsigned int config2=0x48;                                                  //value for I2C2BRG at 400KHz   
 
     unsigned char potWrite=0x58;                                                //slave address for write
-    //unsigned char potRead=0x59;                                                 //slave address for read
     unsigned char instByte=0x00;                                                //instruction byte
-    //unsigned char value=0;                                                      
 
-        __builtin_disi(0x3FFF);                                                 //Disable Interrupts    REV B
+        __builtin_disi(0x3FFF);                                                 //Disable Interrupts    
         OpenI2C2(config1, config2);                                             //open the I2C2 module
         IdleI2C2();                                                             //wait till bus is stable   
         
@@ -109,5 +105,5 @@ void write_AD5241(unsigned char tap)
         StopI2C2();
         while(I2C2CONbits.PEN);                                                 //wait till stop sequence is complete
         CloseI2C2();                                                            //close the I2C module
-        __builtin_disi(0x0000);                                                 //Re-enable interrupts  REV B        
+        __builtin_disi(0x0000);                                                 //Re-enable interrupts          
 }

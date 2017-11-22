@@ -18,7 +18,7 @@
 
 
 #include "LC8004extFRAM_i.h"                                                    //external FRAM function prototypes
-#include "LC8004delay_b.h"                                                      //TEST REV H
+#include "LC8004delay_b.h"                                                      
 #include <i2c.h>                                                                //I2C function prototypes
 #include <uart.h>                                                               //UART functions
 
@@ -71,12 +71,12 @@ typedef union                                                                   
 typedef union                                                                   //union for storing 32 bit long value in 16 bit FRAM registers
 {
 	
-	unsigned long l;                                                                     //32 bit long data REV I
+	unsigned long l;                                                                     //32 bit long data 
 	unsigned int e[2];                                                          // (2) 16 bit words of 32 bit data
 
 } tFRAMLong;
 
-extern void crlf(void);                                                         //REV I
+extern void crlf(void);                                                         
 extern float gageReading;
 extern unsigned long TESTSECONDS;
 unsigned long add=0;
@@ -84,10 +84,10 @@ extern unsigned char MSB;
 extern unsigned char LSB;                                                       
 extern unsigned char MMSB;                                                      
 extern unsigned char MMMSB; 
-char NackTest=0;                                                                 //REV G
+char NackTest=0;                                                                 
 char TEST=0;
-unsigned int config2read=0x18;                                                  //d64 value for I2C1BRG at 925KHz   REV H
-unsigned int config2write=0x18;                                                 //d64 value for I2C1BRG at 925KHz   REV H
+unsigned int config2read=0x18;                                                  //d64 value for I2C1BRG at 925KHz   
+unsigned int config2write=0x18;                                                 //d64 value for I2C1BRG at 925KHz   
 //******************************************************************************
 //                              displayError
 //
@@ -98,7 +98,7 @@ unsigned int config2write=0x18;                                                 
 //      Returns: nothing
 //
 //******************************************************************************
-void displayError(unsigned int fram)                                        //REV B
+void displayError(unsigned int fram)                                        
 {
     char errorAtU2[]={"U2 FAILURE!"};
     char errorAtU4[]={"U4 FAILURE!"};
@@ -148,16 +148,15 @@ void write_Int_FRAM(unsigned long absAdd, unsigned int data)
 
     for(writeloop=0;writeloop<2;writeloop++)
     {
-        //shutdownTimerwithReset(1);                                              //start the reset timer to reset if hangs TEST REM REV B
-        __builtin_disi(0x3FFF);                                                 //Disable Interrupts    REV B
-        OpenI2C1(config1, config2write);                                             //open the I2C1 module
-        IdleI2C1();                                                             //make sure bus is idle   REM REV B
+        __builtin_disi(0x3FFF);                                                 //Disable Interrupts    
+        OpenI2C1(config1, config2write);                                        //open the I2C1 module
+        IdleI2C1();                                                             //make sure bus is idle   
         StartI2C1();                                                            //transmit Start bit
         while(I2C1CONbits.SEN);                                                 //wait till start sequence is complete
 
-        do{                                                                     //REV G
-            NackTest=selectBank(absAdd,0);                                               //Select the appropriate FRAM   
-        }while(NackTest);                                                        //REV G
+        do{                                                                     
+            NackTest=selectBank(absAdd,0);                                      //Select the appropriate FRAM   
+        }while(NackTest);                                                        
 
         tempaddress.f=add;                                                      //convert 16 bit FRAM address into 2 bytes
 
@@ -167,7 +166,7 @@ void write_Int_FRAM(unsigned long absAdd, unsigned int data)
         
         if(writeloop==0)                                                        //Data MSB address
         {
-            MasterWriteI2C1(tempaddress.y[0]);                              //address low byte
+            MasterWriteI2C1(tempaddress.y[0]);                                  //address low byte
         }
         else
         if(writeloop==1)
@@ -182,24 +181,23 @@ void write_Int_FRAM(unsigned long absAdd, unsigned int data)
         //transmit the data
         if(writeloop==0)
         {
-            MasterWriteI2C1(tempdata.z[1]);                                     //write the data high byte to the 27LC512
+            MasterWriteI2C1(tempdata.z[1]);                                     //write the data high byte 
         }
         else
         if(writeloop==1)
         {
-            MasterWriteI2C1(tempdata.z[0]);                                     //write the data low byte to the 27CL512
+            MasterWriteI2C1(tempdata.z[0]);                                     //write the data low byte 
         }
         
         IdleI2C1();                                                             //wait till data high byte is transmitted 
         StopI2C1();
         while(I2C1CONbits.PEN);                                                 //wait till stop sequence is complete
         CloseI2C1();                                                            //close the I2C module    
-        __builtin_disi(0x0000);                                                 //Re-enable interrupts  REV B        
+        __builtin_disi(0x0000);                                                 //Re-enable interrupts          
     }                                                                           //end of for loop
 
     WP=1;                                                                       //Write protect the FRAM
-    return 0;                                                                   //Write was good    REV G
-    //StopshutdownTimer();                                                        //stop the reset timer
+    return 0;                                                                   //Write was good    
 }
 
 
@@ -231,78 +229,76 @@ unsigned int read_Int_FRAM(unsigned long absAdd)
                             I2C1_STOP_DIS & I2C1_RESTART_DIS &
                             I2C1_START_DIS);
 
-    //shutdownTimerwithReset(1);                                                //start the reset timer to reset if hangs   TEST REM REV B
-    __builtin_disi(0x3FFF);                                                     //Disable Interrupts    REV B
-    OpenI2C1(config1, config2read);                                                 //open the I2C1 module
+    __builtin_disi(0x3FFF);                                                     //Disable Interrupts    
+    OpenI2C1(config1, config2read);                                             //open the I2C1 module
     IdleI2C1();                                                                 //make sure bus is idle 
     StartI2C1();                                                                //transmit Start bit
     while(I2C1CONbits.SEN);                                                     //wait till start sequence is complete
 
     for(readloop=0;readloop<2;readloop++)
     {
-        do{                                                                     //REV G
-            NackTest=selectBank(absAdd,0);                                       //select the appropriate FRAM   
-        }while(NackTest);                                                        //REV G
+        do{                                                                     
+            NackTest=selectBank(absAdd,0);                                      //select the appropriate FRAM   
+        }while(NackTest);                                                        
 
         IdleI2C1();                                                             //wait till write is done
         while(I2C1STATbits.TRSTAT);
-        tempaddress.f=add;                                                          //convert 16 bit FRAM address into 2 bytes
+        tempaddress.f=add;                                                      //convert 16 bit FRAM address into 2 bytes
 
         //transmit the address:
-        MasterWriteI2C1(tempaddress.y[1]);                                          //address high byte
-        IdleI2C1();                                                                 //wait till write is done  
+        MasterWriteI2C1(tempaddress.y[1]);                                      //address high byte
+        IdleI2C1();                                                             //wait till write is done  
         while(I2C1STATbits.TRSTAT);
-        delay(20);                                                                   //TEST REV H
-        if(readloop==0)                                                             //data MSB address
+        delay(20);                                                                   
+        if(readloop==0)                                                         //data MSB address
             MasterWriteI2C1(tempaddress.y[0]);                                  //address low byte
         else
             if(readloop==1)
             {
                 tempaddress.y[0]+=1;                                            //increment the address for LSB storage
-                MasterWriteI2C1(tempaddress.y[0]);                                      //address low byte + 1
+                MasterWriteI2C1(tempaddress.y[0]);                              //address low byte + 1
             }
 
         IdleI2C1();                                                      
-        while(I2C1STATbits.TRSTAT);                                         //wait till write is done
-        delay(20);                                                           //TEST REV H
+        while(I2C1STATbits.TRSTAT);                                             //wait till write is done
+        delay(20);                                                           
         IdleI2C1();                                                       
-        RestartI2C1();                                                      //change the direction of the bus
+        RestartI2C1();                                                          //change the direction of the bus
 
-        delay(8);                                                         //TEST REV H
+        delay(8);                                                         
 
-        do{                                                                     //REV G
-            NackTest=selectBank(absAdd,1);                                               //select the appropriate FRAM  
-        }while(NackTest);                                                        //REV G
+        do{                                                                     
+            NackTest=selectBank(absAdd,1);                                      //select the appropriate FRAM  
+        }while(NackTest);                                                        
 
 
-        IdleI2C1();                                                         //wait till read address is transmitted and ACK'd  
+        IdleI2C1();                                                             //wait till read address is transmitted and ACK'd  
         while(I2C1STATbits.TRSTAT);
 
-        if(readloop==0)                                                     //get data high byte from FRAM
+        if(readloop==0)                                                         //get data high byte from FRAM
         {
-            tempdata.z[1]=MasterReadI2C1();                                 //and store in TempData MSB
-            MSB=tempdata.z[1];                                              //Binary VER 6.0.2
+            tempdata.z[1]=MasterReadI2C1();                                     //and store in TempData MSB
+            MSB=tempdata.z[1];                                                  //Binary 
         }
         else
-        if(readloop==1)                                                     //get data low byte from FRAM
+        if(readloop==1)                                                         //get data low byte from FRAM
         {
-            tempdata.z[0]=MasterReadI2C1();                                 //and store in TempData LSB
-            LSB=tempdata.z[0];                                              //Binary VER 6.0.2
+            tempdata.z[0]=MasterReadI2C1();                                     //and store in TempData LSB
+            LSB=tempdata.z[0];                                                  //Binary 
         }
 
-        NotAckI2C1();                                                       //NACK
+        NotAckI2C1();                                                           //NACK
         IdleI2C1();                                                       
-        RestartI2C1();                                                      //change the direction of the bus
+        RestartI2C1();                                                          //change the direction of the bus
 
-        delay(8);                                                               //TEST REV H                                                        
+        delay(8);                                                                                                                       
     }                                                                           //end of for loop
 
     StopI2C1();
     while(I2C1CONbits.PEN);                                                     //wait till stop sequence is complete
 
     CloseI2C1();                                                                //close the I2C1 module 
-    __builtin_disi(0x0000);                                                     //Re-enable interrupts  REV B    
-    //StopshutdownTimer();                                                      //stop the reset timer
+    __builtin_disi(0x0000);                                                     //Re-enable interrupts      
 
     return tempdata.ui;                                                         //Return the 16 bit data
 }
@@ -318,15 +314,13 @@ unsigned int read_Int_FRAM(unsigned long absAdd)
 //
 //
 //***************************************************************************
-void write_longFRAM(unsigned long l, unsigned long add)                         //REV I                         
+void write_longFRAM(unsigned long l, unsigned long add)                                                  
 {
 	tFRAMLong temp;                                                             //variable temp is type tEEPROMFloat
 	temp.l=l;                                                                   //32 bit data
 
-	//write_Int_FRAM(add, temp.e[0]);	//write lower 16 bits of 32 to address      REM REV i
-    //write_Int_FRAM(add+2, temp.e[1]);	//write upper 16 bits of 32 to address+1	REM REV i
-    write_Int_FRAM(add, temp.e[1]);                                             //write upper 16 bits of 32 to address      REV i
-    write_Int_FRAM(add+2, temp.e[0]);                                           //write lower 16 bits of 32 to address+1	REV i
+    write_Int_FRAM(add, temp.e[1]);                                             //write upper 16 bits of 32 to address      
+    write_Int_FRAM(add+2, temp.e[0]);                                           //write lower 16 bits of 32 to address+1	
 
 }
 
@@ -341,26 +335,20 @@ void write_longFRAM(unsigned long l, unsigned long add)                         
 //
 //
 //***************************************************************************
-//long read_longFRAM(unsigned int add)                                          //REM REV C
-//long read_longFRAM(unsigned long add)                                           //REV C
-unsigned long read_longFRAM(unsigned long add)                                           //REV I
+unsigned long read_longFRAM(unsigned long add)                                           
 {
-	//long tempLong=0;                                                          REM REV I
-    unsigned long tempLong=0;                                                   //REV I
+    unsigned long tempLong=0;                                                   
 
-	tFRAMLong temp;					//variable temp is type tEEPROMlong
+	tFRAMLong temp;                                                             //variable temp is type tEEPROMlong
 
-	//temp.e[0]=read_Int_FRAM(add);		//read lower 16 bits of 32 to temp.e[0] REM REV i
-	//temp.e[1]=read_Int_FRAM(add+2);	//read upper 16 bits of 32 to temp.e[1] REM REV i
-    temp.e[1]=read_Int_FRAM(add);                                               //read lower 16 bits of 32 to temp.e[1] REV i
-	temp.e[0]=read_Int_FRAM(add+2);                                             //read upper 16 bits of 32 to temp.e[0]     REV i
+    temp.e[1]=read_Int_FRAM(add);                                               //read lower 16 bits of 32 to temp.e[1] 
+	temp.e[0]=read_Int_FRAM(add+2);                                             //read upper 16 bits of 32 to temp.e[0]     
 
 	tempLong=temp.l;
 	return tempLong;
 }
 
 
-//REV CN:
 //***************************************************************************
 //				read_float()
 //
@@ -377,8 +365,8 @@ float read_float(unsigned long add)
 
 	tFRAMFloat temp;                                                            //variable temp is type tFRAMfloat
 
-    temp.d[1]=read_Int_FRAM(add);                                               //read lower 16 bits of 32 to temp.e[1] REV i
-	temp.d[0]=read_Int_FRAM(add+2);                                             //read upper 16 bits of 32 to temp.e[0]     REV i
+    temp.d[1]=read_Int_FRAM(add);                                               //read lower 16 bits of 32 to temp.e[1] 
+	temp.d[0]=read_Int_FRAM(add+2);                                             //read upper 16 bits of 32 to temp.e[0]     
 
 	tempfloat=temp.f;
 	return tempfloat;
@@ -399,10 +387,10 @@ float read_float(unsigned long add)
 //***************************************************************************
 void write_Flt_FRAM(unsigned long absAdd, float f)                            
 {
-    xFRAMul tempaddress;							//variable tempaddress is type xFRAMul
-    xFRAMflt tempdata;							//variable tempdata is type xFRAMflt
-    unsigned char outerloop=0;							//outer loop index
-    unsigned char writeloop=0;							//inner loop index
+    xFRAMul tempaddress;                                                        //variable tempaddress is type xFRAMul
+    xFRAMflt tempdata;                                                          //variable tempdata is type xFRAMflt
+    unsigned char outerloop=0;                                                  //outer loop index
+    unsigned char writeloop=0;                                                  //inner loop index
     unsigned int config1 = (I2C1_ON & I2C1_IDLE_CON & I2C1_CLK_HLD &
                             I2C1_IPMI_DIS & I2C1_7BIT_ADD &
                             I2C1_SLW_EN & I2C1_SM_DIS &
@@ -411,85 +399,81 @@ void write_Flt_FRAM(unsigned long absAdd, float f)
                             I2C1_STOP_DIS & I2C1_RESTART_DIS &
                             I2C1_START_DIS);
 
-    //shutdownTimerwithReset(1);									//start the reset timer to reset if hangs   TEST REM REV B
-
-    WP=0;															//Disable Write Protection
+    WP=0;                                                                       //Disable Write Protection
 
     for(outerloop=0;outerloop<2;outerloop++)
     {
 
         for(writeloop=0;writeloop<2;writeloop++)
 	{
-            __builtin_disi(0x3FFF);                                                     //Disable Interrupts    REV B
-            OpenI2C1(config1, config2write);								//open the I2C1 module
-            //IdleI2C1();												//make sure bus is idle REM REV B
-            StartI2C1();												//transmit Start bit
-            while(I2C1CONbits.SEN);									//wait till start sequence is complete
+            __builtin_disi(0x3FFF);                                             //Disable Interrupts    
+            OpenI2C1(config1, config2write);                                    //open the I2C1 module
+            StartI2C1();                                                        //transmit Start bit
+            while(I2C1CONbits.SEN);                                             //wait till start sequence is complete
 
-            do{                                                                 //REV G
-                NackTest=selectBank(absAdd,0);						//select the appropriate FRAM   
-            }while(NackTest);                                                    //REV G
-            IdleI2C1();												//wait till address is transmitted and ACK'd    
+            do{                                                                 
+                NackTest=selectBank(absAdd,0);                                  //select the appropriate FRAM   
+            }while(NackTest);                                                    
+            IdleI2C1();                                                         //wait till address is transmitted and ACK'd    
 
             if(outerloop==0)
-                tempaddress.f=add;									//convert 16 bit FRAM address into 2 bytes
+                tempaddress.f=add;                                              //convert 16 bit FRAM address into 2 bytes
             else
-                tempaddress.f=add+2;								//next 16 bit address for FP bytes 3 & 4
+                tempaddress.f=add+2;                                            //next 16 bit address for FP bytes 3 & 4
 
             //transmit the address:
-            MasterWriteI2C1(tempaddress.y[1]);						//address high byte
+            MasterWriteI2C1(tempaddress.y[1]);                                  //address high byte
 
-            IdleI2C1();												//wait till address high byte is transmitted   
-            if(writeloop==0)										//Data MSB address
+            IdleI2C1();                                                         //wait till address high byte is transmitted   
+            if(writeloop==0)                                                    //Data MSB address
             {
-                MasterWriteI2C1(tempaddress.y[0]);					//address low byte
+                MasterWriteI2C1(tempaddress.y[0]);                              //address low byte
             }
             else
             if(writeloop==1)
             {
-                tempaddress.y[0]+=1;								//increment the address for LSB storage
-                MasterWriteI2C1(tempaddress.y[0]);					//address low byte + 1
+                tempaddress.y[0]+=1;                                            //increment the address for LSB storage
+                MasterWriteI2C1(tempaddress.y[0]);                              //address low byte + 1
             }
 
-            IdleI2C1();												//wait till address low byte is transmitted
-            tempdata.g=f;											//convert 16 bit data into 2 bytes
+            IdleI2C1();                                                         //wait till address low byte is transmitted
+            tempdata.g=f;                                                       //convert 16 bit data into 2 bytes
 
             //transmit the data
             if(writeloop==0 && outerloop==0)
             {
-                MasterWriteI2C1(tempdata.x[3]);						//write the data MSB to the 27LC512
+                MasterWriteI2C1(tempdata.x[3]);                                 //write the data MSB 
             }
             else
             if(writeloop==1 && outerloop==0)
             {
-                MasterWriteI2C1(tempdata.x[2]);						//write the data MSB-1 to the 27CL512
+                MasterWriteI2C1(tempdata.x[2]);                                 //write the data MSB-1 
             }
             else
             if(writeloop==0 && outerloop==1)
             {
-                MasterWriteI2C1(tempdata.x[1]);						//write the data MSB-2 to the 27LC512
+                MasterWriteI2C1(tempdata.x[1]);                                 //write the data MSB-2 
             }
             else
             if(writeloop==1 && outerloop==1)
             {
-                MasterWriteI2C1(tempdata.x[0]);						//write the data LSB to the 27CL512
+                MasterWriteI2C1(tempdata.x[0]);                                 //write the data LSB 
             }
 
-            IdleI2C1();												//wait till data byte is transmitted    
+            IdleI2C1();                                                         //wait till data byte is transmitted    
             StopI2C1();
-            while(I2C1CONbits.PEN);								//wait till stop sequence is complete
-            CloseI2C1();												//close the I2C1 module 
-            __builtin_disi(0x0000);                                             //Re-enable interrupts  REV B             
+            while(I2C1CONbits.PEN);                                             //wait till stop sequence is complete
+            CloseI2C1();                                                        //close the I2C1 module 
+            __builtin_disi(0x0000);                                             //Re-enable interrupts               
             
-	}															//end of writeloop
+	}                                                                           //end of writeloop
 
-	tempaddress.y[1]++;											//increment the address pointer
+	tempaddress.y[1]++;                                                         //increment the address pointer
 
-    }																//end of outerloop
+    }                                                                           //end of outerloop
 
-    WP=1;															//Write protect the FRAM
-    //StopshutdownTimer();									//stop the reset timer
-    return 0;                                                                   //REV G
+    WP=1;                                                                       //Write protect the FRAM
+    return 0;                                                                   
 }
 
 
@@ -521,21 +505,19 @@ void read_Flt_FRAM(unsigned long absAdd, unsigned int x)
                             I2C1_START_DIS);
 
 
-    //shutdownTimerwithReset(1);                                                //start the reset timer to reset if hangs   TEST REM REV B
-
     for(outerloop=0;outerloop<2;outerloop++)
     {
         for(readloop=0;readloop<2;readloop++)
 	{
-            __builtin_disi(0x3FFF);                                             //Disable Interrupts    REV B            
+            __builtin_disi(0x3FFF);                                             //Disable Interrupts               
             OpenI2C1(config1, config2read);						
             IdleI2C1();                                                         //make sure bus is idle 
             StartI2C1();                                                        //transmit Start bit
             while(I2C1CONbits.SEN);                                             //wait till start sequence is complete
 
-            do{                                                                 //REV G
-                NackTest=selectBank(absAdd,0);                                               //Select the appropriate FRAM   
-            }while(NackTest);                                                    //REV G
+            do{                                                                 
+                NackTest=selectBank(absAdd,0);                                  //Select the appropriate FRAM   
+            }while(NackTest);                                                   
 
             IdleI2C1();                                                         //wait till write is done   
             while(I2C1STATbits.TRSTAT);
@@ -564,11 +546,11 @@ void read_Flt_FRAM(unsigned long absAdd, unsigned int x)
             IdleI2C1();                                                       
             RestartI2C1();                                                      //change the direction of the bus
 
-            delay(8);                                                         //TEST REV H
+            delay(8);                                                         
 
-            do{                                                                 //REV G    
-                NackTest=selectBank(absAdd,1);                                               //Select the appropriate FRAM   
-            }while(NackTest);                                                    //REV G
+            do{                                                                    
+                NackTest=selectBank(absAdd,1);                                  //Select the appropriate FRAM   
+            }while(NackTest);                                                    
 
             IdleI2C1();                                                         //wait till read address is transmitted and ACK'd  
             while(I2C1STATbits.TRSTAT);
@@ -576,32 +558,32 @@ void read_Flt_FRAM(unsigned long absAdd, unsigned int x)
             if(readloop==0 && outerloop==0)                                     //get the data MSB from FRAM
             {
                 tempdata.x[3]=MasterReadI2C1();                                 //and store in TempData MSB
-                MSB=tempdata.x[3];                                              //Binary ver 6.0.2
+                MSB=tempdata.x[3];                                              //Binary 
             }
             else
             if(readloop==1 && outerloop==0)                                     //get the data MSB-1 from FRAM
             {
                 tempdata.x[2]=MasterReadI2C1();                                 //and store in TempData MSB-1
-                MMSB=tempdata.x[2];                                             //Binary ver 6.0.2
+                MMSB=tempdata.x[2];                                             //Binary 
             }
             else
             if(readloop==0 && outerloop==1)                                     //get the data MSB-2 from FRAM
             {
                 tempdata.x[1]=MasterReadI2C1();                                 //and store in TempData MSB-1
-                MMMSB=tempdata.x[1];                                            //Binary ver 6.0.2
+                MMMSB=tempdata.x[1];                                            //Binary 
             }
             else
             if(readloop==1 && outerloop==1)                                     //get the data LSB from FRAM
             {
                 tempdata.x[0]=MasterReadI2C1();                                 //and store in TempData MSB-1
-                LSB=tempdata.x[0];                                              //Binary ver 6.0.2
+                LSB=tempdata.x[0];                                              //Binary 
             }
 
             NotAckI2C1();                                                       //NACK
             IdleI2C1();                                                       
             RestartI2C1();                                                      //change the direction of the bus
 
-            delay(8);                                                         //TEST REV H
+            delay(8);                                                         
 	}                                                                           //end of writeloop
 		
 	tempaddress.y[1]++;                                                         //increment the address pointer
@@ -611,8 +593,8 @@ void read_Flt_FRAM(unsigned long absAdd, unsigned int x)
     StopI2C1();
     while(I2C1CONbits.PEN);                                                     //wait till stop sequence is complete
 
-    CloseI2C1();                                                                //close the I2C1 module REM REV B
-    __builtin_disi(0x0000);                                                     //Re-enable interrupts  REV B      
+    CloseI2C1();                                                                //close the I2C1 module 
+    __builtin_disi(0x0000);                                                     //Re-enable interrupts        
 
     switch(x)
     {
@@ -631,8 +613,6 @@ void read_Flt_FRAM(unsigned long absAdd, unsigned int x)
         default:
             break;
     }
-
-    //StopshutdownTimer();							//stop the reset timer
 
 }
 
@@ -654,8 +634,7 @@ void read_Flt_FRAM(unsigned long absAdd, unsigned int x)
 //
 //***************************************************************************
 
-//void selectBank(unsigned long absAdd, unsigned char x)                        //REM REV G
-unsigned char selectBank(unsigned long absAdd, unsigned char x)                 //REV G
+unsigned char selectBank(unsigned long absAdd, unsigned char x)                 
 {
 
     //select appropriate FRAM bank and adjust addressing to 0-131040 for each FRAM:
@@ -669,7 +648,7 @@ unsigned char selectBank(unsigned long absAdd, unsigned char x)                 
                 MasterWriteI2C1(0xA1);                                          //Control Byte for FRAM1 page0 Read
             else
                 MasterWriteI2C1(0xA0);                                          //Control Byte for FRAM1 page0 Write
-            if(testNACK())                                                       //FRAM NACK'd
+            if(testNACK())                                                      //FRAM NACK'd
                 return 1;
             return 0;                                                           //FRAM ACK'd
         }
@@ -681,7 +660,7 @@ unsigned char selectBank(unsigned long absAdd, unsigned char x)                 
                 MasterWriteI2C1(0xA3);                                          //Control Byte for FRAM1 page1 Read
             else
                 MasterWriteI2C1(0xA2);                                          //Control Byte for FRAM1 page1 Write
-            if(testNACK())                                                       //FRAM NACK'd
+            if(testNACK())                                                      //FRAM NACK'd
                 return 1;
             return 0;                                                           //FRAM ACK'd
         }
@@ -696,7 +675,7 @@ unsigned char selectBank(unsigned long absAdd, unsigned char x)                 
                 MasterWriteI2C1(0xA5);                                          //Control Byte for FRAM2 page0 Read
             else
                 MasterWriteI2C1(0xA4);                                          //Control Byte for FRAM2 page0 Write
-            if(testNACK())                                                       //FRAM NACK'd
+            if(testNACK())                                                      //FRAM NACK'd
                 return 1;
             return 0;                                                           //FRAM ACK'd
         }
@@ -708,7 +687,7 @@ unsigned char selectBank(unsigned long absAdd, unsigned char x)                 
                 MasterWriteI2C1(0xA7);                                          //Control Byte for FRAM2 page1 Read
             else
                 MasterWriteI2C1(0xA6);                                          //Control Byte for FRAM2 page1 Write
-            if(testNACK())                                                       //FRAM NACK'd
+            if(testNACK())                                                      //FRAM NACK'd
                 return 1;
             return 0;                                                           //FRAM ACK'd
         }
@@ -723,7 +702,7 @@ unsigned char selectBank(unsigned long absAdd, unsigned char x)                 
                 MasterWriteI2C1(0xA9);                                          //Control Byte for FRAM3 page0 Read
             else
                 MasterWriteI2C1(0xA8);                                          //Control Byte for FRAM3 page0 Write
-            if(testNACK())                                                       //FRAM NACK'd
+            if(testNACK())                                                      //FRAM NACK'd
                 return 1;
             return 0;                                                           //FRAM ACK'd
         }
@@ -735,7 +714,7 @@ unsigned char selectBank(unsigned long absAdd, unsigned char x)                 
                 MasterWriteI2C1(0xAB);                                          //Control Byte for FRAM3 page1 Read
             else
                 MasterWriteI2C1(0xAA);                                          //Control Byte for FRAM3 page1 Write
-            if(testNACK())                                                       //FRAM NACK'd
+            if(testNACK())                                                      //FRAM NACK'd
                 return 1;
             return 0;                                                           //FRAM ACK'd
         }
@@ -750,7 +729,7 @@ unsigned char selectBank(unsigned long absAdd, unsigned char x)                 
                 MasterWriteI2C1(0xAD);                                          //Control Byte for FRAM4 page0 Read
             else
                 MasterWriteI2C1(0xAC);                                          //Control Byte for FRAM4 page0 Write
-            if(testNACK())                                                       //FRAM NACK'd
+            if(testNACK())                                                      //FRAM NACK'd
                 return 1;
             return 0;                                                           //FRAM ACK'd
         }
@@ -771,9 +750,9 @@ unsigned char selectBank(unsigned long absAdd, unsigned char x)                 
 }
 
 
-void sleepFRAM(void)                                                            //ADDRESS EACH FRAM INDIVIDUALLY
+void sleepFRAM(void)                                                            
 {
-    unsigned char f=0;                                                          //REV F
+    unsigned char f=0;                                                          
     unsigned int config1 = (I2C1_ON & I2C1_IDLE_CON & I2C1_CLK_HLD &
                             I2C1_IPMI_DIS & I2C1_7BIT_ADD &
                             I2C1_SLW_EN & I2C1_SM_DIS &
@@ -782,11 +761,11 @@ void sleepFRAM(void)                                                            
                             I2C1_STOP_DIS & I2C1_RESTART_DIS &
                             I2C1_START_DIS);
     
-    //shutdownTimerwithReset(1);                                                //start the reset timer to reset if hangs
-    __builtin_disi(0x3FFF);                                                     //Disable Interrupts    REV B    
+
+    __builtin_disi(0x3FFF);                                                     //Disable Interrupts       
    
-    WP=0;                                                                       //Disable Write Protection  REV F
-    for(f=0xA1;f<0xAE;f+=0x04)                                                  //REV F
+    WP=0;                                                                       //Disable Write Protection  
+    for(f=0xA1;f<0xAE;f+=0x04)                                                  
     {
 
 
@@ -806,7 +785,7 @@ void sleepFRAM(void)                                                            
                                                                                 //wait till write is done
         while(I2C1STATbits.TRSTAT);                                             //Transmit status flag
 
-        StartI2C1();                                                            //Restart REV F
+        StartI2C1();                                                            //Restart 
         while(I2C1CONbits.SEN);                                                 //wait till start sequence is complete
         while(I2C1STATbits.TRSTAT);                                             //Transmit status flag    
 
@@ -817,10 +796,10 @@ void sleepFRAM(void)                                                            
         StopI2C1();
         while(I2C1CONbits.PEN);                                                 //wait till stop sequence is complete
 
-        CloseI2C1();                                                            //close the I2C1 module REM REV B
+        CloseI2C1();                                                            //close the I2C1 module 
     }
     WP=1;                                                                       //Enable Write Protection
-    __builtin_disi(0x0000);                                                     //Re-enable interrupts  REV B      
+    __builtin_disi(0x0000);                                                     //Re-enable interrupts        
  
 }
 
@@ -850,114 +829,110 @@ void sleepFRAM(void)                                                            
 unsigned int testFRAM(unsigned int fram)
 {
     char PercentComplete[]={"   % Complete"};
-    //char ExtFRAMtest1[]={"EXTERNAL FRAM U2 TEST:"};                           REM REV D
-    //char ExtFRAMtest2[]={"EXTERNAL FRAM U4 TEST:"};                           REM REV D
-    //char ExtFRAMtest3[]={"EXTERNAL FRAM U5 TEST:"};                           REM REV D
-    //char ExtFRAMtest4[]={"EXTERNAL FRAM U6 TEST:"};                           REM REV D
-    char ExtFRAMtest1[]={"U3:"};                                                //REV I
-    char ExtFRAMtest2[]={"U5:"};                                                //REV I
-    char ExtFRAMtest3[]={"U6:"};                                                //REV I
-    char ExtFRAMtest4[]={"U7:"};                                                //REV I
+    char ExtFRAMtest1[]={"U3:"};                                                
+    char ExtFRAMtest2[]={"U5:"};                                                
+    char ExtFRAMtest3[]={"U6:"};                                                
+    char ExtFRAMtest4[]={"U7:"};                                                
     char RxDataTemp=0;
-    unsigned int originalFRAM=0;			//temporary location of original FRAM value
-    unsigned int tempExtFRAM=0;			//temporary test value
-    unsigned long absadd=0;					//FRAM absolute address
-    float percentComplete=0.0;				//percent of memory test completed
+    unsigned int originalFRAM=0;                                                //temporary location of original FRAM value
+    unsigned int tempExtFRAM=0;                                                 //temporary test value
+    unsigned long absadd=0;                                                     //FRAM absolute address
+    float percentComplete=0.0;                                                  //percent of memory test completed
     float absaddFloat=0.0;
     
-    TEST=1;									//let extFRAM functions know that TEST is occuring
+    TEST=1;                                                                     //let extFRAM functions know that TEST is occurring
 
-    putcUART1(0x0D);						//<CR>
+    putcUART1(0x0D);                                                            //<CR>
     while(BusyUART1());
-    putcUART1(0x0A);						//<LF>
+    putcUART1(0x0A);                                                            //<LF>
     while(BusyUART1());
 
-    switch(fram)							//DISPLAY
+    switch(fram)                                                                //DISPLAY
     {
         case 1:
             absadd=0;
-            putsUART1(ExtFRAMtest1);			//"EXTERNAL FRAM U2 TEST:"
+            putsUART1(ExtFRAMtest1);                                            //"U3:"
             break;
         case 2:
             absadd=64000;
-            putsUART1(ExtFRAMtest2);			//"EXTERNAL FRAM U4 TEST:"
+            putsUART1(ExtFRAMtest2);                                            //"U5:"
             break;
         case 3:
             absadd=128000;
-            putsUART1(ExtFRAMtest3);			//"EXTERNAL FRAM U5 TEST:"
+            putsUART1(ExtFRAMtest3);                                            //"U6:"
             break;
         case 4:
             absadd=192000;
-            putsUART1(ExtFRAMtest4);			//"EXTERNAL FRAM U6 TEST:"
+            putsUART1(ExtFRAMtest4);                                            //"U7:"
             break;
         default:
             break;
     }
     while(BusyUART1());
 
-    putcUART1(0x0D);						//<CR>
+    putcUART1(0x0D);                                                            //<CR>
     while(BusyUART1());
-    putcUART1(0x0A);						//<LF>
+    putcUART1(0x0A);                                                            //<LF>
     while(BusyUART1());
-    putsUART1(PercentComplete);                                 //"% Complete"
+    putsUART1(PercentComplete);                                                 //"% Complete"
     while(BusyUART1());
-    putcUART1(0x0D);						//<CR>
+    putcUART1(0x0D);                                                            //<CR>
     while(BusyUART1());
 
-    IFS0bits.U1RXIF=0;						//clear the UART interrupt flag
+    IFS0bits.U1RXIF=0;                                                          //clear the UART interrupt flag
 
 
     do
     {
         //start and stop timers for each communication
-        originalFRAM=read_Int_FRAM(absadd);	//temporarily store original FRAM value
-        write_Int_FRAM(absadd,0x0000);	//write all zeros to FRAM memory location
-        tempExtFRAM=read_Int_FRAM(absadd);	//read back
+        originalFRAM=read_Int_FRAM(absadd);                                     //temporarily store original FRAM value
+        write_Int_FRAM(absadd,0x0000);                                          //write all zeros to FRAM memory location
+        tempExtFRAM=read_Int_FRAM(absadd);                                      //read back
 
-        if(tempExtFRAM!=0x0000)			//error
+        if(tempExtFRAM!=0x0000)                                                 //error
         {
 
             switch(fram)
             {
-                case 1:						//return the bad memory address for U5
+                case 1:                                                         //return the bad memory address for U3 - not implemented
                     break;
-                case 2:						//return the bad memory address for U6
+                case 2:                                                         //return the bad memory address for U5 - not implemented
                     absadd-=64000;
                     break;
-                case 3:						//return the bad memory address for U7
+                case 3:                                                         //return the bad memory address for U6 - not implemented
                     absadd-=128000;
                     break;
-                case 4:						//return the bad memory address for U8
+                case 4:                                                         //return the bad memory address for U7 - not implemented
                     absadd-=192000;
                     break;
                 default:
                     break;
             }
             Nop();
-            displayError(fram);                                               //Display the bad FRAM
+            displayError(fram);                                                 //Display the bad FRAM
             fram+=1;
             return 1;
         }
 		
-        write_Int_FRAM(absadd,0xFFFF);	//write all ones to FRAM memory location
-        TEST=1;								//allow reading 0xFFFF	
-        tempExtFRAM=read_Int_FRAM(absadd);	//read back
+        write_Int_FRAM(absadd,0xFFFF);                                          //write all ones to FRAM memory location
+        TEST=1;                                                                 //allow reading 0xFFFF	
+        tempExtFRAM=read_Int_FRAM(absadd);                                      //read back
         TEST=0;								
 
-        if(tempExtFRAM!=0xFFFF)			//error
-        {									//handle error here
+        if(tempExtFRAM!=0xFFFF)                                                 //error
+        {									
 
             switch(fram)
             {
-                case 1:						//return the bad memory address for FRAM #1
+                case 1:                                                         //return the bad memory address for U3 - not implemented
                     break;
-                case 2:						//return the bad memory address for FRAM #2
+                case 2:                                                         //return the bad memory address for U5 - not implemented
                     absadd-=64000;
                     break;
-                case 3:						//return the bad memory address for FRAM #3
+                case 3:                                                         //return the bad memory address for U6 - not implemented
                     absadd-=128000;
                     break;
-                case 4:						//return the bad memory address for FRAM #4
+                case 4:                                                         //return the bad memory address for U7 - not implemented
                     absadd-=192000;
                     break;
                 default:
@@ -968,20 +943,20 @@ unsigned int testFRAM(unsigned int fram)
             return 1;
 	}
 
-	write_Int_FRAM(absadd,originalFRAM);	//reload original value if FRAM tested ok
+	write_Int_FRAM(absadd,originalFRAM);                                        //reload original value if FRAM tested ok
 
-	switch(fram)						//convert adsadd to float and offset for percentComplete calculation
+	switch(fram)                                                                //convert adsadd to float and offset for percentComplete calculation
 	{
-            case 1:							//FRAM #1: absaddFloat=absadd
+            case 1:                                                             //FRAM #1: absaddFloat=absadd
                 absaddFloat=absadd;
                 break;
-            case 2:							//FRAM #2: absaddFloat=absadd-64000
+            case 2:                                                             //FRAM #2: absaddFloat=absadd-64000
                 absaddFloat=absadd-64000.0;
                 break;
-            case 3:							//FRAM #3: absaddFloat=absadd-128000
+            case 3:                                                             //FRAM #3: absaddFloat=absadd-128000
                 absaddFloat=absadd-128000.0;
                 break;
-            case 4:							//FRAM #4: absaddFloat=absadd-192000
+            case 4:                                                             //FRAM #4: absaddFloat=absadd-192000
                 absaddFloat=absadd-192000.0;
                 break;
             default:
@@ -990,155 +965,155 @@ unsigned int testFRAM(unsigned int fram)
 
         percentComplete=(absaddFloat/640.0);                                    //calculate percentage of memory tested
 
-        if(percentComplete==0.0)                                                //REV B
+        if(percentComplete==0.0)                                                
         {
             putcUART1(zero);
-            putcUART1(0x0D);                                                    //<CR>  REV B
+            putcUART1(0x0D);                                                    //<CR>  
         }
 
-        if(percentComplete==5.0)                                                //REV B
+        if(percentComplete==5.0)                                                
         {
             putcUART1(five);
-            putcUART1(0x0D);                                                    //<CR>  REV B
+            putcUART1(0x0D);                                                    //<CR>  
         }
 
-        if(percentComplete==10.0)                                               //REV B
+        if(percentComplete==10.0)                                               
         {
             putcUART1(one);
             putcUART1(zero);
-            putcUART1(0x0D);                                                    //<CR>  REV B
+            putcUART1(0x0D);                                                    //<CR>  
         }
 
-        if(percentComplete==15.0)                                               //REV B
+        if(percentComplete==15.0)                                               
         {
             putcUART1(one);
             putcUART1(five);
-            putcUART1(0x0D);                                                    //<CR>  REV B
+            putcUART1(0x0D);                                                    //<CR>  
         }
 
-        if(percentComplete==20.0)                                               //REV B
+        if(percentComplete==20.0)                                               
         {
             putcUART1(two);
             putcUART1(zero);
-            putcUART1(0x0D);                                                    //<CR>  REV B
+            putcUART1(0x0D);                                                    //<CR>  
         }
 
-        if(percentComplete==25.0)                                               //REV B
+        if(percentComplete==25.0)                                               
         {
             putcUART1(two);
             putcUART1(five);
-            putcUART1(0x0D);                                                    //<CR>  REV B
+            putcUART1(0x0D);                                                    //<CR>  
         }
 
-        if(percentComplete==30.0)                                               //REV B
+        if(percentComplete==30.0)                                               
         {
             putcUART1(three);
             putcUART1(zero);
-            putcUART1(0x0D);                                                    //<CR>  REV B
+            putcUART1(0x0D);                                                    //<CR>  
         }
 
-        if(percentComplete==35.0)                                               //REV B
+        if(percentComplete==35.0)                                               
         {
             putcUART1(three);
             putcUART1(five);
-            putcUART1(0x0D);                                                    //<CR>  REV B
+            putcUART1(0x0D);                                                    //<CR>  
         }
 
-        if(percentComplete==40.0)                                               //REV B
+        if(percentComplete==40.0)                                               
         {
             putcUART1(four);
             putcUART1(zero);
-            putcUART1(0x0D);                                                    //<CR>  REV B
+            putcUART1(0x0D);                                                    //<CR>  
         }
 
-        if(percentComplete==45.0)                                               //REV B
+        if(percentComplete==45.0)                                               
         {
             putcUART1(four);
             putcUART1(five);
-            putcUART1(0x0D);                                                    //<CR>  REV B
+            putcUART1(0x0D);                                                    //<CR>  
         }
 
-        if(percentComplete==50.0)                                               //REV B
+        if(percentComplete==50.0)                                               
         {
             putcUART1(five);
             putcUART1(zero);
-            putcUART1(0x0D);                                                    //<CR>  REV B
+            putcUART1(0x0D);                                                    //<CR>  
         }
 
-        if(percentComplete==55.0)                                               //REV B
+        if(percentComplete==55.0)                                               
         {
             putcUART1(five);
             putcUART1(five);
-            putcUART1(0x0D);                                                    //<CR>  REV B
+            putcUART1(0x0D);                                                    //<CR>  
         }
 
-        if(percentComplete==60.0)                                               //REV B
+        if(percentComplete==60.0)                                               
         {
             putcUART1(six);
             putcUART1(zero);
-            putcUART1(0x0D);                                                    //<CR>  REV B
+            putcUART1(0x0D);                                                    //<CR>  
         }
 
-        if(percentComplete==65.0)                                               //REV B
+        if(percentComplete==65.0)                                               
         {
             putcUART1(six);
             putcUART1(five);
-            putcUART1(0x0D);                                                    //<CR>  REV B
+            putcUART1(0x0D);                                                    //<CR>  
         }
 
-        if(percentComplete==70.0)                                               //REV B
+        if(percentComplete==70.0)                                               
         {
             putcUART1(seven);
             putcUART1(zero);
-            putcUART1(0x0D);                                                    //<CR>  REV B
+            putcUART1(0x0D);                                                    //<CR>  
         }
 
-        if(percentComplete==75.0)                                               //REV B
+        if(percentComplete==75.0)                                               
         {
             putcUART1(seven);
             putcUART1(five);
-            putcUART1(0x0D);                                                    //<CR>  REV B
+            putcUART1(0x0D);                                                    //<CR> 
         }
 
-        if(percentComplete==80.0)                                               //REV B
+        if(percentComplete==80.0)                                               
         {
             putcUART1(eight);
             putcUART1(zero);
-            putcUART1(0x0D);                                                    //<CR>  REV B
+            putcUART1(0x0D);                                                    //<CR>  
         }
 
-        if(percentComplete==85.0)                                               //REV B
+        if(percentComplete==85.0)                                               
         {
             putcUART1(eight);
             putcUART1(five);
-            putcUART1(0x0D);                                                    //<CR>  REV B
+            putcUART1(0x0D);                                                    //<CR>  
         }
 
-        if(percentComplete==90.0)                                               //REV B
+        if(percentComplete==90.0)                                               
         {
             putcUART1(nine);
             putcUART1(zero);
-            putcUART1(0x0D);                                                    //<CR>  REV B
+            putcUART1(0x0D);                                                    //<CR>  
         }
 
-        if(percentComplete==95.0)                                               //REV B
+        if(percentComplete==95.0)                                               
         {
             putcUART1(nine);
             putcUART1(five);
-            putcUART1(0x0D);                                                    //<CR>  REV B
+            putcUART1(0x0D);                                                    //<CR>  
         }
 
-        if(percentComplete>99.0)                                                //REV B
+        if(percentComplete>99.0)                                                
         {
             putcUART1(one);
             putcUART1(zero);
             putcUART1(zero);
-            putcUART1(0x0D);                                                    //<CR>  REV B
+            putcUART1(0x0D);                                                    //<CR>  
         }
  
 
-	absadd+=1;										//increment absadd
-	if(fram==1 && absadd>=64000)					//break out of dowhile if all memory tested
+	absadd+=1;                                                                  //increment absadd
+	if(fram==1 && absadd>=64000)                                                //break out of dowhile if all memory tested
             break;
 
     if(fram==2 && absadd>=128000)
@@ -1150,10 +1125,10 @@ unsigned int testFRAM(unsigned int fram)
 	if(fram==4 && absadd>=256000)			
             break;
 
-    }while(absadd<256000 && !IFS0bits.U1RXIF);	//loop until complete or interrupted by keystroke
+    }while(absadd<256000 && !IFS0bits.U1RXIF);                                  //loop until complete or interrupted by keystroke
 
-    IFS0bits.U1RXIF=0;						//clear the UART interrupt flag
-    RxDataTemp=ReadUART1();						//get the char from the UART buffer to clear it
+    IFS0bits.U1RXIF=0;                                                          //clear the UART interrupt flag
+    RxDataTemp=ReadUART1();                                                     //get the char from the UART buffer to clear it
 	
     return 0;
 }

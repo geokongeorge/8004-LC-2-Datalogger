@@ -13,12 +13,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		11/20/2017
+//	DATE:		11/22/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   1.10
-//	CHECKSUM:	0xd8d4 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x7345 (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8800/30720   29%
-//	PGM(FLASH)MEM:  184374/261888 70%
+//	PGM(FLASH)MEM:  184506/261888 70%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -219,7 +219,7 @@
 //      1.9     11/17/17            Add Modbus capability to initiate and read a gage serial number read
 //                                  Utilize STATUS/CONTROL2 bit 8 for this function (1=trigger serial number read)
 //                                  32 bit result stored in memory locations 0x7FF74(MSW)(Modbus register 0x7FBA) and 0x7FF76(LSW) (Modbus register 0x7FBB)
-//      1.10    11/20/17            Debug LOG Table
+//      1.10    11/22/17            Debug LOG Table
 //                                  Cleanup (remove) rem'd out code
 //                                  Add back WDT enable when start logging
 //                                  
@@ -10777,7 +10777,6 @@ void getGageInfo(unsigned char info, int channel) {
 
     //Write to internal FRAM
 
-    //VER 6.0.12:
     switch (channel) {
         case 1:                                                                 //CHANNEL 1
 
@@ -12223,15 +12222,11 @@ float getFrequency(void)
 unsigned char getSerialNumber(void)
 {
     csum crc;
-    //unsigned char i=0;
     unsigned char result=0;
     unsigned int logicthreshold=0;
     unsigned int therm=0;
     unsigned int Vmax=0;                                                        //value of max V at TH (Rth = 0)       
-    //unsigned int *ADC16Ptr;                                                     //pointer to ADC result buffer
-    
-
-    
+   
     //Configure PORTB:
     TRISB=0x033D;                                                               //Configure PORTB
     LATB=0;                                                                     //Set PORTB outputs low
@@ -12752,15 +12747,12 @@ void MODBUScomm(void)
     unsigned int modbusaddressvalue;
     unsigned int testvalue=0;                                                   
     unsigned int i=0;                                                           
-    //unsigned int bytecount=0;                                                   
     unsigned int ECHO=0;
     unsigned int testHours=0;                                                   
     unsigned int testMinutes=0;                                                 
-    //unsigned int testSeconds=0;                                                 
     csum       csumdata;                                                        //csumdata[1] is MSB, csumdata[0] is LSB
     csum       value;                                                           //value[1] is MSB, value[0] is LSB]
     csum       registers;                                                       //registers[1] is MSB, registers [0] is LSB
-    //csum       startingRegister;                                                //Starting register for write multiple registers    
     xFRAMul    ulregister;                                                      //32 bit register for unsigned ints 
     xFRAMflt   fltregister;                                                     //32 bit register for floats     
     s1flags   tempStatusValue;                                                  //temporary register for comparison 
@@ -12864,7 +12856,10 @@ void MODBUScomm(void)
                 }
                 
             
-                if((memaddressStart>=passwordaddressHIGH) && (memaddressStart<=RESERVED2))   //MODBUS R/W Registers 
+                //if((memaddressStart>=passwordaddressHIGH) && (memaddressStart<=RESERVED2))   //MODBUS R/W Registers   REM REV 1.10
+                if(((memaddressStart>=passwordaddressHIGH) && (memaddressStart<=RESERVED2))   //MODBUS R/W Registers REV 1.10                
+                        |
+                    ((memaddressStart>=THMUX_ENABLE1_16flagsaddress) && (memaddressStart<=LastMemoryaddress)))       
                 {
                     if(memaddressStart==ScanSecondsaddress)
                     {
@@ -12901,7 +12896,10 @@ void MODBUScomm(void)
                 MODBUS_TXbuf[5]=MODBUS_RXbuf[5];                                //Load the TXbuf[] with # of Registers LSB                    
             }            
             else
-            if((memaddressStart>=passwordaddressHIGH) && (memaddressStart<=RESERVED2)) //Registers are 16 bit - not password protected    
+            //if((memaddressStart>=passwordaddressHIGH) && (memaddressStart<=RESERVED2)) //Registers are 16 bit - not password protected    REM REV 1.10
+            if(((memaddressStart>=passwordaddressHIGH) && (memaddressStart<=RESERVED2))   //MODBUS R/W Registers REV 1.10                
+                    |
+                ((memaddressStart>=THMUX_ENABLE1_16flagsaddress) && (memaddressStart<=LastMemoryaddress)))                       
             {
                 if(memaddressStart==passwordaddressHIGH && MODBUS_RXbuf[7]==passwordbyte3 && MODBUS_RXbuf[8]==passwordbyte2
                         && MODBUS_RXbuf[9]==passwordbyte1 && MODBUS_RXbuf[10]==passwordbyte0)                        //Password being written?
@@ -13387,14 +13385,12 @@ void MODBUScomm(void)
 
                         if(tempValue2Value.status2flags._SN)                    //Read the gage serial number
                         {
-                            //Nop();
                             ReadSN();                                           //get the gage serial number
                         }                            
 
                         tempValue2Value.status2flags._SN=0;                     //clear this bit on exit  
                         S_2.status2flags._SN=0;                                 //clear the MODBUS status flag      
                         write_Int_FRAM(MODBUS_STATUS2address,S_2.status2);  
-                        //shutdownTimer(TimeOut);                               //Reset 15S timer	
                         break;
 
                     case 9:
