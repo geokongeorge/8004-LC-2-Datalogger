@@ -16,9 +16,9 @@
 //	DATE:		11/22/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   1.10
-//	CHECKSUM:	0x7345 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x9ebf (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8800/30720   29%
-//	PGM(FLASH)MEM:  184506/261888 70%
+//	PGM(FLASH)MEM:  184884/261888 71%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -345,11 +345,11 @@ int main(void)
     
     restoreSettings();                                                          //reload the settings from FRAM    
     
-    LC2CONTROL.flags.Logging=0;                                                 
-    write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);                     
+    //LC2CONTROL.flags.Logging=0;                                               REM REV 1.10  
+    //write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);                   REM REV 1.10  
     
-    LC2CONTROL2.flags2.scheduled=0;                                             
-    write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);                  //store flag in FRAM 
+    //LC2CONTROL2.flags2.scheduled=0;                                           REM REV 1.10  
+    //write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);                  //store flag in FRAM REM REV 1.10
     //stopLogging();                                                              
     
     SLEEP12V = 0;                                                               //Set 12V regulator into switchmode
@@ -1499,43 +1499,50 @@ int checkScanInterval(void)
     MUX4_ENABLE.mux=read_Int_FRAM(MUX4_ENABLEflagsaddress);  
 
     if (MUX4_ENABLE.mflags.mux16_4 == Single) {
-        if (ScanInterval < minScanSingleVW)
+        //if (ScanInterval < minScanSingleVW)                                   //REM REV 1.10
+        if ((ScanInterval < minScanSingleVW) | (LogIntLength<minScanSingleVW))  //REV 1.10
             return minScanSingleVW;
         return 0;
     }
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW4) {
-        if (ScanInterval < minScanFourVW)
+        //if (ScanInterval < minScanFourVW)                                     //REM REV 1.10
+        if ((ScanInterval < minScanFourVW) | (LogIntLength<minScanFourVW))      //REV 1.10
             return minScanFourVW;
         return 0;
     }
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW8) {
-        if (ScanInterval < minScanEightVW)
+        //if (ScanInterval < minScanEightVW)                                    //REM REV 1.10
+        if ((ScanInterval < minScanEightVW) | (LogIntLength<minScanEightVW))    //REV 1.10
             return minScanEightVW;
         return 0;
     }
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW16) {
-        if (ScanInterval < minScanSixteenVW)
+        //if (ScanInterval < minScanSixteenVW)                                  //REM REV 1.10
+        if ((ScanInterval < minScanSixteenVW) | (LogIntLength<minScanSixteenVW))//REV 1.10
             return minScanSixteenVW;
         return 0;
     }
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW32) {
-        if (ScanInterval < minScanThirtytwoVW)
+        //if (ScanInterval < minScanThirtytwoVW)                                //REM REV 1.10
+        if ((ScanInterval < minScanThirtytwoVW) | (LogIntLength<minScanThirtytwoVW))  //REV 1.10
             return minScanThirtytwoVW;
         return 0;
     }
 
     if (MUX4_ENABLE.mflags.mux16_4 == TH8) {
-        if (ScanInterval < minScanEightTH)
+        //if (ScanInterval < minScanEightTH)                                    //REM REV 1.10
+        if ((ScanInterval < minScanEightTH) | (LogIntLength<minScanEightTH))    //REV 1.10
             return minScanEightTH;
         return 0;
     }
 
     if (MUX4_ENABLE.mflags.mux16_4 == TH32) {
-        if (ScanInterval < minScanThirtytwoTH)
+        //if (ScanInterval < minScanThirtytwoTH)                                //REM REV 1.10
+        if ((ScanInterval < minScanThirtytwoTH) | (LogIntLength<minScanThirtytwoTH))  //REV 1.10
             return minScanThirtytwoTH;
         return 0;
     }
@@ -12572,31 +12579,36 @@ void loadDefaults(void)
     write_Int_FRAM(LogItRemain1MASTERaddress,100);                              
     
     //Log interval #2:
-    LogIntLength=40;                                                            //40 second scan interval
+    //LogIntLength=40;                                                            //40 second scan interval REM REV 1.10
+    LogIntLength+=10;                                                           //second scan interval  REV 1.10
     storeLogInterval(2,90);                                                     //90 iterations
     write_Int_FRAM(LogItRemain2address,90);                                     //90 left to go
     write_Int_FRAM(LogItRemain2MASTERaddress,90);                           
 
     //Log interval #3:
-    LogIntLength=50;                                                            //50 second scan interval
+    //LogIntLength=50;                                                            //50 second scan interval REM REV 1.10
+    LogIntLength+=10;                                                           //third scan interval  REV 1.10
     storeLogInterval(3,80);                                                     //80 iterations
     write_Int_FRAM(LogItRemain3address,80);                                     //80 left to go
     write_Int_FRAM(LogItRemain3MASTERaddress,80);                           
 
     //Log interval #4:
-    LogIntLength=60;                                                            //60 second scan interval
+    //LogIntLength=60;                                                            //60 second scan interval REM REV 1.10
+    LogIntLength+=10;                                                           //fourth scan interval  REV 1.10
     storeLogInterval(4,70);                                                     //70 iterations
     write_Int_FRAM(LogItRemain4address,70);                                     //70 left to go
     write_Int_FRAM(LogItRemain4MASTERaddress,70);                           
 
     //Log interval #5:
-    LogIntLength=90;                                                            //90 second scan interval
+    //LogIntLength=90;                                                            //90 second scan interval REM REV 1.10
+    LogIntLength+=10;                                                           //fifth scan interval  REV 1.10
     storeLogInterval(5,60);                                                     //60 iterations
     write_Int_FRAM(LogItRemain5address,60);                                     //60 left to go
     write_Int_FRAM(LogItRemain5MASTERaddress,60);                           
  
     //Log interval #6:
-    LogIntLength=120;                                                           //120 second scan interval
+    //LogIntLength=120;                                                           //120 second scan interval    REM REV 1.10
+    LogIntLength+=10;                                                           //sixth scan interval  REV 1.10
     storeLogInterval(6,0);                                                      //0 iterations
     write_Int_FRAM(LogItRemain6address,0);                                      //0 left to go
     write_Int_FRAM(LogItRemain6MASTERaddress,0);                            
@@ -12839,7 +12851,10 @@ void MODBUScomm(void)
 
         case WRITE_HOLDING:                                                     
             //16 Bit:
-            if((memaddressStart>=baudrateaddress) && (memaddressStart<=RESERVED2))   //MODBUS 16 bit Registers 
+            //if((memaddressStart>=baudrateaddress) && (memaddressStart<=RESERVED2))   //MODBUS 16 bit Registers    REM REV 1.10
+            if(((memaddressStart>=baudrateaddress) && (memaddressStart<=RESERVED2))   //MODBUS 16 bit Registers     REV 1.10
+                    |
+                ((memaddressStart>=THMUX_ENABLE1_16flagsaddress) && (memaddressStart<=LastMemoryaddress)))    
             {
                 MODBUS_TXbuf[REGISTER_MSB]=MODBUS_RXbuf[REGISTER_MSB];          //Load the TXbuf[] with Register address MSB
                 MODBUS_TXbuf[REGISTER_LSB]=MODBUS_RXbuf[REGISTER_LSB];          //Load the TXbuf[] with Register address LSB
@@ -13623,7 +13638,8 @@ void MX1(void)
     MUX_ENABLE1_16.e1flags.CH1=1;                           
     write_Int_FRAM(MUX_ENABLE1_16flagsaddress,MUX_ENABLE1_16.MUXen1_16); 
     LogIntLength = minScanSingleVW;
-    hms(minScanSingleVW, 0);                                                    //load minimum scan interval for Single Channel     
+    hms(minScanSingleVW, 0);                                                    //load minimum scan interval for Single Channel   
+    loadDefaults();                                                             //REV 1.10
 }
 
 
@@ -13635,6 +13651,7 @@ void MX4(void)
     write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);      
     LogIntLength = minScanFourVW;
     hms(minScanFourVW, 0);                                                      //load minimum scan interval for 4 channel mode    
+    loadDefaults();                                                             //REV 1.10
 }
 
 
@@ -13645,7 +13662,8 @@ void MX8(void)
     S_1.status1flags._CFG=VW8;                                                   //set the MODBUS status flags    
     write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                              
     LogIntLength = minScanEightVW;
-    hms(minScanEightVW, 0);                                                     //load minimum scan interval for 8 channel VW mode    
+    hms(minScanEightVW, 0);                                                     //load minimum scan interval for 8 channel VW mode  
+    loadDefaults();                                                             //REV 1.10
 }
 
 
@@ -13656,7 +13674,8 @@ void MX8T(void)
     S_1.status1flags._CFG=TH8;                                                   //set the MODBUS status flags   
     write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                              
     LogIntLength = minScanEightTH;
-    hms(minScanEightTH, 0);                                                     //load minimum scan interval for 8 channel thermistor mode    
+    hms(minScanEightTH, 0);                                                     //load minimum scan interval for 8 channel thermistor mode  
+    loadDefaults();                                                             //REV 1.10
 }
 
 
@@ -13667,9 +13686,9 @@ void MX16(void)
     S_1.status1flags._CFG=VW16;                                                  //set the MODBUS status flags    
     write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                              
     LogIntLength = minScanSixteenVW;
-    hms(minScanSixteenVW, 0);                                                   //load minimum scan interval if 16 channel mode    
+    hms(minScanSixteenVW, 0);                                                   //load minimum scan interval if 16 channel mode 
+    loadDefaults();                                                             //REV 1.10
 }
-
 
 void MX32(void)                                                                 
 {
@@ -13678,7 +13697,8 @@ void MX32(void)
     S_1.status1flags._CFG=VW32;                                                  //set the MODBUS status flags    
     write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                              
     LogIntLength = minScanThirtytwoVW;
-    hms(minScanThirtytwoVW, 0);                                                 //load minimum scan interval for 32 channel VW mode    
+    hms(minScanThirtytwoVW, 0);                                                 //load minimum scan interval for 32 channel VW mode
+    loadDefaults();                                                             //REV 1.10    
 }
 
 
@@ -13689,7 +13709,8 @@ void MX32T(void)
     S_1.status1flags._CFG=TH32;                                                  //set the MODBUS status flags    
     write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                              
     LogIntLength = minScanThirtytwoTH;
-    hms(minScanThirtytwoTH, 0);                                                 //load minimum scan interval for 32 channel thermistor mode    
+    hms(minScanThirtytwoTH, 0);                                                 //load minimum scan interval for 32 channel thermistor mode 
+    loadDefaults();                                                             //REV 1.10
 }
 
 void O_D(void)                                                                  
@@ -15339,7 +15360,7 @@ void start32KHz(void)
 
 
 void startLogging(void) {
-    WDTSWEnable;                                                                
+    //WDTSWEnable;                                                                
 
     if (LC2CONTROL.flags.LogInterval) 
     {
@@ -15400,8 +15421,8 @@ void startLogging(void) {
     enableINT1();                                                               //enable INT1 (take a reading on interrupt)
     INTCON1bits.NSTDIS = 0;                                                     //Reset nesting of interrupts                     
     IFS3bits.T9IF=1;                                                            //set the T9 interrupt flag to force shutdown   
-    ClrWdt();                                                                 
-    WDTSWDisable;                                                             
+    //ClrWdt();                                                                 
+    //WDTSWDisable;                                                             
 }
 
 
@@ -17298,7 +17319,7 @@ void take_One_Complete_Reading(unsigned char store)
 
                 if (!store)
                     IEC1bits.INT1IE = 0;                                        //temporarily disable the INT2 interrupt
-                WDTSWEnable;                                                    //Start WDT                           
+                //WDTSWEnable;                                                    //Start WDT                           
                 VWreading = take_reading(gageType,ch);                          //take VW reading (or other gage type) 
                 if(!VWreading)                                                  //retry if no response  
                 {
@@ -17308,8 +17329,8 @@ void take_One_Complete_Reading(unsigned char store)
                 }
                 disableVWchannel();                                             
 
-                ClrWdt();                                                       //clear the WDT 
-                WDTSWDisable;                                                   //Stop WDT 
+                //ClrWdt();                                                       //clear the WDT 
+                //WDTSWDisable;                                                   //Stop WDT 
                 if (!store) {
                     IEC1bits.INT1IE = 1;                                        //re-enable the INT2 interrupt
                     Nop();

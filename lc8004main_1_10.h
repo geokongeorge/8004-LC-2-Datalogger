@@ -1243,7 +1243,7 @@ char Synchnot[]={"Readings are not synchronized to the top of the hour."};
 char SystemStatus[]={"S,SS                   datalogger Status, System Status"};
 char szzzz[]={"                       szzzzzz = zero reading with sign"};
 
-char t[]={"                       t = Thermistor Type (0,1,2)"};                
+char t[]={"                       t = Thermistor Type (1,2,3)"};                
 char tt[]={"		       tt = Gage Type"};
 char Tab[]={"   "};					//3 space tab
 char TF[]={"TF                     Time Format(0=hhmm,1=hh,mm)"};
