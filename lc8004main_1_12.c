@@ -13,10 +13,10 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		11/27/2017
+//	DATE:		11/28/2017
 //	DESIGNER: 	GEORGE MOORE
-//	REVISION:   1.11
-//	CHECKSUM:	0xae64 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	REVISION:   1.12
+//	CHECKSUM:	0xae65 (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8874/30720   29%
 //	PGM(FLASH)MEM:  185640/261888 71%
 
@@ -223,6 +223,7 @@
 //                                  Cleanup (remove) rem'd out code
 //                                  Add back WDT enable when start logging
 //      1.11    11/27/17            Add automatic write to MODBUS firmware revision register the current firmware revision on bootup.
+//      1.12    11/28/17            Debug LOG Intervals when used with scheduled logging
 //                                  
 //
 //
@@ -275,7 +276,7 @@
 //	Header Files:
 //#include "p33FJ256GP710A.h"
 //#include "LC8004extFRAM_i.h"                              
-//#include "LC8004main_1_11.h"
+//#include "LC8004main_1_12.h"
 //#include "LC8004delay_b.h"
 //#include "AD5241b.h"
 //#include "FRAM_ADDRESSh.h                                                     
@@ -301,7 +302,7 @@
 //--------------------------------------------------------------
 #include "p33FJ256GP710A.h"
 #include "LC8004extFRAM_i.h"                                                    
-#include "LC8004main_1_11.h"
+#include "LC8004main_1_12.h"
 #include "LC8004delay_b.h"                                                      
 #include "AD5241b.h"                                                            
 #include "FRAM_ADDRESSh.h"                                                      

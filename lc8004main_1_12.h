@@ -1,6 +1,6 @@
 
-#ifndef LC8004main_1_11_H
-#define LC8004main_1_11_H
+#ifndef LC8004main_1_12_H
+#define LC8004main_1_12_H
 
 // DSPIC33FJ256GP710A Configuration Bit Settings
 
@@ -1216,7 +1216,7 @@ char Resetting[]={"Resetting..."};
 char ResetComplete[]={"RESET COMPLETE"};						
 //char Rev[]={"1.11"};                                                          REM REV 1.11
 char RevMAJOR[]={"1"};                                                          //255 MAX   REV 1.11   
-char RevMINOR[]={"11"};                                                         //255 MAX   REV 1.11
+char RevMINOR[]={"12"};                                                         //255 MAX   REV 1.11
 char RnotAllowed[]={"RESET Not Allowed While Logging"};			
 char RUsure[]={"Are you sure(Y/N)?"};
 char RSN[]={"RSN                    Read transducer Serial Number"};            

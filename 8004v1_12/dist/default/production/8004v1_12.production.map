@@ -6,7 +6,7 @@ Tool Name:
 Command:
   -p33FJ256GP710A \
   -o \
-  dist/default/production/8004v1_11.production.elf \
+  dist/default/production/8004v1_12.production.elf \
   -Lc:/program files (x86)/microchip/xc16/v1.26/bin/bin/.. \
   -Lc:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib \
   -Lc:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/PIC24E \
@@ -24,7 +24,7 @@ Command:
   build/default/production/_ext/1472/LC8004delay_b.o \
   build/default/production/_ext/1472/LC8004extFRAM_i.o \
   build/default/production/_ext/1472/AD5241b.o \
-  build/default/production/_ext/1472/lc8004main_1_11.o \
+  build/default/production/_ext/1472/lc8004main_1_12.o \
   --defsym=__MPLAB_BUILD=1 \
   -Tp33FJ256GP710A.gld.00 \
   --stack=16 \
@@ -38,7 +38,7 @@ Command:
   --stackguard=16 \
   --no-force-link \
   --smart-io \
-  -Map=dist/default/production/8004v1_11.production.map \
+  -Map=dist/default/production/8004v1_12.production.map \
   --report-mem \
   --memorysummary \
   dist/default/production/memoryfile.xml \
@@ -83,31 +83,31 @@ c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ2
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(StopI2C2.o)
                               build/default/production/_ext/1472/AD5241b.o (_StopI2C2)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(CloseOC1.o)
-                              build/default/production/_ext/1472/lc8004main_1_11.o (_CloseOC1)
+                              build/default/production/_ext/1472/lc8004main_1_12.o (_CloseOC1)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(isWDTTO.o)
-                              build/default/production/_ext/1472/lc8004main_1_11.o (_isWDTTO)
+                              build/default/production/_ext/1472/lc8004main_1_12.o (_isWDTTO)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(CloseTimer23.o)
-                              build/default/production/_ext/1472/lc8004main_1_11.o (_CloseTimer23)
+                              build/default/production/_ext/1472/lc8004main_1_12.o (_CloseTimer23)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(CloseTimer3.o)
-                              build/default/production/_ext/1472/lc8004main_1_11.o (_CloseTimer3)
+                              build/default/production/_ext/1472/lc8004main_1_12.o (_CloseTimer3)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(ConfigIntTimer89.o)
                               build/default/production/_ext/1472/LC8004delay_b.o (_ConfigIntTimer89)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(OpenTimer3.o)
-                              build/default/production/_ext/1472/lc8004main_1_11.o (_OpenTimer3)
+                              build/default/production/_ext/1472/lc8004main_1_12.o (_OpenTimer3)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(OpenTimer89.o)
                               build/default/production/_ext/1472/LC8004delay_b.o (_OpenTimer89)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(WriteTimer3.o)
-                              build/default/production/_ext/1472/lc8004main_1_11.o (_WriteTimer3)
+                              build/default/production/_ext/1472/lc8004main_1_12.o (_WriteTimer3)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(WriteTimer89.o)
                               build/default/production/_ext/1472/LC8004delay_b.o (_WriteTimer89)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(BusyUART1.o)
                               build/default/production/_ext/1472/LC8004extFRAM_i.o (_BusyUART1)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(ConfigIntUART1.o)
-                              build/default/production/_ext/1472/lc8004main_1_11.o (_ConfigIntUART1)
+                              build/default/production/_ext/1472/lc8004main_1_12.o (_ConfigIntUART1)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(DataRdyUART1.o)
-                              build/default/production/_ext/1472/lc8004main_1_11.o (_DataRdyUART1)
+                              build/default/production/_ext/1472/lc8004main_1_12.o (_DataRdyUART1)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(OpenUART1.o)
-                              build/default/production/_ext/1472/lc8004main_1_11.o (_OpenUART1)
+                              build/default/production/_ext/1472/lc8004main_1_12.o (_OpenUART1)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(putsUART1.o)
                               build/default/production/_ext/1472/LC8004extFRAM_i.o (_putsUART1)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(ReadUART1.o)
@@ -115,13 +115,13 @@ c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ2
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(WriteUART1.o)
                               build/default/production/_ext/1472/LC8004extFRAM_i.o (_WriteUART1)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(ConfigINT1.o)
-                              build/default/production/_ext/1472/lc8004main_1_11.o (_ConfigINT1)
+                              build/default/production/_ext/1472/lc8004main_1_12.o (_ConfigINT1)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-pic30-elf.a(crt0_standard.o)
                               (__resetPRI)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-pic30-elf.a(data_init_standard.o)
                               c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-pic30-elf.a(crt0_standard.o) (__data_init_standard)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-pic30-elf.a(delay32.Leo)
-                              build/default/production/_ext/1472/lc8004main_1_11.o (___delay32)
+                              build/default/production/_ext/1472/lc8004main_1_12.o (___delay32)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(addsf3.eo)
                               build/default/production/_ext/1472/LC8004delay_b.o (___subsf3)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(divsf3.eo)
@@ -131,15 +131,15 @@ c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(feqltle
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(fgtge.eo)
                               build/default/production/_ext/1472/LC8004extFRAM_i.o (___gtsf2)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(fixsfsi.eo)
-                              build/default/production/_ext/1472/lc8004main_1_11.o (_(float, int, long long, short, float, short, int))
+                              build/default/production/_ext/1472/lc8004main_1_12.o (_(float, int, long long, short, float, short, int))
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(fixunssfsi.eo)
                               build/default/production/_ext/1472/LC8004delay_b.o (___fixunssfsi)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(floatsisf.eo)
-                              build/default/production/_ext/1472/lc8004main_1_11.o (___floatsisf)
+                              build/default/production/_ext/1472/lc8004main_1_12.o (___floatsisf)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(floatunsisf.eo)
                               build/default/production/_ext/1472/LC8004delay_b.o (___floatunsisf)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(fne.eo)
-                              build/default/production/_ext/1472/lc8004main_1_11.o (___nesf2)
+                              build/default/production/_ext/1472/lc8004main_1_12.o (___nesf2)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(fpack.eo)
                               c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(addsf3.eo) (__fpack)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(funpack.eo)
@@ -149,11 +149,11 @@ c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(funpack
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(futil.eo)
                               c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(addsf3.eo) (__fPropagateNaN)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(logf.eo)
-                              build/default/production/_ext/1472/lc8004main_1_11.o (_logf)
+                              build/default/production/_ext/1472/lc8004main_1_12.o (_logf)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(mulsf3.eo)
-                              build/default/production/_ext/1472/lc8004main_1_11.o (___mulsf3)
+                              build/default/production/_ext/1472/lc8004main_1_12.o (___mulsf3)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(umodsi3.eo)
-                              build/default/production/_ext/1472/lc8004main_1_11.o (___umodsi3)
+                              build/default/production/_ext/1472/lc8004main_1_12.o (___umodsi3)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(_frexpf.eo)
                               c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(logf.eo) (__frexpf)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(errno.eo)
@@ -167,23 +167,23 @@ c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(floatun
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(udivsi3.eo)
                               c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(umodsi3.eo) (___udivsi3)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(isalpha.XXeso)
-                              build/default/production/_ext/1472/lc8004main_1_11.o (_isalpha)
+                              build/default/production/_ext/1472/lc8004main_1_12.o (_isalpha)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(isgraph.XXeso)
-                              build/default/production/_ext/1472/lc8004main_1_11.o (_isgraph)
+                              build/default/production/_ext/1472/lc8004main_1_12.o (_isgraph)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(xstoul.XXeo)
-                              build/default/production/_ext/1472/lc8004main_1_11.o (__Stoul)
+                              build/default/production/_ext/1472/lc8004main_1_12.o (__Stoul)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(isspace.XXelso)
                               c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(xstoul.XXeo) (_isspace)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(tolower.XXelso)
                               c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(xstoul.XXeo) (_tolower)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(sprintf_cdnopuxX.XXeo)
-                              build/default/production/_ext/1472/lc8004main_1_11.o (__sprintf_cdnopuxX)
+                              build/default/production/_ext/1472/lc8004main_1_12.o (__sprintf_cdnopuxX)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(xprintf_cdnopuxX.XXeo)
                               c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(sprintf_cdnopuxX.XXeo) (___Printf_cdnopuxX)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(xputfld_cdnopuxX.XXeo)
                               c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(xprintf_cdnopuxX.XXeo) (___Putfld_cdnopuxX)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(sprintf_cdfFnopuxX.XXeo)
-                              build/default/production/_ext/1472/lc8004main_1_11.o (__sprintf_cdfFnopuxX)
+                              build/default/production/_ext/1472/lc8004main_1_12.o (__sprintf_cdfFnopuxX)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(xprintf_cdfFnopuxX.XXeo)
                               c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(sprintf_cdfFnopuxX.XXeo) (___Printf_cdfFnopuxX)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(xputfld_cdfFnopuxX.XXeo)
@@ -2307,7 +2307,7 @@ Linker script and memory map
 LOAD build/default/production/_ext/1472/LC8004delay_b.o
 LOAD build/default/production/_ext/1472/LC8004extFRAM_i.o
 LOAD build/default/production/_ext/1472/AD5241b.o
-LOAD build/default/production/_ext/1472/lc8004main_1_11.o
+LOAD build/default/production/_ext/1472/lc8004main_1_12.o
                     0x0001                  __MPLAB_BUILD = 0x1
 LOAD c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a
 LOAD c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libfx-elf.a
@@ -2660,7 +2660,7 @@ __FUID3
  .debug_info      0x000000        0x255 build/default/production/_ext/1472/LC8004delay_b.o
  .debug_info      0x000255        0xdf8 build/default/production/_ext/1472/LC8004extFRAM_i.o
  .debug_info      0x00104d        0x2f3 build/default/production/_ext/1472/AD5241b.o
- .debug_info      0x001340       0xefd2 build/default/production/_ext/1472/lc8004main_1_11.o
+ .debug_info      0x001340       0xefd2 build/default/production/_ext/1472/lc8004main_1_12.o
  *(.gnu.linkonce.wi.*)
 
 .debug_abbrev     0x000000        0x639
@@ -2668,28 +2668,28 @@ __FUID3
  .debug_abbrev    0x000000         0xd9 build/default/production/_ext/1472/LC8004delay_b.o
  .debug_abbrev    0x0000d9        0x1bd build/default/production/_ext/1472/LC8004extFRAM_i.o
  .debug_abbrev    0x000296         0xb6 build/default/production/_ext/1472/AD5241b.o
- .debug_abbrev    0x00034c        0x2ed build/default/production/_ext/1472/lc8004main_1_11.o
+ .debug_abbrev    0x00034c        0x2ed build/default/production/_ext/1472/lc8004main_1_12.o
 
 .debug_line       0x000000       0x3ef9
  *(.debug_line)
  .debug_line      0x000000         0xb8 build/default/production/_ext/1472/LC8004delay_b.o
  .debug_line      0x0000b8        0x329 build/default/production/_ext/1472/LC8004extFRAM_i.o
  .debug_line      0x0003e1         0xc4 build/default/production/_ext/1472/AD5241b.o
- .debug_line      0x0004a5       0x3a54 build/default/production/_ext/1472/lc8004main_1_11.o
+ .debug_line      0x0004a5       0x3a54 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .debug_frame      0x000000       0x2792
  *(.debug_frame)
  .debug_frame     0x000000         0x90 build/default/production/_ext/1472/LC8004delay_b.o
  .debug_frame     0x000090        0x16a build/default/production/_ext/1472/LC8004extFRAM_i.o
  .debug_frame     0x0001fa         0x4c build/default/production/_ext/1472/AD5241b.o
- .debug_frame     0x000246       0x254c build/default/production/_ext/1472/lc8004main_1_11.o
+ .debug_frame     0x000246       0x254c build/default/production/_ext/1472/lc8004main_1_12.o
 
 .debug_str        0x000000       0x1084
  *(.debug_str)
  .debug_str       0x000000         0x20 build/default/production/_ext/1472/LC8004delay_b.o
  .debug_str       0x000020         0xa6 build/default/production/_ext/1472/LC8004extFRAM_i.o
  .debug_str       0x0000c6          0xc build/default/production/_ext/1472/AD5241b.o
- .debug_str       0x0000d2        0xfb2 build/default/production/_ext/1472/lc8004main_1_11.o
+ .debug_str       0x0000d2        0xfb2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .debug_loc
  *(.debug_loc)
@@ -2707,7 +2707,7 @@ __FUID3
  .debug_pubnames
                   0x000176         0x33 build/default/production/_ext/1472/AD5241b.o
  .debug_pubnames
-                  0x0001a9       0x2d24 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x0001a9       0x2d24 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .debug_ranges
  *(.debug_ranges)
@@ -2721,7 +2721,7 @@ __FUID3
  .debug_aranges
                   0x000030         0x18 build/default/production/_ext/1472/AD5241b.o
  .debug_aranges
-                  0x000048         0x18 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000048         0x18 build/default/production/_ext/1472/lc8004main_1_12.o
                     0x0000                  WREG0 = 0x0
                     0x0000                  _WREG0 = 0x0
                     0x0002                  WREG1 = 0x2
@@ -3954,7 +3954,7 @@ LOAD c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-pic30
 LOAD c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a
 LOAD c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a
 END GROUP
-OUTPUT(dist/default/production/8004v1_11.production.elf elf32-pic30)
+OUTPUT(dist/default/production/8004v1_12.production.elf elf32-pic30)
 LOAD FBS
 LOAD FSS
 LOAD FGS
@@ -3972,7 +3972,7 @@ LOAD shared_data_init
  .debug_pubtypes
                   0x000165         0x35 build/default/production/_ext/1472/AD5241b.o
  .debug_pubtypes
-                  0x00019a        0x98d build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00019a        0x98d build/default/production/_ext/1472/lc8004main_1_12.o
 
 __c30_signature
                   0x000b27        0x264
@@ -3983,7 +3983,7 @@ __c30_signature
  __c30_signature
                   0x000b33          0x6 build/default/production/_ext/1472/AD5241b.o
  __c30_signature
-                  0x000b39          0x6 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000b39          0x6 build/default/production/_ext/1472/lc8004main_1_12.o
  __c30_signature
                   0x000b3f          0x6 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(CloseI2C1.o)
  __c30_signature
@@ -4186,7 +4186,7 @@ __c30_signature
                     0x0800                  _errno
 
 .data               0x0802       0x1e92
- .data              0x0802       0x1e92 build/default/production/_ext/1472/lc8004main_1_11.o
+ .data              0x0802       0x1e92 build/default/production/_ext/1472/lc8004main_1_12.o
                     0x0802                  _gain
                     0x0804                  _maxSingleVW
                     0x0806                  _maxFourVW
@@ -4506,7 +4506,7 @@ __c30_signature
                     0x2650                  _por
 
 .bss                0x2694        0x31e
- .bss               0x2694        0x31e build/default/production/_ext/1472/lc8004main_1_11.o
+ .bss               0x2694        0x31e build/default/production/_ext/1472/lc8004main_1_12.o
                     0x2694                  _VWflags
                     0x2696                  _VWflagsbits
                     0x2698                  _FRAM_MEMORY
@@ -4668,668 +4668,668 @@ __c30_signature
 .data               0x2aa8          0x2
  .data              0x2aa8          0x2 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(xgenld_cdfFnopuxX.XXeo)
 
-_0407D900_at_address_00F80006
+_03FD9900_at_address_00F80006
                   0xf80006          0x2
- _0407D900_at_address_00F80006
-                  0xf80006          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+ _03FD9900_at_address_00F80006
+                  0xf80006          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
                   0xf80006                  _FOSCSEL
 
-_0407D960_at_address_00F80008
+_03FD9960_at_address_00F80008
                   0xf80008          0x2
- _0407D960_at_address_00F80008
-                  0xf80008          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+ _03FD9960_at_address_00F80008
+                  0xf80008          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
                   0xf80008                  _FOSC
 
-_0407D9C0_at_address_00F8000A
+_03FD99C0_at_address_00F8000A
                   0xf8000a          0x2
- _0407D9C0_at_address_00F8000A
-                  0xf8000a          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+ _03FD99C0_at_address_00F8000A
+                  0xf8000a          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
                   0xf8000a                  _FWDT
 
-_0407DA20_at_address_00F8000C
+_03FD9A20_at_address_00F8000C
                   0xf8000c          0x2
- _0407DA20_at_address_00F8000C
-                  0xf8000c          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+ _03FD9A20_at_address_00F8000C
+                  0xf8000c          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
                   0xf8000c                  _FPOR
 
-_0407DA80_at_address_00F8000E
+_03FD9A80_at_address_00F8000E
                   0xf8000e          0x2
- _0407DA80_at_address_00F8000E
-                  0xf8000e          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+ _03FD9A80_at_address_00F8000E
+                  0xf8000e          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
                   0xf8000e                  _FICD
 
 .ivt._INT0Interrupt
                   0x000014          0x2
  .ivt._INT0Interrupt
-                  0x000014          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000014          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._IC1Interrupt
                   0x000016          0x2
  .ivt._IC1Interrupt
-                  0x000016          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000016          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._OC1Interrupt
                   0x000018          0x2
  .ivt._OC1Interrupt
-                  0x000018          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000018          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._T1Interrupt
                   0x00001a          0x2
  .ivt._T1Interrupt
-                  0x00001a          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00001a          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._DMA0Interrupt
                   0x00001c          0x2
  .ivt._DMA0Interrupt
-                  0x00001c          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00001c          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._IC2Interrupt
                   0x00001e          0x2
  .ivt._IC2Interrupt
-                  0x00001e          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00001e          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._OC2Interrupt
                   0x000020          0x2
  .ivt._OC2Interrupt
-                  0x000020          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000020          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._T2Interrupt
                   0x000022          0x2
  .ivt._T2Interrupt
-                  0x000022          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000022          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._T3Interrupt
                   0x000024          0x2
  .ivt._T3Interrupt
-                  0x000024          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000024          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._SPI1Interrupt
                   0x000028          0x2
  .ivt._SPI1Interrupt
-                  0x000028          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000028          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._U1TXInterrupt
                   0x00002c          0x2
  .ivt._U1TXInterrupt
-                  0x00002c          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00002c          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._ADC1Interrupt
                   0x00002e          0x2
  .ivt._ADC1Interrupt
-                  0x00002e          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00002e          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._DMA1Interrupt
                   0x000030          0x2
  .ivt._DMA1Interrupt
-                  0x000030          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000030          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._SI2C1Interrupt
                   0x000034          0x2
  .ivt._SI2C1Interrupt
-                  0x000034          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000034          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._MI2C1Interrupt
                   0x000036          0x2
  .ivt._MI2C1Interrupt
-                  0x000036          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000036          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._CNInterrupt
                   0x00003a          0x2
  .ivt._CNInterrupt
-                  0x00003a          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00003a          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._ADC2Interrupt
                   0x00003e          0x2
  .ivt._ADC2Interrupt
-                  0x00003e          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00003e          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._IC7Interrupt
                   0x000040          0x2
  .ivt._IC7Interrupt
-                  0x000040          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000040          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._IC8Interrupt
                   0x000042          0x2
  .ivt._IC8Interrupt
-                  0x000042          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000042          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._DMA2Interrupt
                   0x000044          0x2
  .ivt._DMA2Interrupt
-                  0x000044          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000044          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._OC3Interrupt
                   0x000046          0x2
  .ivt._OC3Interrupt
-                  0x000046          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000046          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._OC4Interrupt
                   0x000048          0x2
  .ivt._OC4Interrupt
-                  0x000048          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000048          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._T4Interrupt
                   0x00004a          0x2
  .ivt._T4Interrupt
-                  0x00004a          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00004a          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._INT2Interrupt
                   0x00004e          0x2
  .ivt._INT2Interrupt
-                  0x00004e          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00004e          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._U2RXInterrupt
                   0x000050          0x2
  .ivt._U2RXInterrupt
-                  0x000050          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000050          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._U2TXInterrupt
                   0x000052          0x2
  .ivt._U2TXInterrupt
-                  0x000052          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000052          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._SPI2ErrInterrupt
                   0x000054          0x2
  .ivt._SPI2ErrInterrupt
-                  0x000054          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000054          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._SPI2Interrupt
                   0x000056          0x2
  .ivt._SPI2Interrupt
-                  0x000056          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000056          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._C1RxRdyInterrupt
                   0x000058          0x2
  .ivt._C1RxRdyInterrupt
-                  0x000058          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000058          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._C1Interrupt
                   0x00005a          0x2
  .ivt._C1Interrupt
-                  0x00005a          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00005a          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._DMA3Interrupt
                   0x00005c          0x2
  .ivt._DMA3Interrupt
-                  0x00005c          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00005c          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._IC3Interrupt
                   0x00005e          0x2
  .ivt._IC3Interrupt
-                  0x00005e          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00005e          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._IC4Interrupt
                   0x000060          0x2
  .ivt._IC4Interrupt
-                  0x000060          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000060          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._IC5Interrupt
                   0x000062          0x2
  .ivt._IC5Interrupt
-                  0x000062          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000062          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._IC6Interrupt
                   0x000064          0x2
  .ivt._IC6Interrupt
-                  0x000064          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000064          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._OC5Interrupt
                   0x000066          0x2
  .ivt._OC5Interrupt
-                  0x000066          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000066          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._OC6Interrupt
                   0x000068          0x2
  .ivt._OC6Interrupt
-                  0x000068          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000068          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._OC7Interrupt
                   0x00006a          0x2
  .ivt._OC7Interrupt
-                  0x00006a          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00006a          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._OC8Interrupt
                   0x00006c          0x2
  .ivt._OC8Interrupt
-                  0x00006c          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00006c          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._DMA4Interrupt
                   0x000070          0x2
  .ivt._DMA4Interrupt
-                  0x000070          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000070          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._T6Interrupt
                   0x000072          0x2
  .ivt._T6Interrupt
-                  0x000072          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000072          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._SI2C2Interrupt
                   0x000076          0x2
  .ivt._SI2C2Interrupt
-                  0x000076          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000076          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._MI2C2Interrupt
                   0x000078          0x2
  .ivt._MI2C2Interrupt
-                  0x000078          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000078          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._T8Interrupt
                   0x00007a          0x2
  .ivt._T8Interrupt
-                  0x00007a          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00007a          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._T9Interrupt
                   0x00007c          0x2
  .ivt._T9Interrupt
-                  0x00007c          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00007c          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._INT3Interrupt
                   0x00007e          0x2
  .ivt._INT3Interrupt
-                  0x00007e          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00007e          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._INT4Interrupt
                   0x000080          0x2
  .ivt._INT4Interrupt
-                  0x000080          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000080          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._C2RxRdyInterrupt
                   0x000082          0x2
  .ivt._C2RxRdyInterrupt
-                  0x000082          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000082          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._C2Interrupt
                   0x000084          0x2
  .ivt._C2Interrupt
-                  0x000084          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000084          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._DCIErrInterrupt
                   0x00008a          0x2
  .ivt._DCIErrInterrupt
-                  0x00008a          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00008a          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._DCIInterrupt
                   0x00008c          0x2
  .ivt._DCIInterrupt
-                  0x00008c          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00008c          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._DMA5Interrupt
                   0x00008e          0x2
  .ivt._DMA5Interrupt
-                  0x00008e          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00008e          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._U1ErrInterrupt
                   0x000096          0x2
  .ivt._U1ErrInterrupt
-                  0x000096          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000096          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._U2ErrInterrupt
                   0x000098          0x2
  .ivt._U2ErrInterrupt
-                  0x000098          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000098          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._DMA6Interrupt
                   0x00009c          0x2
  .ivt._DMA6Interrupt
-                  0x00009c          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00009c          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._DMA7Interrupt
                   0x00009e          0x2
  .ivt._DMA7Interrupt
-                  0x00009e          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00009e          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._C1TxReqInterrupt
                   0x0000a0          0x2
  .ivt._C1TxReqInterrupt
-                  0x0000a0          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x0000a0          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._C2TxReqInterrupt
                   0x0000a2          0x2
  .ivt._C2TxReqInterrupt
-                  0x0000a2          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x0000a2          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltINT0Interrupt
                   0x000114          0x2
  .aivt._AltINT0Interrupt
-                  0x000114          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000114          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltIC1Interrupt
                   0x000116          0x2
  .aivt._AltIC1Interrupt
-                  0x000116          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000116          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltOC1Interrupt
                   0x000118          0x2
  .aivt._AltOC1Interrupt
-                  0x000118          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000118          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltT1Interrupt
                   0x00011a          0x2
  .aivt._AltT1Interrupt
-                  0x00011a          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00011a          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltDMA0Interrupt
                   0x00011c          0x2
  .aivt._AltDMA0Interrupt
-                  0x00011c          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00011c          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltIC2Interrupt
                   0x00011e          0x2
  .aivt._AltIC2Interrupt
-                  0x00011e          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00011e          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltOC2Interrupt
                   0x000120          0x2
  .aivt._AltOC2Interrupt
-                  0x000120          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000120          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltT2Interrupt
                   0x000122          0x2
  .aivt._AltT2Interrupt
-                  0x000122          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000122          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltT3Interrupt
                   0x000124          0x2
  .aivt._AltT3Interrupt
-                  0x000124          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000124          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltSPI1Interrupt
                   0x000128          0x2
  .aivt._AltSPI1Interrupt
-                  0x000128          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000128          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltU1TXInterrupt
                   0x00012c          0x2
  .aivt._AltU1TXInterrupt
-                  0x00012c          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00012c          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltADC1Interrupt
                   0x00012e          0x2
  .aivt._AltADC1Interrupt
-                  0x00012e          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00012e          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltDMA1Interrupt
                   0x000130          0x2
  .aivt._AltDMA1Interrupt
-                  0x000130          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000130          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltSI2C1Interrupt
                   0x000134          0x2
  .aivt._AltSI2C1Interrupt
-                  0x000134          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000134          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltMI2C1Interrupt
                   0x000136          0x2
  .aivt._AltMI2C1Interrupt
-                  0x000136          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000136          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltCNInterrupt
                   0x00013a          0x2
  .aivt._AltCNInterrupt
-                  0x00013a          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00013a          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltADC2Interrupt
                   0x00013e          0x2
  .aivt._AltADC2Interrupt
-                  0x00013e          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00013e          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltIC7Interrupt
                   0x000140          0x2
  .aivt._AltIC7Interrupt
-                  0x000140          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000140          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltIC8Interrupt
                   0x000142          0x2
  .aivt._AltIC8Interrupt
-                  0x000142          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000142          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltDMA2Interrupt
                   0x000144          0x2
  .aivt._AltDMA2Interrupt
-                  0x000144          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000144          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltOC3Interrupt
                   0x000146          0x2
  .aivt._AltOC3Interrupt
-                  0x000146          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000146          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltOC4Interrupt
                   0x000148          0x2
  .aivt._AltOC4Interrupt
-                  0x000148          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000148          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltT4Interrupt
                   0x00014a          0x2
  .aivt._AltT4Interrupt
-                  0x00014a          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00014a          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltINT2Interrupt
                   0x00014e          0x2
  .aivt._AltINT2Interrupt
-                  0x00014e          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00014e          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltU2RXInterrupt
                   0x000150          0x2
  .aivt._AltU2RXInterrupt
-                  0x000150          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000150          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltU2TXInterrupt
                   0x000152          0x2
  .aivt._AltU2TXInterrupt
-                  0x000152          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000152          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltSPI2ErrInterrupt
                   0x000154          0x2
  .aivt._AltSPI2ErrInterrupt
-                  0x000154          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000154          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltSPI2Interrupt
                   0x000156          0x2
  .aivt._AltSPI2Interrupt
-                  0x000156          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000156          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltC1RxRdyInterrupt
                   0x000158          0x2
  .aivt._AltC1RxRdyInterrupt
-                  0x000158          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000158          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltC1Interrupt
                   0x00015a          0x2
  .aivt._AltC1Interrupt
-                  0x00015a          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00015a          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltDMA3Interrupt
                   0x00015c          0x2
  .aivt._AltDMA3Interrupt
-                  0x00015c          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00015c          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltIC3Interrupt
                   0x00015e          0x2
  .aivt._AltIC3Interrupt
-                  0x00015e          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00015e          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltIC4Interrupt
                   0x000160          0x2
  .aivt._AltIC4Interrupt
-                  0x000160          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000160          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltIC5Interrupt
                   0x000162          0x2
  .aivt._AltIC5Interrupt
-                  0x000162          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000162          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltIC6Interrupt
                   0x000164          0x2
  .aivt._AltIC6Interrupt
-                  0x000164          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000164          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltOC5Interrupt
                   0x000166          0x2
  .aivt._AltOC5Interrupt
-                  0x000166          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000166          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltOC6Interrupt
                   0x000168          0x2
  .aivt._AltOC6Interrupt
-                  0x000168          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000168          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltOC7Interrupt
                   0x00016a          0x2
  .aivt._AltOC7Interrupt
-                  0x00016a          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00016a          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltOC8Interrupt
                   0x00016c          0x2
  .aivt._AltOC8Interrupt
-                  0x00016c          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00016c          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltDMA4Interrupt
                   0x000170          0x2
  .aivt._AltDMA4Interrupt
-                  0x000170          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000170          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltT6Interrupt
                   0x000172          0x2
  .aivt._AltT6Interrupt
-                  0x000172          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000172          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltSI2C2Interrupt
                   0x000176          0x2
  .aivt._AltSI2C2Interrupt
-                  0x000176          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000176          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltMI2C2Interrupt
                   0x000178          0x2
  .aivt._AltMI2C2Interrupt
-                  0x000178          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000178          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltT8Interrupt
                   0x00017a          0x2
  .aivt._AltT8Interrupt
-                  0x00017a          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00017a          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltT9Interrupt
                   0x00017c          0x2
  .aivt._AltT9Interrupt
-                  0x00017c          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00017c          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltINT3Interrupt
                   0x00017e          0x2
  .aivt._AltINT3Interrupt
-                  0x00017e          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00017e          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltINT4Interrupt
                   0x000180          0x2
  .aivt._AltINT4Interrupt
-                  0x000180          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000180          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltC2RxRdyInterrupt
                   0x000182          0x2
  .aivt._AltC2RxRdyInterrupt
-                  0x000182          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000182          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltC2Interrupt
                   0x000184          0x2
  .aivt._AltC2Interrupt
-                  0x000184          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000184          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltDCIErrInterrupt
                   0x00018a          0x2
  .aivt._AltDCIErrInterrupt
-                  0x00018a          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00018a          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltDCIInterrupt
                   0x00018c          0x2
  .aivt._AltDCIInterrupt
-                  0x00018c          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00018c          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltDMA5Interrupt
                   0x00018e          0x2
  .aivt._AltDMA5Interrupt
-                  0x00018e          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00018e          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltU1ErrInterrupt
                   0x000196          0x2
  .aivt._AltU1ErrInterrupt
-                  0x000196          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000196          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltU2ErrInterrupt
                   0x000198          0x2
  .aivt._AltU2ErrInterrupt
-                  0x000198          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000198          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltDMA6Interrupt
                   0x00019c          0x2
  .aivt._AltDMA6Interrupt
-                  0x00019c          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00019c          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltDMA7Interrupt
                   0x00019e          0x2
  .aivt._AltDMA7Interrupt
-                  0x00019e          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00019e          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltC1TxReqInterrupt
                   0x0001a0          0x2
  .aivt._AltC1TxReqInterrupt
-                  0x0001a0          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x0001a0          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltC2TxReqInterrupt
                   0x0001a2          0x2
  .aivt._AltC2TxReqInterrupt
-                  0x0001a2          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x0001a2          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._U1RXInterrupt
                   0x00002a          0x2
  .ivt._U1RXInterrupt
-                  0x00002a          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00002a          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltU1RXInterrupt
                   0x00012a          0x2
  .aivt._AltU1RXInterrupt
-                  0x00012a          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00012a          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._INT1Interrupt
                   0x00003c          0x2
  .ivt._INT1Interrupt
-                  0x00003c          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00003c          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltINT1Interrupt
                   0x00013c          0x2
  .aivt._AltINT1Interrupt
-                  0x00013c          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00013c          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._OscillatorFail
                   0x000006          0x2
  .ivt._OscillatorFail
-                  0x000006          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000006          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltOscillatorFail
                   0x000106          0x2
  .aivt._AltOscillatorFail
-                  0x000106          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000106          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._T5Interrupt
                   0x00004c          0x2
  .ivt._T5Interrupt
-                  0x00004c          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00004c          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltT5Interrupt
                   0x00014c          0x2
  .aivt._AltT5Interrupt
-                  0x00014c          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x00014c          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .ivt._T7Interrupt
                   0x000074          0x2
  .ivt._T7Interrupt
-                  0x000074          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000074          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .aivt._AltT7Interrupt
                   0x000174          0x2
  .aivt._AltT7Interrupt
-                  0x000174          0x2 build/default/production/_ext/1472/lc8004main_1_11.o
+                  0x000174          0x2 build/default/production/_ext/1472/lc8004main_1_12.o
 
 .text             0x001fc0      0x19f3c
- .text            0x001fc0      0x19f3c build/default/production/_ext/1472/lc8004main_1_11.o
+ .text            0x001fc0      0x19f3c build/default/production/_ext/1472/lc8004main_1_12.o
                   0x001fc0                  _main
                   0x00232e                  __3VX_on
                   0x002344                  __3VX_off
