@@ -16,9 +16,9 @@
 //	DATE:		11/27/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   1.11
-//	CHECKSUM:	0x9ec0 (MPLABX ver 3.15 and XC16 ver 1.26)
-//	DATA(RAM)MEM:	8800/30720   29%
-//	PGM(FLASH)MEM:  184884/261888 71%
+//	CHECKSUM:	0x0d28 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	DATA(RAM)MEM:	8802/30720   29%
+//	PGM(FLASH)MEM:  185250/261888 71%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -12708,7 +12708,7 @@ void loadSV(void)                                                               
     sprintf(svBUF,"%s",Rev);
     len=strlen(svBUF);
     
-    for(i=0;i<len;i++)                                                //locate the decimal point
+    for(i=0;i<len;i++)                                                          //locate the decimal point
     {
         if(svBUF[i]==decimal)
         {
@@ -12720,12 +12720,14 @@ void loadSV(void)                                                               
     if(i==len)
         return;                                                                 //exit if no decimal point found
     
-    
-    for(i=dp-1,j=0;i>=0;i--,j++)                                               //get the major revision
+    MAJOR=svBUF[i]-0x30;                                                        //get the ones of the major revision
+    i--;                                                                        //point to the tens
+    for(i,j=0;i>=0;i--,j++)                                                     //get the rest of the major revision
     {
-        MAJOR=(svBUF[i]-0x30)+(10^j);                                           //convert to decimal
+        MAJOR+=(svBUF[i]-0x30)*(10^j);                                          
     }
     
+    Nop();                                                                      //TEST
     for(i=dp+1,j=0;i<len;i++,j++)
     {
         MINOR=(svBUF[i]-0x30)+(10*j);                                           //convert to decimal
