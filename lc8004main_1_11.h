@@ -1214,7 +1214,8 @@ char Reset[]={"R                      Reset memory"};
 char RESET[]={"RESET                  RESET processor"};		
 char Resetting[]={"Resetting..."};								
 char ResetComplete[]={"RESET COMPLETE"};						
-char Rev[]={"1.11"};                                                             
+//char Rev[]={"1.11"};                                                             TEST REM REV 1.11
+char Rev[]={"45.93"};                                                            //TEST REV 1.11   
 char RnotAllowed[]={"RESET Not Allowed While Logging"};			
 char RUsure[]={"Are you sure(Y/N)?"};
 char RSN[]={"RSN                    Read transducer Serial Number"};            
@@ -1389,6 +1390,7 @@ void hms(unsigned long, unsigned char);
 unsigned long hms2s(void);
 float INT16tof32(void);                                                          
 void loadDefaults(void);
+void loadSV(void);                                                              //REV 1.11
 int main(void);
 int MODBUScheckScanInterval(unsigned int);                                      
 void MODBUScomm(void);                                                          
