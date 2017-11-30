@@ -13,12 +13,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		11/29/2017
+//	DATE:		11/30/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   1.13
-//	CHECKSUM:	0x78e9 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x087a (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8874/30720   29%
-//	PGM(FLASH)MEM:  185604/261888 71%
+//	PGM(FLASH)MEM:  185949/261888 71%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -224,7 +224,24 @@
 //                                  Add back WDT enable when start logging
 //      1.11    11/27/17            Add automatic write to MODBUS firmware revision register the current firmware revision on bootup.
 //      1.12    11/29/17            Debug LOG Intervals when used with scheduled logging
-//      1.13    11/29/17            Debug defaults being loaded when Modbus RTC read is issued
+//      1.13    11/30/17            Debug defaults being loaded when Modbus RTC read is issued
+//                                  Add another Nop() between each step to setting the Oscillator PLL:
+//                                      int main(void) 
+//                                      {
+//                                        Nop();                                //REV 1.13
+//                                        Nop();
+//                                        PLLFBDbits.PLLDIV=14;                 //PLL Feedback Divisor M value (x16)  
+//                                        Nop();                                //REV 1.13
+//                                        Nop();
+//                                        CLKDIVbits.PLLPOST=0;                 //PLL Postcaler N2 value (DIV/2)    
+//                                        Nop();                                //REV 1.13
+//                                        Nop();
+//                                        CLKDIVbits.PLLPRE=0;                  //PLL Prescaler N1 value (DIV/2)    
+//                                        Nop();                                //REV 1.13
+//                                        Nop();
+//                                        while(!OSCCONbits.LOCK){};            //Wait for PLL to lock  
+//                                        setup();                                 
+//                                        etc...    
 //                                  
 //
 //
@@ -332,13 +349,16 @@
 
 int main(void) 
 {
-
+    Nop();                                                                      //REV 1.13
     Nop();
-    PLLFBDbits.PLLDIV=14;                                                       //PLL Feedback Divisor M value (x16)    
+    PLLFBDbits.PLLDIV=14;                                                       //PLL Feedback Divisor M value (x16)  
+    Nop();                                                                      //REV 1.13
     Nop();
     CLKDIVbits.PLLPOST=0;                                                       //PLL Postcaler N2 value (DIV/2)    
+    Nop();                                                                      //REV 1.13
     Nop();
     CLKDIVbits.PLLPRE=0;                                                        //PLL Prescaler N1 value (DIV/2)    
+    Nop();                                                                      //REV 1.13
     Nop();
     while(!OSCCONbits.LOCK){};                                                  //Wait for PLL to lock  
     setup();                                 
@@ -13063,45 +13083,68 @@ void MODBUScomm(void)
     //Perform the requested function if Status register was written             
     if(memaddressStart==MODBUS_STATUS1address && MODBUS_RXbuf[COMMAND]==WRITE_HOLDING)        //write to STATUS1 Register          
     {
-        if(tempStatusValue.status1 != value.c)                                  //if new value is different than what's present
+
+        if(tempStatusValue.status1 != value.c)                               //if new value is different than what's present REV 1.13
         {
             Nop();                                                              //FOR DEBUG REV 1.12
             Nop();                                                              //FOR DEBUG REV 1.12
             tempValueValue.status1 = value.c;                                   //store received flags
-
+            
             switch(tempValueValue.status1flags._CFG)                             
             {
-                if (tempStatusValue.status1flags._CFG == tempValueValue.status1flags._CFG)    //no difference between received and stored value
-                    break;  
-
-                if(tempStatusValue.status1flags._Logging)                        //if logging    
-                    break;                                                      //Don't allow CFG change    
-
                 case 0:                                                         //MX4   
+                    if (tempStatusValue.status1flags._CFG == tempValueValue.status1flags._CFG)    //no difference between received and stored value REV 1.13
+                        break;                                                          //REV 1.13
+                    if(tempStatusValue.status1flags._Logging)                           //if logging    REV 1.13
+                        break;                                                          //Don't allow CFG change    REV 1.13
                     MX4();                                                      //Configure for 4VW/4TH
                     break;
 
                 case 1:
+                    if (tempStatusValue.status1flags._CFG == tempValueValue.status1flags._CFG)    //no difference between received and stored value REV 1.13
+                        break;                                                          //REV 1.13
+                    if(tempStatusValue.status1flags._Logging)                           //if logging    REV 1.13
+                        break;                                                          //Don't allow CFG change    REV 1.13                    
                     MX16();
                     break;
 
                 case 2:
+                    if (tempStatusValue.status1flags._CFG == tempValueValue.status1flags._CFG)    //no difference between received and stored value REV 1.13
+                        break;                                                          //REV 1.13   
+                    if(tempStatusValue.status1flags._Logging)                           //if logging    REV 1.13
+                        break;                                                          //Don't allow CFG change    REV 1.13                    
                     MX1();
                     break;
 
                 case 3:
+                    if (tempStatusValue.status1flags._CFG == tempValueValue.status1flags._CFG)    //no difference between received and stored value REV 1.13
+                        break;                                                          //REV 1.13
+                    if(tempStatusValue.status1flags._Logging)                           //if logging    REV 1.13
+                        break;                                                          //Don't allow CFG change    REV 1.13                    
                     MX8T();
                     break;
 
                 case 4:
+                    if (tempStatusValue.status1flags._CFG == tempValueValue.status1flags._CFG)    //no difference between received and stored value REV 1.13
+                        break;                                                          //REV 1.13
+                    if(tempStatusValue.status1flags._Logging)                           //if logging    REV 1.13
+                        break;                                                          //Don't allow CFG change    REV 1.13                    
                     MX32();
                     break;
 
                 case 5:
+                    if (tempStatusValue.status1flags._CFG == tempValueValue.status1flags._CFG)    //no difference between received and stored value REV 1.13
+                        break;                                                          //REV 1.13  
+                    if(tempStatusValue.status1flags._Logging)                           //if logging    REV 1.13
+                        break;                                                          //Don't allow CFG change    REV 1.13                    
                     MX32T();
                     break;
 
                 case 6:
+                    if (tempStatusValue.status1flags._CFG == tempValueValue.status1flags._CFG)    //no difference between received and stored value REV 1.13
+                        break;                                                          //REV 1.13
+                    if(tempStatusValue.status1flags._Logging)                           //if logging    REV 1.13
+                        break;                                                          //Don't allow CFG change    REV 1.13                    
                     MX8();
                     break;
 
@@ -13129,7 +13172,7 @@ void MODBUScomm(void)
                             tempValueValue.status1flags._Setrtc=0;              //clear this bit on exit
                             tempStatusValue.status1flags._Setrtc=0;             
                             S_1.status1flags._Setrtc=0;                         //clear the MODBUS status flag      
-                            write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);      
+                            write_Int_FRAM(MODBUS_STATUS1address,tempValueValue.status1);         
                             break;
                         }                                                       
 
@@ -13237,6 +13280,7 @@ void MODBUScomm(void)
                         tempValueValue.status1flags._Readrtc=0;                 //clear this bit on exit       
                         S_1.status1flags._Setrtc=0;                             //clear the MODBUS status flag      
                         write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);          
+                        write_Int_FRAM(MODBUS_STATUS1address,tempValueValue.status1);   //REV 1.13       
                         break;
 
                     case 14:                                                    
