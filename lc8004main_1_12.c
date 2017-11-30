@@ -13,12 +13,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		11/28/2017
+//	DATE:		11/29/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   1.12
-//	CHECKSUM:	0xae65 (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x78e8 (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	8874/30720   29%
-//	PGM(FLASH)MEM:  185640/261888 71%
+//	PGM(FLASH)MEM:  185604/261888 71%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -223,7 +223,7 @@
 //                                  Cleanup (remove) rem'd out code
 //                                  Add back WDT enable when start logging
 //      1.11    11/27/17            Add automatic write to MODBUS firmware revision register the current firmware revision on bootup.
-//      1.12    11/28/17            Debug LOG Intervals when used with scheduled logging
+//      1.12    11/29/17            Debug LOG Intervals when used with scheduled logging
 //                                  
 //
 //
@@ -2656,7 +2656,7 @@ void CMDcomm(void)
                     }
 
                     LogInt = getLogInterval();                                  //Get the Log Interval
-
+                    
                     if (LogInt == -2)                                           //error
                         break;                                                  //return to "*" prompt
 
@@ -2665,6 +2665,8 @@ void CMDcomm(void)
 
                     if (LogIntLength <= 0 | LogIntLength > 86400)               //error or illegal
                         break;
+                    
+                    ScanInterval=LogIntLength;                                  //TEST REV 1.12
 
                     testScanInterval = checkScanInterval();
 
@@ -3247,7 +3249,8 @@ void CMDcomm(void)
                             while (BusyUART1());                                    
                         }
 
-                        if (LC2CONTROL.flags.LoggingStopTime)                   //display logging stop time
+                        //if (LC2CONTROL.flags.LoggingStopTime)                   //display logging stop time   REM REV 1.12
+                        if (LC2CONTROL.flags.LoggingStopTime &&!LC2CONTROL.flags.LogInterval)   //rev 1.12
                         {
                             LC2CONTROL2.flags2.SetStopTime = 1;                 //set the flag to format the stop time
                             crlf();
@@ -10178,6 +10181,7 @@ void enableINT1(void)
 
 void ENLOGINT(void)                                                             
 {
+    LC2CONTROL.flags.LoggingStopTime=0;                                         //Clear the LoggingStopTime flag    REV 1.12
     LC2CONTROL.flags.LogInterval = 1;                                           //Set Log intervals flag
     write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);                     //store flag in FRAM    
                             
@@ -13060,6 +13064,8 @@ void MODBUScomm(void)
     {
         if(tempStatusValue.status1 != value.c)                                  //if new value is different than what's present
         {
+            Nop();                                                              //FOR DEBUG REV 1.12
+            Nop();                                                              //FOR DEBUG REV 1.12
             tempValueValue.status1 = value.c;                                   //store received flags
 
             switch(tempValueValue.status1flags._CFG)                             
@@ -14556,6 +14562,12 @@ void reloadLogTable(void)
        val=read_Int_FRAM(index);                                                //Read the master value    
        write_Int_FRAM(index-0x3e2,val);                                         //reload the log table with the master value
    }
+   
+   for(index=LogItRemain1MASTERaddress;index<LogIntLength1MASTERaddress;index+=2)          //REV 1.12
+   {
+       val=read_Int_FRAM(index);                                                //Read the master value    
+       write_Int_FRAM(index-0x30,val);                                          //reload the log table with the master value
+   }
 }
 
 void resetMemory(void) 
@@ -15460,6 +15472,7 @@ unsigned int START(void)
     if(!LC2CONTROL2.flags2.Modbus)                                              //only if command line
         crlf();
     
+    /*                                                                          REM REV 1.2
     testScanInterval = 0;                                                       //set ScanInterval to 0
     ScanInterval = hms2s();                                                     //get the stored scan interval
     testScanInterval = checkScanInterval();                                     //test for minimum allowable Scan Interval
@@ -15488,6 +15501,7 @@ unsigned int START(void)
             return 0;                                                           //return error in MODBUS
         }
     }
+    */
     
     if (!LC2CONTROL.flags.Logging)                                              //is Logging flag clear?
     {
@@ -16413,15 +16427,17 @@ void take_One_Complete_Reading(unsigned char store)
             TotalStopSeconds -= 86400;                                          //compensate TotalStopSeconds
             write_longFRAM(TotalStopSeconds,TotalStopSecondsaddress);           //update FRAM   
         }
-
-        if (LC2CONTROL.flags.LoggingStopTime && (TotalStopSeconds < seconds_since_midnight)) //if scheduled Stop Logging is enabled
-        {   
-            DISPLAY_CONTROL.flags.TakingReading = 0;                            //Reset the Taking Reading flag  
-            write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);//store flags in FRAM VER 6.0.13  
-            stopLogging(); //and it's past the Stop Logging time
-            U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  
-            U1STAbits.UTXEN=1;                                                  
-            return;
+        if(!LC2CONTROL.flags.LogInterval)                                       //REV 1.12
+        {
+            if (LC2CONTROL.flags.LoggingStopTime && (TotalStopSeconds < seconds_since_midnight)) //if scheduled Stop Logging is enabled
+            {   
+                DISPLAY_CONTROL.flags.TakingReading = 0;                            //Reset the Taking Reading flag  
+                write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);//store flags in FRAM VER 6.0.13  
+                stopLogging(); //and it's past the Stop Logging time
+                U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  
+                U1STAbits.UTXEN=1;                                                  
+                return;
+            }
         }
     } else 
     {
@@ -17566,9 +17582,15 @@ void take_One_Complete_Reading(unsigned char store)
     write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);        //store flags in FRAM 
     VWflagsbits.firstReading=0;                                                 
     
-    if ((LC2CONTROL.flags.LoggingStopTime && (TotalStopSeconds == seconds_since_midnight)) | //logging scheduled to stop?
-            (memoryStatus >= maxSingleVW && outputPosition == 1 && !DISPLAY_CONTROL.flags.WrapMemory)) //stop logging when memory full?
+    //if ((LC2CONTROL.flags.LoggingStopTime && (TotalStopSeconds == seconds_since_midnight)) | //logging scheduled to stop?
+      //      (memoryStatus >= maxSingleVW && outputPosition == 1 && !DISPLAY_CONTROL.flags.WrapMemory)) //stop logging when memory full?   REM REV 1.12
+    if ((!LC2CONTROL.flags.LogInterval && (LC2CONTROL.flags.LoggingStopTime && (TotalStopSeconds == seconds_since_midnight))) | //logging scheduled to stop?   REV 1.12
+        (memoryStatus >= maxSingleVW && outputPosition == 1 && !DISPLAY_CONTROL.flags.WrapMemory)) //stop logging when memory full? 
+    {
+        Nop();                                                                  //Nop()s for debug only)
+        Nop();
         stopLogging();                                                          //yes
+    }
 
     if(store)                                                                   
         checkSynch(ReadingTimeSeconds);                                         //adjust time of next scheduled reading if necessary
