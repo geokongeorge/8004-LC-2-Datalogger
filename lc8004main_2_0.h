@@ -170,14 +170,18 @@ uflags2 LC2CONTROL2;
 
 //MUX ENABLE FLAGS:
 typedef struct{
-	unsigned	mux16_4:3;                                                      //0=4 channel mux selected  (VW4)
-                                                                                //1=16 channel mux selected (VW16)
-                                                                                //2=single channel selected (Single)
+	unsigned	mux16_4:4;                                                      //0=4 channel VW/TH mux selected  (VW_TH4) REV 2.0
+                                                                                //1=16 channel VW/TH mux selected (VW_TH16)
+                                                                                //2=single channel VW/TH selected (Single)
                                                                                 //3=8 channel thermistor mux selected (TH8)
                                                                                 //4=32 channel VW mux selected (VW32)
                                                                                 //5=32 channel TH mux selected (TH32)
                                                                                 //6=8 channel VW mux selected (VW8)
-	unsigned	skip:1;                                                         //0=channel enabled, 1=skip channel
+                                                                                //7=8 channel VW/TH mux selected    REV 2.0
+                                                                                //8=16 channel VW mux selected  REV 2.0
+                                                                                //9=16 channel TH mux selected  REV 2.0
+	
+    unsigned	skip:1;                                                         //0=channel enabled, 1=skip channel
 }Mux_ControlBits;
 typedef union{ unsigned int mux;
 Mux_ControlBits mflags;
@@ -412,7 +416,7 @@ typedef union                                                                   
 } xFRAMul;
 
 
-
+//REV 2.0: WILL NEED TO CHANGE _CFG TO 4 BIT BY MOVING ONE OF THE OTHER SINGLE BITS TO MODBUS STATUS2 REGISTER
 //MODBUS STATUS1 REGISTER:
 typedef struct{                                                                 //   BIT          READ                              WRITE
 	unsigned	_CFG:3;                                                          //   012    110   VW8                               VW8                       Lsb
@@ -528,18 +532,29 @@ unsigned int LoggingStartDay;
 //CFG MEM START - 140 bytes = max data space start address
 //0x7f820 - 0x8C = 0x7f794
 //522272 - 140 = 522132
-const unsigned int  maxSingleVW=29000;                                          //522132/18 = 29007
-const unsigned int  maxFourVW=14500;                                            //522132/36 = 14503
+//const unsigned int  maxSingleVW=29000;                                          //522132/18 = 29007   REM REV 2.0
+const unsigned int  maxSingle=29000;                                            //522132/18 = 29007 REV 2.0
+//const unsigned int  maxFourVW=14500;                                            //522132/36 = 14503   REM REV 2.0
+const unsigned int  maxFour=14500;                                              //522132/36 = 14503 REV 2.0
+const unsigned int  maxEight=8700;                                              //REV 2.0
 const unsigned int  maxEightVW=11860;                                           //522132/44 = 11866 
-const unsigned int  maxSixteenVW=4830;                                          //522132/108 = 4834          
+//const unsigned int  maxSixteenVW=4830;                                          //522132/108 = 4834   REM REV 2.0
+const unsigned int  maxSixteen=4830;                                          //522132/108 = 4834     REV 2.0    
+const unsigned int  maxSixteenVW=6870;                                          //REV 2.0
+const unsigned int  maxSixteenTH=11860;                                         //REV 2.0
 const unsigned int  maxThirtytwoVW=3720;                                        //522132/140 = 3729
 const unsigned int  maxEightTH=18640;                                           //522132/28 = 18647
 const unsigned int  maxThirtytwoTH=6870;                                        //522132/76 = 6870
 
-const unsigned char minScanSingleVW=3;                                          
-const unsigned char minScanFourVW=8;                                            
+//const unsigned char minScanSingleVW=3;                                          REM REV 2.0
+const unsigned char minScanSingle=3;                                            //REV 2.0                                          
+//const unsigned char minScanFourVW=8;                                            REM REV 2.0
+const unsigned char minScanFour=8;                                              //REV 2.0 
+const unsigned char minScanEight=15;                                            //REV 2.0
+const unsigned char minScanSixteen=30;                                          //REV 2.0                                     
 const unsigned char minScanEightVW=12;                                          
-const unsigned char minScanSixteenVW=30;                                        
+const unsigned char minScanSixteenVW=30;  
+const unsigned char mixScanSixteenTH=6;                                         //REV 2.0
 const unsigned char minScanThirtytwoVW=60;                                      
 const unsigned char minScanEightTH=4;                                                                                      
 const unsigned char minScanThirtytwoTH=10;                                       
@@ -889,15 +904,18 @@ unsigned int decimalRTC;
 //------------------------------------------------------------------------------
 //                              Configurations
 //------------------------------------------------------------------------------
-#define VW4                     0                                               
-#define VW16                    1
-#define Single                  2
+#define VW_TH4                  0                                               //REV 2.0
+#define VW_TH16                 1                                               //REV 2.0
+#define SingleVW_TH             2                                               //REV 2.0
 #define TH8                     3
 #define VW32                    4
 #define TH32                    5
 #define VW8                     6
+#define VW_TH8                  7                                               //REV 2.0
+#define VW16                    8                                               //REV 2.0
+#define TH16                    9                                               //REV 2.0
 
-
+/*REM REV 2.0:
 //------------------------------------------------------------------------------    
 //                      External FRAM base addresses
 //------------------------------------------------------------------------------
@@ -922,7 +940,39 @@ unsigned int decimalRTC;
 #define TH32Position            TH32Bytes*(outputPosition-1)
 
 //********************************************************************************************************
+*/
 
+//REV 2.0:
+//------------------------------------------------------------------------------    
+//                      External FRAM base addresses
+//------------------------------------------------------------------------------
+//
+//sector size (bytes)
+#define SingleVW_THBytes        18                                              //29015 readings max
+#define VW_TH4Bytes             36                                              //14507 readings max
+#define VW_TH8Bytes             60                                              //8700 readings max
+#define VW_TH16Bytes            108                                             //4835 readings max
+#define VW8Bytes                44                                              //11860 readings max   
+#define VW16Bytes               76                                              //6870 readings max      
+#define VW32Bytes               140                                             //3730 readings max
+#define TH8Bytes                28                                              //18652 readings max
+#define TH16Bytes               44                                              //11860 readings max
+#define TH32Bytes               76                                              //6870 readings max
+
+
+//address calculation:
+#define SingleVW_THPosition     SingleVW_THBytes*(outputPosition-1)             //address calculation
+#define VW_TH4Position          VW_TH4Bytes*(outputPosition-1)
+#define VW_TH8Position          VW_TH8Bytes*(outputPosition-1)
+#define VW_TH16Position            VW_TH16Bytes*(outputPosition-1)
+#define VW8Position             VW8Bytes*(outputPosition-1)
+#define VW16Position            VW16Bytes*(outputPosition-1)
+#define VW32Position            VW32Bytes*(outputPosition-1)
+#define TH8Position             TH8Bytes*(outputPosition-1)
+#define TH16Position             TH16Bytes*(outputPosition-1)
+#define TH32Position            TH32Bytes*(outputPosition-1)
+
+//********************************************************************************************************
 
 
 
@@ -1417,8 +1467,9 @@ void MODBUS_EnableStopTime(void);
 unsigned char MODBUS_RX(void);                                                  
 void MODBUS_TX(unsigned int);                                                   
 void MX1(void);                                                                 
-void MX4(void);                                                                 
-void MX8(void);                                                                 
+void MX4(void); 
+void MX8(void);                                                                 //REV 2.0
+void MX8V(void);                                                                //REV 2.0                                                                 
 void MX8T(void);                                                                
 void MX16(void);                                                                
 void MX32(void);                                                                

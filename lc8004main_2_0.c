@@ -14,12 +14,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		11/30/2017
+//	DATE:		12/01/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   2.0
-//	CHECKSUM:	0xef0c (MPLABX ver 3.15 and XC16 ver 1.26)
-//	DATA(RAM)MEM:	9156/30720   30%
-//	PGM(FLASH)MEM:  186231/261888 71%
+//	CHECKSUM:	0x94cd (MPLABX ver 3.15 and XC16 ver 1.26)
+//	DATA(RAM)MEM:	9164/30720   30%
+//	PGM(FLASH)MEM:  190476/261888 73%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -245,7 +245,7 @@
 //                                        etc...    
 //      
 //
-//      2.0     11/30/17            Add 8 channel (4-wire) and 16 channel (2-wire) support:
+//      2.0     12/01/17            Add 8 channel (4-wire) and 16 channel (2-wire) support:
 //                                  Change current MX8 to MX8V (VW 2 wire)
 //                                  Add MX8 (4 wire) & MX8T (Thermistor 2 wire)
 //
@@ -1306,7 +1306,7 @@ unsigned long Buffer2Decimal(char buffer[], unsigned int i, unsigned int x) {
         loopcount++;
     }
 
-    if (buffer[0] == capP && (num > (maxSingleVW - 1) | num == 0))              //invalid pointer positions    
+    if (buffer[0] == capP && (num > (maxSingle - 1) | num == 0))              //invalid pointer positions   REV 2.0 
         return;                                                                 //so ignore
 
     if (num > 86400)                                                            //Scan Interval greater than 1 day?
@@ -1524,17 +1524,24 @@ int checkScanInterval(void)
 {
     MUX4_ENABLE.mux=read_Int_FRAM(MUX4_ENABLEflagsaddress);  
 
-    if (MUX4_ENABLE.mflags.mux16_4 == Single) {
+    if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH) {                                 ////REV 2.0
         //if (ScanInterval < minScanSingleVW)                                   //REM REV 1.10
-        if ((ScanInterval < minScanSingleVW) | (LogIntLength<minScanSingleVW))  //REV 1.10
-            return minScanSingleVW;
+        if ((ScanInterval < minScanSingle) | (LogIntLength<minScanSingle))      //REV 2.0
+            return minScanSingle;                                               //REV 2.0
         return 0;
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4) {
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4) {                                 //REV 2.0
         //if (ScanInterval < minScanFourVW)                                     //REM REV 1.10
-        if ((ScanInterval < minScanFourVW) | (LogIntLength<minScanFourVW))      //REV 1.10
-            return minScanFourVW;
+        if ((ScanInterval < minScanFour) | (LogIntLength<minScanFour))          //REV 2.0
+            return minScanFour;                                                 //REV 2.0
+        return 0;
+    }
+    
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH8) {                                 //REV 2.0
+        //if (ScanInterval < minScanFourVW)                                     //REM REV 1.10
+        if ((ScanInterval < minScanEight) | (LogIntLength<minScanEight))        //REV 2.0
+            return minScanEight;                                                //REV 2.0
         return 0;
     }
 
@@ -1545,10 +1552,10 @@ int checkScanInterval(void)
         return 0;
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16) {
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH16) {                                   //REV 2.0
         //if (ScanInterval < minScanSixteenVW)                                  //REM REV 1.10
-        if ((ScanInterval < minScanSixteenVW) | (LogIntLength<minScanSixteenVW))//REV 1.10
-            return minScanSixteenVW;
+        if ((ScanInterval < minScanSixteen) | (LogIntLength<minScanSixteen))//REV 2.0
+            return minScanSixteen;                                            //REV 2.0
         return 0;
     }
 
@@ -2250,13 +2257,15 @@ void CMDcomm(void)
 
                     if (buffer[1] == capL && buffer[2] == cr)                   //DL<CR> received
                     {
-                        if (MUX4_ENABLE.mflags.mux16_4 == Single)               //Single Channel    
+                        if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)               //SingleVW_TH Channel  //REV 2.0  
                             putsUART1(LCfour);
-                        if (MUX4_ENABLE.mflags.mux16_4 == VW4)                  //4 channel mux 
+                        if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4)                  //4 channel mux 
                             putsUART1(LCfourbyfour);
+                        if (MUX4_ENABLE.mflags.mux16_4 == VW_TH8)                  //8 channel mux REV 2.0
+                            putsUART1(LCfourbyeight);                        
                         if (MUX4_ENABLE.mflags.mux16_4 == VW8)                  //8 channel VW mux 
                             putsUART1(LCfourbyeightVW);
-                        if (MUX4_ENABLE.mflags.mux16_4 == VW16)                 //16 channel mux
+                        if (MUX4_ENABLE.mflags.mux16_4 == VW_TH16)                 //16 channel mux    //REV 2.0
                             putsUART1(LCfourbysixteen);                          
                         if (MUX4_ENABLE.mflags.mux16_4 == VW32)                 //32 channel VW mux 
                             putsUART1(LCfourbythirtytwoVW);
@@ -2324,19 +2333,26 @@ void CMDcomm(void)
                             if (DISPLAY_CONTROL.flags.bail)                     //break out of data download
                                 break;
 
-                            if (id == (maxSingleVW + 1) && MUX4_ENABLE.mflags.mux16_4 == Single) //Single Channel  VW 
+                            if (id == (maxSingle + 1) && MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH) //Single Channel  VW/TH REV 2.0
                             {
                                 id = 1;                                         //memory rolled over so reset display pointers
-                                DisplayArrayPointer = (DisplayArrayPointer + tempUserPosition)-(maxSingleVW + 1); 
+                                DisplayArrayPointer = (DisplayArrayPointer + tempUserPosition)-(maxSingle + 1); //REV 2.0
                                 tempUserPosition = 1;
                             }
 
-                            if (id == (maxFourVW + 1) && MUX4_ENABLE.mflags.mux16_4 == VW4) //if 4 channel VW MUX  
+                            if (id == (maxFour + 1) && MUX4_ENABLE.mflags.mux16_4 == VW_TH4) //if 4 channel VW/TH MUX  REV 2.0
                             {
                                 id = 1;                                         //memory rolled over so reset display pointers
-                                DisplayArrayPointer = (DisplayArrayPointer + tempUserPosition)-(maxFourVW + 1);
+                                DisplayArrayPointer = (DisplayArrayPointer + tempUserPosition)-(maxFour + 1); //REV 2.0
                                 tempUserPosition = 1;
                             }
+                            
+                            if (id == (maxEight + 1) && MUX4_ENABLE.mflags.mux16_4 == VW_TH8) //if 8 channel VW/TH MUX  REV 2.0
+                            {
+                                id = 1;                                         //memory rolled over so reset display pointers
+                                DisplayArrayPointer = (DisplayArrayPointer + tempUserPosition)-(maxEight + 1); //REV 2.0
+                                tempUserPosition = 1;
+                            }                            
 
                             if (id == (maxEightVW + 1) && MUX4_ENABLE.mflags.mux16_4 == VW8) //if 8 channel VW MUX  
                             {
@@ -2345,10 +2361,10 @@ void CMDcomm(void)
                                 tempUserPosition = 1;
                             }
 
-                            if (id == (maxSixteenVW + 1) && MUX4_ENABLE.mflags.mux16_4 == VW16) //if 16 channel VW MUX     
+                            if (id == (maxSixteen + 1) && MUX4_ENABLE.mflags.mux16_4 == VW_TH16) //if 16 channel VW/TH MUX  REV 2.0   
                             {
                                 id = 1;                                         //memory rolled over so reset display pointers
-                                DisplayArrayPointer = (DisplayArrayPointer + tempUserPosition)-(maxSixteenVW + 1);
+                                DisplayArrayPointer = (DisplayArrayPointer + tempUserPosition)-(maxSixteen + 1);  //REV 2.0
                                 tempUserPosition = 1;
                             }
 
@@ -2439,13 +2455,14 @@ void CMDcomm(void)
                         channel = getChannel();                                 //get the current channel #
 
                     //TEST MUX CONFIGURATION FOR INVALID CHANNELS:
-                    if ((channel >= 5 && (MUX4_ENABLE.mflags.mux16_4 == VW4)) | //4 channel VW/TH
+                    if ((channel >= 5 && (MUX4_ENABLE.mflags.mux16_4 == VW_TH4)) | //4 channel VW/TH
                             (channel >= 9 && (MUX4_ENABLE.mflags.mux16_4 == TH8)) | //8 channel TH
-                            (channel >= 9 && (MUX4_ENABLE.mflags.mux16_4 == VW8)) | //8 channel VW
-                            (channel >= 17 && (MUX4_ENABLE.mflags.mux16_4 == VW16)) | //16 channel VW/TH
+                            (channel >= 9 && (MUX4_ENABLE.mflags.mux16_4 == VW8)) | //8 channel VW  
+                            (channel >= 9 && (MUX4_ENABLE.mflags.mux16_4 == VW_TH8)) | //8 channel VW/TH    REV 2.0
+                            (channel >= 17 && (MUX4_ENABLE.mflags.mux16_4 == VW_TH16)) | //16 channel VW/TH
                             (channel >= 33 && (MUX4_ENABLE.mflags.mux16_4 == TH32)) | //32 channel TH
                             (channel >= 33 && (MUX4_ENABLE.mflags.mux16_4 == VW32)) |
-                            (channel != 1 && (MUX4_ENABLE.mflags.mux16_4 == Single))) //single channel
+                            (channel != 1 && (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH))) //single channel  //REV 2.0
                         break;                                                  //return to '*' prompt
 
                     if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32) 
@@ -2809,16 +2826,19 @@ void CMDcomm(void)
 						crlf();
                         switch(MUX4_ENABLE.mflags.mux16_4)
                         {
-                            case Single:                                        
+                            case SingleVW_TH:                                   //REV 2.0                      
                                 putsUART1(Readings29K);                         //Display 29000 readings max
                                 break;
-                            case VW4:
+                            case VW_TH4:                                        //REV 2.0
                                 putsUART1(Readings14_5K);                       //Display 14500 readings max
                                 break;
+                            case VW_TH8:                                        //REV 2.0
+                                putsUART1(Readings8_7K);                        //Display 8700 readings max
+                                break;                                
                             case VW8:
                                 putsUART1(Readings11_86K);                      //Display 11860 readings max
                                 break;
-                            case VW16:
+                            case VW_TH16:
                                 putsUART1(Readings4_83K);                       //Display 4830 readings max
                                 break;
                             case VW32:
@@ -2860,7 +2880,7 @@ void CMDcomm(void)
 					}
 
 
-                    //case MXS, MX1, MX4, MX8, MX8T, MX16, MX32, MX32T:
+                    //case MXS, MX1, MX4, MX8, MX8V, MX8T, MX16, MX16V, MX16T MX32, MX32T:  REV 2.0
 
                     if (buffer[1] == capX && buffer[2] == capS && buffer[3] == cr) //Display multiplexer setup
                     {
@@ -2880,7 +2900,7 @@ void CMDcomm(void)
                         }
 
                         MX1();                                                     
-                        putsUART1(MUX1);                                        //Display Single Channel Datalogger Selected.    
+                        putsUART1(MUX1);                                        //Display Single Channel VW/TH Datalogger Selected.    
                         while (BusyUART1());
                         break;
                     }
@@ -2896,12 +2916,44 @@ void CMDcomm(void)
                         }
 
                         MX4();
-                        putsUART1(MUX4);                                        //Display 4 Channel Mux Selected.
+                        putsUART1(MUX4);                                        //Display 4 Channel VW/TH Mux Selected.
                         while (BusyUART1());
                         break;
                     }
+                    
+                    if (buffer[1] == capX && buffer[2] == eight && buffer[3] == cr) //Select 8 channel VW/TH mux   REV 2.0
+                    {
+                        crlf();
 
-                    //VER 6.0.6:
+                        if (LC2CONTROL.flags.Logging) {
+                            putsUART1(CnotAllowed);
+                            while (BusyUART1());
+                            break;
+                        }
+
+                        MX8();
+                        putsUART1(MUX8);                                        //Display 8 Channel VW/TH Mux Selected.
+                        while (BusyUART1());
+                        break;
+                    }
+                    
+                    if (buffer[1] == capX && buffer[2] == eight && buffer[3] == capV && buffer[4] == cr) //Select 8 channel VW mux
+                    {
+                        crlf();
+
+                        if (LC2CONTROL.flags.Logging) {
+                            putsUART1(CnotAllowed);
+                            while (BusyUART1());
+                            break;
+                        }
+
+                        MX8V();                                                  
+                        putsUART1(MUX8V);                                        //Display 8 Channel VW Mux Selected. REV 2.0
+                        while (BusyUART1());
+                        break;
+                    }                    
+                    
+
                     if (buffer[1] == capX && buffer[2] == eight && buffer[3] == capT && buffer[4] == cr) //Select 8 channel thermistor mux
                     {
                         crlf();
@@ -2951,21 +3003,7 @@ void CMDcomm(void)
                         break;
                     }
 
-                    if (buffer[1] == capX && buffer[2] == eight && buffer[3] == cr) //Select 8 channel VW mux
-                    {
-                        crlf();
 
-                        if (LC2CONTROL.flags.Logging) {
-                            putsUART1(CnotAllowed);
-                            while (BusyUART1());
-                            break;
-                        }
-
-                        MX8();                                                  
-                        putsUART1(MUX8);                                        //Display 8 Channel VW/TH Mux Selected. REV 2.0
-                        while (BusyUART1());
-                        break;
-                    }
 
                     if (buffer[1] == capX && buffer[2] == three && buffer[3] == two && buffer[4] == cr) //Select 32 channel VW mux
                     {
@@ -3230,13 +3268,15 @@ void CMDcomm(void)
                         crlf();
 
                         
-                        if (MUX4_ENABLE.mflags.mux16_4 == Single)
+                        if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)               //REV 2.0
                             putsUART1(MUX1);
-                        if (MUX4_ENABLE.mflags.mux16_4 == VW4)                  //Display MUX type  
+                        if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4)                  //Display MUX type  
                             putsUART1(MUX4);
+                        if (MUX4_ENABLE.mflags.mux16_4 == VW_TH8)               //REV 2.0  
+                            putsUART1(MUX8);                        
                         if (MUX4_ENABLE.mflags.mux16_4 == VW8) 
                             putsUART1(MUX8);                                    //REV 2.0
-                        if (MUX4_ENABLE.mflags.mux16_4 == VW16)
+                        if (MUX4_ENABLE.mflags.mux16_4 == VW_TH16)
                             putsUART1(MUX16);
                         if (MUX4_ENABLE.mflags.mux16_4 == VW32) 
                             putsUART1(MUX32V);                                  //REV 2.0
@@ -3440,7 +3480,7 @@ void CMDcomm(void)
                         }
                         while (BusyUART1());
                         
-                        if(MUX4_ENABLE.mflags.mux16_4==Single)                  //if Single Channel   
+                        if(MUX4_ENABLE.mflags.mux16_4==SingleVW_TH)                  //if Single Channel   //REV 2.0
                         {
                             crlf();												
                             Thermtype=read_Int_FRAM(CH1THaddress);              //read thermistor type	
@@ -3975,11 +4015,12 @@ void CMDcomm(void)
 					if((isdigit(buffer[1]) && buffer[2]==slash) | (isdigit(buffer[1]) && isdigit(buffer[2]) && 	buffer[3]==slash))
 							channel=getChannel();                               //get the current channel #		
 
-                    if((channel>1&&MUX4_ENABLE.mflags.mux16_4==Single) |
-                            (channel>4&&MUX4_ENABLE.mflags.mux16_4==VW4) |
+                    if((channel>1&&MUX4_ENABLE.mflags.mux16_4==SingleVW_TH) |        //REV 2.0
+                            (channel>4&&MUX4_ENABLE.mflags.mux16_4==VW_TH4) |
+                            (channel>8&&MUX4_ENABLE.mflags.mux16_4==VW_TH8) |   //REV 2.0                            
                             (channel>8&&MUX4_ENABLE.mflags.mux16_4==VW8) |
                             (channel>8&&MUX4_ENABLE.mflags.mux16_4==TH8) |
-                            (channel>16&&MUX4_ENABLE.mflags.mux16_4==VW16) |
+                            (channel>16&&MUX4_ENABLE.mflags.mux16_4==VW_TH16) |
                             (channel>32&&MUX4_ENABLE.mflags.mux16_4==VW32) |
                             (channel>32&&MUX4_ENABLE.mflags.mux16_4==TH32))
                         break;                                                  //return to '*' prompt
@@ -4931,7 +4972,7 @@ void displayGageInfo(int channel)                                               
     }
 
 	//calculate indexed address for gage type                                   
-    if(MUX4_ENABLE.mflags.mux16_4==Single)                                      //if Single Channel                                      
+    if(MUX4_ENABLE.mflags.mux16_4==SingleVW_TH)                                      //if Single Channel   //REV 2.0                                   
     {
         address=CH1GTaddress;
         Thermaddress=CH1THaddress;                                              
@@ -4952,7 +4993,7 @@ void displayGageInfo(int channel)                                               
     switch (channel)                                                            //get the gage information
     {
         case 1:
-			if(MUX4_ENABLE.mflags.mux16_4==Single | MUX4_ENABLE.mflags.mux16_4==VW4)//Single channel or 4 channel MUX?    
+			if(MUX4_ENABLE.mflags.mux16_4==SingleVW_TH | MUX4_ENABLE.mflags.mux16_4==VW_TH4)//Single channel or 4 channel MUX?    //REV 2.0
 			{            
                 if (MUX_CONVERSION1_16.c1flags.CH1)                             //Polynomial Conversion?
                 {
@@ -4969,7 +5010,7 @@ void displayGageInfo(int channel)                                               
             }
             else
 			{
-                if(MUX4_ENABLE.mflags.mux16_4==VW8 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)   
+                if(MUX4_ENABLE.mflags.mux16_4==VW_TH8 | MUX4_ENABLE.mflags.mux16_4==VW8 | MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW32)   //REV 2.0
                 {
                     if(MUX_CONVERSION1_16.c1flags.CH1)                          //Ch 1 of 16 Polynomial Conversion?
                     {
@@ -5724,7 +5765,7 @@ void displayLogInterval(int interval) {
 
     putsUART1(Length);
     while (BusyUART1());
-    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //Single VW Channel 
+    if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                                   //Single VW Channel //REV 2.0
         length=read_longFRAM(SingleLogIntLength1address+(interval*4));          //get Interval value  
     else                                                                        //multichannel  
         length=read_longFRAM(LogIntLength1address+(interval*4));                //get Interval value  
@@ -5741,7 +5782,7 @@ void displayLogInterval(int interval) {
 
     putsUART1(Iterations);
     while (BusyUART1());
-    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //Single VW Channel 
+    if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                                   //Single VW Channel //REV 2.0
         value=read_Int_FRAM(SingleLogIt1address+(interval*2));                  //get Interval iterations 
     else                                                                        //multichannel  
         value=read_Int_FRAM(LogIt1address+(interval*2));                        //get Interval value    
@@ -5753,7 +5794,7 @@ void displayLogInterval(int interval) {
     {
         putcUART1(slash);                                                       //foreslash
         while (BusyUART1());
-        if (MUX4_ENABLE.mflags.mux16_4 == Single)                               //Single VW Channel 
+        if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                               //Single VW Channel //REV 2.0
             value=read_Int_FRAM(SingleLogItRemain1address+(interval*2));        //get the remaining iterations at this interval   
         else                                                                    //multichannel
             value=read_Int_FRAM(LogItRemain1address+(interval*2));              //get the remaining iterations at this interval   
@@ -5844,9 +5885,9 @@ void displayMUX(int displayChannel)
     //DISPLAY MUX SETUP TABLE:
     crlf();
 
-    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //Single Channel    
+    if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                                   //Single Channel    //REV 2.0
     {
-        putsUART1(MUX1setupmenu);                                               //"LC-4 Single Channel VW Setup:"
+        putsUART1(MUX1setupmenu);                                               //"LC-4 Single Channel VW/TH Setup:"
         while (BusyUART1());
         crlf();
         displayGageInfo(1);                                                     //Display gage information
@@ -5856,11 +5897,13 @@ void displayMUX(int displayChannel)
     }
 
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4)
-        putsUART1(MUX4setupmenu);                                               //"LC-4MUX 4-Channel VW Multiplexer Setup:"
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4)                                      //REV 2.0
+        putsUART1(MUX4setupmenu);                                               //"LC-4MUX 4-Channel VW/TH Multiplexer Setup:"
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH8)                                      //REV 2.0
+        putsUART1(MUX8setupmenu);                                               //"LC-4MUX 8-Channel VW/TH Multiplexer Setup:"    
     if (MUX4_ENABLE.mflags.mux16_4 == VW8)
         putsUART1(MUX8setupmenu);                                               //"LC-4MUX 8-Channel VW Multiplexer Setup:"
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16)
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH16)
         putsUART1(MUX16setupmenu);                                              //"LC-4MUX 16-Channel VW Mulitplexer Setup:"
     if (MUX4_ENABLE.mflags.mux16_4 == VW32)
         putsUART1(MUX32setupmenu);                                              //"LC-4MUX 32-Channel VW Multiplexer Setup:"
@@ -5878,8 +5921,9 @@ void displayMUX(int displayChannel)
         putsUART1(CH1);                                                         //CH1 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW8 |      
-                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
+        if(MUX4_ENABLE.mflags.mux16_4==VW_TH4| MUX4_ENABLE.mflags.mux16_4==VW8 |      //REV 2.0
+                MUX4_ENABLE.mflags.mux16_4==VW_TH8  |                           //REV 2.0
+                MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
             if (MUX_ENABLE1_16.e1flags.CH1)                                     //Display ENABLED or DISABLED
                 putsUART1(Enabled);
@@ -5906,8 +5950,9 @@ void displayMUX(int displayChannel)
         putsUART1(CH2);                                                         //CH2 setup
         while (BusyUART1());
 
-        if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW8 |      
-                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
+        if(MUX4_ENABLE.mflags.mux16_4==VW_TH4| MUX4_ENABLE.mflags.mux16_4==VW8 |       //REV 2.0 
+                MUX4_ENABLE.mflags.mux16_4==VW_TH8  |                           //REV 2.0                
+                MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
             if (MUX_ENABLE1_16.e1flags.CH2)                                     //Display ENABLED or DISABLED
                 putsUART1(Enabled);
@@ -5934,8 +5979,9 @@ void displayMUX(int displayChannel)
         putsUART1(CH3);                                                         //CH3 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW8 |      
-                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
+        if(MUX4_ENABLE.mflags.mux16_4==VW_TH4| MUX4_ENABLE.mflags.mux16_4==VW8 |      //REV 2.0
+                MUX4_ENABLE.mflags.mux16_4==VW_TH8  |                           //REV 2.0                
+                MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
             if (MUX_ENABLE1_16.e1flags.CH3)                                     //Display ENABLED or DISABLED
                 putsUART1(Enabled);
@@ -5962,8 +6008,9 @@ void displayMUX(int displayChannel)
         putsUART1(CH4);                                                         //CH4 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW4 | MUX4_ENABLE.mflags.mux16_4==VW8 |      
-                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
+        if(MUX4_ENABLE.mflags.mux16_4==VW_TH4| MUX4_ENABLE.mflags.mux16_4==VW8 |      //REV 2.0
+                MUX4_ENABLE.mflags.mux16_4==VW_TH8  |                           //REV 2.0                
+                MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
             if (MUX_ENABLE1_16.e1flags.CH4)                                     //Display ENABLED or DISABLED
                 putsUART1(Enabled);
@@ -5986,7 +6033,7 @@ void displayMUX(int displayChannel)
     }
 
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4)
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4)
         return;
 
     if (displayChannel == 5 | displayChannel == 0) 
@@ -5994,8 +6041,9 @@ void displayMUX(int displayChannel)
         putsUART1(CH5);                                                         //CH5 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW8 |      
-                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
+        if(MUX4_ENABLE.mflags.mux16_4==VW8 |
+                MUX4_ENABLE.mflags.mux16_4==VW_TH8  |                           //REV 2.0
+                MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
             if (MUX_ENABLE1_16.e1flags.CH5)                                     //Display ENABLED or DISABLED
                 putsUART1(Enabled);
@@ -6022,8 +6070,9 @@ void displayMUX(int displayChannel)
         putsUART1(CH6);                                                         //CH6 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW8 |      
-                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
+        if(MUX4_ENABLE.mflags.mux16_4==VW8 |   
+                MUX4_ENABLE.mflags.mux16_4==VW_TH8  |                           //REV 2.0                
+                MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
             if (MUX_ENABLE1_16.e1flags.CH6)                                     //Display ENABLED or DISABLED
                 putsUART1(Enabled);
@@ -6050,8 +6099,9 @@ void displayMUX(int displayChannel)
         putsUART1(CH7);                                                         //CH7 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW8 |      
-                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
+        if(MUX4_ENABLE.mflags.mux16_4==VW8 |    
+                MUX4_ENABLE.mflags.mux16_4==VW_TH8  |                           //REV 2.0                
+                MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
             if (MUX_ENABLE1_16.e1flags.CH7)                                     //Display ENABLED or DISABLED
                 putsUART1(Enabled);
@@ -6078,8 +6128,9 @@ void displayMUX(int displayChannel)
         putsUART1(CH8);                                                         //CH8 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW8 |      
-                MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
+        if(MUX4_ENABLE.mflags.mux16_4==VW8 | 
+                MUX4_ENABLE.mflags.mux16_4==VW_TH8  |                           //REV 2.0                
+                MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
             if (MUX_ENABLE1_16.e1flags.CH8)                                     //Display ENABLED or DISABLED
                 putsUART1(Enabled);
@@ -6101,7 +6152,7 @@ void displayMUX(int displayChannel)
         crlf();
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == TH8)
+    if (MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == TH8   |   MUX4_ENABLE.mflags.mux16_4 == VW_TH8)   //REV 2.0
         return;
 
 
@@ -6110,7 +6161,7 @@ void displayMUX(int displayChannel)
         putsUART1(CH9);                                                         //CH9 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
+        if(MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
             if (MUX_ENABLE1_16.e1flags.CH9)                                     //Display ENABLED or DISABLED
                 putsUART1(Enabled);
@@ -6137,7 +6188,7 @@ void displayMUX(int displayChannel)
         putsUART1(CH10);                                                        //CH10 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
+        if(MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
             if (MUX_ENABLE1_16.e1flags.CH10)                                    //Display ENABLED or DISABLED
                 putsUART1(Enabled);
@@ -6164,7 +6215,7 @@ void displayMUX(int displayChannel)
         putsUART1(CH11);                                                        //CH11 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
+        if(MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
             if (MUX_ENABLE1_16.e1flags.CH11)                                    //Display ENABLED or DISABLED
                 putsUART1(Enabled);
@@ -6191,7 +6242,7 @@ void displayMUX(int displayChannel)
         putsUART1(CH12);                                                        //CH12 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
+        if(MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
             if (MUX_ENABLE1_16.e1flags.CH12)                                    //Display ENABLED or DISABLED
                 putsUART1(Enabled);
@@ -6218,7 +6269,7 @@ void displayMUX(int displayChannel)
         putsUART1(CH13);                                                        //CH13 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
+        if(MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
             if (MUX_ENABLE1_16.e1flags.CH13)                                    //Display ENABLED or DISABLED
                 putsUART1(Enabled);
@@ -6245,7 +6296,7 @@ void displayMUX(int displayChannel)
         putsUART1(CH14);                                                        //CH14 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
+        if(MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
             if (MUX_ENABLE1_16.e1flags.CH14)                                    //Display ENABLED or DISABLED
                 putsUART1(Enabled);
@@ -6272,7 +6323,7 @@ void displayMUX(int displayChannel)
         putsUART1(CH15);                                                        //CH15 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
+        if(MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
             if (MUX_ENABLE1_16.e1flags.CH15)                                    //Display ENABLED or DISABLED
                 putsUART1(Enabled);
@@ -6299,7 +6350,7 @@ void displayMUX(int displayChannel)
         putsUART1(CH16);                                                        //CH16 setup
         while (BusyUART1());
         
-        if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
+        if(MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW32)    
         {
             if (MUX_ENABLE1_16.e1flags.CH16)                                    //Display ENABLED or DISABLED
                 putsUART1(Enabled);
@@ -6321,7 +6372,7 @@ void displayMUX(int displayChannel)
         crlf();
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16)
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH16)
         return;
 
     if (displayChannel == 17 | displayChannel == 0) 
@@ -6770,7 +6821,7 @@ void displayReading(int ch, unsigned long outputPosition)                       
     uarrays TXARRAY;                                                            //TXARRAY.ArrayBytes.msb, TXARRAY.array.lsb
     
     char BUF[10];                                                               //temporary storage for display data                          
-    unsigned char NOB;                                                          //Number Of Bytes 
+    //unsigned char NOB;                                                          //Number Of Bytes REM REV 2.0
     volatile unsigned int arrayIDX;                                                      
     unsigned char month;
     unsigned char day;
@@ -6794,10 +6845,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
     year = read_Int_FRAM(0);                                                    //Read the year from the external FRAM to initialize I2C    
         
-    if ((outputPosition > maxSingleVW && (MUX4_ENABLE.mflags.mux16_4 == Single)) |
-            (outputPosition > maxFourVW && (MUX4_ENABLE.mflags.mux16_4 == VW4)) |
+    if ((outputPosition > maxSingle && (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)) |  //REV 2.0
+            (outputPosition > maxFour && (MUX4_ENABLE.mflags.mux16_4 == VW_TH4)) |   //REV 2.0
+            (outputPosition > maxEight && (MUX4_ENABLE.mflags.mux16_4 == VW_TH8)) |   //REV 2.0            
             (outputPosition > maxEightVW && (MUX4_ENABLE.mflags.mux16_4 == VW8)) |
-            (outputPosition > maxSixteenVW && (MUX4_ENABLE.mflags.mux16_4 == VW16)) |
+            (outputPosition > maxSixteen && (MUX4_ENABLE.mflags.mux16_4 == VW_TH16)) |   //REV 2.0
             (outputPosition > maxThirtytwoVW && (MUX4_ENABLE.mflags.mux16_4 == VW32)) | //memory full:Return memory pointer to 1 for circular memory
             (outputPosition > maxEightTH && (MUX4_ENABLE.mflags.mux16_4 == TH8)) |
             (outputPosition > maxThirtytwoTH && (MUX4_ENABLE.mflags.mux16_4 == TH32))) {
@@ -6808,46 +6860,52 @@ void displayReading(int ch, unsigned long outputPosition)                       
     TXARRAY.array=outputPosition;                                               
 
     //calculate the external FRAM base address:
-    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //Single Channel VW
+    if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                                   //Single Channel VW/TH //REV 2.0
     {
-        FRAMaddress = SingleVWPosition;
-        NOB=28;                                                                 //28 bytes for binary download  
+        FRAMaddress = SingleVW_THPosition;                                         //REV 2.0
+        //NOB=28;                                                                 //28 bytes for binary download  REM REV 2.0
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4)                                      //4 Channel VW
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4)                                      //4 Channel VW/TH
     {
-        FRAMaddress = VW4Position;
-        NOB=52;                                                                 
+        FRAMaddress = VW_TH4Position;                                              //REV 2.0
+        //NOB=52;                                                                 REM REV 2.0
     }
+    
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH8)                                      //8 Channel VW/TH
+    {
+        FRAMaddress = VW_TH8Position;                                              //REV 2.0
+        //NOB=52;                                                                 REM REV 2.0
+    }    
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW8)                                      //8 Channel VW
     {
         FRAMaddress = VW8Position;
-        NOB=52;                                                                 
+        //NOB=52;                                                                 REM REV 2.0
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16)                                     //16 Channel VW
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH16)                                     //16 Channel VW
     {
-        FRAMaddress = VW16Position;
-        NOB=148;                                                                          
+        FRAMaddress = VW_TH16Position;                                             //REV 2.0
+        //NOB=148;                                                                          REM REV 2.0
     }
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW32)                                     //32 Channel VW
     {
         FRAMaddress = VW32Position;
-        NOB=148;                                                                
+        //NOB=148;                                                                REM REV 2.0
     }
 
     if (MUX4_ENABLE.mflags.mux16_4 == TH8)                                      //8 Channel thermistor
     {
         FRAMaddress = TH8Position;
-        NOB=52;                                                                 
+        //NOB=52;                                                                 REM REV 2.0
     }
 
     if (MUX4_ENABLE.mflags.mux16_4 == TH32)                                     //32 Channel thermistor
     {
         FRAMaddress = TH32Position;
-        NOB=148;                                                                
+        //NOB=148;                                                                REM REV 2.0
     }
 
     if (!_232) 
@@ -7020,16 +7078,19 @@ void displayReading(int ch, unsigned long outputPosition)                       
     tempoutputPosition = outputPosition;
 
     //GAGE READING
-    if (MUX4_ENABLE.mflags.mux16_4 == Single) 
-        maxchannelplusone = 2;                                                  //single channel VW
+    if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                                   //REV 2.0
+        maxchannelplusone = 2;                                                  //single channel VW/TH
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4)                                      
-        maxchannelplusone = 5;                                                  //4 channel VW mux
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4)                                      
+        maxchannelplusone = 5;                                                  //4 channel VW/TH mux
+    
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH8)
+        maxchannelplusone = 9;                                                  //8 channel VW/TH mux    REV 2.0
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW8)
         maxchannelplusone = 9;                                                  //8 channel VW mux
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16) 
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH16) 
         maxchannelplusone = 17;                                                 //16 channel VW mux
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW32) 
@@ -7045,17 +7106,20 @@ void displayReading(int ch, unsigned long outputPosition)                       
     {
         IEC1bits.INT1IE = 0;                                                    //Disable INT1
 
-        if (MUX4_ENABLE.mflags.mux16_4 == Single)                               //Single Channel VW
-            FRAMaddress = SingleVWBytes * (tempoutputPosition - 1)+(6 * (displayChannel - 1)) + 12;
+        if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                               //Single Channel VW/TH //REV 2.0
+            FRAMaddress = SingleVW_THBytes * (tempoutputPosition - 1)+(6 * (displayChannel - 1)) + 12; //REV 2.0
 
-        if (MUX4_ENABLE.mflags.mux16_4 == VW4)                                  //4 channel VW mux
-            FRAMaddress = VW4Bytes * (tempoutputPosition - 1)+(6 * (displayChannel - 1)) + 12;
+        if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4)                                  //4 channel VW/TH mux
+            FRAMaddress = VW_TH4Bytes * (tempoutputPosition - 1)+(6 * (displayChannel - 1)) + 12;  //REV 2.0
+        
+        if (MUX4_ENABLE.mflags.mux16_4 == VW_TH8)                                  //8 channel VW/TH mux    REV 2.0
+            FRAMaddress = VW_TH8Bytes * (tempoutputPosition - 1)+(6 * (displayChannel - 1)) + 12;  //REV 2.0        
 
         if (MUX4_ENABLE.mflags.mux16_4 == VW8)                                  //8 channel VW mux
             FRAMaddress = VW8Bytes * (tempoutputPosition - 1)+(4 * (displayChannel - 1)) + 12;
 
-        if (MUX4_ENABLE.mflags.mux16_4 == VW16)                                 //16 channel mux    
-            FRAMaddress = VW16Bytes * (tempoutputPosition - 1)+(6 * (displayChannel - 1)) + 12;
+        if (MUX4_ENABLE.mflags.mux16_4 == VW_TH16)                                 //16 channel mux    
+            FRAMaddress = VW_TH16Bytes * (tempoutputPosition - 1)+(6 * (displayChannel - 1)) + 12; //REV 2.0
 
         if (MUX4_ENABLE.mflags.mux16_4 == VW32)                                 //32 channel VW mux
             FRAMaddress = VW32Bytes * (tempoutputPosition - 1)+(4 * (displayChannel - 1)) + 12;
@@ -7106,10 +7170,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
         {
 
             case 1:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 1 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 1 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH1)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7128,10 +7193,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
                 break;
 
             case 2:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 2 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 2 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH2)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7151,10 +7217,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
                 break;
 
             case 3:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 3 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 3 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH3)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7173,10 +7240,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
                 break;
 
             case 4:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 4 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 4 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH4)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7195,10 +7263,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
                 break;
 
             case 5:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 5 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 5 disabled   //REV 2.0 
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH5)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7217,10 +7286,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
                 break;
 
             case 6:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 6 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 6 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH6)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7239,10 +7309,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
                 break;
 
             case 7:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 7 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 7 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH7)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7261,10 +7332,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
                 break;
 
             case 8:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 8 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 8 disabled   //REV 2.0 
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH8)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7284,10 +7356,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
             case 9:
 
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 9 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 9 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH9)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7306,10 +7379,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
                 break;
 
             case 10:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 10 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 10 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH10)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7328,10 +7402,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
                 break;
 
             case 11:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 11 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 11 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH11)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7350,10 +7425,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
                 break;
 
             case 12:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 12 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 12 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH12)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7373,10 +7449,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
 
             case 13:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 13 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 13 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH13)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7396,10 +7473,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
 
             case 14:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 14 disabled   
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 14 disabled   //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH14)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7419,10 +7497,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
 
             case 15:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 15 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 15 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH15)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7442,10 +7521,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
 
             case 16:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 16 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 16 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH16)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7465,10 +7545,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
 
             case 17:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 17 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 17 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH17)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7488,10 +7569,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
 
             case 18:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 18 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 18 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH18)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7511,10 +7593,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
 
             case 19:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 4 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 4 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH19)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7534,10 +7617,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
 
             case 20:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 20 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 20 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH20)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7557,10 +7641,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
 
             case 21:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 21 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 21 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH21)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7580,10 +7665,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
 
             case 22:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 22 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 22 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH22)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7603,10 +7689,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
 
             case 23:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 23 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 23 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH23)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7626,10 +7713,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
 
             case 24:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 24 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 24 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH24)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7649,10 +7737,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
 
             case 25:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 25 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 25 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH25)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7672,10 +7761,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
 
             case 26:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 26 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 26 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH26)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7695,10 +7785,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
 
             case 27:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 27 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 27 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH27)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7718,10 +7809,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
 
             case 28:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 28 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 28 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH28)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7741,10 +7833,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
 
             case 29:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 29 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 29 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH29)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7764,10 +7857,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
 
             case 30:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 30 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 30 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH30)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7787,10 +7881,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
 
             case 31:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 31 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 31 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH31)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7810,10 +7905,11 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
 
             case 32:
-                if (((MUX4_ENABLE.mflags.mux16_4==Single  |                     //Channel 32 disabled    
-                    MUX4_ENABLE.mflags.mux16_4==VW4     |
+                if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |                     //Channel 32 disabled    //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |                       //REV 2.0
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                       //REV 2.0                        
                     MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                    MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                     MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH32)
                 |  
                 ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -7850,17 +7946,20 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
             IEC1bits.INT1IE = 0;                                                //Disable INT1
 
-            if (MUX4_ENABLE.mflags.mux16_4 == Single)                           //Single Channel VW
-                FRAMaddress = SingleVWBytes * (tempoutputPosition - 1)+(6 * (displayChannel - 1)) + 12;
+            if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                           //Single Channel VW //REV 2.0
+                FRAMaddress = SingleVW_THBytes * (tempoutputPosition - 1)+(6 * (displayChannel - 1)) + 12; //REV 2.0
 
-            if (MUX4_ENABLE.mflags.mux16_4 == VW4)                              //4 channel VW mux
-                FRAMaddress = VW4Bytes * (tempoutputPosition - 1)+(6 * (displayChannel - 1)) + 12;
+            if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4)                              //4 channel VW/TH mux    //REV 2.0
+                FRAMaddress = VW_TH4Bytes * (tempoutputPosition - 1)+(6 * (displayChannel - 1)) + 12;  //REV 2.0
+            
+            if (MUX4_ENABLE.mflags.mux16_4 == VW_TH8)                              //8 channel VW/TH mux    //REV 2.0
+                FRAMaddress = VW_TH8Bytes * (tempoutputPosition - 1)+(6 * (displayChannel - 1)) + 12;  //REV 2.0            
 
             if (MUX4_ENABLE.mflags.mux16_4 == VW8)                              //8 channel VW mux
                 FRAMaddress = VW8Bytes * (tempoutputPosition - 1)+(4 * (displayChannel - 1)) + 12;
 
-            if (MUX4_ENABLE.mflags.mux16_4 == VW16)                             //16 channel VW mux
-                FRAMaddress = VW16Bytes * (tempoutputPosition - 1)+(6 * (displayChannel - 1)) + 12;
+            if (MUX4_ENABLE.mflags.mux16_4 == VW_TH16)                             //16 channel VW/TH mux //REV 2.0
+                FRAMaddress = VW_TH16Bytes * (tempoutputPosition - 1)+(6 * (displayChannel - 1)) + 12; //REV 2.0
 
             if (MUX4_ENABLE.mflags.mux16_4 == VW32)                             //32 channel VW mux
                 FRAMaddress = VW32Bytes * (tempoutputPosition - 1)+(4 * (displayChannel - 1)) + 12;
@@ -8390,21 +8489,26 @@ void displayTempReading(void) {
        
     //GAGE READING & THERMISTOR READINGS
 
-    if (MUX4_ENABLE.mflags.mux16_4 == Single) {
+    if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH) {                                 //REV 2.0
         maxchannelplusone = 2;                                                  //Single Channel
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4)                                      //determine # of channels in MUX    
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4)                                      //determine # of channels in MUX    
     {
         maxchannelplusone = 5;                                                  //4 CHANNEL
     }
+    
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH8)                                      //determine # of channels in MUX    
+    {
+        maxchannelplusone = 9;                                                  //8 CHANNEL
+    }    
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW8)                                      //determine # of channels in MUX    
     {
         maxchannelplusone = 9;                                                  //8 CHANNEL
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16) 
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH16) 
     {
         maxchannelplusone = 17;                                                 //16 CHANNEL
     }
@@ -8434,10 +8538,10 @@ void displayTempReading(void) {
             //GAGE READING
             IEC1bits.INT1IE = 0;                                                //Disable INT2
 
-            if(MUX4_ENABLE.mflags.mux16_4==Single)                              
+            if(MUX4_ENABLE.mflags.mux16_4==SingleVW_TH)                              //REV 2.0                       
                 TempFRAMaddress=XmemStart+0xE;                                  
             else                                                                
-            if(MUX4_ENABLE.mflags.mux16_4 == VW4 | MUX4_ENABLE.mflags.mux16_4 == VW16)
+            if(MUX4_ENABLE.mflags.mux16_4 == VW_TH4| MUX4_ENABLE.mflags.mux16_4 == VW_TH8 | MUX4_ENABLE.mflags.mux16_4 == VW_TH16)  //REV 2.0
                 TempFRAMaddress = (XmemStart+0xE) + (6 * (displayChannel - 1)); //compute the reading address    
             else
             if (MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW32) 
@@ -8463,10 +8567,11 @@ void displayTempReading(void) {
 
                     case 1:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 1 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 1 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH1)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8482,10 +8587,11 @@ void displayTempReading(void) {
 
                     case 2:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 2 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 2 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH2)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8501,10 +8607,11 @@ void displayTempReading(void) {
 
                     case 3:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 3 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 3 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH3)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8521,10 +8628,11 @@ void displayTempReading(void) {
 
                     case 4:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 4 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 4 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH4)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8541,10 +8649,11 @@ void displayTempReading(void) {
 
                     case 5:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 5 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 5 disabled   //REV 2.0 
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH5)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8560,10 +8669,11 @@ void displayTempReading(void) {
 
                     case 6:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 6 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 6 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH6)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8579,10 +8689,11 @@ void displayTempReading(void) {
 
                     case 7:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 7 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 7 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH7)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8599,10 +8710,11 @@ void displayTempReading(void) {
 
                     case 8:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 8 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 8 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH8)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8619,10 +8731,11 @@ void displayTempReading(void) {
 
                     case 9:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 9 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 9 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH9)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8639,10 +8752,11 @@ void displayTempReading(void) {
 
                     case 10:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 10 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 10 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH10)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8659,10 +8773,11 @@ void displayTempReading(void) {
 
                     case 11:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 11 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 11 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH11)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8679,10 +8794,11 @@ void displayTempReading(void) {
 
                     case 12:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 12 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 12 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH12)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8699,10 +8815,11 @@ void displayTempReading(void) {
 
                     case 13:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 13 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 13 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH13)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8719,10 +8836,11 @@ void displayTempReading(void) {
 
                     case 14:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 14 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 14 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH14)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8739,10 +8857,11 @@ void displayTempReading(void) {
 
                     case 15:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 15 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 15 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH15)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8759,10 +8878,11 @@ void displayTempReading(void) {
 
                     case 16:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 16 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 16 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH16)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8779,10 +8899,11 @@ void displayTempReading(void) {
 
                     case 17:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 17 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 17 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH17)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8799,10 +8920,11 @@ void displayTempReading(void) {
 
                     case 18:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 18 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 18 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH18)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8818,10 +8940,11 @@ void displayTempReading(void) {
 
                     case 19:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 19 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 19 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH19)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8837,10 +8960,11 @@ void displayTempReading(void) {
 
                     case 20:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 20 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 20 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH20)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8856,10 +8980,11 @@ void displayTempReading(void) {
 
                     case 21:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 21 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 21 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH21)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8875,10 +9000,11 @@ void displayTempReading(void) {
 
                     case 22:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 22 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 22 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH22)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8894,10 +9020,11 @@ void displayTempReading(void) {
 
                     case 23:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 23 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 23 disabled   //REV 2.0 
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH23)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8913,10 +9040,11 @@ void displayTempReading(void) {
 
                     case 24:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 24 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 24 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH24)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8932,10 +9060,11 @@ void displayTempReading(void) {
 
                     case 25:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 25 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
-                            MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 25 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
+                            MUX4_ENABLE.mflags.mux16_4==VW8     |   
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH25)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8951,10 +9080,11 @@ void displayTempReading(void) {
 
                     case 26:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 26 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 26 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH26)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8970,10 +9100,11 @@ void displayTempReading(void) {
 
                     case 27:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 27 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 27 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH27)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -8989,10 +9120,11 @@ void displayTempReading(void) {
 
                     case 28:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 28 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 28 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH28)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9008,10 +9140,11 @@ void displayTempReading(void) {
 
                     case 29:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 29 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 29 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH29)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9027,10 +9160,11 @@ void displayTempReading(void) {
 
                     case 30:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 30 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 30 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH30)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9046,10 +9180,11 @@ void displayTempReading(void) {
 
                     case 31:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 31 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 31 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH31)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9065,10 +9200,11 @@ void displayTempReading(void) {
 
                     case 32:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 32 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 32 disabled   //REV 2.0 
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH32)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9119,10 +9255,11 @@ void displayTempReading(void) {
 
                 case 1:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 1 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 1 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH1)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9139,10 +9276,11 @@ void displayTempReading(void) {
 
                 case 2:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 2 disabled   
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 2 disabled   //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH2)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9159,10 +9297,11 @@ void displayTempReading(void) {
 
                 case 3:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 3 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 3 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH3)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9179,10 +9318,11 @@ void displayTempReading(void) {
 
                 case 4:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 4 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 4 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH4)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9199,10 +9339,11 @@ void displayTempReading(void) {
 
                 case 5:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 5 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 5 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH5)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9219,10 +9360,11 @@ void displayTempReading(void) {
 
                 case 6:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 6 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 6 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH6)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9239,10 +9381,11 @@ void displayTempReading(void) {
 
                 case 7:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 7 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 7 disabled   //REV 2.0 
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH7)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9259,10 +9402,11 @@ void displayTempReading(void) {
 
                 case 8:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 8 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 8 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH8)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9279,10 +9423,11 @@ void displayTempReading(void) {
 
                 case 9:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 9 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 9 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH9)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9299,10 +9444,11 @@ void displayTempReading(void) {
 
                 case 10:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 10 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 10 disabled   //REV 2.0 
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH10)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9319,10 +9465,11 @@ void displayTempReading(void) {
 
                 case 11:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 11 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 11 disabled   //REV 2.0 
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH11)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9339,10 +9486,11 @@ void displayTempReading(void) {
 
                 case 12:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 12 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 12 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |              //REV 2.0 
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH12)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9359,10 +9507,11 @@ void displayTempReading(void) {
 
                 case 13:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 13 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 13 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH13)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9379,10 +9528,11 @@ void displayTempReading(void) {
 
                 case 14:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 14 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 14 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH14)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9399,10 +9549,11 @@ void displayTempReading(void) {
 
                 case 15:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 15 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 15 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH15)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9419,10 +9570,11 @@ void displayTempReading(void) {
 
                 case 16:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 16 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 16 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH16)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9439,10 +9591,11 @@ void displayTempReading(void) {
 
                 case 17:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 17 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 17 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH17)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9459,10 +9612,11 @@ void displayTempReading(void) {
 
                 case 18:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 18 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 18 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH18)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9478,10 +9632,11 @@ void displayTempReading(void) {
 
                 case 19:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 19 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 19 disabled   //REV 2.0 
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH19)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9497,10 +9652,11 @@ void displayTempReading(void) {
 
                 case 20:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 20 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 20 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH20)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9516,10 +9672,11 @@ void displayTempReading(void) {
 
                 case 21:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 21 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 21 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH21)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9535,10 +9692,11 @@ void displayTempReading(void) {
 
                 case 22:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 22 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 22 disabled   //REV 2.0 
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH22)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9554,10 +9712,11 @@ void displayTempReading(void) {
 
                 case 23:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 23 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 23 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH23)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9573,10 +9732,11 @@ void displayTempReading(void) {
 
                 case 24:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 24 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 24 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH24)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9592,10 +9752,11 @@ void displayTempReading(void) {
 
                 case 25:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 25 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 25 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH25)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9611,10 +9772,11 @@ void displayTempReading(void) {
 
                 case 26:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 26 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 26 disabled   //REV 2.0 
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH26)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9630,10 +9792,11 @@ void displayTempReading(void) {
 
                 case 27:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 27 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 27 disabled   //REV 2.0 
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH27)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9649,10 +9812,11 @@ void displayTempReading(void) {
 
                 case 28:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 28 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 28 disabled  //REV 2.0  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |              //REV 2.0 
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH28)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9668,10 +9832,11 @@ void displayTempReading(void) {
 
                 case 29:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 29 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 29 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH29)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9687,10 +9852,11 @@ void displayTempReading(void) {
 
                 case 30:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 30 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 30 disabled    //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH30)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9706,10 +9872,11 @@ void displayTempReading(void) {
 
                 case 31:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 31 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 31 disabled  //REV 2.0  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH31)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9725,10 +9892,11 @@ void displayTempReading(void) {
 
                 case 32:
 
-                        if (((MUX4_ENABLE.mflags.mux16_4==Single  |             //Channel 32 disabled    
-                            MUX4_ENABLE.mflags.mux16_4==VW4     |
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 32 disabled  //REV 2.0  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
                             MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                            MUX4_ENABLE.mflags.mux16_4==VW16    |  
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
                             MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH32)
                             |  
                             ((MUX4_ENABLE.mflags.mux16_4==TH8     |
@@ -9793,7 +9961,7 @@ void displayTemporaryStatus(int tempUserPosition) {
     while (BusyUART1());                                                        //Display Temporary User Position
     pointer = tempUserPosition;
 
-    if (pointer == (maxSingleVW + 1))                                           //restore pointer to 1  
+    if (pointer == (maxSingle + 1))                                           //restore pointer to 1  REV 2.0
         pointer = 1;
 
     sprintf(BUF, "%d", pointer);
@@ -12558,20 +12726,27 @@ void loadDefaults(void)
    write_Int_FRAM(THMUX_ENABLE17_32flagsaddress, 0xFFFF);                       
 
     //initialize scan intervals:
-    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //Single VW Channel
+    if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                                   //Single VW/TH Channel //REV 2.0
     {
-        S_1.status1flags._CFG=Single;                                           
-        LogIntLength = minScanSingleVW;
-        hms(minScanSingleVW, 0);
+        S_1.status1flags._CFG=SingleVW_TH;                       //REV 2.0                    
+        LogIntLength = minScanSingle;                                         //REV 2.0
+        hms(minScanSingle, 0);                                                //REV 2.0
         
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4)                                      //4 channel VW MUX
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4)                                      //4 channel VW/TH MUX
     {
-        S_1.status1flags._CFG=VW4;                                              
-        LogIntLength = minScanFourVW;
-        hms(minScanFourVW, 0);
+        S_1.status1flags._CFG=VW_TH4;                                              
+        LogIntLength = minScanFour;                                           //REV 2.0
+        hms(minScanFour, 0);                                                  //REV 2.0
     }
+   
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH8)                                      //8 channel VW/TH MUX    REV 2.0
+    {
+        S_1.status1flags._CFG=VW_TH8;                                              
+        LogIntLength = minScanEight;                                           //REV 2.0
+        hms(minScanEight, 0);                                                  //REV 2.0
+    }   
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW8)                                      //8 channel VW MUX
     {
@@ -12580,11 +12755,11 @@ void loadDefaults(void)
         hms(minScanEightVW, 0);
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16)                                     //16 channel VW MUX
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH16)                                     //16 channel VW/TH MUX
     {
-        S_1.status1flags._CFG=VW16;                                             
-        LogIntLength = minScanSixteenVW;
-        hms(minScanSixteenVW, 0);
+        S_1.status1flags._CFG=VW_TH16;                                             //REV 2.0
+        LogIntLength = minScanSixteen;                                        //REV 2.0
+        hms(minScanSixteen, 0);                                               //REV 2.0
     }
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW32)                                     //32 channel VW MUX
@@ -12649,7 +12824,7 @@ void loadDefaults(void)
     write_Int_FRAM(LogItRemain6address,0);                                      //0 left to go
     write_Int_FRAM(LogItRemain6MASTERaddress,0);                            
 
-    if(MUX4_ENABLE.mflags.mux16_4==Single)                                      //Single Channel selected    
+    if(MUX4_ENABLE.mflags.mux16_4==SingleVW_TH)                                      //Single Channel selected    //REV 2.0
     {
         //Log interval #1:
         LogIntLength = 3;                                                       //3 second scan interval
@@ -12745,19 +12920,26 @@ int MODBUScheckScanInterval(unsigned int x)                                     
 {
     MUX4_ENABLE.mux=read_Int_FRAM(MUX4_ENABLEflagsaddress);  
 
-    if (MUX4_ENABLE.mflags.mux16_4 == Single) 
+    if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                                   //REV 2.0
     {
-        if (x < minScanSingleVW)
-            return minScanSingleVW;
+        if (x < minScanSingle)                                                //REV 2,0
+            return minScanSingle;                                             //REV 2.0
         return 0;
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4) 
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4) 
     {
-        if (x < minScanFourVW)
-            return minScanFourVW;
+        if (x < minScanFour)                                                  //REV 2.0
+            return minScanFour;                                               //REV 2.0
         return 0;
     }
+    
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH8)                                   //REV 2.0     
+    {
+        if (x < minScanEight)                                                  //REV 2.0
+            return minScanEight;                                               //REV 2.0
+        return 0;
+    }    
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW8) 
     {
@@ -12766,10 +12948,10 @@ int MODBUScheckScanInterval(unsigned int x)                                     
         return 0;
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16) 
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH16) 
     {
-        if (x < minScanSixteenVW)
-            return minScanSixteenVW;
+        if (x < minScanSixteen)                                               //REV 2.0
+            return minScanSixteen;                                            //REV 2.0
         return 0;
     }
 
@@ -13150,8 +13332,16 @@ void MODBUScomm(void)
                         break;                                                          //REV 1.13
                     if(tempStatusValue.status1flags._Logging)                           //if logging    REV 1.13
                         break;                                                          //Don't allow CFG change    REV 1.13                    
-                    MX8();
+                    MX8V();                                                     //REV 2.0
                     break;
+                    
+                case 7:                                                         //REV 2.0
+                    if (tempStatusValue.status1flags._CFG == tempValueValue.status1flags._CFG)    //no difference between received and stored value REV 1.13
+                        break;                                                          //REV 1.13
+                    if(tempStatusValue.status1flags._Logging)                           //if logging    REV 1.13
+                        break;                                                          //Don't allow CFG change    REV 1.13                    
+                    MX8();                                                     //REV 2.0
+                    break;                    
 
                 default:
                     break;
@@ -13704,31 +13894,43 @@ void MX1(void)
     DISPLAY_CONTROL.flags.TH=0;                                                 //VW Configuration  
     write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);        //store flag in FRAM  
     MUX4_ENABLE.mflags.mux16_4=0;                                               //clear the mux flags   
-    MUX4_ENABLE.mflags.mux16_4 = Single;                                        //Single Channel Datalogger selected
-    S_1.status1flags._CFG=Single;                                               //set the MODBUS status flags    
+    MUX4_ENABLE.mflags.mux16_4 = SingleVW_TH;                                        //Single Channel Datalogger selected    //REV 2.0
+    S_1.status1flags._CFG=SingleVW_TH;                                               //set the MODBUS status flags    //REV 2.0
     write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);        
     write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);                    //store flag in FRAM  
     MUX_ENABLE1_16.e1flags.CH1=1;                           
     write_Int_FRAM(MUX_ENABLE1_16flagsaddress,MUX_ENABLE1_16.MUXen1_16); 
-    LogIntLength = minScanSingleVW;
-    hms(minScanSingleVW, 0);                                                    //load minimum scan interval for Single Channel   
+    LogIntLength = minScanSingle;                                             //REV 2.0
+    hms(minScanSingle, 0);                                                    //load minimum scan interval for Single Channel   REV 2.0
     loadDefaults();                                                             //REV 1.10
 }
 
 
 void MX4(void)                                                                  
 {
-    MUX4_ENABLE.mflags.mux16_4 = VW4;                                           //4 channel VW/TH mux selected  
+    MUX4_ENABLE.mflags.mux16_4 = VW_TH4;                                           //4 channel VW/TH mux selected  
     write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);                    //store flag in FRAM  
-    S_1.status1flags._CFG=VW4;                                                   //set the MODBUS status flags    
+    S_1.status1flags._CFG=VW_TH4;                                                   //set the MODBUS status flags    
     write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);      
-    LogIntLength = minScanFourVW;
-    hms(minScanFourVW, 0);                                                      //load minimum scan interval for 4 channel mode    
+    LogIntLength = minScanFour;                                               //REV 2.0
+    hms(minScanFour, 0);                                                      //load minimum scan interval for 4 channel mode    REV 2.0
     loadDefaults();                                                             //REV 1.10
 }
 
 
-void MX8(void)                                                                  
+void MX8(void)                                                                  //REV 2.0
+{
+    MUX4_ENABLE.mflags.mux16_4 = VW_TH8;                                        //8 channel VW/TH mux selected  
+    write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);                    //store flag in FRAM  
+    S_1.status1flags._CFG=VW_TH8;                                               //set the MODBUS status flags    
+    write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);      
+    LogIntLength = minScanEight;                                                //REV 2.0
+    hms(minScanEight, 0);                                                       //load minimum scan interval for 8 channel mode    REV 2.0
+    loadDefaults();                                                             //REV 1.10
+}
+
+
+void MX8V(void)                                                                 //REV 2.0
 {
     MUX4_ENABLE.mflags.mux16_4 = VW8;                                           //8 channel VW mux selected
     write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);                    //store flag in FRAM 
@@ -13754,12 +13956,12 @@ void MX8T(void)
 
 void MX16(void)                                                                 
 {
-    MUX4_ENABLE.mflags.mux16_4 = VW16;                                          //16 channel VW/TH mux selected 
+    MUX4_ENABLE.mflags.mux16_4 = VW_TH16;                                          //16 channel VW/TH mux selected 
     write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);                    //store flag in FRAM 
-    S_1.status1flags._CFG=VW16;                                                  //set the MODBUS status flags    
+    S_1.status1flags._CFG=VW_TH16;                                                  //set the MODBUS status flags    
     write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);                              
-    LogIntLength = minScanSixteenVW;
-    hms(minScanSixteenVW, 0);                                                   //load minimum scan interval if 16 channel mode 
+    LogIntLength = minScanSixteen;                                            //REV 2.0
+    hms(minScanSixteen, 0);                                                   //load minimum scan interval if 16 channel mode REV 2.0
     loadDefaults();                                                             //REV 1.10
 }
 
@@ -15779,7 +15981,7 @@ void storeLogInterval(int interval, int iterations)
 {
     interval -= 1;                                                              //change interval from 1-6 to 0-5
     
-    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //if Single Channel  
+    if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                                   //if Single Channel  //REV 2.0
     {
         write_longFRAM(LogIntLength,(SingleLogIntLength1address+(interval*4)));	//store the interval  
         write_longFRAM(LogIntLength,(SingleLogIntLength1MASTERaddress+(interval*4)));   //store as the MASTER   
@@ -15806,14 +16008,16 @@ void storeChannelReading(int ch) {
 
     outputPosition=read_Int_FRAM(OutputPositionaddress);                        //get the memory pointer  
 
-    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //if Single Channel  
-        baseAddress = SingleVWBytes;
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4)                                      //if 4 channel MUX  
-        baseAddress = VW4Bytes;
-    if (MUX4_ENABLE.mflags.mux16_4 == VW8)                                      //if 8 channel MUX  
+    if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                                   //if Single Channel VW/TH  //REV 2.0
+        baseAddress = SingleVW_THBytes;                                            //REV 2.0
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4)                                      //if 4 channel VW/TH MUX  
+        baseAddress = VW_TH4Bytes;                                                 //REV 2.0
+    if (MUX4_ENABLE.mflags.mux16_4 == VW8)                                      //if 8 channel VW/TH MUX  
         baseAddress = VW8Bytes;
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16)                                     //if 16 channel MUX  
-        baseAddress = VW16Bytes;
+    if (MUX4_ENABLE.mflags.mux16_4 == VW16)                                      //if 16 channel VW MUX REV 2.0 
+        baseAddress = VW16Bytes;    
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH16)                                     //if 16 channel MUX  
+        baseAddress = VW_TH16Bytes;                                                //REV 2.0
     if (MUX4_ENABLE.mflags.mux16_4 == VW32)                                     //if 32 channel MUX  
         baseAddress = VW32Bytes;
     if (MUX4_ENABLE.mflags.mux16_4 == TH8)                                      //if 8 channel Thermistor MUX  
@@ -15832,7 +16036,7 @@ void storeChannelReading(int ch) {
     else
         FRAMaddress = (baseAddress * (outputPosition - 1))+(6 * (ch - 1) + 12); //calculate the external FRAM address
 
-    if (MUX4_ENABLE.mflags.mux16_4 == Single | MUX4_ENABLE.mflags.mux16_4 == VW4 | MUX4_ENABLE.mflags.mux16_4 == VW16) 
+    if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH | MUX4_ENABLE.mflags.mux16_4 == VW_TH4| MUX4_ENABLE.mflags.mux16_4 == VW_TH8 | MUX4_ENABLE.mflags.mux16_4 == VW_TH16)  //REV 2.0
     {
         write_Flt_FRAM(FRAMaddress, VWreadingProcessed);                        //store the processed VW reading
         write_Int_FRAM(FRAMaddress + 4, extThermreading);                       //store the external thermistor reading 12bit ADC value
@@ -15860,14 +16064,16 @@ unsigned long storeReading(int ch) {
     userPosition=read_Int_FRAM(UserPositionaddress);                            //get the user position
     FRAM_MEMORY.memory=read_Int_FRAM(FRAM_MEMORYflagsaddress);                  //get max # of arrays
     
-    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //if Single Channel VW
-        baseAddress = SingleVWBytes;                                            //external FRAM base address (Single channel)
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4)                                      //if 4 channel VW MUX
-        baseAddress = VW4Bytes;                                                 //external FRAM base address (4 channel)
+    if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                                   //if Single Channel VW/TH  //REV 2.0
+        baseAddress = SingleVW_THBytes;                                            //external FRAM base address (Single channel)   REV 2.0
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4)                                      //if 4 channel VW/TH MUX
+        baseAddress = VW_TH4Bytes;                                                 //external FRAM base address (4 channel)    REV 2.0
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH8)                                      //if 8 channel VW/TH MUX     REV 2.0
+        baseAddress = VW_TH8Bytes;                                                 //external FRAM base address (8 channel)    REV 2.0    
     if (MUX4_ENABLE.mflags.mux16_4 == VW8)                                      //if 8 channel VW MUX
         baseAddress = VW8Bytes;                                                 //external FRAM base address (8 channel)
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16)                                     //if 16 channel VW MUX
-        baseAddress = VW16Bytes;                                                //external FRAM base address (16 channel)
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH16)                                     //if 16 channel VW MUX
+        baseAddress = VW_TH16Bytes;                                                //external FRAM base address (16 channel)   REV 2.0
     if (MUX4_ENABLE.mflags.mux16_4 == VW32)                                     //if 32 channel VW MUX
         baseAddress = VW32Bytes;                                                //external FRAM base address (4 channel)
     if (MUX4_ENABLE.mflags.mux16_4 == TH8)                                      //if 8 channel Thermistor MUX
@@ -15884,8 +16090,8 @@ unsigned long storeReading(int ch) {
     write_Int_FRAM(FRAMaddress + 8, mainBatreading);                            //store the 3V battery voltage 12bit ADC value
     write_Int_FRAM(FRAMaddress + 10, intThermreading);                          //store the internal thermistor reading 12bit ADC value
 
-    //VER 6.0.3:
-    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //single channel VW selected   
+    
+    if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                                   //single channel VW/TH selected   //REV 2.0
     {
         if (gageType == 95)
             write_Flt_FRAM(FRAMaddress + 12, Lithiumreading + 0.19);
@@ -15893,17 +16099,24 @@ unsigned long storeReading(int ch) {
             write_Flt_FRAM(FRAMaddress + 12, VWreadingProcessed);
         write_Int_FRAM(FRAMaddress + 16, extThermreading);                      //store the external thermistor reading 12bit ADC value
 
-        if (memoryStatus < maxSingleVW)                                         //if memory has not become full 
+        if (memoryStatus < maxSingle)                                         //if memory has not become full REV 2.0
             memoryStatus += 1;                                                  //add 1 to the memory status register
             write_Int_FRAM(MemoryStatusaddress,memoryStatus);                   //store memoryStatus and userPosition in internal FRAM   
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4)                                      //if 4 channel VW MUX  
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4)                                      //if 4 channel VW/TH MUX  
     {
-        if (memoryStatus < maxFourVW)                                           //if memory has not become full
+        if (memoryStatus < maxFour)                                           //if memory has not become full REV 2.0
             memoryStatus += 1;                                                  //add 1 to the memory status register
         write_Int_FRAM(MemoryStatusaddress,memoryStatus);                       //store memoryStatus and userPosition in internal FRAM    
     }
+    
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH8)                                      //if 8 channel VW/TH MUX  REV 2.0
+    {
+        if (memoryStatus < maxEight)                                           //if memory has not become full REV 2.0
+            memoryStatus += 1;                                                  //add 1 to the memory status register
+        write_Int_FRAM(MemoryStatusaddress,memoryStatus);                       //store memoryStatus and userPosition in internal FRAM    
+    }    
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW8)                                      //if 8 channel VW MUX  
     {
@@ -15912,9 +16125,9 @@ unsigned long storeReading(int ch) {
         write_Int_FRAM(MemoryStatusaddress,memoryStatus);                       //store memoryStatus and userPosition in internal FRAM   
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16)                                     //if 16 channel VW MUX 
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH16)                                     //if 16 channel VW MUX 
     {
-        if (memoryStatus < maxSixteenVW)                                        //if memory has not become full
+        if (memoryStatus < maxSixteen)                                        //if memory has not become full REV 2.0
             memoryStatus += 1;                                                  //add 1 to the memory status register
         write_Int_FRAM(MemoryStatusaddress,memoryStatus);                       //store memoryStatus and userPosition in internal FRAM   
     }
@@ -15943,17 +16156,23 @@ unsigned long storeReading(int ch) {
     outputPosition += 1;                                                        //increment the output position pointer
 
 
-    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //Single Channel VW 
+    if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                                   //Single Channel VW/TH     //REV 2.0
     {
-        if (outputPosition > maxSingleVW)                                       //if memory is full 
+        if (outputPosition > maxSingle)                                       //if memory is full REV 2.0
             wrap_stop(); 
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4)                                      //if 4 channel VW MUX  
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4)                                      //if 4 channel VW/TH MUX  
     {
-        if (outputPosition > maxFourVW)                                         //if memory is full
+        if (outputPosition > maxFour)                                         //if memory is full REV 2.0
             wrap_stop(); 
     }
+    
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH8)                                      //if 8 channel VW/TH MUX  
+    {
+        if (outputPosition > maxEight)                                         //if memory is full REV 2.0
+            wrap_stop(); 
+    }    
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW8)                                      //if 8 channel VW MUX  
     {
@@ -15961,9 +16180,9 @@ unsigned long storeReading(int ch) {
             wrap_stop(); 
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16)                                     //if 16 channel VW MUX 
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH16)                                     //if 16 channel VW/TH MUX 
     {
-        if (outputPosition > maxSixteenVW)                                      //if memory is full
+        if (outputPosition > maxSixteen)                                      //if memory is full REV 2.0
             wrap_stop(); 
     }
 
@@ -15987,34 +16206,48 @@ unsigned long storeReading(int ch) {
 
     write_Int_FRAM(OutputPositionaddress,outputPosition);                       //store outputPosition pointer in internal FRAM  
 
-    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //Single Channel VW  
+    if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                                   //Single Channel VW/TH  //REV 2.0
     {                                                                           //User Position = Memory Status until Memory is full
-        if (memoryStatus < maxSingleVW) 
+        if (memoryStatus < maxSingle)                                           //REV 2.0
             userPosition = memoryStatus;
 
-        if (memoryStatus >= maxSingleVW && outputPosition == 1) 
+        if (memoryStatus >= maxSingle && outputPosition == 1)                   //REV 2.0
             userPosition = outputPosition;
         else
             userPosition = outputPosition - 1;                                  //after that User Position equals Output Position - 1
 
-        if (userPosition == (maxSingleVW + 1)) 
+        if (userPosition == (maxSingle + 1))                                  //REV 2.0
             userPosition = 1;
     }
 
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4)                                      //if 4 channel VW MUX  
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4)                                      //if 4 channel VW/TH MUX  
     {                                                                           //User Position = Memory Status until Memory is full
-        if (memoryStatus < maxFourVW)
+        if (memoryStatus < maxFour)                                           //REV 2.0
             userPosition = memoryStatus;
                                                                                 //User Position = Output Position for first reading
-        if (memoryStatus >= maxFourVW && outputPosition == 1)
+        if (memoryStatus >= maxFour && outputPosition == 1)                   //REV 2.0
             userPosition = outputPosition;
         else
             userPosition = outputPosition - 1;                                  //after that User Position equals Output Position - 1
 
-        if (userPosition == (maxFourVW + 1))
+        if (userPosition == (maxFour + 1))                                    //REV 2.0
             userPosition = 1;
     }
+    
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH8)                                      //if 8 channel VW/TH MUX     REV 2.0
+    {                                                                           //User Position = Memory Status until Memory is full
+        if (memoryStatus < maxEight)                                           //REV 2.0
+            userPosition = memoryStatus;
+                                                                                //User Position = Output Position for first reading
+        if (memoryStatus >= maxEight && outputPosition == 1)                   //REV 2.0
+            userPosition = outputPosition;
+        else
+            userPosition = outputPosition - 1;                                  //after that User Position equals Output Position - 1
+
+        if (userPosition == (maxEight + 1))                                    //REV 2.0
+            userPosition = 1;
+    }    
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW8)                                      //if 8 channel VW MUX  
     {                                                                           //User Position = Memory Status until Memory is full
@@ -16030,17 +16263,17 @@ unsigned long storeReading(int ch) {
             userPosition = 1;
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16)                                     //do same for 16 channel VW MUX    
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH16)                                     //do same for 16 channel VW/TH MUX    
     {                                                                           //User Position = Memory Status until Memory is full
-        if (memoryStatus < maxSixteenVW)
+        if (memoryStatus < maxSixteen)                                        //REV 2.0
             userPosition = memoryStatus;
                                                                                 //User Position = Output Position for first reading
-        if (memoryStatus >= maxSixteenVW && outputPosition == 1)
+        if (memoryStatus >= maxSixteen && outputPosition == 1)                //REV 2.0
             userPosition = outputPosition;
         else
             userPosition = outputPosition - 1;                                  //after that User Position equals Output Position - 1
 
-        if (userPosition == (maxSixteenVW + 1))
+        if (userPosition == (maxSixteen + 1))                                 //REV 2.0
             userPosition = 1;
     }
 
@@ -16088,21 +16321,29 @@ unsigned long storeReading(int ch) {
 
     write_Int_FRAM(UserPositionaddress,userPosition);  
 
-    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //Single Channel VW  
+    if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                                   //Single Channel VW/TH  //REV 2.0
     {
         if (outputPosition == 1)                                                //memory has rolled over
-            outputPosition = maxSingleVW;                                       //point to last array for displayReading() 
+            outputPosition = maxSingle;                                       //point to last array for displayReading() REV 2.0
         else
             outputPosition -= 1;                                                //otherwise point to the reading just stored
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4)                                      //if 4 channel VW MUX  
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4)                                      //if 4 channel VW/TH MUX  
     {
         if (outputPosition == 1)                                                //memory has rolled over
-            outputPosition = maxFourVW;                                         //point to last array for displayReading()
+            outputPosition = maxFour;                                         //point to last array for displayReading()  REV 2.0
         else
             outputPosition -= 1;                                                //otherwise point to the reading just stored
     }
+    
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH8)                                      //if 8 channel VW/TH MUX  REV 2.0
+    {
+        if (outputPosition == 1)                                                //memory has rolled over
+            outputPosition = maxEight;                                         //point to last array for displayReading()  REV 2.0
+        else
+            outputPosition -= 1;                                                //otherwise point to the reading just stored
+    }    
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW8)                                      //if 8 channel VW MUX  
     {
@@ -16112,10 +16353,10 @@ unsigned long storeReading(int ch) {
             outputPosition -= 1;                                                //otherwise point to the reading just stored
     }
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16)                                     //if 16 channel VW MUX 
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH16)                                     //if 16 channel VW MUX 
     {
         if (outputPosition == 1)                                                //memory has rolled over
-            outputPosition = maxSixteenVW;                                      //point to last array for displayReading()
+            outputPosition = maxSixteen;                                      //point to last array for displayReading()  REV 2.0
         else
             outputPosition -= 1;                                                //otherwise point to the reading just stored
     }
@@ -16156,9 +16397,10 @@ void storeTempChannelReading(int ch)                                            
     unsigned long TempFRAMaddress;
     unsigned int DEC_Thermreading=0;                                            
 
-    if (MUX4_ENABLE.mflags.mux16_4 == Single | 
-            MUX4_ENABLE.mflags.mux16_4 == VW4 |
-            MUX4_ENABLE.mflags.mux16_4 == VW16) 
+    if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH |                                  //REV 2.0
+            MUX4_ENABLE.mflags.mux16_4 == VW_TH4|                                 //REV 2.0
+            MUX4_ENABLE.mflags.mux16_4 == VW_TH8|                                 //REV 2.0            
+            MUX4_ENABLE.mflags.mux16_4 == VW_TH16) 
     {
         TempFRAMaddress = (XmemStart+0xC) + (6 * (ch - 1));                     //compute memory location for external thermistor   
         DEC_Thermreading=DEC_TEMP.decimaltemp;                                          
@@ -16507,7 +16749,7 @@ void take_One_Complete_Reading(unsigned char store)
     
     
     // TAKE VW READINGS:
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4 | MUX4_ENABLE.mflags.mux16_4 == VW16) //activate mux if multichannel  
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4| MUX4_ENABLE.mflags.mux16_4 == VW_TH8 | MUX4_ENABLE.mflags.mux16_4 == VW_TH16) //activate mux if multichannel  //REV 2.0
         MUX_RESET = 1;                                                          //set the MUX_RESET line high
     if (MUX4_ENABLE.mflags.mux16_4 == TH8 | MUX4_ENABLE.mflags.mux16_4 == TH32 |
             MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW32) //if 8 or 32 channel mux  
@@ -16515,13 +16757,15 @@ void take_One_Complete_Reading(unsigned char store)
     
     delay(11000);                                                               //4mS delay between ENABLE & 1st CLOCK  
 
-    if (MUX4_ENABLE.mflags.mux16_4 == Single)                                   //single channel selected   
+    if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                                   //single channel selected   //REV 2.0
         ch_max = 1;
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4)                                      //4 channel mux selected    
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4)                                      //4 channel mux selected    
         ch_max = 4;
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH8)                                      //8 channel mux selected    REV 2.0
+        ch_max = 8;    
     if (MUX4_ENABLE.mflags.mux16_4 == VW8)                                      //8 channel mux selected    
         ch_max = 8;
-    if (MUX4_ENABLE.mflags.mux16_4 == VW16)                                     //16 channel mux selected   
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH16)                                     //16 channel mux selected   
         ch_max = 16;
     if (MUX4_ENABLE.mflags.mux16_4 == VW32)                                     //32 channel mux selected    
         ch_max = 32;
@@ -16532,7 +16776,7 @@ void take_One_Complete_Reading(unsigned char store)
 
     for (ch = 1; ch <= ch_max; ch++)                                            //mux loop
     {
-        if (MUX4_ENABLE.mflags.mux16_4 == VW4 | MUX4_ENABLE.mflags.mux16_4 == VW16) //activate mux if multichannel  
+        if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4| MUX4_ENABLE.mflags.mux16_4 == VW_TH8 | MUX4_ENABLE.mflags.mux16_4 == VW_TH16) //activate mux if multichannel  //REV 2.0
             clockMux(10000);                                                    //double pulse clock the MUX
         if (MUX4_ENABLE.mflags.mux16_4 == TH8 | MUX4_ENABLE.mflags.mux16_4 == TH32 |
                 MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW32) //if 8 or 32 channel mux  
@@ -17386,7 +17630,7 @@ void take_One_Complete_Reading(unsigned char store)
 
         if (MUX4_ENABLE.mflags.skip)                                            //skip channel
         {
-            if (MUX4_ENABLE.mflags.mux16_4 == VW4 | MUX4_ENABLE.mflags.mux16_4 == VW16) 
+            if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4| MUX4_ENABLE.mflags.mux16_4 == VW_TH8 | MUX4_ENABLE.mflags.mux16_4 == VW_TH16)     //REV 2.0
                 clockMux(10);
             if (MUX4_ENABLE.mflags.mux16_4 == TH8 | MUX4_ENABLE.mflags.mux16_4 == TH32 |
                     MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW32) //if 8 or 32 channel mux  
@@ -17437,9 +17681,10 @@ void take_One_Complete_Reading(unsigned char store)
                 if (!store)
                     IEC1bits.INT1IE = 0;                                        //temporarily disable the INT2 interrupt
                 
-                if (MUX4_ENABLE.mflags.mux16_4 == Single |
-                        MUX4_ENABLE.mflags.mux16_4 == VW4 |
-                        MUX4_ENABLE.mflags.mux16_4 == VW16)
+                if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH |                      //REV 2.0
+                        MUX4_ENABLE.mflags.mux16_4 == VW_TH4|                     //REV 2.0
+                        MUX4_ENABLE.mflags.mux16_4 == VW_TH8|                     //REV 2.0                        
+                        MUX4_ENABLE.mflags.mux16_4 == VW_TH16)
                 {
 
                     extThermreading = take_analog_reading(85);                  //take external thermistor reading
@@ -17455,7 +17700,7 @@ void take_One_Complete_Reading(unsigned char store)
                     extThermreading=f32toINT16(extThermProcessed);              //convert float to 16 bit	
                 }
 
-                if (store && MUX4_ENABLE.mflags.mux16_4 != Single)
+                if (store && MUX4_ENABLE.mflags.mux16_4 != SingleVW_TH)              //REV 2.0
                     storeChannelReading(ch);                                    //store the reading   
                 if (!store)
                     storeTempChannelReading(ch);
@@ -17496,7 +17741,7 @@ void take_One_Complete_Reading(unsigned char store)
         }
     }                                                                           //end of MUX loop for(ch)
 
-    if (MUX4_ENABLE.mflags.mux16_4 == VW4 | MUX4_ENABLE.mflags.mux16_4 == VW16) //deactivate mux if multichannel  
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4| MUX4_ENABLE.mflags.mux16_4 == VW_TH8 | MUX4_ENABLE.mflags.mux16_4 == VW_TH16) //deactivate mux if multichannel     //REV 2.0
         MUX_RESET = 0;                                                          //bring the MUX_RESET line low
     if (MUX4_ENABLE.mflags.mux16_4 == TH8 | MUX4_ENABLE.mflags.mux16_4 == TH32 |
             MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW32) //if 8 or 32 channel mux        
@@ -17635,7 +17880,7 @@ void take_One_Complete_Reading(unsigned char store)
     //if ((LC2CONTROL.flags.LoggingStopTime && (TotalStopSeconds == seconds_since_midnight)) | //logging scheduled to stop?
       //      (memoryStatus >= maxSingleVW && outputPosition == 1 && !DISPLAY_CONTROL.flags.WrapMemory)) //stop logging when memory full?   REM REV 1.12
     if ((!LC2CONTROL.flags.LogInterval && (LC2CONTROL.flags.LoggingStopTime && (TotalStopSeconds == seconds_since_midnight))) | //logging scheduled to stop?   REV 1.12
-        (memoryStatus >= maxSingleVW && outputPosition == 1 && !DISPLAY_CONTROL.flags.WrapMemory)) //stop logging when memory full? 
+        (memoryStatus >= maxSingle && outputPosition == 1 && !DISPLAY_CONTROL.flags.WrapMemory)) //stop logging when memory full? REV 2.0
     {
         Nop();                                                                  //Nop()s for debug only)
         Nop();
@@ -18245,7 +18490,7 @@ void upD8RTCAlarm1(void)
     if (LC2CONTROL.flags.LogInterval)                                           //Log Intervals enabled?
     {                                                                           //yes
 
-        if (MUX4_ENABLE.mflags.mux16_4 != Single)                               //if multichannel   
+        if (MUX4_ENABLE.mflags.mux16_4 != SingleVW_TH)                               //if multichannel  //REV 2.0 
         {
             LogIt1=read_Int_FRAM(LogIt1address);                                //check if Log iterations=0
             LogIt2=read_Int_FRAM(LogIt2address);                                //check if Log iterations=0
@@ -18282,9 +18527,9 @@ void upD8RTCAlarm1(void)
         //********************************LOG INTERVAL 1*****************************************
         while (LogIt1 == 0)                                                     //if 0, log indefinately at this Scan Interval	
         {
-            if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
+            if (MUX4_ENABLE.mflags.mux16_4 != SingleVW_TH)                           //if multichannel   //REV 2.0
                 ScanInterval=read_longFRAM(LogIntLength1address);   
-            if (MUX4_ENABLE.mflags.mux16_4 == Single)                           //if single channel    
+            if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                           //if single channel    //REV 2.0
                 ScanInterval=read_longFRAM(SingleLogIntLength1address);       
             break;
         }
@@ -18293,13 +18538,13 @@ void upD8RTCAlarm1(void)
         {
             LogItRemain1 -= 1;                                                  //yes, so decrement the remaining intervals
 
-            if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
+            if (MUX4_ENABLE.mflags.mux16_4 != SingleVW_TH)                           //if multichannel   //REV 2.0
                 write_Int_FRAM(LogItRemain1address,LogItRemain1);               //store it to FRAM    
-            if (MUX4_ENABLE.mflags.mux16_4 == Single) //VER 6.0.7
+            if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                           //REV 2.0
                 write_Int_FRAM(SingleLogItRemain1address,LogItRemain1);         //store it to FRAM    
-            if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
+            if (MUX4_ENABLE.mflags.mux16_4 != SingleVW_TH)                           //if multichannel   //REV 2.0
                 ScanInterval=read_longFRAM(LogIntLength1address);   
-            if (MUX4_ENABLE.mflags.mux16_4 == Single) //VER 6.0.7
+            if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                           //REV 2.0
                 ScanInterval=read_longFRAM(SingleLogIntLength1address);       
             break;
         }
@@ -18307,9 +18552,9 @@ void upD8RTCAlarm1(void)
         //********************************LOG INTERVAL 2*****************************************
         while (LogIt2 == 0 && LogItRemain1 == -1 && LogIt1 != 0)                //if 0, log indefinately at this Scan Interval 
         {
-            if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
+            if (MUX4_ENABLE.mflags.mux16_4 != SingleVW_TH)                           //if multichannel   //REV 2.0
                 ScanInterval=read_longFRAM(LogIntLength2address);    
-            if (MUX4_ENABLE.mflags.mux16_4 == Single) //VER 6.0.7
+            if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                           //REV 2.0
                 ScanInterval=read_longFRAM(SingleLogIntLength2address);       
             break;
         }
@@ -18318,13 +18563,13 @@ void upD8RTCAlarm1(void)
         {
             LogItRemain2 -= 1;                                                  //yes, so decrement the remaining intervals
 
-            if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
+            if (MUX4_ENABLE.mflags.mux16_4 != SingleVW_TH)                           //if multichannel   //REV 2.0
                 write_Int_FRAM(LogItRemain2address,LogItRemain2);               //store it to FRAM    
-            if (MUX4_ENABLE.mflags.mux16_4 == Single) 
+            if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                           //REV 2.0
                 write_Int_FRAM(SingleLogItRemain2address,LogItRemain2);         //store it to FRAM    
-            if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
+            if (MUX4_ENABLE.mflags.mux16_4 != SingleVW_TH)                           //if multichannel   //REV 2.0
                 ScanInterval=read_longFRAM(LogIntLength2address);   
-            if (MUX4_ENABLE.mflags.mux16_4 == Single) 
+            if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                           //REV 2.0
                 ScanInterval=read_longFRAM(SingleLogIntLength2address);       
             break;
         }
@@ -18332,9 +18577,9 @@ void upD8RTCAlarm1(void)
         //********************************LOG INTERVAL 3*****************************************
         while (LogIt3 == 0 && LogItRemain2 == -1 && LogItRemain1 == -1 && LogIt1 != 0 && LogIt2 != 0) //if 0, log indefinately at this Scan Interval	
         {
-            if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
+            if (MUX4_ENABLE.mflags.mux16_4 != SingleVW_TH)                           //if multichannel  //REV 2.0 
                 ScanInterval=read_longFRAM(LogIntLength3address);    
-            if (MUX4_ENABLE.mflags.mux16_4 == Single) 
+            if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                           //REV 2.0
                 ScanInterval=read_longFRAM(SingleLogIntLength3address);       
             break;
         }
@@ -18342,13 +18587,13 @@ void upD8RTCAlarm1(void)
         while (LogItRemain3>-1 && LogItRemain2 == -1 && LogItRemain1 == -1 && LogIt1 != 0 && LogIt2 != 0) //in interval 3?	
         {
             LogItRemain3 -= 1;                                                  //yes, so decrement the remaining intervals
-            if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
+            if (MUX4_ENABLE.mflags.mux16_4 != SingleVW_TH)                           //if multichannel   //REV 2.0
                 write_Int_FRAM(LogItRemain3address,LogItRemain3);               //store it to FRAM    
-            if (MUX4_ENABLE.mflags.mux16_4 == Single) 
+            if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                           //REV 2.0
                 write_Int_FRAM(SingleLogItRemain3address,LogItRemain3);          //store it to FRAM    
-            if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
+            if (MUX4_ENABLE.mflags.mux16_4 != SingleVW_TH)                           //if multichannel   //REV 2.0
                 ScanInterval=read_longFRAM(LogIntLength3address);   
-            if (MUX4_ENABLE.mflags.mux16_4 == Single) 
+            if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                           //REV 2.0
                 ScanInterval=read_longFRAM(SingleLogIntLength3address);       
             break;
         }
@@ -18356,9 +18601,9 @@ void upD8RTCAlarm1(void)
         //********************************LOG INTERVAL 4*****************************************
         while (LogIt4 == 0 && LogItRemain3 == -1 && LogItRemain2 == -1 && LogItRemain1 == -1 && LogIt1 != 0 && LogIt2 != 0 && LogIt3 != 0) //if 0, log indefinitely at this Scan Interval	
         {
-            if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
+            if (MUX4_ENABLE.mflags.mux16_4 != SingleVW_TH)                           //if multichannel   //REV 2.0
                 ScanInterval=read_longFRAM(LogIntLength4address);    
-            if (MUX4_ENABLE.mflags.mux16_4 == Single) 
+            if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                           //REV 2.0
                 ScanInterval=read_longFRAM(SingleLogIntLength4address);       
             break;
         }
@@ -18366,13 +18611,13 @@ void upD8RTCAlarm1(void)
         while (LogItRemain4>-1 && LogItRemain3 == -1 && LogItRemain2 == -1 && LogItRemain1 == -1 && LogIt1 != 0 && LogIt2 != 0 && LogIt3 != 0)//in interval 4?	
         {
             LogItRemain4 -= 1;                                                  //yes, so decrement the remaining intervals
-            if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
+            if (MUX4_ENABLE.mflags.mux16_4 != SingleVW_TH)                           //if multichannel   //REV 2.0
                 write_Int_FRAM(LogItRemain4address,LogItRemain4);               //store it to FRAM    
-            if (MUX4_ENABLE.mflags.mux16_4 == Single) 
+            if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                           //REV 2.0
                 write_Int_FRAM(SingleLogItRemain4address,LogItRemain4);         //store it to FRAM    
-            if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
+            if (MUX4_ENABLE.mflags.mux16_4 != SingleVW_TH)                           //if multichannel   //REV 2.0
                 ScanInterval=read_longFRAM(LogIntLength4address);   
-            if (MUX4_ENABLE.mflags.mux16_4 == Single) 
+            if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                           //REV 2.0
                 ScanInterval=read_longFRAM(SingleLogIntLength4address);       
             break;
         }
@@ -18380,9 +18625,9 @@ void upD8RTCAlarm1(void)
         //********************************LOG INTERVAL 5*****************************************
         while (LogIt5 == 0 && LogItRemain4 == -1 && LogItRemain3 == -1 && LogItRemain2 == -1 && LogItRemain1 == -1 && LogIt1 != 0 && LogIt2 != 0 && LogIt3 != 0 && LogIt4 != 0) //if 0, log indefinately at this Scan Interval	
         {
-            if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
+            if (MUX4_ENABLE.mflags.mux16_4 != SingleVW_TH)                           //if multichannel   //REV 2.0
                 ScanInterval=read_longFRAM(LogIntLength5address);    
-            if (MUX4_ENABLE.mflags.mux16_4 == Single) 
+            if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                           //REV 2.0
                 ScanInterval=read_longFRAM(SingleLogIntLength5address);       
             break;
         }
@@ -18390,13 +18635,13 @@ void upD8RTCAlarm1(void)
         while (LogItRemain5>-1 && LogItRemain4 == -1 && LogItRemain3 == -1 && LogItRemain2 == -1 && LogItRemain1 == -1 && LogIt1 != 0 && LogIt2 != 0 && LogIt3 != 0 && LogIt4 != 0) //in interval 5?	
         {
             LogItRemain5 -= 1;                                                  //yes, so decrement the remaining intervals
-            if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
+            if (MUX4_ENABLE.mflags.mux16_4 != SingleVW_TH)                           //if multichannel   //REV 2.0
                 write_Int_FRAM(LogItRemain5address,LogItRemain5);               //store it to FRAM`
-            if (MUX4_ENABLE.mflags.mux16_4 == Single) 
+            if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                           //REV 2.0
                 write_Int_FRAM(SingleLogItRemain5address,LogItRemain5);          //store it to FRAM    
-            if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
+            if (MUX4_ENABLE.mflags.mux16_4 != SingleVW_TH)                           //if multichannel   //REV 2.0
                 ScanInterval=read_longFRAM(LogIntLength5address);   
-            if (MUX4_ENABLE.mflags.mux16_4 == Single) 
+            if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                           //REV 2.0
                 ScanInterval=read_longFRAM(SingleLogIntLength5address);       
             break;
         }
@@ -18404,28 +18649,28 @@ void upD8RTCAlarm1(void)
         //********************************LOG INTERVAL 6*****************************************
         while (LogIt6 == 0 && LogItRemain5 == -1 && LogItRemain4 == -1 && LogItRemain3 == -1 && LogItRemain2 == -1 && LogItRemain1 == -1 && LogIt1 != 0 && LogIt2 != 0 && LogIt3 != 0 && LogIt4 != 0 && LogIt5 != 0) //if 0, log indefinately at this Scan Interval	 
         {
-            if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
+            if (MUX4_ENABLE.mflags.mux16_4 != SingleVW_TH)                           //if multichannel   //REV 2.0
                 ScanInterval=read_longFRAM(LogIntLength6address);    
-            if (MUX4_ENABLE.mflags.mux16_4 == Single) 
+            if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                           //REV 2.0
                 ScanInterval=read_longFRAM(SingleLogIntLength6address);        
             break;
         }
 
-        if (MUX4_ENABLE.mflags.mux16_4 != Single)                               //if multichannel   
+        if (MUX4_ENABLE.mflags.mux16_4 != SingleVW_TH)                               //if multichannel   //REV 2.0
             LogItRemain6=read_Int_FRAM(LogItRemain6address);                    //get the remaining intervals
-        if (MUX4_ENABLE.mflags.mux16_4 == Single) 
+        if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                               //REV 2.0
             LogItRemain6=read_Int_FRAM(SingleLogItRemain6address);              //get the remaining intervals   
 
         while (LogItRemain6>-1 && LogItRemain5 == -1 && LogItRemain4 == -1 && LogItRemain3 == -1 && LogItRemain2 == -1 && LogItRemain1 == -1 && LogIt1 != 0 && LogIt2 != 0 && LogIt3 != 0 && LogIt4 != 0 && LogIt5 != 0)//in interval 6?	
         {
             LogItRemain6 -= 1;                                                  //yes, so decrement the remaining intervals
-            if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
+            if (MUX4_ENABLE.mflags.mux16_4 != SingleVW_TH)                           //if multichannel  //REV 2.0 
                 write_Int_FRAM(LogItRemain6address,LogItRemain6);               //store it to FRAM    
-            if (MUX4_ENABLE.mflags.mux16_4 == Single) 
+            if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                           //REV 2.0
                 write_Int_FRAM(SingleLogItRemain6address,LogItRemain6);         //store it to FRAM    
-            if (MUX4_ENABLE.mflags.mux16_4 != Single)                           //if multichannel   
+            if (MUX4_ENABLE.mflags.mux16_4 != SingleVW_TH)                           //if multichannel   //REV 2.0
                 ScanInterval=read_longFRAM(LogIntLength6address);   
-            if (MUX4_ENABLE.mflags.mux16_4 == Single) 
+            if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                           //REV 2.0
                 ScanInterval=read_longFRAM(SingleLogIntLength6address);       
             break;
         }
@@ -18458,13 +18703,13 @@ void upD8RTCAlarm1(void)
 
     if (LC2CONTROL2.flags2.FirstReading)                                        //is it the first reading?
     {
-        if (MUX4_ENABLE.mflags.mux16_4 == VW32 | MUX4_ENABLE.mflags.mux16_4 == VW16) //32 or 16 channel mux    
+        if (MUX4_ENABLE.mflags.mux16_4 == VW32 | MUX4_ENABLE.mflags.mux16_4 == VW_TH16) //32 or 16 channel mux    
         {
             if (NewTime <= (CurrentTimeSeconds + 20))
                 NewTime = NewTime + ScanInterval;                               //to make sure reading isn't skipped due to processing time
         }
 
-        if (MUX4_ENABLE.mflags.mux16_4 == VW4 | MUX4_ENABLE.mflags.mux16_4 == TH8) //4 or 8 channel mux     
+        if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4| MUX4_ENABLE.mflags.mux16_4 == VW_TH8 | MUX4_ENABLE.mflags.mux16_4 == TH8) //4 or 8 channel mux     //REV 2.0
         {
             if (NewTime <= (CurrentTimeSeconds + 6))
                 NewTime = NewTime + ScanInterval;                               //to make sure reading isn't skipped due to processing time
@@ -18476,7 +18721,7 @@ void upD8RTCAlarm1(void)
                 NewTime = NewTime + ScanInterval;                               //to make sure reading isn't skipped due to processing time
         }
 
-        if (MUX4_ENABLE.mflags.mux16_4 == Single)                               //single channel     
+        if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                               //single channel  //REV 2.0   
         {
             if (NewTime == CurrentTimeSeconds)
                 NewTime = CurrentTimeSeconds + ScanInterval;                    //In case synch'd time is current time
