@@ -416,29 +416,31 @@ typedef union                                                                   
 } xFRAMul;
 
 
-//REV 2.0: WILL NEED TO CHANGE _CFG TO 4 BIT BY MOVING ONE OF THE OTHER SINGLE BITS TO MODBUS STATUS2 REGISTER
+//REV 2.0: 
 //MODBUS STATUS1 REGISTER:
 typedef struct{                                                                 //   BIT          READ                              WRITE
-	unsigned	_CFG:3;                                                          //   012    110   VW8                               VW8                       Lsb
-                                                                                //          101   TH32                              TH32
-                                                                                //          100   VW32                              VW32
-                                                                                //          011   TH8                               TH8
-                                                                                //          010   VW/TH Single                      VW/TH Single
-                                                                                //          001   VW/TH16                           VW/TH16
-                                                                                //          000   VW/TH4                            VW/TH4
-    unsigned    _Setrtc:1;                                                       //   3            0                           1=RTC Current Time Set REV CJ
-	unsigned 	_Logint:1;                                                       //   4      1=Log Ints Enabled, 0=Disabled    1=Enable, 0=Disable
-	unsigned 	_Wrap:1;                                                         //   5      1=Memory Wrap Enabled, 0=Disabled 1=Enable, 0=Disable
-	unsigned	_BT:1;                                                           //   6      1=Bluetooth ON, 0=OFF             1=Turn BT ON, 0=Turn OFF
-	unsigned	_BT_Timer:1;                                                     //   7      1=BT Timer Enabled, 0=Disabled    1=Enable BT Timer, 0=Disable
-	unsigned	_OP:1;                                                           //   8      1=Output Port ON, 0=OFF           1=Turn ON, 0=Turn OFF
-	unsigned	_OP_Timer:1;                                                     //   9      1=OP Timer Enabled, 0=Disabled    1=Enable OP Timer, 0=Disable
-	unsigned	_Sync:1;                                                         //   10     1=Readings Sync'd, 0=not Sync'd   1=Sync Readings,0=Don't Sync
-	unsigned 	_ST:1;                                                           //   11     1=Start Time Enabled,0=Disabled   1=Enable Start Time,0=Disable
-    unsigned 	_SP:1;                                                           //   12     1=Stop Time Enabled,0=Disabled    1=Enable Stop Time,0=Disable    
-    unsigned    _Readrtc:1;                                                      //   13           0                           1=RTC Current Time Read
-    unsigned    _X:1;                                                            //   14           0                           1=Take single reading not stored                                  
-	unsigned	_Logging:1;                                                      //   15     1=Started, 0=Stopped              1=Start, 0=Stop                 Msb    
+	unsigned	_CFG:4;                                                          //  0123   1001   TH16                             TH16 
+                                                                                //          1000   VW16                             VW16
+                                                                                //          0111   VW/TH8                           VW/TH8    
+                                                                                //          0110   VW8                               VW8                       Lsb
+                                                                                //          0101   TH32                              TH32
+                                                                                //          0100   VW32                              VW32
+                                                                                //          0011   TH8                               TH8
+                                                                                //          0010   VW/TH Single                      VW/TH Single
+                                                                                //          0001   VW/TH16                           VW/TH16
+                                                                                //          0000   VW/TH4                            VW/TH4
+    unsigned    _Setrtc:1;                                                      //   4            0                           1=RTC Current Time Set REV CJ
+	unsigned 	_Logint:1;                                                      //   5      1=Log Ints Enabled, 0=Disabled    1=Enable, 0=Disable
+	unsigned	_BT:1;                                                          //   6      1=Bluetooth ON, 0=OFF             1=Turn BT ON, 0=Turn OFF
+	unsigned	_BT_Timer:1;                                                    //   7      1=BT Timer Enabled, 0=Disabled    1=Enable BT Timer, 0=Disable
+	unsigned	_OP:1;                                                          //   8      1=Output Port ON, 0=OFF           1=Turn ON, 0=Turn OFF
+	unsigned	_OP_Timer:1;                                                    //   9      1=OP Timer Enabled, 0=Disabled    1=Enable OP Timer, 0=Disable
+	unsigned	_Sync:1;                                                        //   10     1=Readings Sync'd, 0=not Sync'd   1=Sync Readings,0=Don't Sync
+	unsigned 	_ST:1;                                                          //   11     1=Start Time Enabled,0=Disabled   1=Enable Start Time,0=Disable
+    unsigned 	_SP:1;                                                          //   12     1=Stop Time Enabled,0=Disabled    1=Enable Stop Time,0=Disable    
+    unsigned    _Readrtc:1;                                                     //   13           0                           1=RTC Current Time Read
+    unsigned    _X:1;                                                           //   14           0                           1=Take single reading not stored                                  
+	unsigned	_Logging:1;                                                     //   15     1=Started, 0=Stopped              1=Start, 0=Stop                 Msb    
 }Status1ControlBits;
 typedef union{ unsigned int status1;
 Status1ControlBits status1flags;
@@ -457,7 +459,7 @@ typedef struct{                                                                 
     unsigned    _BV12:1;                                                        //   6              0                           1=Read 12V Battery Voltage to BatteryReading
 	unsigned	_BAT:1;                                                         //   7      1=12V Connected,0=3V Connected              RO
 	unsigned	_SN:1;                                                          //   8              0                           1=Read Gage Serial Number to GageSerialNumber   REV 1.9                                                
-	unsigned	bit9:1;                                                     
+	unsigned 	_Wrap:1;                                                        //   9      1=Memory Wrap Enabled, 0=Disabled   1=Enable, 0=Disable     REV 2.0                                                
 	unsigned	bit10:1;                                                         
 	unsigned 	bit11:1;                                                           
     unsigned 	bit12:1;                                                              
@@ -552,7 +554,7 @@ const unsigned char minScanSingle=3;                                            
 const unsigned char minScanFour=8;                                              //REV 2.0 
 const unsigned char minScanEight=15;                                            //REV 2.0
 const unsigned char minScanSixteen=30;                                          //REV 2.0                                     
-const unsigned char minScanEightVW=12;                                          
+const unsigned char minScanEightVW=15;                                          
 const unsigned char minScanSixteenVW=30;  
 const unsigned char mixScanSixteenTH=6;                                         //REV 2.0
 const unsigned char minScanThirtytwoVW=60;                                      
