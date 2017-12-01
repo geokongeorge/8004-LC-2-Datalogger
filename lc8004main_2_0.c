@@ -17,9 +17,9 @@
 //	DATE:		12/01/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   2.0
-//	CHECKSUM:	0x94cd (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x1c9c (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	9164/30720   30%
-//	PGM(FLASH)MEM:  190476/261888 73%
+//	PGM(FLASH)MEM:  190530/261888 73%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -376,7 +376,7 @@ int main(void)
     
     //LC2CONTROL2.flags2.scheduled=0;                                           REM REV 1.10  
     //write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);                  //store flag in FRAM REM REV 1.10
-    //stopLogging();                                                              
+    stopLogging();                                                              
     
     SLEEP12V = 0;                                                               //Set 12V regulator into switchmode
     wait2S();                                                                   //provide a 2S delay to allow DS3231 to stabilize
@@ -12866,7 +12866,7 @@ void loadDefaults(void)
 
     //initialize wrap format
     DISPLAY_CONTROL.flags.WrapMemory = 1;                                       //set memory to wrap
-    S_1.status1flags._Wrap=1;                                                    
+    S_2.status2flags._Wrap=1;                                                   //REV 2.0                                             
 
     //initialize reading synchronization
     DISPLAY_CONTROL.flags.Synch = 1;                                            //readings synchronized to top of hour
@@ -13347,13 +13347,13 @@ void MODBUScomm(void)
                     break;
             }
 
-            for(i=3;i<16;i++)                                                   
+            for(i=4;i<16;i++)                                                   //REV 2.0
             {
 
                 switch(i)
                 {
 
-                    case 3:                                                     //unused
+                    case 4:                                                     //RTC   REV 2.0
                         if (tempStatusValue.status1flags._Setrtc == tempValueValue.status1flags._Setrtc)    //no difference between received and stored value
                         {
                             tempValueValue.status1flags._Setrtc=0;              
@@ -13371,7 +13371,7 @@ void MODBUScomm(void)
                             break;
                         }                                                       
 
-                    case 4:
+                    case 5:                                                     //REV 2.0
                         if (tempStatusValue.status1flags._Logint == tempValueValue.status1flags._Logint)    //no difference between received and stored value
                             break;                        
 
@@ -13381,15 +13381,6 @@ void MODBUScomm(void)
                             DISLOGINT();                                        //disable Log Intervals
                         break;
 
-                    case 5:
-                        if (tempStatusValue.status1flags._Wrap == tempValueValue.status1flags._Wrap)    //no difference between received and stored value
-                            break;                        
-
-                        if(tempValueValue.status1flags._Wrap)
-                            wrap_one();                                         //Enable memory wrapping
-                        else
-                            wrap_zero();                                        //Disable memory wrapping    
-                        break;
 
                     case 6:
                         if (tempStatusValue.status1flags._BT == tempValueValue.status1flags._BT)    //no difference between received and stored value
@@ -13672,7 +13663,15 @@ void MODBUScomm(void)
                         break;
 
                     case 9:
+                        if (tempStatus2Value.status2flags._Wrap == tempValue2Value.status2flags._Wrap)    //no difference between received and stored value   REV 2.0
+                            break;                        
+
+                        if(tempValue2Value.status2flags._Wrap)                   //REV 2.0
+                            wrap_one();                                         //Enable memory wrapping
+                        else
+                            wrap_zero();                                        //Disable memory wrapping    
                         break;
+
 
                     case 10: 
                         break;
@@ -18911,8 +18910,8 @@ void wrap_one(void)
     shutdownTimer(TimeOut);                                                     //Reset 15S timer   
     DISPLAY_CONTROL.flags.WrapMemory = 1;                                       //set the wrap memory flag
     write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);        //store flags in FRAM
-    S_1.status1flags._Wrap=1;                                                   //Set the MODBUS status flag    
-    write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);          
+    S_2.status2flags._Wrap=1;                                                   //Set the MODBUS status flag    REV 2.0
+    write_Int_FRAM(MODBUS_STATUS2address,S_2.status2);                          //REV 2.0
 }
 
 void wrap_stop(void) 
@@ -18929,8 +18928,8 @@ void wrap_zero(void)
     shutdownTimer(TimeOut);                                                     //Reset 15S timer   
     DISPLAY_CONTROL.flags.WrapMemory = 0;                                       //clear the wrap memory flag
     write_Int_FRAM(DISPLAY_CONTROLflagsaddress,DISPLAY_CONTROL.display);        //store flags in FRAM 
-    S_1.status1flags._Wrap=0;                                                   //Clear the MODBUS status flag    
-    write_Int_FRAM(MODBUS_STATUS1address,S_1.status1);    
+    S_2.status2flags._Wrap=0;                                                   //Clear the MODBUS status flag    REV 2.0
+    write_Int_FRAM(MODBUS_STATUS2address,S_2.status2);                          //REV 2.0
 }
 
 void WRITE_TIME(void)                                                           
