@@ -17,9 +17,9 @@
 //	DATE:		12/01/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   2.0
-//	CHECKSUM:	0x1c9c (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x444f (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	9164/30720   30%
-//	PGM(FLASH)MEM:  190530/261888 73%
+//	PGM(FLASH)MEM:  190548/261888 73%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -16011,6 +16011,8 @@ void storeChannelReading(int ch) {
         baseAddress = SingleVW_THBytes;                                            //REV 2.0
     if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4)                                      //if 4 channel VW/TH MUX  
         baseAddress = VW_TH4Bytes;                                                 //REV 2.0
+    if (MUX4_ENABLE.mflags.mux16_4 == VW_TH8)                                      //if 8 channel VW/TH MUX  
+        baseAddress = VW_TH8Bytes;                                                 //REV 2.0    
     if (MUX4_ENABLE.mflags.mux16_4 == VW8)                                      //if 8 channel VW/TH MUX  
         baseAddress = VW8Bytes;
     if (MUX4_ENABLE.mflags.mux16_4 == VW16)                                      //if 16 channel VW MUX REV 2.0 
