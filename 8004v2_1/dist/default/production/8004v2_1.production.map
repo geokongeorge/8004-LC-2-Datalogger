@@ -6,7 +6,7 @@ Tool Name:
 Command:
   -p33FJ256GP710A \
   -o \
-  dist/default/production/8004v2_0.production.elf \
+  dist/default/production/8004v2_1.production.elf \
   -Lc:/program files (x86)/microchip/xc16/v1.26/bin/bin/.. \
   -Lc:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib \
   -Lc:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/PIC24E \
@@ -24,7 +24,7 @@ Command:
   build/default/production/_ext/1472/LC8004delay_b.o \
   build/default/production/_ext/1472/LC8004extFRAM_i.o \
   build/default/production/_ext/1472/AD5241b.o \
-  build/default/production/_ext/1472/lc8004main_2_0.o \
+  build/default/production/_ext/1472/lc8004main_2_1.o \
   --defsym=__MPLAB_BUILD=1 \
   -Tp33FJ256GP710A.gld.00 \
   --stack=16 \
@@ -38,7 +38,7 @@ Command:
   --stackguard=16 \
   --no-force-link \
   --smart-io \
-  -Map=dist/default/production/8004v2_0.production.map \
+  -Map=dist/default/production/8004v2_1.production.map \
   --report-mem \
   --memorysummary \
   dist/default/production/memoryfile.xml \
@@ -83,31 +83,31 @@ c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ2
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(StopI2C2.o)
                               build/default/production/_ext/1472/AD5241b.o (_StopI2C2)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(CloseOC1.o)
-                              build/default/production/_ext/1472/lc8004main_2_0.o (_CloseOC1)
+                              build/default/production/_ext/1472/lc8004main_2_1.o (_CloseOC1)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(isWDTTO.o)
-                              build/default/production/_ext/1472/lc8004main_2_0.o (_isWDTTO)
+                              build/default/production/_ext/1472/lc8004main_2_1.o (_isWDTTO)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(CloseTimer23.o)
-                              build/default/production/_ext/1472/lc8004main_2_0.o (_CloseTimer23)
+                              build/default/production/_ext/1472/lc8004main_2_1.o (_CloseTimer23)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(CloseTimer3.o)
-                              build/default/production/_ext/1472/lc8004main_2_0.o (_CloseTimer3)
+                              build/default/production/_ext/1472/lc8004main_2_1.o (_CloseTimer3)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(ConfigIntTimer89.o)
                               build/default/production/_ext/1472/LC8004delay_b.o (_ConfigIntTimer89)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(OpenTimer3.o)
-                              build/default/production/_ext/1472/lc8004main_2_0.o (_OpenTimer3)
+                              build/default/production/_ext/1472/lc8004main_2_1.o (_OpenTimer3)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(OpenTimer89.o)
                               build/default/production/_ext/1472/LC8004delay_b.o (_OpenTimer89)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(WriteTimer3.o)
-                              build/default/production/_ext/1472/lc8004main_2_0.o (_WriteTimer3)
+                              build/default/production/_ext/1472/lc8004main_2_1.o (_WriteTimer3)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(WriteTimer89.o)
                               build/default/production/_ext/1472/LC8004delay_b.o (_WriteTimer89)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(BusyUART1.o)
                               build/default/production/_ext/1472/LC8004extFRAM_i.o (_BusyUART1)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(ConfigIntUART1.o)
-                              build/default/production/_ext/1472/lc8004main_2_0.o (_ConfigIntUART1)
+                              build/default/production/_ext/1472/lc8004main_2_1.o (_ConfigIntUART1)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(DataRdyUART1.o)
-                              build/default/production/_ext/1472/lc8004main_2_0.o (_DataRdyUART1)
+                              build/default/production/_ext/1472/lc8004main_2_1.o (_DataRdyUART1)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(OpenUART1.o)
-                              build/default/production/_ext/1472/lc8004main_2_0.o (_OpenUART1)
+                              build/default/production/_ext/1472/lc8004main_2_1.o (_OpenUART1)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(putsUART1.o)
                               build/default/production/_ext/1472/LC8004extFRAM_i.o (_putsUART1)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(ReadUART1.o)
@@ -115,13 +115,13 @@ c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ2
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(WriteUART1.o)
                               build/default/production/_ext/1472/LC8004extFRAM_i.o (_WriteUART1)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(ConfigINT1.o)
-                              build/default/production/_ext/1472/lc8004main_2_0.o (_ConfigINT1)
+                              build/default/production/_ext/1472/lc8004main_2_1.o (_ConfigINT1)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-pic30-elf.a(crt0_standard.o)
                               (__resetPRI)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-pic30-elf.a(data_init_standard.o)
                               c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-pic30-elf.a(crt0_standard.o) (__data_init_standard)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-pic30-elf.a(delay32.Leo)
-                              build/default/production/_ext/1472/lc8004main_2_0.o (___delay32)
+                              build/default/production/_ext/1472/lc8004main_2_1.o (___delay32)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(addsf3.eo)
                               build/default/production/_ext/1472/LC8004delay_b.o (___subsf3)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(divsf3.eo)
@@ -131,15 +131,15 @@ c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(feqltle
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(fgtge.eo)
                               build/default/production/_ext/1472/LC8004extFRAM_i.o (___gtsf2)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(fixsfsi.eo)
-                              build/default/production/_ext/1472/lc8004main_2_0.o (_(float, int, long long, short, float, short, int))
+                              build/default/production/_ext/1472/lc8004main_2_1.o (_(float, int, long long, short, float, short, int))
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(fixunssfsi.eo)
                               build/default/production/_ext/1472/LC8004delay_b.o (___fixunssfsi)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(floatsisf.eo)
-                              build/default/production/_ext/1472/lc8004main_2_0.o (___floatsisf)
+                              build/default/production/_ext/1472/lc8004main_2_1.o (___floatsisf)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(floatunsisf.eo)
                               build/default/production/_ext/1472/LC8004delay_b.o (___floatunsisf)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(fne.eo)
-                              build/default/production/_ext/1472/lc8004main_2_0.o (___nesf2)
+                              build/default/production/_ext/1472/lc8004main_2_1.o (___nesf2)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(fpack.eo)
                               c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(addsf3.eo) (__fpack)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(funpack.eo)
@@ -149,11 +149,11 @@ c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(funpack
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(futil.eo)
                               c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(addsf3.eo) (__fPropagateNaN)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(logf.eo)
-                              build/default/production/_ext/1472/lc8004main_2_0.o (_logf)
+                              build/default/production/_ext/1472/lc8004main_2_1.o (_logf)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(mulsf3.eo)
-                              build/default/production/_ext/1472/lc8004main_2_0.o (___mulsf3)
+                              build/default/production/_ext/1472/lc8004main_2_1.o (___mulsf3)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(umodsi3.eo)
-                              build/default/production/_ext/1472/lc8004main_2_0.o (___umodsi3)
+                              build/default/production/_ext/1472/lc8004main_2_1.o (___umodsi3)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(_frexpf.eo)
                               c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(logf.eo) (__frexpf)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(errno.eo)
@@ -167,23 +167,23 @@ c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(floatun
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(udivsi3.eo)
                               c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a(umodsi3.eo) (___udivsi3)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(isalpha.XXeso)
-                              build/default/production/_ext/1472/lc8004main_2_0.o (_isalpha)
+                              build/default/production/_ext/1472/lc8004main_2_1.o (_isalpha)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(isgraph.XXeso)
-                              build/default/production/_ext/1472/lc8004main_2_0.o (_isgraph)
+                              build/default/production/_ext/1472/lc8004main_2_1.o (_isgraph)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(xstoul.XXeo)
-                              build/default/production/_ext/1472/lc8004main_2_0.o (__Stoul)
+                              build/default/production/_ext/1472/lc8004main_2_1.o (__Stoul)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(isspace.XXelso)
                               c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(xstoul.XXeo) (_isspace)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(tolower.XXelso)
                               c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(xstoul.XXeo) (_tolower)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(sprintf_cdnopuxX.XXeo)
-                              build/default/production/_ext/1472/lc8004main_2_0.o (__sprintf_cdnopuxX)
+                              build/default/production/_ext/1472/lc8004main_2_1.o (__sprintf_cdnopuxX)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(xprintf_cdnopuxX.XXeo)
                               c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(sprintf_cdnopuxX.XXeo) (___Printf_cdnopuxX)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(xputfld_cdnopuxX.XXeo)
                               c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(xprintf_cdnopuxX.XXeo) (___Putfld_cdnopuxX)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(sprintf_cdfFnopuxX.XXeo)
-                              build/default/production/_ext/1472/lc8004main_2_0.o (__sprintf_cdfFnopuxX)
+                              build/default/production/_ext/1472/lc8004main_2_1.o (__sprintf_cdfFnopuxX)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(xprintf_cdfFnopuxX.XXeo)
                               c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(sprintf_cdfFnopuxX.XXeo) (___Printf_cdfFnopuxX)
 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(xputfld_cdfFnopuxX.XXeo)
@@ -282,13 +282,13 @@ Program Memory  [Origin = 0x200, Length = 0x2aa00]
 section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
 .text                        0x200              0x1dc0          0x2ca0  (11424)
-.text                       0x1fc0             0x1ab42         0x280e3  (164067)
-.dinit                     0x1cb02              0x1608          0x210c  (8460)
-.text                      0x1e10a              0x1110          0x1998  (6552)
-.init.delay32              0x1f21a                0x1c            0x2a  (42)
-.shared.dinit              0x1f236                 0x2             0x3  (3)
+.text                       0x1fc0             0x1c410         0x2a618  (173592)
+.dinit                     0x1e3d0              0x1608          0x210c  (8460)
+.text                      0x1f9d8              0x1110          0x1998  (6552)
+.init.delay32              0x20ae8                0x1c            0x2a  (42)
+.shared.dinit              0x20b04                 0x2             0x3  (3)
 
-                 Total program memory used (bytes):        0x2e854  (190548) 72%
+                 Total program memory used (bytes):        0x30d89  (200073) 76%
 
 
 Ivt Memory  [Origin = 0x4, Length = 0xfc]
@@ -472,7 +472,7 @@ External Symbols in Data Memory (by address):
                     0x081b                  _minScanSixteen
                     0x081c                  _minScanEightVW
                     0x081d                  _minScanSixteenVW
-                    0x081e                  _mixScanSixteenTH
+                    0x081e                  _minScanSixteenTH
                     0x081f                  _minScanThirtytwoVW
                     0x0820                  _minScanEightTH
                     0x0821                  _minScanThirtytwoTH
@@ -1363,11 +1363,11 @@ External Symbols in Data Memory (by name):
                     0x0819                  _minScanFour
                     0x0818                  _minScanSingle
                     0x081b                  _minScanSixteen
+                    0x081e                  _minScanSixteenTH
                     0x081d                  _minScanSixteenVW
                     0x0821                  _minScanThirtytwoTH
                     0x081f                  _minScanThirtytwoVW
                     0x2a10                  _minute
-                    0x081e                  _mixScanSixteenTH
                     0x2a06                  _month
                     0x0850                  _mul12V
                     0x084c                  _mul3V
@@ -1421,9 +1421,9 @@ External Symbols in Data Memory (by name):
 
 External Symbols in Program Memory (by address):
 
-                  0x000000                  _FBS
                   0x000000                  _FGS
                   0x000000                  _FSS
+                  0x000000                  _FBS
                   0x000200                  __resetPRI
                   0x00022c                  __psv_init
                   0x00023c                  __data_init_standard
@@ -1465,9 +1465,9 @@ External Symbols in Program Memory (by address):
                   0x0004b8                  ___subsf3
                   0x0004ba                  ___addsf3
                   0x000574                  ___divsf3
-                  0x0005f8                  ___ltsf2
-                  0x0005f8                  ___eqsf2
                   0x0005f8                  ___lesf2
+                  0x0005f8                  ___eqsf2
+                  0x0005f8                  ___ltsf2
                   0x0005fc                  ___gtsf2
                   0x0005fc                  ___gesf2
                   0x000600                  ___fixsfsi
@@ -1497,8 +1497,8 @@ External Symbols in Program Memory (by address):
                   0x000aa8                  sprintf_cdfFnopuxX.XXeo:_prout
                   0x000ab6                  __sprintf_cdnopuxX
                   0x000ab6                  __sprintf_cdfFnopuxX
-                  0x000ad4                  ___Printf_cdnopuxX
                   0x000ad4                  ___Printf_cdfFnopuxX
+                  0x000ad4                  ___Printf_cdnopuxX
                   0x000c38                  ___Putfld_cdnopuxX
                   0x000c38                  ___Putfld_cdfFnopuxX
                   0x000ece                  ___Ldtob_cdfFnopuxX
@@ -1530,8 +1530,8 @@ External Symbols in Program Memory (by address):
                   0x001a72                  ___muldf3
                   0x001b5c                  ___subdf3
                   0x001b60                  ___mulp32eds3
-                  0x001b60                  ___mulsi3
                   0x001b60                  ___mulp32peds3
+                  0x001b60                  ___mulsi3
                   0x001bb8                  ___udivmoddi3
                   0x001c9e                  ___udivdi3
                   0x001cac                  ___umoddi3
@@ -1559,304 +1559,306 @@ External Symbols in Program Memory (by address):
                   0x0032c4                  _Buffer2Decimal
                   0x0034cc                  _Buf2GageData
                   0x0039e2                  _checkScanInterval
-                  0x003c24                  _checkSynch
-                  0x003ce8                  _clockMux
-                  0x003d10                  _clockThMux
-                  0x003d24                  _CMDcomm
-                  0x007476                  _CMD_LINE
-                  0x007492                  _configMODBUStimers
-                  0x00751e                  _configShutdownTimer
-                  0x007530                  _configTimers
-                  0x007562                  _configUARTnormal
-                  0x0075a4                  _controlPortStatus
-                  0x007774                  _CRC
-                  0x0077f8                  _CRC_SN
-                  0x007858                  _crlf
-                  0x00787e                  _debounce
-                  0x00789c                  _disableAlarm
-                  0x0078f8                  _disableBT
-                  0x007950                  _disableChannel
-                  0x007adc                  _disableTHChannel
-                  0x007c68                  _disableINT1
-                  0x007c72                  _disableOP
-                  0x007cbe                  _DISLOGINT
-                  0x007ce8                  _disableTimers
-                  0x007cf6                  _disableVWchannel
-                  0x007d14                  _displayBCD
-                  0x007d6a                  _displayClock
-                  0x007ea6                  _displayFRAMError
-                  0x007ee2                  _displayGageInfo
-                  0x008ae0                  _displayLoggingWillStart
-                  0x008b40                  _displayLoggingWillStop
-                  0x008bb2                  _displayLogInterval
-                  0x008d82                  _displayLogTable
-                  0x008dc2                  _displayMemoryStatus
-                  0x008ed6                  _displayMUX
-                  0x00a462                  _displayReading
-                  0x00d150                  _displayScanInterval
-                  0x00d194                  _displayTempReading
-                  0x010b06                  _displayTemporaryStatus
-                  0x010c52                  _displayTestMenu
-                  0x010d04                  _enableAlarm
-                  0x010d92                  _enableBT
-                  0x010dc4                  _enableChannel
-                  0x010f48                  _enableTHChannel
-                  0x0110cc                  _enableINT1
-                  0x0110d8                  _ENLOGINT
-                  0x01111a                  _enableOP
-                  0x01115c                  _f32toINT16
-                  0x011272                  _enableVWchannel
-                  0x0113da                  _filterArray
-                  0x01148a                  _formatandDisplayGageInfo
-                  0x01189c                  _getChannel
-                  0x0118f8                  _getSNbytes
-                  0x011b1e                  _getConversion
-                  0x011bd2                  _getGageInfo
-                  0x0130a6                  _getGageType
-                  0x013178                  _getLogInterval
-                  0x0131d8                  _getLogIntLength
-                  0x013648                  _getLogIterations
-                  0x013842                  _getFrequency
-                  0x0139f2                  _getSerialNumber
-                  0x013ada                  _getThermtype
-                  0x013b4e                  _getTxChecksum
-                  0x013b8c                  _handleCOMError
-                  0x013b98                  _handleFRAMResults
-                  0x013bcc                  _hms
-                  0x013cf4                  _hms2s
-                  0x013d58                  _INT16tof32
-                  0x013da6                  _loadDefaults
-                  0x0142de                  _loadSV
-                  0x014314                  _MODBUScheckScanInterval
-                  0x014418                  _MODBUScomm
-                  0x01519a                  _MODBUS_DisableStartTime
-                  0x0151e2                  _MODBUS_EnableStartTime
-                  0x01528c                  _MODBUS_DisableStopTime
-                  0x0152c8                  _MODBUS_EnableStopTime
-                  0x0152d0                  _MODBUS_RX
-                  0x0153fe                  _MODBUS_TX
-                  0x015468                  _MX1
-                  0x0154e8                  _MX4
-                  0x015538                  _MX8
-                  0x015588                  _MX8V
-                  0x0155d8                  _MX8T
-                  0x015628                  _MX16
-                  0x015678                  _MX32
-                  0x0156c8                  _MX32T
-                  0x015718                  _O_D
-                  0x015746                  _O_E
-                  0x015788                  _pack
-                  0x0157a6                  _pluck
-                  0x015900                  _pluckOFF
-                  0x015910                  _pluckON
-                  0x01592e                  _pluckPOS
-                  0x015938                  _pluckNEG
-                  0x015942                  _processDS3231Temperature
-                  0x015962                  _processReading
-                  0x015d7c                  _prompt
-                  0x015db2                  _readClock
-                  0x015eea                  _readDS3231temperature
-                  0x015f18                  _R
-                  0x015f50                  _READ_TIME
-                  0x016146                  _ReadSN
-                  0x016206                  _RST
-                  0x016220                  _read_vw
-                  0x01628e                  _reloadLogTable
-                  0x0162f8                  _resetMemory
-                  0x01634e                  _restoreSettings
-                  0x016400                  _RTChms2s
-                  0x0164e6                  _RTCtoDecimal
-                  0x01659c                  _seconds2hms
-                  0x0165ec                  _setADCsleep
-                  0x016608                  _setADCwake
-                  0x01661a                  _setChannelConversion
-                  0x01699e                  _setChannelThermtype
-                  0x016c12                  _setClock
-                  0x016da0                  _setup
-                  0x016ec6                  _shutdown
-                  0x016f4a                  _start32KHz
-                  0x016f5e                  _startLogging
-                  0x0170f8                  _START
-                  0x017192                  _stop32KHz
-                  0x0171ac                  _stopLogging
-                  0x017368                  _STOP
-                  0x01743c                  _STOPTIME
-                  0x0175b2                  _storeGageType
-                  0x0175d8                  _storeLogInterval
-                  0x017706                  _storeChannelReading
-                  0x017900                  _storeReading
-                  0x018184                  _storeTempChannelReading
-                  0x018266                  _storeTempChannelTHReading
-                  0x01828a                  _storeTempReading
-                  0x0182ce                  _synch
-                  0x01832c                  _synch_one
-                  0x0183b0                  _synch_zero
-                  0x018434                  _take_analog_reading
-                  0x018578                  _take_fast_analog_reading
-                  0x01861a                  _take_One_Complete_Reading
-                  0x01a44e                  _take_reading
-                  0x01a596                  _testPoint
-                  0x01a610                  _testPoint2
-                  0x01a63c                  _testReset
-                  0x01a758                  _toBCD
-                  0x01a888                  _toJulian
-                  0x01a9ae                  _toMonthDay
-                  0x01acf4                  _unpack
-                  0x01ad16                  _upD8RTCAlarm1
-                  0x01b542                  _V_HT2C
-                  0x01b7a2                  _vwf32toINT16
-                  0x01b8f0                  _wait
-                  0x01b918                  _wait2S
-                  0x01b946                  _wrap_one
-                  0x01b976                  _wrap_stop
-                  0x01b990                  _wrap_zero
-                  0x01b9c0                  _WRITE_TIME
-                  0x01ba72                  _X
-                  0x01bab8                  __INT0Interrupt
-                  0x01bacc                  __IC1Interrupt
-                  0x01bae0                  __OC1Interrupt
-                  0x01baf4                  __T1Interrupt
-                  0x01bb08                  __DMA0Interrupt
-                  0x01bb1c                  __IC2Interrupt
-                  0x01bb30                  __OC2Interrupt
-                  0x01bb44                  __T2Interrupt
-                  0x01bb58                  __T3Interrupt
-                  0x01bb6c                  __SPI1Interrupt
-                  0x01bb80                  __U1TXInterrupt
-                  0x01bb94                  __ADC1Interrupt
-                  0x01bba8                  __DMA1Interrupt
-                  0x01bbbc                  __SI2C1Interrupt
-                  0x01bbd0                  __MI2C1Interrupt
-                  0x01bbe4                  __CNInterrupt
-                  0x01bbf8                  __ADC2Interrupt
-                  0x01bc0c                  __IC7Interrupt
-                  0x01bc20                  __IC8Interrupt
-                  0x01bc34                  __DMA2Interrupt
-                  0x01bc48                  __OC3Interrupt
-                  0x01bc5c                  __OC4Interrupt
-                  0x01bc70                  __T4Interrupt
-                  0x01bc84                  __INT2Interrupt
-                  0x01bc98                  __U2RXInterrupt
-                  0x01bcac                  __U2TXInterrupt
-                  0x01bcc0                  __SPI2ErrInterrupt
-                  0x01bcd4                  __SPI2Interrupt
-                  0x01bce8                  __C1RxRdyInterrupt
-                  0x01bcfc                  __C1Interrupt
-                  0x01bd10                  __DMA3Interrupt
-                  0x01bd24                  __IC3Interrupt
-                  0x01bd38                  __IC4Interrupt
-                  0x01bd4c                  __IC5Interrupt
-                  0x01bd60                  __IC6Interrupt
-                  0x01bd74                  __OC5Interrupt
-                  0x01bd88                  __OC6Interrupt
-                  0x01bd9c                  __OC7Interrupt
-                  0x01bdb0                  __OC8Interrupt
-                  0x01bdc4                  __DMA4Interrupt
-                  0x01bdd8                  __T6Interrupt
-                  0x01bdec                  __SI2C2Interrupt
-                  0x01be00                  __MI2C2Interrupt
-                  0x01be14                  __T8Interrupt
-                  0x01be28                  __T9Interrupt
-                  0x01be3c                  __INT3Interrupt
-                  0x01be50                  __INT4Interrupt
-                  0x01be64                  __C2RxRdyInterrupt
-                  0x01be78                  __C2Interrupt
-                  0x01be8c                  __DCIErrInterrupt
-                  0x01bea0                  __DCIInterrupt
-                  0x01beb4                  __DMA5Interrupt
-                  0x01bec8                  __U1ErrInterrupt
-                  0x01bedc                  __U2ErrInterrupt
-                  0x01bef0                  __DMA6Interrupt
-                  0x01bf04                  __DMA7Interrupt
-                  0x01bf18                  __C1TxReqInterrupt
-                  0x01bf2c                  __C2TxReqInterrupt
-                  0x01bf40                  __AltINT0Interrupt
-                  0x01bf54                  __AltIC1Interrupt
-                  0x01bf68                  __AltOC1Interrupt
-                  0x01bf7c                  __AltT1Interrupt
-                  0x01bf90                  __AltDMA0Interrupt
-                  0x01bfa4                  __AltIC2Interrupt
-                  0x01bfb8                  __AltOC2Interrupt
-                  0x01bfcc                  __AltT2Interrupt
-                  0x01bfe0                  __AltT3Interrupt
-                  0x01bff4                  __AltSPI1Interrupt
-                  0x01c008                  __AltU1TXInterrupt
-                  0x01c01c                  __AltADC1Interrupt
-                  0x01c030                  __AltDMA1Interrupt
-                  0x01c044                  __AltSI2C1Interrupt
-                  0x01c058                  __AltMI2C1Interrupt
-                  0x01c06c                  __AltCNInterrupt
-                  0x01c080                  __AltADC2Interrupt
-                  0x01c094                  __AltIC7Interrupt
-                  0x01c0a8                  __AltIC8Interrupt
-                  0x01c0bc                  __AltDMA2Interrupt
-                  0x01c0d0                  __AltOC3Interrupt
-                  0x01c0e4                  __AltOC4Interrupt
-                  0x01c0f8                  __AltT4Interrupt
-                  0x01c10c                  __AltINT2Interrupt
-                  0x01c120                  __AltU2RXInterrupt
-                  0x01c134                  __AltU2TXInterrupt
-                  0x01c148                  __AltSPI2ErrInterrupt
-                  0x01c15c                  __AltSPI2Interrupt
-                  0x01c170                  __AltC1RxRdyInterrupt
-                  0x01c184                  __AltC1Interrupt
-                  0x01c198                  __AltDMA3Interrupt
-                  0x01c1ac                  __AltIC3Interrupt
-                  0x01c1c0                  __AltIC4Interrupt
-                  0x01c1d4                  __AltIC5Interrupt
-                  0x01c1e8                  __AltIC6Interrupt
-                  0x01c1fc                  __AltOC5Interrupt
-                  0x01c210                  __AltOC6Interrupt
-                  0x01c224                  __AltOC7Interrupt
-                  0x01c238                  __AltOC8Interrupt
-                  0x01c24c                  __AltDMA4Interrupt
-                  0x01c260                  __AltT6Interrupt
-                  0x01c274                  __AltSI2C2Interrupt
-                  0x01c288                  __AltMI2C2Interrupt
-                  0x01c29c                  __AltT8Interrupt
-                  0x01c2b0                  __AltT9Interrupt
-                  0x01c2c4                  __AltINT3Interrupt
-                  0x01c2d8                  __AltINT4Interrupt
-                  0x01c2ec                  __AltC2RxRdyInterrupt
-                  0x01c300                  __AltC2Interrupt
-                  0x01c314                  __AltDCIErrInterrupt
-                  0x01c328                  __AltDCIInterrupt
-                  0x01c33c                  __AltDMA5Interrupt
-                  0x01c350                  __AltU1ErrInterrupt
-                  0x01c364                  __AltU2ErrInterrupt
-                  0x01c378                  __AltDMA6Interrupt
-                  0x01c38c                  __AltDMA7Interrupt
-                  0x01c3a0                  __AltC1TxReqInterrupt
-                  0x01c3b4                  __AltC2TxReqInterrupt
-                  0x01c3c8                  __U1RXInterrupt
-                  0x01c408                  __AltU1RXInterrupt
-                  0x01c448                  __INT1Interrupt
-                  0x01c76c                  __AltINT1Interrupt
-                  0x01ca5e                  __OscillatorFail
-                  0x01ca72                  __AltOscillatorFail
-                  0x01ca86                  __T5Interrupt
-                  0x01caa8                  __AltT5Interrupt
-                  0x01cac8                  __T7Interrupt
-                  0x01cae8                  __AltT7Interrupt
-                  0x01e10a                  _displayError
-                  0x01e1c2                  _write_Int_FRAM
-                  0x01e288                  _read_Int_FRAM
-                  0x01e3d0                  _write_longFRAM
-                  0x01e3fa                  _read_longFRAM
-                  0x01e424                  _read_float
-                  0x01e44e                  _write_Flt_FRAM
-                  0x01e57e                  _read_Flt_FRAM
-                  0x01e77e                  _selectBank
-                  0x01ea0a                  _sleepFRAM
-                  0x01eabc                  _testFRAM
-                  0x01f058                  _testNACK
-                  0x01f0a4                  _read_AD5241
-                  0x01f0fe                  _write_AD5241
-                  0x01f168                  _delay
-                  0x01f180                  _shutdownTimer
-                  0x01f1d6                  _shutdownTimerwithReset
-                  0x01f214                  _StopshutdownTimer
-                  0x01f21a                  ___delay32
+                  0x003cb0                  _checkSynch
+                  0x003d76                  _clockMux
+                  0x003d9e                  _clockThMux
+                  0x003db2                  _CMDcomm
+                  0x007626                  _CMD_LINE
+                  0x007642                  _configMODBUStimers
+                  0x0076ce                  _configShutdownTimer
+                  0x0076e0                  _configTimers
+                  0x007712                  _configUARTnormal
+                  0x007754                  _controlPortStatus
+                  0x007924                  _CRC
+                  0x0079a8                  _CRC_SN
+                  0x007a08                  _crlf
+                  0x007a2e                  _debounce
+                  0x007a4c                  _disableAlarm
+                  0x007ab2                  _disableBT
+                  0x007b0a                  _disableChannel
+                  0x007c96                  _disableTHChannel
+                  0x007e22                  _disableINT1
+                  0x007e2c                  _disableOP
+                  0x007e78                  _DISLOGINT
+                  0x007ea2                  _disableTimers
+                  0x007eb0                  _disableVWchannel
+                  0x007ece                  _displayBCD
+                  0x007f24                  _displayClock
+                  0x008060                  _displayFRAMError
+                  0x00809c                  _displayGageInfo
+                  0x008cc2                  _displayLoggingWillStart
+                  0x008d22                  _displayLoggingWillStop
+                  0x008d94                  _displayLogInterval
+                  0x008f64                  _displayLogTable
+                  0x008fa4                  _displayMemoryStatus
+                  0x0090b8                  _displayMUX
+                  0x00a81e                  _displayReading
+                  0x00daee                  _displayScanInterval
+                  0x00db32                  _displayTempReading
+                  0x011d6e                  _displayTemporaryStatus
+                  0x011eba                  _displayTestMenu
+                  0x011f6c                  _enableAlarm
+                  0x011ffa                  _enableBT
+                  0x01202c                  _enableChannel
+                  0x0121b0                  _enableTHChannel
+                  0x012334                  _enableINT1
+                  0x012340                  _ENLOGINT
+                  0x012382                  _enableOP
+                  0x0123c4                  _f32toINT16
+                  0x0124da                  _enableVWchannel
+                  0x012642                  _filterArray
+                  0x0126f2                  _formatandDisplayGageInfo
+                  0x012b04                  _getChannel
+                  0x012b60                  _getSNbytes
+                  0x012d86                  _getConversion
+                  0x012e3a                  _getGageInfo
+                  0x01430e                  _getGageType
+                  0x0143e0                  _getLogInterval
+                  0x014440                  _getLogIntLength
+                  0x0148b0                  _getLogIterations
+                  0x014aaa                  _getFrequency
+                  0x014c5a                  _getSerialNumber
+                  0x014d42                  _getThermtype
+                  0x014db6                  _getTxChecksum
+                  0x014df4                  _handleCOMError
+                  0x014e00                  _handleFRAMResults
+                  0x014e34                  _hms
+                  0x014f5c                  _hms2s
+                  0x014fc0                  _INT16tof32
+                  0x01500e                  _loadDefaults
+                  0x01559e                  _loadSV
+                  0x0155d4                  _MODBUScheckScanInterval
+                  0x015714                  _MODBUScomm
+                  0x016496                  _MODBUS_DisableStartTime
+                  0x0164de                  _MODBUS_EnableStartTime
+                  0x016588                  _MODBUS_DisableStopTime
+                  0x0165c4                  _MODBUS_EnableStopTime
+                  0x0165cc                  _MODBUS_RX
+                  0x0166fa                  _MODBUS_TX
+                  0x016764                  _MX1
+                  0x0167e4                  _MX4
+                  0x016834                  _MX8
+                  0x016884                  _MX8V
+                  0x0168d4                  _MX8T
+                  0x016924                  _MX16
+                  0x016974                  _MX16V
+                  0x0169c4                  _MX16T
+                  0x016a14                  _MX32
+                  0x016a64                  _MX32T
+                  0x016ab4                  _O_D
+                  0x016ae2                  _O_E
+                  0x016b24                  _pack
+                  0x016b42                  _pluck
+                  0x016c9c                  _pluckOFF
+                  0x016cac                  _pluckON
+                  0x016cca                  _pluckPOS
+                  0x016cd4                  _pluckNEG
+                  0x016cde                  _processDS3231Temperature
+                  0x016cfe                  _processReading
+                  0x017118                  _prompt
+                  0x01714e                  _readClock
+                  0x017286                  _readDS3231temperature
+                  0x0172b4                  _R
+                  0x0172ec                  _READ_TIME
+                  0x0174e2                  _ReadSN
+                  0x0175a2                  _RST
+                  0x0175bc                  _read_vw
+                  0x01762a                  _reloadLogTable
+                  0x017694                  _resetMemory
+                  0x0176ea                  _restoreSettings
+                  0x01779c                  _RTChms2s
+                  0x017882                  _RTCtoDecimal
+                  0x017938                  _seconds2hms
+                  0x017988                  _setADCsleep
+                  0x0179a4                  _setADCwake
+                  0x0179b6                  _setChannelConversion
+                  0x017d3a                  _setChannelThermtype
+                  0x017fb0                  _setClock
+                  0x01813e                  _setup
+                  0x018264                  _shutdown
+                  0x0182e8                  _start32KHz
+                  0x0182fc                  _startLogging
+                  0x018498                  _START
+                  0x018534                  _stop32KHz
+                  0x01854e                  _stopLogging
+                  0x018712                  _STOP
+                  0x0187e8                  _STOPTIME
+                  0x018960                  _storeGageType
+                  0x018986                  _storeLogInterval
+                  0x018ab4                  _storeChannelReading
+                  0x018cde                  _storeReading
+                  0x01973a                  _storeTempChannelReading
+                  0x01982e                  _storeTempChannelTHReading
+                  0x019852                  _storeTempReading
+                  0x019896                  _synch
+                  0x0198f4                  _synch_one
+                  0x019978                  _synch_zero
+                  0x0199fc                  _take_analog_reading
+                  0x019b40                  _take_fast_analog_reading
+                  0x019be2                  _take_One_Complete_Reading
+                  0x01bcf8                  _take_reading
+                  0x01be40                  _testPoint
+                  0x01beba                  _testPoint2
+                  0x01bee6                  _testReset
+                  0x01c002                  _toBCD
+                  0x01c132                  _toJulian
+                  0x01c258                  _toMonthDay
+                  0x01c59e                  _unpack
+                  0x01c5c0                  _upD8RTCAlarm1
+                  0x01ce10                  _V_HT2C
+                  0x01d070                  _vwf32toINT16
+                  0x01d1be                  _wait
+                  0x01d1e6                  _wait2S
+                  0x01d214                  _wrap_one
+                  0x01d244                  _wrap_stop
+                  0x01d25e                  _wrap_zero
+                  0x01d28e                  _WRITE_TIME
+                  0x01d340                  _X
+                  0x01d386                  __INT0Interrupt
+                  0x01d39a                  __IC1Interrupt
+                  0x01d3ae                  __OC1Interrupt
+                  0x01d3c2                  __T1Interrupt
+                  0x01d3d6                  __DMA0Interrupt
+                  0x01d3ea                  __IC2Interrupt
+                  0x01d3fe                  __OC2Interrupt
+                  0x01d412                  __T2Interrupt
+                  0x01d426                  __T3Interrupt
+                  0x01d43a                  __SPI1Interrupt
+                  0x01d44e                  __U1TXInterrupt
+                  0x01d462                  __ADC1Interrupt
+                  0x01d476                  __DMA1Interrupt
+                  0x01d48a                  __SI2C1Interrupt
+                  0x01d49e                  __MI2C1Interrupt
+                  0x01d4b2                  __CNInterrupt
+                  0x01d4c6                  __ADC2Interrupt
+                  0x01d4da                  __IC7Interrupt
+                  0x01d4ee                  __IC8Interrupt
+                  0x01d502                  __DMA2Interrupt
+                  0x01d516                  __OC3Interrupt
+                  0x01d52a                  __OC4Interrupt
+                  0x01d53e                  __T4Interrupt
+                  0x01d552                  __INT2Interrupt
+                  0x01d566                  __U2RXInterrupt
+                  0x01d57a                  __U2TXInterrupt
+                  0x01d58e                  __SPI2ErrInterrupt
+                  0x01d5a2                  __SPI2Interrupt
+                  0x01d5b6                  __C1RxRdyInterrupt
+                  0x01d5ca                  __C1Interrupt
+                  0x01d5de                  __DMA3Interrupt
+                  0x01d5f2                  __IC3Interrupt
+                  0x01d606                  __IC4Interrupt
+                  0x01d61a                  __IC5Interrupt
+                  0x01d62e                  __IC6Interrupt
+                  0x01d642                  __OC5Interrupt
+                  0x01d656                  __OC6Interrupt
+                  0x01d66a                  __OC7Interrupt
+                  0x01d67e                  __OC8Interrupt
+                  0x01d692                  __DMA4Interrupt
+                  0x01d6a6                  __T6Interrupt
+                  0x01d6ba                  __SI2C2Interrupt
+                  0x01d6ce                  __MI2C2Interrupt
+                  0x01d6e2                  __T8Interrupt
+                  0x01d6f6                  __T9Interrupt
+                  0x01d70a                  __INT3Interrupt
+                  0x01d71e                  __INT4Interrupt
+                  0x01d732                  __C2RxRdyInterrupt
+                  0x01d746                  __C2Interrupt
+                  0x01d75a                  __DCIErrInterrupt
+                  0x01d76e                  __DCIInterrupt
+                  0x01d782                  __DMA5Interrupt
+                  0x01d796                  __U1ErrInterrupt
+                  0x01d7aa                  __U2ErrInterrupt
+                  0x01d7be                  __DMA6Interrupt
+                  0x01d7d2                  __DMA7Interrupt
+                  0x01d7e6                  __C1TxReqInterrupt
+                  0x01d7fa                  __C2TxReqInterrupt
+                  0x01d80e                  __AltINT0Interrupt
+                  0x01d822                  __AltIC1Interrupt
+                  0x01d836                  __AltOC1Interrupt
+                  0x01d84a                  __AltT1Interrupt
+                  0x01d85e                  __AltDMA0Interrupt
+                  0x01d872                  __AltIC2Interrupt
+                  0x01d886                  __AltOC2Interrupt
+                  0x01d89a                  __AltT2Interrupt
+                  0x01d8ae                  __AltT3Interrupt
+                  0x01d8c2                  __AltSPI1Interrupt
+                  0x01d8d6                  __AltU1TXInterrupt
+                  0x01d8ea                  __AltADC1Interrupt
+                  0x01d8fe                  __AltDMA1Interrupt
+                  0x01d912                  __AltSI2C1Interrupt
+                  0x01d926                  __AltMI2C1Interrupt
+                  0x01d93a                  __AltCNInterrupt
+                  0x01d94e                  __AltADC2Interrupt
+                  0x01d962                  __AltIC7Interrupt
+                  0x01d976                  __AltIC8Interrupt
+                  0x01d98a                  __AltDMA2Interrupt
+                  0x01d99e                  __AltOC3Interrupt
+                  0x01d9b2                  __AltOC4Interrupt
+                  0x01d9c6                  __AltT4Interrupt
+                  0x01d9da                  __AltINT2Interrupt
+                  0x01d9ee                  __AltU2RXInterrupt
+                  0x01da02                  __AltU2TXInterrupt
+                  0x01da16                  __AltSPI2ErrInterrupt
+                  0x01da2a                  __AltSPI2Interrupt
+                  0x01da3e                  __AltC1RxRdyInterrupt
+                  0x01da52                  __AltC1Interrupt
+                  0x01da66                  __AltDMA3Interrupt
+                  0x01da7a                  __AltIC3Interrupt
+                  0x01da8e                  __AltIC4Interrupt
+                  0x01daa2                  __AltIC5Interrupt
+                  0x01dab6                  __AltIC6Interrupt
+                  0x01daca                  __AltOC5Interrupt
+                  0x01dade                  __AltOC6Interrupt
+                  0x01daf2                  __AltOC7Interrupt
+                  0x01db06                  __AltOC8Interrupt
+                  0x01db1a                  __AltDMA4Interrupt
+                  0x01db2e                  __AltT6Interrupt
+                  0x01db42                  __AltSI2C2Interrupt
+                  0x01db56                  __AltMI2C2Interrupt
+                  0x01db6a                  __AltT8Interrupt
+                  0x01db7e                  __AltT9Interrupt
+                  0x01db92                  __AltINT3Interrupt
+                  0x01dba6                  __AltINT4Interrupt
+                  0x01dbba                  __AltC2RxRdyInterrupt
+                  0x01dbce                  __AltC2Interrupt
+                  0x01dbe2                  __AltDCIErrInterrupt
+                  0x01dbf6                  __AltDCIInterrupt
+                  0x01dc0a                  __AltDMA5Interrupt
+                  0x01dc1e                  __AltU1ErrInterrupt
+                  0x01dc32                  __AltU2ErrInterrupt
+                  0x01dc46                  __AltDMA6Interrupt
+                  0x01dc5a                  __AltDMA7Interrupt
+                  0x01dc6e                  __AltC1TxReqInterrupt
+                  0x01dc82                  __AltC2TxReqInterrupt
+                  0x01dc96                  __U1RXInterrupt
+                  0x01dcd6                  __AltU1RXInterrupt
+                  0x01dd16                  __INT1Interrupt
+                  0x01e03a                  __AltINT1Interrupt
+                  0x01e32c                  __OscillatorFail
+                  0x01e340                  __AltOscillatorFail
+                  0x01e354                  __T5Interrupt
+                  0x01e376                  __AltT5Interrupt
+                  0x01e396                  __T7Interrupt
+                  0x01e3b6                  __AltT7Interrupt
+                  0x01f9d8                  _displayError
+                  0x01fa90                  _write_Int_FRAM
+                  0x01fb56                  _read_Int_FRAM
+                  0x01fc9e                  _write_longFRAM
+                  0x01fcc8                  _read_longFRAM
+                  0x01fcf2                  _read_float
+                  0x01fd1c                  _write_Flt_FRAM
+                  0x01fe4c                  _read_Flt_FRAM
+                  0x02004c                  _selectBank
+                  0x0202d8                  _sleepFRAM
+                  0x02038a                  _testFRAM
+                  0x020926                  _testNACK
+                  0x020972                  _read_AD5241
+                  0x0209cc                  _write_AD5241
+                  0x020a36                  _delay
+                  0x020a4e                  _shutdownTimer
+                  0x020aa4                  _shutdownTimerwithReset
+                  0x020ae2                  _StopshutdownTimer
+                  0x020ae8                  ___delay32
                   0xf80000                  __FBS.sec
                   0xf80002                  __FSS.sec
                   0xf80004                  __FGS.sec
@@ -1879,10 +1881,10 @@ External Symbols in Program Memory (by name):
                   0x0034cc                  _Buf2GageData
                   0x0032c4                  _Buffer2Decimal
                   0x0003dc                  _BusyUART1
-                  0x007476                  _CMD_LINE
-                  0x003d24                  _CMDcomm
-                  0x007774                  _CRC
-                  0x0077f8                  _CRC_SN
+                  0x007626                  _CMD_LINE
+                  0x003db2                  _CMDcomm
+                  0x007924                  _CRC
+                  0x0079a8                  _CRC_SN
                   0x0002b0                  _CloseI2C1
                   0x0002bc                  _CloseI2C2
                   0x000372                  _CloseOC1
@@ -1891,9 +1893,9 @@ External Symbols in Program Memory (by name):
                   0x000484                  _ConfigINT1
                   0x00039a                  _ConfigIntTimer89
                   0x0003e6                  _ConfigIntUART1
-                  0x007cbe                  _DISLOGINT
+                  0x007e78                  _DISLOGINT
                   0x00042e                  _DataRdyUART1
-                  0x0110d8                  _ENLOGINT
+                  0x012340                  _ENLOGINT
                   0x000000                  _FBS
                   0x000000                  _FGS
                   0xf8000e                  _FICD
@@ -1902,196 +1904,198 @@ External Symbols in Program Memory (by name):
                   0xf8000c                  _FPOR
                   0x000000                  _FSS
                   0xf8000a                  _FWDT
-                  0x013d58                  _INT16tof32
+                  0x014fc0                  _INT16tof32
                   0x0002c8                  _IdleI2C1
                   0x0002e2                  _IdleI2C2
-                  0x01519a                  _MODBUS_DisableStartTime
-                  0x01528c                  _MODBUS_DisableStopTime
-                  0x0151e2                  _MODBUS_EnableStartTime
-                  0x0152c8                  _MODBUS_EnableStopTime
-                  0x0152d0                  _MODBUS_RX
-                  0x0153fe                  _MODBUS_TX
-                  0x014314                  _MODBUScheckScanInterval
-                  0x014418                  _MODBUScomm
-                  0x015468                  _MX1
-                  0x015628                  _MX16
-                  0x015678                  _MX32
-                  0x0156c8                  _MX32T
-                  0x0154e8                  _MX4
-                  0x015538                  _MX8
-                  0x0155d8                  _MX8T
-                  0x015588                  _MX8V
+                  0x016496                  _MODBUS_DisableStartTime
+                  0x016588                  _MODBUS_DisableStopTime
+                  0x0164de                  _MODBUS_EnableStartTime
+                  0x0165c4                  _MODBUS_EnableStopTime
+                  0x0165cc                  _MODBUS_RX
+                  0x0166fa                  _MODBUS_TX
+                  0x0155d4                  _MODBUScheckScanInterval
+                  0x015714                  _MODBUScomm
+                  0x016764                  _MX1
+                  0x016924                  _MX16
+                  0x0169c4                  _MX16T
+                  0x016974                  _MX16V
+                  0x016a14                  _MX32
+                  0x016a64                  _MX32T
+                  0x0167e4                  _MX4
+                  0x016834                  _MX8
+                  0x0168d4                  _MX8T
+                  0x016884                  _MX8V
                   0x0002fc                  _MasterReadI2C1
                   0x000308                  _MasterReadI2C2
                   0x000314                  _MasterWriteI2C1
                   0x000330                  _MasterWriteI2C2
                   0x00034c                  _NotAckI2C1
-                  0x015718                  _O_D
-                  0x015746                  _O_E
+                  0x016ab4                  _O_D
+                  0x016ae2                  _O_E
                   0x000352                  _OpenI2C1
                   0x000358                  _OpenI2C2
                   0x0003bc                  _OpenTimer3
                   0x0003c4                  _OpenTimer89
                   0x000434                  _OpenUART1
-                  0x015f18                  _R
-                  0x015f50                  _READ_TIME
-                  0x016206                  _RST
-                  0x016400                  _RTChms2s
-                  0x0164e6                  _RTCtoDecimal
-                  0x016146                  _ReadSN
+                  0x0172b4                  _R
+                  0x0172ec                  _READ_TIME
+                  0x0175a2                  _RST
+                  0x01779c                  _RTChms2s
+                  0x017882                  _RTCtoDecimal
+                  0x0174e2                  _ReadSN
                   0x000464                  _ReadUART1
                   0x00035e                  _RestartI2C1
-                  0x0170f8                  _START
-                  0x017368                  _STOP
-                  0x01743c                  _STOPTIME
+                  0x018498                  _START
+                  0x018712                  _STOP
+                  0x0187e8                  _STOPTIME
                   0x000362                  _StartI2C1
                   0x000366                  _StartI2C2
                   0x00036a                  _StopI2C1
                   0x00036e                  _StopI2C2
-                  0x01f214                  _StopshutdownTimer
-                  0x01b542                  _V_HT2C
-                  0x01b9c0                  _WRITE_TIME
+                  0x020ae2                  _StopshutdownTimer
+                  0x01ce10                  _V_HT2C
+                  0x01d28e                  _WRITE_TIME
                   0x0003d2                  _WriteTimer3
                   0x0003d6                  _WriteTimer89
                   0x000476                  _WriteUART1
-                  0x01ba72                  _X
+                  0x01d340                  _X
                   0x002350                  __3VX_off
                   0x00233a                  __3VX_on
-                  0x01bb94                  __ADC1Interrupt
-                  0x01bbf8                  __ADC2Interrupt
-                  0x01c01c                  __AltADC1Interrupt
-                  0x01c080                  __AltADC2Interrupt
-                  0x01c184                  __AltC1Interrupt
-                  0x01c170                  __AltC1RxRdyInterrupt
-                  0x01c3a0                  __AltC1TxReqInterrupt
-                  0x01c300                  __AltC2Interrupt
-                  0x01c2ec                  __AltC2RxRdyInterrupt
-                  0x01c3b4                  __AltC2TxReqInterrupt
-                  0x01c06c                  __AltCNInterrupt
-                  0x01c314                  __AltDCIErrInterrupt
-                  0x01c328                  __AltDCIInterrupt
-                  0x01bf90                  __AltDMA0Interrupt
-                  0x01c030                  __AltDMA1Interrupt
-                  0x01c0bc                  __AltDMA2Interrupt
-                  0x01c198                  __AltDMA3Interrupt
-                  0x01c24c                  __AltDMA4Interrupt
-                  0x01c33c                  __AltDMA5Interrupt
-                  0x01c378                  __AltDMA6Interrupt
-                  0x01c38c                  __AltDMA7Interrupt
-                  0x01bf54                  __AltIC1Interrupt
-                  0x01bfa4                  __AltIC2Interrupt
-                  0x01c1ac                  __AltIC3Interrupt
-                  0x01c1c0                  __AltIC4Interrupt
-                  0x01c1d4                  __AltIC5Interrupt
-                  0x01c1e8                  __AltIC6Interrupt
-                  0x01c094                  __AltIC7Interrupt
-                  0x01c0a8                  __AltIC8Interrupt
-                  0x01bf40                  __AltINT0Interrupt
-                  0x01c76c                  __AltINT1Interrupt
-                  0x01c10c                  __AltINT2Interrupt
-                  0x01c2c4                  __AltINT3Interrupt
-                  0x01c2d8                  __AltINT4Interrupt
-                  0x01c058                  __AltMI2C1Interrupt
-                  0x01c288                  __AltMI2C2Interrupt
-                  0x01bf68                  __AltOC1Interrupt
-                  0x01bfb8                  __AltOC2Interrupt
-                  0x01c0d0                  __AltOC3Interrupt
-                  0x01c0e4                  __AltOC4Interrupt
-                  0x01c1fc                  __AltOC5Interrupt
-                  0x01c210                  __AltOC6Interrupt
-                  0x01c224                  __AltOC7Interrupt
-                  0x01c238                  __AltOC8Interrupt
-                  0x01ca72                  __AltOscillatorFail
-                  0x01c044                  __AltSI2C1Interrupt
-                  0x01c274                  __AltSI2C2Interrupt
-                  0x01bff4                  __AltSPI1Interrupt
-                  0x01c148                  __AltSPI2ErrInterrupt
-                  0x01c15c                  __AltSPI2Interrupt
-                  0x01bf7c                  __AltT1Interrupt
-                  0x01bfcc                  __AltT2Interrupt
-                  0x01bfe0                  __AltT3Interrupt
-                  0x01c0f8                  __AltT4Interrupt
-                  0x01caa8                  __AltT5Interrupt
-                  0x01c260                  __AltT6Interrupt
-                  0x01cae8                  __AltT7Interrupt
-                  0x01c29c                  __AltT8Interrupt
-                  0x01c2b0                  __AltT9Interrupt
-                  0x01c350                  __AltU1ErrInterrupt
-                  0x01c408                  __AltU1RXInterrupt
-                  0x01c008                  __AltU1TXInterrupt
-                  0x01c364                  __AltU2ErrInterrupt
-                  0x01c120                  __AltU2RXInterrupt
-                  0x01c134                  __AltU2TXInterrupt
-                  0x01bcfc                  __C1Interrupt
-                  0x01bce8                  __C1RxRdyInterrupt
-                  0x01bf18                  __C1TxReqInterrupt
-                  0x01be78                  __C2Interrupt
-                  0x01be64                  __C2RxRdyInterrupt
-                  0x01bf2c                  __C2TxReqInterrupt
-                  0x01bbe4                  __CNInterrupt
-                  0x01be8c                  __DCIErrInterrupt
-                  0x01bea0                  __DCIInterrupt
-                  0x01bb08                  __DMA0Interrupt
-                  0x01bba8                  __DMA1Interrupt
-                  0x01bc34                  __DMA2Interrupt
-                  0x01bd10                  __DMA3Interrupt
-                  0x01bdc4                  __DMA4Interrupt
-                  0x01beb4                  __DMA5Interrupt
-                  0x01bef0                  __DMA6Interrupt
-                  0x01bf04                  __DMA7Interrupt
+                  0x01d462                  __ADC1Interrupt
+                  0x01d4c6                  __ADC2Interrupt
+                  0x01d8ea                  __AltADC1Interrupt
+                  0x01d94e                  __AltADC2Interrupt
+                  0x01da52                  __AltC1Interrupt
+                  0x01da3e                  __AltC1RxRdyInterrupt
+                  0x01dc6e                  __AltC1TxReqInterrupt
+                  0x01dbce                  __AltC2Interrupt
+                  0x01dbba                  __AltC2RxRdyInterrupt
+                  0x01dc82                  __AltC2TxReqInterrupt
+                  0x01d93a                  __AltCNInterrupt
+                  0x01dbe2                  __AltDCIErrInterrupt
+                  0x01dbf6                  __AltDCIInterrupt
+                  0x01d85e                  __AltDMA0Interrupt
+                  0x01d8fe                  __AltDMA1Interrupt
+                  0x01d98a                  __AltDMA2Interrupt
+                  0x01da66                  __AltDMA3Interrupt
+                  0x01db1a                  __AltDMA4Interrupt
+                  0x01dc0a                  __AltDMA5Interrupt
+                  0x01dc46                  __AltDMA6Interrupt
+                  0x01dc5a                  __AltDMA7Interrupt
+                  0x01d822                  __AltIC1Interrupt
+                  0x01d872                  __AltIC2Interrupt
+                  0x01da7a                  __AltIC3Interrupt
+                  0x01da8e                  __AltIC4Interrupt
+                  0x01daa2                  __AltIC5Interrupt
+                  0x01dab6                  __AltIC6Interrupt
+                  0x01d962                  __AltIC7Interrupt
+                  0x01d976                  __AltIC8Interrupt
+                  0x01d80e                  __AltINT0Interrupt
+                  0x01e03a                  __AltINT1Interrupt
+                  0x01d9da                  __AltINT2Interrupt
+                  0x01db92                  __AltINT3Interrupt
+                  0x01dba6                  __AltINT4Interrupt
+                  0x01d926                  __AltMI2C1Interrupt
+                  0x01db56                  __AltMI2C2Interrupt
+                  0x01d836                  __AltOC1Interrupt
+                  0x01d886                  __AltOC2Interrupt
+                  0x01d99e                  __AltOC3Interrupt
+                  0x01d9b2                  __AltOC4Interrupt
+                  0x01daca                  __AltOC5Interrupt
+                  0x01dade                  __AltOC6Interrupt
+                  0x01daf2                  __AltOC7Interrupt
+                  0x01db06                  __AltOC8Interrupt
+                  0x01e340                  __AltOscillatorFail
+                  0x01d912                  __AltSI2C1Interrupt
+                  0x01db42                  __AltSI2C2Interrupt
+                  0x01d8c2                  __AltSPI1Interrupt
+                  0x01da16                  __AltSPI2ErrInterrupt
+                  0x01da2a                  __AltSPI2Interrupt
+                  0x01d84a                  __AltT1Interrupt
+                  0x01d89a                  __AltT2Interrupt
+                  0x01d8ae                  __AltT3Interrupt
+                  0x01d9c6                  __AltT4Interrupt
+                  0x01e376                  __AltT5Interrupt
+                  0x01db2e                  __AltT6Interrupt
+                  0x01e3b6                  __AltT7Interrupt
+                  0x01db6a                  __AltT8Interrupt
+                  0x01db7e                  __AltT9Interrupt
+                  0x01dc1e                  __AltU1ErrInterrupt
+                  0x01dcd6                  __AltU1RXInterrupt
+                  0x01d8d6                  __AltU1TXInterrupt
+                  0x01dc32                  __AltU2ErrInterrupt
+                  0x01d9ee                  __AltU2RXInterrupt
+                  0x01da02                  __AltU2TXInterrupt
+                  0x01d5ca                  __C1Interrupt
+                  0x01d5b6                  __C1RxRdyInterrupt
+                  0x01d7e6                  __C1TxReqInterrupt
+                  0x01d746                  __C2Interrupt
+                  0x01d732                  __C2RxRdyInterrupt
+                  0x01d7fa                  __C2TxReqInterrupt
+                  0x01d4b2                  __CNInterrupt
+                  0x01d75a                  __DCIErrInterrupt
+                  0x01d76e                  __DCIInterrupt
+                  0x01d3d6                  __DMA0Interrupt
+                  0x01d476                  __DMA1Interrupt
+                  0x01d502                  __DMA2Interrupt
+                  0x01d5de                  __DMA3Interrupt
+                  0x01d692                  __DMA4Interrupt
+                  0x01d782                  __DMA5Interrupt
+                  0x01d7be                  __DMA6Interrupt
+                  0x01d7d2                  __DMA7Interrupt
                   0x0002ac                  __DefaultInterrupt
                   0x0017ce                  __Dnorm
                   0xf80000                  __FBS.sec
                   0xf80004                  __FGS.sec
                   0xf80002                  __FSS.sec
-                  0x01bacc                  __IC1Interrupt
-                  0x01bb1c                  __IC2Interrupt
-                  0x01bd24                  __IC3Interrupt
-                  0x01bd38                  __IC4Interrupt
-                  0x01bd4c                  __IC5Interrupt
-                  0x01bd60                  __IC6Interrupt
-                  0x01bc0c                  __IC7Interrupt
-                  0x01bc20                  __IC8Interrupt
-                  0x01bab8                  __INT0Interrupt
-                  0x01c448                  __INT1Interrupt
-                  0x01bc84                  __INT2Interrupt
-                  0x01be3c                  __INT3Interrupt
-                  0x01be50                  __INT4Interrupt
+                  0x01d39a                  __IC1Interrupt
+                  0x01d3ea                  __IC2Interrupt
+                  0x01d5f2                  __IC3Interrupt
+                  0x01d606                  __IC4Interrupt
+                  0x01d61a                  __IC5Interrupt
+                  0x01d62e                  __IC6Interrupt
+                  0x01d4da                  __IC7Interrupt
+                  0x01d4ee                  __IC8Interrupt
+                  0x01d386                  __INT0Interrupt
+                  0x01dd16                  __INT1Interrupt
+                  0x01d552                  __INT2Interrupt
+                  0x01d70a                  __INT3Interrupt
+                  0x01d71e                  __INT4Interrupt
                   0x0013a0                  __LDunscale
                   0x0013f4                  __Litob
-                  0x01bbd0                  __MI2C1Interrupt
-                  0x01be00                  __MI2C2Interrupt
-                  0x01bae0                  __OC1Interrupt
-                  0x01bb30                  __OC2Interrupt
-                  0x01bc48                  __OC3Interrupt
-                  0x01bc5c                  __OC4Interrupt
-                  0x01bd74                  __OC5Interrupt
-                  0x01bd88                  __OC6Interrupt
-                  0x01bd9c                  __OC7Interrupt
-                  0x01bdb0                  __OC8Interrupt
-                  0x01ca5e                  __OscillatorFail
+                  0x01d49e                  __MI2C1Interrupt
+                  0x01d6ce                  __MI2C2Interrupt
+                  0x01d3ae                  __OC1Interrupt
+                  0x01d3fe                  __OC2Interrupt
+                  0x01d516                  __OC3Interrupt
+                  0x01d52a                  __OC4Interrupt
+                  0x01d642                  __OC5Interrupt
+                  0x01d656                  __OC6Interrupt
+                  0x01d66a                  __OC7Interrupt
+                  0x01d67e                  __OC8Interrupt
+                  0x01e32c                  __OscillatorFail
                   0x001652                  __Puttxt
-                  0x01bbbc                  __SI2C1Interrupt
-                  0x01bdec                  __SI2C2Interrupt
-                  0x01bb6c                  __SPI1Interrupt
-                  0x01bcc0                  __SPI2ErrInterrupt
-                  0x01bcd4                  __SPI2Interrupt
+                  0x01d48a                  __SI2C1Interrupt
+                  0x01d6ba                  __SI2C2Interrupt
+                  0x01d43a                  __SPI1Interrupt
+                  0x01d58e                  __SPI2ErrInterrupt
+                  0x01d5a2                  __SPI2Interrupt
                   0x000956                  __Stoul
-                  0x01baf4                  __T1Interrupt
-                  0x01bb44                  __T2Interrupt
-                  0x01bb58                  __T3Interrupt
-                  0x01bc70                  __T4Interrupt
-                  0x01ca86                  __T5Interrupt
-                  0x01bdd8                  __T6Interrupt
-                  0x01cac8                  __T7Interrupt
-                  0x01be14                  __T8Interrupt
-                  0x01be28                  __T9Interrupt
-                  0x01bec8                  __U1ErrInterrupt
-                  0x01c3c8                  __U1RXInterrupt
-                  0x01bb80                  __U1TXInterrupt
-                  0x01bedc                  __U2ErrInterrupt
-                  0x01bc98                  __U2RXInterrupt
-                  0x01bcac                  __U2TXInterrupt
+                  0x01d3c2                  __T1Interrupt
+                  0x01d412                  __T2Interrupt
+                  0x01d426                  __T3Interrupt
+                  0x01d53e                  __T4Interrupt
+                  0x01e354                  __T5Interrupt
+                  0x01d6a6                  __T6Interrupt
+                  0x01e396                  __T7Interrupt
+                  0x01d6e2                  __T8Interrupt
+                  0x01d6f6                  __T9Interrupt
+                  0x01d796                  __U1ErrInterrupt
+                  0x01dc96                  __U1RXInterrupt
+                  0x01d44e                  __U1TXInterrupt
+                  0x01d7aa                  __U2ErrInterrupt
+                  0x01d566                  __U2RXInterrupt
+                  0x01d57a                  __U2TXInterrupt
                   0x0017ca                  __Vacopy
                   0x00111e                  ___Genld_cdfFnopuxX
                   0x000ece                  ___Ldtob_cdfFnopuxX
@@ -2101,7 +2105,7 @@ External Symbols in Program Memory (by name):
                   0x000c38                  ___Putfld_cdnopuxX
                   0x001d70                  ___adddf3
                   0x0004ba                  ___addsf3
-                  0x01f21a                  ___delay32
+                  0x020ae8                  ___delay32
                   0x00187a                  ___divdf3
                   0x001cb4                  ___divdi3
                   0x000574                  ___divsf3
@@ -2165,152 +2169,152 @@ External Symbols in Program Memory (by name):
                   0x000ab6                  __sprintf_cdnopuxX
                   0x002368                  _bcd2d
                   0x0039e2                  _checkScanInterval
-                  0x003c24                  _checkSynch
-                  0x003ce8                  _clockMux
-                  0x003d10                  _clockThMux
-                  0x007492                  _configMODBUStimers
-                  0x00751e                  _configShutdownTimer
-                  0x007530                  _configTimers
-                  0x007562                  _configUARTnormal
-                  0x0075a4                  _controlPortStatus
-                  0x007858                  _crlf
-                  0x00787e                  _debounce
-                  0x01f168                  _delay
-                  0x00789c                  _disableAlarm
-                  0x0078f8                  _disableBT
-                  0x007950                  _disableChannel
-                  0x007c68                  _disableINT1
-                  0x007c72                  _disableOP
-                  0x007adc                  _disableTHChannel
-                  0x007ce8                  _disableTimers
-                  0x007cf6                  _disableVWchannel
-                  0x007d14                  _displayBCD
-                  0x007d6a                  _displayClock
-                  0x01e10a                  _displayError
-                  0x007ea6                  _displayFRAMError
-                  0x007ee2                  _displayGageInfo
-                  0x008bb2                  _displayLogInterval
-                  0x008d82                  _displayLogTable
-                  0x008ae0                  _displayLoggingWillStart
-                  0x008b40                  _displayLoggingWillStop
-                  0x008ed6                  _displayMUX
-                  0x008dc2                  _displayMemoryStatus
-                  0x00a462                  _displayReading
-                  0x00d150                  _displayScanInterval
-                  0x00d194                  _displayTempReading
-                  0x010b06                  _displayTemporaryStatus
-                  0x010c52                  _displayTestMenu
+                  0x003cb0                  _checkSynch
+                  0x003d76                  _clockMux
+                  0x003d9e                  _clockThMux
+                  0x007642                  _configMODBUStimers
+                  0x0076ce                  _configShutdownTimer
+                  0x0076e0                  _configTimers
+                  0x007712                  _configUARTnormal
+                  0x007754                  _controlPortStatus
+                  0x007a08                  _crlf
+                  0x007a2e                  _debounce
+                  0x020a36                  _delay
+                  0x007a4c                  _disableAlarm
+                  0x007ab2                  _disableBT
+                  0x007b0a                  _disableChannel
+                  0x007e22                  _disableINT1
+                  0x007e2c                  _disableOP
+                  0x007c96                  _disableTHChannel
+                  0x007ea2                  _disableTimers
+                  0x007eb0                  _disableVWchannel
+                  0x007ece                  _displayBCD
+                  0x007f24                  _displayClock
+                  0x01f9d8                  _displayError
+                  0x008060                  _displayFRAMError
+                  0x00809c                  _displayGageInfo
+                  0x008d94                  _displayLogInterval
+                  0x008f64                  _displayLogTable
+                  0x008cc2                  _displayLoggingWillStart
+                  0x008d22                  _displayLoggingWillStop
+                  0x0090b8                  _displayMUX
+                  0x008fa4                  _displayMemoryStatus
+                  0x00a81e                  _displayReading
+                  0x00daee                  _displayScanInterval
+                  0x00db32                  _displayTempReading
+                  0x011d6e                  _displayTemporaryStatus
+                  0x011eba                  _displayTestMenu
                   0x001326                  _div
-                  0x010d04                  _enableAlarm
-                  0x010d92                  _enableBT
-                  0x010dc4                  _enableChannel
-                  0x0110cc                  _enableINT1
-                  0x01111a                  _enableOP
-                  0x010f48                  _enableTHChannel
-                  0x011272                  _enableVWchannel
-                  0x01115c                  _f32toINT16
-                  0x0113da                  _filterArray
-                  0x01148a                  _formatandDisplayGageInfo
-                  0x01189c                  _getChannel
-                  0x011b1e                  _getConversion
-                  0x013842                  _getFrequency
-                  0x011bd2                  _getGageInfo
-                  0x0130a6                  _getGageType
-                  0x0131d8                  _getLogIntLength
-                  0x013178                  _getLogInterval
-                  0x013648                  _getLogIterations
-                  0x0118f8                  _getSNbytes
-                  0x0139f2                  _getSerialNumber
-                  0x013ada                  _getThermtype
-                  0x013b4e                  _getTxChecksum
-                  0x013b8c                  _handleCOMError
-                  0x013b98                  _handleFRAMResults
-                  0x013bcc                  _hms
-                  0x013cf4                  _hms2s
+                  0x011f6c                  _enableAlarm
+                  0x011ffa                  _enableBT
+                  0x01202c                  _enableChannel
+                  0x012334                  _enableINT1
+                  0x012382                  _enableOP
+                  0x0121b0                  _enableTHChannel
+                  0x0124da                  _enableVWchannel
+                  0x0123c4                  _f32toINT16
+                  0x012642                  _filterArray
+                  0x0126f2                  _formatandDisplayGageInfo
+                  0x012b04                  _getChannel
+                  0x012d86                  _getConversion
+                  0x014aaa                  _getFrequency
+                  0x012e3a                  _getGageInfo
+                  0x01430e                  _getGageType
+                  0x014440                  _getLogIntLength
+                  0x0143e0                  _getLogInterval
+                  0x0148b0                  _getLogIterations
+                  0x012b60                  _getSNbytes
+                  0x014c5a                  _getSerialNumber
+                  0x014d42                  _getThermtype
+                  0x014db6                  _getTxChecksum
+                  0x014df4                  _handleCOMError
+                  0x014e00                  _handleFRAMResults
+                  0x014e34                  _hms
+                  0x014f5c                  _hms2s
                   0x00037c                  _isWDTTO
                   0x000936                  _isalpha
                   0x00094a                  _isgraph
                   0x000a8a                  _isspace
                   0x00133c                  _ldiv
-                  0x013da6                  _loadDefaults
-                  0x0142de                  _loadSV
+                  0x01500e                  _loadDefaults
+                  0x01559e                  _loadSV
                   0x00072c                  _logf
                   0x001fc0                  _main
                   0x001366                  _memchr
                   0x00137a                  _memcpy
-                  0x015788                  _pack
-                  0x0157a6                  _pluck
-                  0x015938                  _pluckNEG
-                  0x015900                  _pluckOFF
-                  0x015910                  _pluckON
-                  0x01592e                  _pluckPOS
-                  0x015942                  _processDS3231Temperature
-                  0x015962                  _processReading
-                  0x015d7c                  _prompt
+                  0x016b24                  _pack
+                  0x016b42                  _pluck
+                  0x016cd4                  _pluckNEG
+                  0x016c9c                  _pluckOFF
+                  0x016cac                  _pluckON
+                  0x016cca                  _pluckPOS
+                  0x016cde                  _processDS3231Temperature
+                  0x016cfe                  _processReading
+                  0x017118                  _prompt
                   0x00043c                  _putsUART1
-                  0x015db2                  _readClock
-                  0x015eea                  _readDS3231temperature
-                  0x01f0a4                  _read_AD5241
-                  0x01e57e                  _read_Flt_FRAM
-                  0x01e288                  _read_Int_FRAM
-                  0x01e424                  _read_float
-                  0x01e3fa                  _read_longFRAM
-                  0x016220                  _read_vw
-                  0x01628e                  _reloadLogTable
-                  0x0162f8                  _resetMemory
-                  0x01634e                  _restoreSettings
-                  0x01659c                  _seconds2hms
-                  0x01e77e                  _selectBank
-                  0x0165ec                  _setADCsleep
-                  0x016608                  _setADCwake
-                  0x01661a                  _setChannelConversion
-                  0x01699e                  _setChannelThermtype
-                  0x016c12                  _setClock
-                  0x016da0                  _setup
-                  0x016ec6                  _shutdown
-                  0x01f180                  _shutdownTimer
-                  0x01f1d6                  _shutdownTimerwithReset
-                  0x01ea0a                  _sleepFRAM
-                  0x016f4a                  _start32KHz
-                  0x016f5e                  _startLogging
-                  0x017192                  _stop32KHz
-                  0x0171ac                  _stopLogging
-                  0x017706                  _storeChannelReading
-                  0x0175b2                  _storeGageType
-                  0x0175d8                  _storeLogInterval
-                  0x017900                  _storeReading
-                  0x018184                  _storeTempChannelReading
-                  0x018266                  _storeTempChannelTHReading
-                  0x01828a                  _storeTempReading
+                  0x01714e                  _readClock
+                  0x017286                  _readDS3231temperature
+                  0x020972                  _read_AD5241
+                  0x01fe4c                  _read_Flt_FRAM
+                  0x01fb56                  _read_Int_FRAM
+                  0x01fcf2                  _read_float
+                  0x01fcc8                  _read_longFRAM
+                  0x0175bc                  _read_vw
+                  0x01762a                  _reloadLogTable
+                  0x017694                  _resetMemory
+                  0x0176ea                  _restoreSettings
+                  0x017938                  _seconds2hms
+                  0x02004c                  _selectBank
+                  0x017988                  _setADCsleep
+                  0x0179a4                  _setADCwake
+                  0x0179b6                  _setChannelConversion
+                  0x017d3a                  _setChannelThermtype
+                  0x017fb0                  _setClock
+                  0x01813e                  _setup
+                  0x018264                  _shutdown
+                  0x020a4e                  _shutdownTimer
+                  0x020aa4                  _shutdownTimerwithReset
+                  0x0202d8                  _sleepFRAM
+                  0x0182e8                  _start32KHz
+                  0x0182fc                  _startLogging
+                  0x018534                  _stop32KHz
+                  0x01854e                  _stopLogging
+                  0x018ab4                  _storeChannelReading
+                  0x018960                  _storeGageType
+                  0x018986                  _storeLogInterval
+                  0x018cde                  _storeReading
+                  0x01973a                  _storeTempChannelReading
+                  0x01982e                  _storeTempChannelTHReading
+                  0x019852                  _storeTempReading
                   0x001388                  _strchr
-                  0x0182ce                  _synch
-                  0x01832c                  _synch_one
-                  0x0183b0                  _synch_zero
-                  0x01861a                  _take_One_Complete_Reading
-                  0x018434                  _take_analog_reading
-                  0x018578                  _take_fast_analog_reading
-                  0x01a44e                  _take_reading
-                  0x01eabc                  _testFRAM
-                  0x01f058                  _testNACK
-                  0x01a596                  _testPoint
-                  0x01a610                  _testPoint2
-                  0x01a63c                  _testReset
-                  0x01a758                  _toBCD
-                  0x01a888                  _toJulian
-                  0x01a9ae                  _toMonthDay
+                  0x019896                  _synch
+                  0x0198f4                  _synch_one
+                  0x019978                  _synch_zero
+                  0x019be2                  _take_One_Complete_Reading
+                  0x0199fc                  _take_analog_reading
+                  0x019b40                  _take_fast_analog_reading
+                  0x01bcf8                  _take_reading
+                  0x02038a                  _testFRAM
+                  0x020926                  _testNACK
+                  0x01be40                  _testPoint
+                  0x01beba                  _testPoint2
+                  0x01bee6                  _testReset
+                  0x01c002                  _toBCD
+                  0x01c132                  _toJulian
+                  0x01c258                  _toMonthDay
                   0x000a9a                  _tolower
-                  0x01acf4                  _unpack
-                  0x01ad16                  _upD8RTCAlarm1
-                  0x01b7a2                  _vwf32toINT16
-                  0x01b8f0                  _wait
-                  0x01b918                  _wait2S
-                  0x01b946                  _wrap_one
-                  0x01b976                  _wrap_stop
-                  0x01b990                  _wrap_zero
-                  0x01f0fe                  _write_AD5241
-                  0x01e44e                  _write_Flt_FRAM
-                  0x01e1c2                  _write_Int_FRAM
-                  0x01e3d0                  _write_longFRAM
+                  0x01c59e                  _unpack
+                  0x01c5c0                  _upD8RTCAlarm1
+                  0x01d070                  _vwf32toINT16
+                  0x01d1be                  _wait
+                  0x01d1e6                  _wait2S
+                  0x01d214                  _wrap_one
+                  0x01d244                  _wrap_stop
+                  0x01d25e                  _wrap_zero
+                  0x0209cc                  _write_AD5241
+                  0x01fd1c                  _write_Flt_FRAM
+                  0x01fa90                  _write_Int_FRAM
+                  0x01fc9e                  _write_longFRAM
                   0x000aa8                  sprintf_cdfFnopuxX.XXeo:_prout
 
 Memory Configuration
@@ -2341,7 +2345,7 @@ Linker script and memory map
 LOAD build/default/production/_ext/1472/LC8004delay_b.o
 LOAD build/default/production/_ext/1472/LC8004extFRAM_i.o
 LOAD build/default/production/_ext/1472/AD5241b.o
-LOAD build/default/production/_ext/1472/lc8004main_2_0.o
+LOAD build/default/production/_ext/1472/lc8004main_2_1.o
                     0x0001                  __MPLAB_BUILD = 0x1
 LOAD c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a
 LOAD c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libfx-elf.a
@@ -2689,12 +2693,12 @@ __FUID3
 .comment
  *(.comment)
 
-.debug_info       0x000000      0x104ef
+.debug_info       0x000000      0x1054d
  *(.debug_info)
  .debug_info      0x000000        0x254 build/default/production/_ext/1472/LC8004delay_b.o
  .debug_info      0x000254        0xdf7 build/default/production/_ext/1472/LC8004extFRAM_i.o
  .debug_info      0x00104b        0x2f2 build/default/production/_ext/1472/AD5241b.o
- .debug_info      0x00133d       0xf1b2 build/default/production/_ext/1472/lc8004main_2_0.o
+ .debug_info      0x00133d       0xf210 build/default/production/_ext/1472/lc8004main_2_1.o
  *(.gnu.linkonce.wi.*)
 
 .debug_abbrev     0x000000        0x639
@@ -2702,28 +2706,28 @@ __FUID3
  .debug_abbrev    0x000000         0xd9 build/default/production/_ext/1472/LC8004delay_b.o
  .debug_abbrev    0x0000d9        0x1bd build/default/production/_ext/1472/LC8004extFRAM_i.o
  .debug_abbrev    0x000296         0xb6 build/default/production/_ext/1472/AD5241b.o
- .debug_abbrev    0x00034c        0x2ed build/default/production/_ext/1472/lc8004main_2_0.o
+ .debug_abbrev    0x00034c        0x2ed build/default/production/_ext/1472/lc8004main_2_1.o
 
-.debug_line       0x000000       0x4120
+.debug_line       0x000000       0x4373
  *(.debug_line)
  .debug_line      0x000000         0xb8 build/default/production/_ext/1472/LC8004delay_b.o
  .debug_line      0x0000b8        0x329 build/default/production/_ext/1472/LC8004extFRAM_i.o
  .debug_line      0x0003e1         0xc4 build/default/production/_ext/1472/AD5241b.o
- .debug_line      0x0004a5       0x3c7b build/default/production/_ext/1472/lc8004main_2_0.o
+ .debug_line      0x0004a5       0x3ece build/default/production/_ext/1472/lc8004main_2_1.o
 
-.debug_frame      0x000000       0x27a0
+.debug_frame      0x000000       0x27d8
  *(.debug_frame)
  .debug_frame     0x000000         0x90 build/default/production/_ext/1472/LC8004delay_b.o
  .debug_frame     0x000090        0x16a build/default/production/_ext/1472/LC8004extFRAM_i.o
  .debug_frame     0x0001fa         0x4c build/default/production/_ext/1472/AD5241b.o
- .debug_frame     0x000246       0x255a build/default/production/_ext/1472/lc8004main_2_0.o
+ .debug_frame     0x000246       0x2592 build/default/production/_ext/1472/lc8004main_2_1.o
 
-.debug_str        0x000000       0x1099
+.debug_str        0x000000       0x1119
  *(.debug_str)
  .debug_str       0x000000         0x20 build/default/production/_ext/1472/LC8004delay_b.o
  .debug_str       0x000020         0xa6 build/default/production/_ext/1472/LC8004extFRAM_i.o
  .debug_str       0x0000c6          0xc build/default/production/_ext/1472/AD5241b.o
- .debug_str       0x0000d2        0xfc7 build/default/production/_ext/1472/lc8004main_2_0.o
+ .debug_str       0x0000d2       0x1047 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .debug_loc
  *(.debug_loc)
@@ -2732,7 +2736,7 @@ __FUID3
  *(.debug_macinfo)
 
 .debug_pubnames
-                  0x000000       0x2fdd
+                  0x000000       0x2ff1
  *(.debug_pubnames)
  .debug_pubnames
                   0x000000         0x5f build/default/production/_ext/1472/LC8004delay_b.o
@@ -2741,7 +2745,7 @@ __FUID3
  .debug_pubnames
                   0x000176         0x33 build/default/production/_ext/1472/AD5241b.o
  .debug_pubnames
-                  0x0001a9       0x2e34 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x0001a9       0x2e48 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .debug_ranges
  *(.debug_ranges)
@@ -2755,7 +2759,7 @@ __FUID3
  .debug_aranges
                   0x000030         0x18 build/default/production/_ext/1472/AD5241b.o
  .debug_aranges
-                  0x000048         0x18 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000048         0x18 build/default/production/_ext/1472/lc8004main_2_1.o
                     0x0000                  WREG0 = 0x0
                     0x0000                  _WREG0 = 0x0
                     0x0002                  WREG1 = 0x2
@@ -3988,7 +3992,7 @@ LOAD c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-pic30
 LOAD c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\libm-elf.a
 LOAD c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a
 END GROUP
-OUTPUT(dist/default/production/8004v2_0.production.elf elf32-pic30)
+OUTPUT(dist/default/production/8004v2_1.production.elf elf32-pic30)
 LOAD FBS
 LOAD FSS
 LOAD FGS
@@ -4006,7 +4010,7 @@ LOAD shared_data_init
  .debug_pubtypes
                   0x000165         0x35 build/default/production/_ext/1472/AD5241b.o
  .debug_pubtypes
-                  0x00019a        0x98d build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00019a        0x98d build/default/production/_ext/1472/lc8004main_2_1.o
 
 __c30_signature
                   0x000b27        0x264
@@ -4017,7 +4021,7 @@ __c30_signature
  __c30_signature
                   0x000b33          0x6 build/default/production/_ext/1472/AD5241b.o
  __c30_signature
-                  0x000b39          0x6 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000b39          0x6 build/default/production/_ext/1472/lc8004main_2_1.o
  __c30_signature
                   0x000b3f          0x6 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib/dsPIC33F\libp33FJ256GP710A-elf.a(CloseI2C1.o)
  __c30_signature
@@ -4220,7 +4224,7 @@ __c30_signature
                     0x0800                  _errno
 
 .data               0x0802       0x1fb4
- .data              0x0802       0x1fb4 build/default/production/_ext/1472/lc8004main_2_0.o
+ .data              0x0802       0x1fb4 build/default/production/_ext/1472/lc8004main_2_1.o
                     0x0802                  _gain
                     0x0804                  _maxSingle
                     0x0806                  _maxFour
@@ -4238,7 +4242,7 @@ __c30_signature
                     0x081b                  _minScanSixteen
                     0x081c                  _minScanEightVW
                     0x081d                  _minScanSixteenVW
-                    0x081e                  _mixScanSixteenTH
+                    0x081e                  _minScanSixteenTH
                     0x081f                  _minScanThirtytwoVW
                     0x0820                  _minScanEightTH
                     0x0821                  _minScanThirtytwoTH
@@ -4556,7 +4560,7 @@ __c30_signature
                     0x2771                  _por
 
 .bss                0x27b6        0x31e
- .bss               0x27b6        0x31e build/default/production/_ext/1472/lc8004main_2_0.o
+ .bss               0x27b6        0x31e build/default/production/_ext/1472/lc8004main_2_1.o
                     0x27b6                  _VWflags
                     0x27b8                  _VWflagsbits
                     0x27ba                  _FRAM_MEMORY
@@ -4718,668 +4722,668 @@ __c30_signature
 .data               0x2bca          0x2
  .data              0x2bca          0x2 c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-c-elf.a(xgenld_cdfFnopuxX.XXeo)
 
-_03F89900_at_address_00F80006
+_03FB9900_at_address_00F80006
                   0xf80006          0x2
- _03F89900_at_address_00F80006
-                  0xf80006          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+ _03FB9900_at_address_00F80006
+                  0xf80006          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
                   0xf80006                  _FOSCSEL
 
-_03F89960_at_address_00F80008
+_03FB9960_at_address_00F80008
                   0xf80008          0x2
- _03F89960_at_address_00F80008
-                  0xf80008          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+ _03FB9960_at_address_00F80008
+                  0xf80008          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
                   0xf80008                  _FOSC
 
-_03F899C0_at_address_00F8000A
+_03FB99C0_at_address_00F8000A
                   0xf8000a          0x2
- _03F899C0_at_address_00F8000A
-                  0xf8000a          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+ _03FB99C0_at_address_00F8000A
+                  0xf8000a          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
                   0xf8000a                  _FWDT
 
-_03F89A20_at_address_00F8000C
+_03FB9A20_at_address_00F8000C
                   0xf8000c          0x2
- _03F89A20_at_address_00F8000C
-                  0xf8000c          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+ _03FB9A20_at_address_00F8000C
+                  0xf8000c          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
                   0xf8000c                  _FPOR
 
-_03F89A80_at_address_00F8000E
+_03FB9A80_at_address_00F8000E
                   0xf8000e          0x2
- _03F89A80_at_address_00F8000E
-                  0xf8000e          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+ _03FB9A80_at_address_00F8000E
+                  0xf8000e          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
                   0xf8000e                  _FICD
 
 .ivt._INT0Interrupt
                   0x000014          0x2
  .ivt._INT0Interrupt
-                  0x000014          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000014          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._IC1Interrupt
                   0x000016          0x2
  .ivt._IC1Interrupt
-                  0x000016          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000016          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._OC1Interrupt
                   0x000018          0x2
  .ivt._OC1Interrupt
-                  0x000018          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000018          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._T1Interrupt
                   0x00001a          0x2
  .ivt._T1Interrupt
-                  0x00001a          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00001a          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._DMA0Interrupt
                   0x00001c          0x2
  .ivt._DMA0Interrupt
-                  0x00001c          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00001c          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._IC2Interrupt
                   0x00001e          0x2
  .ivt._IC2Interrupt
-                  0x00001e          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00001e          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._OC2Interrupt
                   0x000020          0x2
  .ivt._OC2Interrupt
-                  0x000020          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000020          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._T2Interrupt
                   0x000022          0x2
  .ivt._T2Interrupt
-                  0x000022          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000022          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._T3Interrupt
                   0x000024          0x2
  .ivt._T3Interrupt
-                  0x000024          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000024          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._SPI1Interrupt
                   0x000028          0x2
  .ivt._SPI1Interrupt
-                  0x000028          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000028          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._U1TXInterrupt
                   0x00002c          0x2
  .ivt._U1TXInterrupt
-                  0x00002c          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00002c          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._ADC1Interrupt
                   0x00002e          0x2
  .ivt._ADC1Interrupt
-                  0x00002e          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00002e          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._DMA1Interrupt
                   0x000030          0x2
  .ivt._DMA1Interrupt
-                  0x000030          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000030          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._SI2C1Interrupt
                   0x000034          0x2
  .ivt._SI2C1Interrupt
-                  0x000034          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000034          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._MI2C1Interrupt
                   0x000036          0x2
  .ivt._MI2C1Interrupt
-                  0x000036          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000036          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._CNInterrupt
                   0x00003a          0x2
  .ivt._CNInterrupt
-                  0x00003a          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00003a          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._ADC2Interrupt
                   0x00003e          0x2
  .ivt._ADC2Interrupt
-                  0x00003e          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00003e          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._IC7Interrupt
                   0x000040          0x2
  .ivt._IC7Interrupt
-                  0x000040          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000040          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._IC8Interrupt
                   0x000042          0x2
  .ivt._IC8Interrupt
-                  0x000042          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000042          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._DMA2Interrupt
                   0x000044          0x2
  .ivt._DMA2Interrupt
-                  0x000044          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000044          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._OC3Interrupt
                   0x000046          0x2
  .ivt._OC3Interrupt
-                  0x000046          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000046          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._OC4Interrupt
                   0x000048          0x2
  .ivt._OC4Interrupt
-                  0x000048          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000048          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._T4Interrupt
                   0x00004a          0x2
  .ivt._T4Interrupt
-                  0x00004a          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00004a          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._INT2Interrupt
                   0x00004e          0x2
  .ivt._INT2Interrupt
-                  0x00004e          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00004e          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._U2RXInterrupt
                   0x000050          0x2
  .ivt._U2RXInterrupt
-                  0x000050          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000050          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._U2TXInterrupt
                   0x000052          0x2
  .ivt._U2TXInterrupt
-                  0x000052          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000052          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._SPI2ErrInterrupt
                   0x000054          0x2
  .ivt._SPI2ErrInterrupt
-                  0x000054          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000054          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._SPI2Interrupt
                   0x000056          0x2
  .ivt._SPI2Interrupt
-                  0x000056          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000056          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._C1RxRdyInterrupt
                   0x000058          0x2
  .ivt._C1RxRdyInterrupt
-                  0x000058          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000058          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._C1Interrupt
                   0x00005a          0x2
  .ivt._C1Interrupt
-                  0x00005a          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00005a          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._DMA3Interrupt
                   0x00005c          0x2
  .ivt._DMA3Interrupt
-                  0x00005c          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00005c          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._IC3Interrupt
                   0x00005e          0x2
  .ivt._IC3Interrupt
-                  0x00005e          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00005e          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._IC4Interrupt
                   0x000060          0x2
  .ivt._IC4Interrupt
-                  0x000060          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000060          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._IC5Interrupt
                   0x000062          0x2
  .ivt._IC5Interrupt
-                  0x000062          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000062          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._IC6Interrupt
                   0x000064          0x2
  .ivt._IC6Interrupt
-                  0x000064          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000064          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._OC5Interrupt
                   0x000066          0x2
  .ivt._OC5Interrupt
-                  0x000066          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000066          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._OC6Interrupt
                   0x000068          0x2
  .ivt._OC6Interrupt
-                  0x000068          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000068          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._OC7Interrupt
                   0x00006a          0x2
  .ivt._OC7Interrupt
-                  0x00006a          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00006a          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._OC8Interrupt
                   0x00006c          0x2
  .ivt._OC8Interrupt
-                  0x00006c          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00006c          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._DMA4Interrupt
                   0x000070          0x2
  .ivt._DMA4Interrupt
-                  0x000070          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000070          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._T6Interrupt
                   0x000072          0x2
  .ivt._T6Interrupt
-                  0x000072          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000072          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._SI2C2Interrupt
                   0x000076          0x2
  .ivt._SI2C2Interrupt
-                  0x000076          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000076          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._MI2C2Interrupt
                   0x000078          0x2
  .ivt._MI2C2Interrupt
-                  0x000078          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000078          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._T8Interrupt
                   0x00007a          0x2
  .ivt._T8Interrupt
-                  0x00007a          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00007a          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._T9Interrupt
                   0x00007c          0x2
  .ivt._T9Interrupt
-                  0x00007c          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00007c          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._INT3Interrupt
                   0x00007e          0x2
  .ivt._INT3Interrupt
-                  0x00007e          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00007e          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._INT4Interrupt
                   0x000080          0x2
  .ivt._INT4Interrupt
-                  0x000080          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000080          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._C2RxRdyInterrupt
                   0x000082          0x2
  .ivt._C2RxRdyInterrupt
-                  0x000082          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000082          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._C2Interrupt
                   0x000084          0x2
  .ivt._C2Interrupt
-                  0x000084          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000084          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._DCIErrInterrupt
                   0x00008a          0x2
  .ivt._DCIErrInterrupt
-                  0x00008a          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00008a          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._DCIInterrupt
                   0x00008c          0x2
  .ivt._DCIInterrupt
-                  0x00008c          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00008c          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._DMA5Interrupt
                   0x00008e          0x2
  .ivt._DMA5Interrupt
-                  0x00008e          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00008e          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._U1ErrInterrupt
                   0x000096          0x2
  .ivt._U1ErrInterrupt
-                  0x000096          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000096          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._U2ErrInterrupt
                   0x000098          0x2
  .ivt._U2ErrInterrupt
-                  0x000098          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000098          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._DMA6Interrupt
                   0x00009c          0x2
  .ivt._DMA6Interrupt
-                  0x00009c          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00009c          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._DMA7Interrupt
                   0x00009e          0x2
  .ivt._DMA7Interrupt
-                  0x00009e          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00009e          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._C1TxReqInterrupt
                   0x0000a0          0x2
  .ivt._C1TxReqInterrupt
-                  0x0000a0          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x0000a0          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._C2TxReqInterrupt
                   0x0000a2          0x2
  .ivt._C2TxReqInterrupt
-                  0x0000a2          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x0000a2          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltINT0Interrupt
                   0x000114          0x2
  .aivt._AltINT0Interrupt
-                  0x000114          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000114          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltIC1Interrupt
                   0x000116          0x2
  .aivt._AltIC1Interrupt
-                  0x000116          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000116          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltOC1Interrupt
                   0x000118          0x2
  .aivt._AltOC1Interrupt
-                  0x000118          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000118          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltT1Interrupt
                   0x00011a          0x2
  .aivt._AltT1Interrupt
-                  0x00011a          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00011a          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltDMA0Interrupt
                   0x00011c          0x2
  .aivt._AltDMA0Interrupt
-                  0x00011c          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00011c          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltIC2Interrupt
                   0x00011e          0x2
  .aivt._AltIC2Interrupt
-                  0x00011e          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00011e          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltOC2Interrupt
                   0x000120          0x2
  .aivt._AltOC2Interrupt
-                  0x000120          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000120          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltT2Interrupt
                   0x000122          0x2
  .aivt._AltT2Interrupt
-                  0x000122          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000122          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltT3Interrupt
                   0x000124          0x2
  .aivt._AltT3Interrupt
-                  0x000124          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000124          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltSPI1Interrupt
                   0x000128          0x2
  .aivt._AltSPI1Interrupt
-                  0x000128          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000128          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltU1TXInterrupt
                   0x00012c          0x2
  .aivt._AltU1TXInterrupt
-                  0x00012c          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00012c          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltADC1Interrupt
                   0x00012e          0x2
  .aivt._AltADC1Interrupt
-                  0x00012e          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00012e          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltDMA1Interrupt
                   0x000130          0x2
  .aivt._AltDMA1Interrupt
-                  0x000130          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000130          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltSI2C1Interrupt
                   0x000134          0x2
  .aivt._AltSI2C1Interrupt
-                  0x000134          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000134          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltMI2C1Interrupt
                   0x000136          0x2
  .aivt._AltMI2C1Interrupt
-                  0x000136          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000136          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltCNInterrupt
                   0x00013a          0x2
  .aivt._AltCNInterrupt
-                  0x00013a          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00013a          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltADC2Interrupt
                   0x00013e          0x2
  .aivt._AltADC2Interrupt
-                  0x00013e          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00013e          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltIC7Interrupt
                   0x000140          0x2
  .aivt._AltIC7Interrupt
-                  0x000140          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000140          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltIC8Interrupt
                   0x000142          0x2
  .aivt._AltIC8Interrupt
-                  0x000142          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000142          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltDMA2Interrupt
                   0x000144          0x2
  .aivt._AltDMA2Interrupt
-                  0x000144          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000144          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltOC3Interrupt
                   0x000146          0x2
  .aivt._AltOC3Interrupt
-                  0x000146          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000146          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltOC4Interrupt
                   0x000148          0x2
  .aivt._AltOC4Interrupt
-                  0x000148          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000148          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltT4Interrupt
                   0x00014a          0x2
  .aivt._AltT4Interrupt
-                  0x00014a          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00014a          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltINT2Interrupt
                   0x00014e          0x2
  .aivt._AltINT2Interrupt
-                  0x00014e          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00014e          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltU2RXInterrupt
                   0x000150          0x2
  .aivt._AltU2RXInterrupt
-                  0x000150          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000150          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltU2TXInterrupt
                   0x000152          0x2
  .aivt._AltU2TXInterrupt
-                  0x000152          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000152          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltSPI2ErrInterrupt
                   0x000154          0x2
  .aivt._AltSPI2ErrInterrupt
-                  0x000154          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000154          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltSPI2Interrupt
                   0x000156          0x2
  .aivt._AltSPI2Interrupt
-                  0x000156          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000156          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltC1RxRdyInterrupt
                   0x000158          0x2
  .aivt._AltC1RxRdyInterrupt
-                  0x000158          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000158          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltC1Interrupt
                   0x00015a          0x2
  .aivt._AltC1Interrupt
-                  0x00015a          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00015a          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltDMA3Interrupt
                   0x00015c          0x2
  .aivt._AltDMA3Interrupt
-                  0x00015c          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00015c          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltIC3Interrupt
                   0x00015e          0x2
  .aivt._AltIC3Interrupt
-                  0x00015e          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00015e          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltIC4Interrupt
                   0x000160          0x2
  .aivt._AltIC4Interrupt
-                  0x000160          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000160          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltIC5Interrupt
                   0x000162          0x2
  .aivt._AltIC5Interrupt
-                  0x000162          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000162          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltIC6Interrupt
                   0x000164          0x2
  .aivt._AltIC6Interrupt
-                  0x000164          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000164          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltOC5Interrupt
                   0x000166          0x2
  .aivt._AltOC5Interrupt
-                  0x000166          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000166          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltOC6Interrupt
                   0x000168          0x2
  .aivt._AltOC6Interrupt
-                  0x000168          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000168          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltOC7Interrupt
                   0x00016a          0x2
  .aivt._AltOC7Interrupt
-                  0x00016a          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00016a          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltOC8Interrupt
                   0x00016c          0x2
  .aivt._AltOC8Interrupt
-                  0x00016c          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00016c          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltDMA4Interrupt
                   0x000170          0x2
  .aivt._AltDMA4Interrupt
-                  0x000170          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000170          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltT6Interrupt
                   0x000172          0x2
  .aivt._AltT6Interrupt
-                  0x000172          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000172          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltSI2C2Interrupt
                   0x000176          0x2
  .aivt._AltSI2C2Interrupt
-                  0x000176          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000176          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltMI2C2Interrupt
                   0x000178          0x2
  .aivt._AltMI2C2Interrupt
-                  0x000178          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000178          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltT8Interrupt
                   0x00017a          0x2
  .aivt._AltT8Interrupt
-                  0x00017a          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00017a          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltT9Interrupt
                   0x00017c          0x2
  .aivt._AltT9Interrupt
-                  0x00017c          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00017c          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltINT3Interrupt
                   0x00017e          0x2
  .aivt._AltINT3Interrupt
-                  0x00017e          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00017e          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltINT4Interrupt
                   0x000180          0x2
  .aivt._AltINT4Interrupt
-                  0x000180          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000180          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltC2RxRdyInterrupt
                   0x000182          0x2
  .aivt._AltC2RxRdyInterrupt
-                  0x000182          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000182          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltC2Interrupt
                   0x000184          0x2
  .aivt._AltC2Interrupt
-                  0x000184          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000184          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltDCIErrInterrupt
                   0x00018a          0x2
  .aivt._AltDCIErrInterrupt
-                  0x00018a          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00018a          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltDCIInterrupt
                   0x00018c          0x2
  .aivt._AltDCIInterrupt
-                  0x00018c          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00018c          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltDMA5Interrupt
                   0x00018e          0x2
  .aivt._AltDMA5Interrupt
-                  0x00018e          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00018e          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltU1ErrInterrupt
                   0x000196          0x2
  .aivt._AltU1ErrInterrupt
-                  0x000196          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000196          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltU2ErrInterrupt
                   0x000198          0x2
  .aivt._AltU2ErrInterrupt
-                  0x000198          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000198          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltDMA6Interrupt
                   0x00019c          0x2
  .aivt._AltDMA6Interrupt
-                  0x00019c          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00019c          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltDMA7Interrupt
                   0x00019e          0x2
  .aivt._AltDMA7Interrupt
-                  0x00019e          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00019e          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltC1TxReqInterrupt
                   0x0001a0          0x2
  .aivt._AltC1TxReqInterrupt
-                  0x0001a0          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x0001a0          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltC2TxReqInterrupt
                   0x0001a2          0x2
  .aivt._AltC2TxReqInterrupt
-                  0x0001a2          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x0001a2          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._U1RXInterrupt
                   0x00002a          0x2
  .ivt._U1RXInterrupt
-                  0x00002a          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00002a          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltU1RXInterrupt
                   0x00012a          0x2
  .aivt._AltU1RXInterrupt
-                  0x00012a          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00012a          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._INT1Interrupt
                   0x00003c          0x2
  .ivt._INT1Interrupt
-                  0x00003c          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00003c          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltINT1Interrupt
                   0x00013c          0x2
  .aivt._AltINT1Interrupt
-                  0x00013c          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00013c          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._OscillatorFail
                   0x000006          0x2
  .ivt._OscillatorFail
-                  0x000006          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000006          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltOscillatorFail
                   0x000106          0x2
  .aivt._AltOscillatorFail
-                  0x000106          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000106          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._T5Interrupt
                   0x00004c          0x2
  .ivt._T5Interrupt
-                  0x00004c          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00004c          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltT5Interrupt
                   0x00014c          0x2
  .aivt._AltT5Interrupt
-                  0x00014c          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x00014c          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .ivt._T7Interrupt
                   0x000074          0x2
  .ivt._T7Interrupt
-                  0x000074          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000074          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
 .aivt._AltT7Interrupt
                   0x000174          0x2
  .aivt._AltT7Interrupt
-                  0x000174          0x2 build/default/production/_ext/1472/lc8004main_2_0.o
+                  0x000174          0x2 build/default/production/_ext/1472/lc8004main_2_1.o
 
-.text             0x001fc0      0x1ab42
- .text            0x001fc0      0x1ab42 build/default/production/_ext/1472/lc8004main_2_0.o
+.text             0x001fc0      0x1c410
+ .text            0x001fc0      0x1c410 build/default/production/_ext/1472/lc8004main_2_1.o
                   0x001fc0                  _main
                   0x00233a                  __3VX_on
                   0x002350                  __3VX_off
@@ -5395,315 +5399,317 @@ _03F89A80_at_address_00F8000E
                   0x0032c4                  _Buffer2Decimal
                   0x0034cc                  _Buf2GageData
                   0x0039e2                  _checkScanInterval
-                  0x003c24                  _checkSynch
-                  0x003ce8                  _clockMux
-                  0x003d10                  _clockThMux
-                  0x003d24                  _CMDcomm
-                  0x007476                  _CMD_LINE
-                  0x007492                  _configMODBUStimers
-                  0x00751e                  _configShutdownTimer
-                  0x007530                  _configTimers
-                  0x007562                  _configUARTnormal
-                  0x0075a4                  _controlPortStatus
-                  0x007774                  _CRC
-                  0x0077f8                  _CRC_SN
-                  0x007858                  _crlf
-                  0x00787e                  _debounce
-                  0x00789c                  _disableAlarm
-                  0x0078f8                  _disableBT
-                  0x007950                  _disableChannel
-                  0x007adc                  _disableTHChannel
-                  0x007c68                  _disableINT1
-                  0x007c72                  _disableOP
-                  0x007cbe                  _DISLOGINT
-                  0x007ce8                  _disableTimers
-                  0x007cf6                  _disableVWchannel
-                  0x007d14                  _displayBCD
-                  0x007d6a                  _displayClock
-                  0x007ea6                  _displayFRAMError
-                  0x007ee2                  _displayGageInfo
-                  0x008ae0                  _displayLoggingWillStart
-                  0x008b40                  _displayLoggingWillStop
-                  0x008bb2                  _displayLogInterval
-                  0x008d82                  _displayLogTable
-                  0x008dc2                  _displayMemoryStatus
-                  0x008ed6                  _displayMUX
-                  0x00a462                  _displayReading
-                  0x00d150                  _displayScanInterval
-                  0x00d194                  _displayTempReading
-                  0x010b06                  _displayTemporaryStatus
-                  0x010c52                  _displayTestMenu
-                  0x010d04                  _enableAlarm
-                  0x010d92                  _enableBT
-                  0x010dc4                  _enableChannel
-                  0x010f48                  _enableTHChannel
-                  0x0110cc                  _enableINT1
-                  0x0110d8                  _ENLOGINT
-                  0x01111a                  _enableOP
-                  0x01115c                  _f32toINT16
-                  0x011272                  _enableVWchannel
-                  0x0113da                  _filterArray
-                  0x01148a                  _formatandDisplayGageInfo
-                  0x01189c                  _getChannel
-                  0x0118f8                  _getSNbytes
-                  0x011b1e                  _getConversion
-                  0x011bd2                  _getGageInfo
-                  0x0130a6                  _getGageType
-                  0x013178                  _getLogInterval
-                  0x0131d8                  _getLogIntLength
-                  0x013648                  _getLogIterations
-                  0x013842                  _getFrequency
-                  0x0139f2                  _getSerialNumber
-                  0x013ada                  _getThermtype
-                  0x013b4e                  _getTxChecksum
-                  0x013b8c                  _handleCOMError
-                  0x013b98                  _handleFRAMResults
-                  0x013bcc                  _hms
-                  0x013cf4                  _hms2s
-                  0x013d58                  _INT16tof32
-                  0x013da6                  _loadDefaults
-                  0x0142de                  _loadSV
-                  0x014314                  _MODBUScheckScanInterval
-                  0x014418                  _MODBUScomm
-                  0x01519a                  _MODBUS_DisableStartTime
-                  0x0151e2                  _MODBUS_EnableStartTime
-                  0x01528c                  _MODBUS_DisableStopTime
-                  0x0152c8                  _MODBUS_EnableStopTime
-                  0x0152d0                  _MODBUS_RX
-                  0x0153fe                  _MODBUS_TX
-                  0x015468                  _MX1
-                  0x0154e8                  _MX4
-                  0x015538                  _MX8
-                  0x015588                  _MX8V
-                  0x0155d8                  _MX8T
-                  0x015628                  _MX16
-                  0x015678                  _MX32
-                  0x0156c8                  _MX32T
-                  0x015718                  _O_D
-                  0x015746                  _O_E
-                  0x015788                  _pack
-                  0x0157a6                  _pluck
-                  0x015900                  _pluckOFF
-                  0x015910                  _pluckON
-                  0x01592e                  _pluckPOS
-                  0x015938                  _pluckNEG
-                  0x015942                  _processDS3231Temperature
-                  0x015962                  _processReading
-                  0x015d7c                  _prompt
-                  0x015db2                  _readClock
-                  0x015eea                  _readDS3231temperature
-                  0x015f18                  _R
-                  0x015f50                  _READ_TIME
-                  0x016146                  _ReadSN
-                  0x016206                  _RST
-                  0x016220                  _read_vw
-                  0x01628e                  _reloadLogTable
-                  0x0162f8                  _resetMemory
-                  0x01634e                  _restoreSettings
-                  0x016400                  _RTChms2s
-                  0x0164e6                  _RTCtoDecimal
-                  0x01659c                  _seconds2hms
-                  0x0165ec                  _setADCsleep
-                  0x016608                  _setADCwake
-                  0x01661a                  _setChannelConversion
-                  0x01699e                  _setChannelThermtype
-                  0x016c12                  _setClock
-                  0x016da0                  _setup
-                  0x016ec6                  _shutdown
-                  0x016f4a                  _start32KHz
-                  0x016f5e                  _startLogging
-                  0x0170f8                  _START
-                  0x017192                  _stop32KHz
-                  0x0171ac                  _stopLogging
-                  0x017368                  _STOP
-                  0x01743c                  _STOPTIME
-                  0x0175b2                  _storeGageType
-                  0x0175d8                  _storeLogInterval
-                  0x017706                  _storeChannelReading
-                  0x017900                  _storeReading
-                  0x018184                  _storeTempChannelReading
-                  0x018266                  _storeTempChannelTHReading
-                  0x01828a                  _storeTempReading
-                  0x0182ce                  _synch
-                  0x01832c                  _synch_one
-                  0x0183b0                  _synch_zero
-                  0x018434                  _take_analog_reading
-                  0x018578                  _take_fast_analog_reading
-                  0x01861a                  _take_One_Complete_Reading
-                  0x01a44e                  _take_reading
-                  0x01a596                  _testPoint
-                  0x01a610                  _testPoint2
-                  0x01a63c                  _testReset
-                  0x01a758                  _toBCD
-                  0x01a888                  _toJulian
-                  0x01a9ae                  _toMonthDay
-                  0x01acf4                  _unpack
-                  0x01ad16                  _upD8RTCAlarm1
-                  0x01b542                  _V_HT2C
-                  0x01b7a2                  _vwf32toINT16
-                  0x01b8f0                  _wait
-                  0x01b918                  _wait2S
-                  0x01b946                  _wrap_one
-                  0x01b976                  _wrap_stop
-                  0x01b990                  _wrap_zero
-                  0x01b9c0                  _WRITE_TIME
-                  0x01ba72                  _X
-                  0x01bab8                  __INT0Interrupt
-                  0x01bacc                  __IC1Interrupt
-                  0x01bae0                  __OC1Interrupt
-                  0x01baf4                  __T1Interrupt
-                  0x01bb08                  __DMA0Interrupt
-                  0x01bb1c                  __IC2Interrupt
-                  0x01bb30                  __OC2Interrupt
-                  0x01bb44                  __T2Interrupt
-                  0x01bb58                  __T3Interrupt
-                  0x01bb6c                  __SPI1Interrupt
-                  0x01bb80                  __U1TXInterrupt
-                  0x01bb94                  __ADC1Interrupt
-                  0x01bba8                  __DMA1Interrupt
-                  0x01bbbc                  __SI2C1Interrupt
-                  0x01bbd0                  __MI2C1Interrupt
-                  0x01bbe4                  __CNInterrupt
-                  0x01bbf8                  __ADC2Interrupt
-                  0x01bc0c                  __IC7Interrupt
-                  0x01bc20                  __IC8Interrupt
-                  0x01bc34                  __DMA2Interrupt
-                  0x01bc48                  __OC3Interrupt
-                  0x01bc5c                  __OC4Interrupt
-                  0x01bc70                  __T4Interrupt
-                  0x01bc84                  __INT2Interrupt
-                  0x01bc98                  __U2RXInterrupt
-                  0x01bcac                  __U2TXInterrupt
-                  0x01bcc0                  __SPI2ErrInterrupt
-                  0x01bcd4                  __SPI2Interrupt
-                  0x01bce8                  __C1RxRdyInterrupt
-                  0x01bcfc                  __C1Interrupt
-                  0x01bd10                  __DMA3Interrupt
-                  0x01bd24                  __IC3Interrupt
-                  0x01bd38                  __IC4Interrupt
-                  0x01bd4c                  __IC5Interrupt
-                  0x01bd60                  __IC6Interrupt
-                  0x01bd74                  __OC5Interrupt
-                  0x01bd88                  __OC6Interrupt
-                  0x01bd9c                  __OC7Interrupt
-                  0x01bdb0                  __OC8Interrupt
-                  0x01bdc4                  __DMA4Interrupt
-                  0x01bdd8                  __T6Interrupt
-                  0x01bdec                  __SI2C2Interrupt
-                  0x01be00                  __MI2C2Interrupt
-                  0x01be14                  __T8Interrupt
-                  0x01be28                  __T9Interrupt
-                  0x01be3c                  __INT3Interrupt
-                  0x01be50                  __INT4Interrupt
-                  0x01be64                  __C2RxRdyInterrupt
-                  0x01be78                  __C2Interrupt
-                  0x01be8c                  __DCIErrInterrupt
-                  0x01bea0                  __DCIInterrupt
-                  0x01beb4                  __DMA5Interrupt
-                  0x01bec8                  __U1ErrInterrupt
-                  0x01bedc                  __U2ErrInterrupt
-                  0x01bef0                  __DMA6Interrupt
-                  0x01bf04                  __DMA7Interrupt
-                  0x01bf18                  __C1TxReqInterrupt
-                  0x01bf2c                  __C2TxReqInterrupt
-                  0x01bf40                  __AltINT0Interrupt
-                  0x01bf54                  __AltIC1Interrupt
-                  0x01bf68                  __AltOC1Interrupt
-                  0x01bf7c                  __AltT1Interrupt
-                  0x01bf90                  __AltDMA0Interrupt
-                  0x01bfa4                  __AltIC2Interrupt
-                  0x01bfb8                  __AltOC2Interrupt
-                  0x01bfcc                  __AltT2Interrupt
-                  0x01bfe0                  __AltT3Interrupt
-                  0x01bff4                  __AltSPI1Interrupt
-                  0x01c008                  __AltU1TXInterrupt
-                  0x01c01c                  __AltADC1Interrupt
-                  0x01c030                  __AltDMA1Interrupt
-                  0x01c044                  __AltSI2C1Interrupt
-                  0x01c058                  __AltMI2C1Interrupt
-                  0x01c06c                  __AltCNInterrupt
-                  0x01c080                  __AltADC2Interrupt
-                  0x01c094                  __AltIC7Interrupt
-                  0x01c0a8                  __AltIC8Interrupt
-                  0x01c0bc                  __AltDMA2Interrupt
-                  0x01c0d0                  __AltOC3Interrupt
-                  0x01c0e4                  __AltOC4Interrupt
-                  0x01c0f8                  __AltT4Interrupt
-                  0x01c10c                  __AltINT2Interrupt
-                  0x01c120                  __AltU2RXInterrupt
-                  0x01c134                  __AltU2TXInterrupt
-                  0x01c148                  __AltSPI2ErrInterrupt
-                  0x01c15c                  __AltSPI2Interrupt
-                  0x01c170                  __AltC1RxRdyInterrupt
-                  0x01c184                  __AltC1Interrupt
-                  0x01c198                  __AltDMA3Interrupt
-                  0x01c1ac                  __AltIC3Interrupt
-                  0x01c1c0                  __AltIC4Interrupt
-                  0x01c1d4                  __AltIC5Interrupt
-                  0x01c1e8                  __AltIC6Interrupt
-                  0x01c1fc                  __AltOC5Interrupt
-                  0x01c210                  __AltOC6Interrupt
-                  0x01c224                  __AltOC7Interrupt
-                  0x01c238                  __AltOC8Interrupt
-                  0x01c24c                  __AltDMA4Interrupt
-                  0x01c260                  __AltT6Interrupt
-                  0x01c274                  __AltSI2C2Interrupt
-                  0x01c288                  __AltMI2C2Interrupt
-                  0x01c29c                  __AltT8Interrupt
-                  0x01c2b0                  __AltT9Interrupt
-                  0x01c2c4                  __AltINT3Interrupt
-                  0x01c2d8                  __AltINT4Interrupt
-                  0x01c2ec                  __AltC2RxRdyInterrupt
-                  0x01c300                  __AltC2Interrupt
-                  0x01c314                  __AltDCIErrInterrupt
-                  0x01c328                  __AltDCIInterrupt
-                  0x01c33c                  __AltDMA5Interrupt
-                  0x01c350                  __AltU1ErrInterrupt
-                  0x01c364                  __AltU2ErrInterrupt
-                  0x01c378                  __AltDMA6Interrupt
-                  0x01c38c                  __AltDMA7Interrupt
-                  0x01c3a0                  __AltC1TxReqInterrupt
-                  0x01c3b4                  __AltC2TxReqInterrupt
-                  0x01c3c8                  __U1RXInterrupt
-                  0x01c408                  __AltU1RXInterrupt
-                  0x01c448                  __INT1Interrupt
-                  0x01c76c                  __AltINT1Interrupt
-                  0x01ca5e                  __OscillatorFail
-                  0x01ca72                  __AltOscillatorFail
-                  0x01ca86                  __T5Interrupt
-                  0x01caa8                  __AltT5Interrupt
-                  0x01cac8                  __T7Interrupt
-                  0x01cae8                  __AltT7Interrupt
+                  0x003cb0                  _checkSynch
+                  0x003d76                  _clockMux
+                  0x003d9e                  _clockThMux
+                  0x003db2                  _CMDcomm
+                  0x007626                  _CMD_LINE
+                  0x007642                  _configMODBUStimers
+                  0x0076ce                  _configShutdownTimer
+                  0x0076e0                  _configTimers
+                  0x007712                  _configUARTnormal
+                  0x007754                  _controlPortStatus
+                  0x007924                  _CRC
+                  0x0079a8                  _CRC_SN
+                  0x007a08                  _crlf
+                  0x007a2e                  _debounce
+                  0x007a4c                  _disableAlarm
+                  0x007ab2                  _disableBT
+                  0x007b0a                  _disableChannel
+                  0x007c96                  _disableTHChannel
+                  0x007e22                  _disableINT1
+                  0x007e2c                  _disableOP
+                  0x007e78                  _DISLOGINT
+                  0x007ea2                  _disableTimers
+                  0x007eb0                  _disableVWchannel
+                  0x007ece                  _displayBCD
+                  0x007f24                  _displayClock
+                  0x008060                  _displayFRAMError
+                  0x00809c                  _displayGageInfo
+                  0x008cc2                  _displayLoggingWillStart
+                  0x008d22                  _displayLoggingWillStop
+                  0x008d94                  _displayLogInterval
+                  0x008f64                  _displayLogTable
+                  0x008fa4                  _displayMemoryStatus
+                  0x0090b8                  _displayMUX
+                  0x00a81e                  _displayReading
+                  0x00daee                  _displayScanInterval
+                  0x00db32                  _displayTempReading
+                  0x011d6e                  _displayTemporaryStatus
+                  0x011eba                  _displayTestMenu
+                  0x011f6c                  _enableAlarm
+                  0x011ffa                  _enableBT
+                  0x01202c                  _enableChannel
+                  0x0121b0                  _enableTHChannel
+                  0x012334                  _enableINT1
+                  0x012340                  _ENLOGINT
+                  0x012382                  _enableOP
+                  0x0123c4                  _f32toINT16
+                  0x0124da                  _enableVWchannel
+                  0x012642                  _filterArray
+                  0x0126f2                  _formatandDisplayGageInfo
+                  0x012b04                  _getChannel
+                  0x012b60                  _getSNbytes
+                  0x012d86                  _getConversion
+                  0x012e3a                  _getGageInfo
+                  0x01430e                  _getGageType
+                  0x0143e0                  _getLogInterval
+                  0x014440                  _getLogIntLength
+                  0x0148b0                  _getLogIterations
+                  0x014aaa                  _getFrequency
+                  0x014c5a                  _getSerialNumber
+                  0x014d42                  _getThermtype
+                  0x014db6                  _getTxChecksum
+                  0x014df4                  _handleCOMError
+                  0x014e00                  _handleFRAMResults
+                  0x014e34                  _hms
+                  0x014f5c                  _hms2s
+                  0x014fc0                  _INT16tof32
+                  0x01500e                  _loadDefaults
+                  0x01559e                  _loadSV
+                  0x0155d4                  _MODBUScheckScanInterval
+                  0x015714                  _MODBUScomm
+                  0x016496                  _MODBUS_DisableStartTime
+                  0x0164de                  _MODBUS_EnableStartTime
+                  0x016588                  _MODBUS_DisableStopTime
+                  0x0165c4                  _MODBUS_EnableStopTime
+                  0x0165cc                  _MODBUS_RX
+                  0x0166fa                  _MODBUS_TX
+                  0x016764                  _MX1
+                  0x0167e4                  _MX4
+                  0x016834                  _MX8
+                  0x016884                  _MX8V
+                  0x0168d4                  _MX8T
+                  0x016924                  _MX16
+                  0x016974                  _MX16V
+                  0x0169c4                  _MX16T
+                  0x016a14                  _MX32
+                  0x016a64                  _MX32T
+                  0x016ab4                  _O_D
+                  0x016ae2                  _O_E
+                  0x016b24                  _pack
+                  0x016b42                  _pluck
+                  0x016c9c                  _pluckOFF
+                  0x016cac                  _pluckON
+                  0x016cca                  _pluckPOS
+                  0x016cd4                  _pluckNEG
+                  0x016cde                  _processDS3231Temperature
+                  0x016cfe                  _processReading
+                  0x017118                  _prompt
+                  0x01714e                  _readClock
+                  0x017286                  _readDS3231temperature
+                  0x0172b4                  _R
+                  0x0172ec                  _READ_TIME
+                  0x0174e2                  _ReadSN
+                  0x0175a2                  _RST
+                  0x0175bc                  _read_vw
+                  0x01762a                  _reloadLogTable
+                  0x017694                  _resetMemory
+                  0x0176ea                  _restoreSettings
+                  0x01779c                  _RTChms2s
+                  0x017882                  _RTCtoDecimal
+                  0x017938                  _seconds2hms
+                  0x017988                  _setADCsleep
+                  0x0179a4                  _setADCwake
+                  0x0179b6                  _setChannelConversion
+                  0x017d3a                  _setChannelThermtype
+                  0x017fb0                  _setClock
+                  0x01813e                  _setup
+                  0x018264                  _shutdown
+                  0x0182e8                  _start32KHz
+                  0x0182fc                  _startLogging
+                  0x018498                  _START
+                  0x018534                  _stop32KHz
+                  0x01854e                  _stopLogging
+                  0x018712                  _STOP
+                  0x0187e8                  _STOPTIME
+                  0x018960                  _storeGageType
+                  0x018986                  _storeLogInterval
+                  0x018ab4                  _storeChannelReading
+                  0x018cde                  _storeReading
+                  0x01973a                  _storeTempChannelReading
+                  0x01982e                  _storeTempChannelTHReading
+                  0x019852                  _storeTempReading
+                  0x019896                  _synch
+                  0x0198f4                  _synch_one
+                  0x019978                  _synch_zero
+                  0x0199fc                  _take_analog_reading
+                  0x019b40                  _take_fast_analog_reading
+                  0x019be2                  _take_One_Complete_Reading
+                  0x01bcf8                  _take_reading
+                  0x01be40                  _testPoint
+                  0x01beba                  _testPoint2
+                  0x01bee6                  _testReset
+                  0x01c002                  _toBCD
+                  0x01c132                  _toJulian
+                  0x01c258                  _toMonthDay
+                  0x01c59e                  _unpack
+                  0x01c5c0                  _upD8RTCAlarm1
+                  0x01ce10                  _V_HT2C
+                  0x01d070                  _vwf32toINT16
+                  0x01d1be                  _wait
+                  0x01d1e6                  _wait2S
+                  0x01d214                  _wrap_one
+                  0x01d244                  _wrap_stop
+                  0x01d25e                  _wrap_zero
+                  0x01d28e                  _WRITE_TIME
+                  0x01d340                  _X
+                  0x01d386                  __INT0Interrupt
+                  0x01d39a                  __IC1Interrupt
+                  0x01d3ae                  __OC1Interrupt
+                  0x01d3c2                  __T1Interrupt
+                  0x01d3d6                  __DMA0Interrupt
+                  0x01d3ea                  __IC2Interrupt
+                  0x01d3fe                  __OC2Interrupt
+                  0x01d412                  __T2Interrupt
+                  0x01d426                  __T3Interrupt
+                  0x01d43a                  __SPI1Interrupt
+                  0x01d44e                  __U1TXInterrupt
+                  0x01d462                  __ADC1Interrupt
+                  0x01d476                  __DMA1Interrupt
+                  0x01d48a                  __SI2C1Interrupt
+                  0x01d49e                  __MI2C1Interrupt
+                  0x01d4b2                  __CNInterrupt
+                  0x01d4c6                  __ADC2Interrupt
+                  0x01d4da                  __IC7Interrupt
+                  0x01d4ee                  __IC8Interrupt
+                  0x01d502                  __DMA2Interrupt
+                  0x01d516                  __OC3Interrupt
+                  0x01d52a                  __OC4Interrupt
+                  0x01d53e                  __T4Interrupt
+                  0x01d552                  __INT2Interrupt
+                  0x01d566                  __U2RXInterrupt
+                  0x01d57a                  __U2TXInterrupt
+                  0x01d58e                  __SPI2ErrInterrupt
+                  0x01d5a2                  __SPI2Interrupt
+                  0x01d5b6                  __C1RxRdyInterrupt
+                  0x01d5ca                  __C1Interrupt
+                  0x01d5de                  __DMA3Interrupt
+                  0x01d5f2                  __IC3Interrupt
+                  0x01d606                  __IC4Interrupt
+                  0x01d61a                  __IC5Interrupt
+                  0x01d62e                  __IC6Interrupt
+                  0x01d642                  __OC5Interrupt
+                  0x01d656                  __OC6Interrupt
+                  0x01d66a                  __OC7Interrupt
+                  0x01d67e                  __OC8Interrupt
+                  0x01d692                  __DMA4Interrupt
+                  0x01d6a6                  __T6Interrupt
+                  0x01d6ba                  __SI2C2Interrupt
+                  0x01d6ce                  __MI2C2Interrupt
+                  0x01d6e2                  __T8Interrupt
+                  0x01d6f6                  __T9Interrupt
+                  0x01d70a                  __INT3Interrupt
+                  0x01d71e                  __INT4Interrupt
+                  0x01d732                  __C2RxRdyInterrupt
+                  0x01d746                  __C2Interrupt
+                  0x01d75a                  __DCIErrInterrupt
+                  0x01d76e                  __DCIInterrupt
+                  0x01d782                  __DMA5Interrupt
+                  0x01d796                  __U1ErrInterrupt
+                  0x01d7aa                  __U2ErrInterrupt
+                  0x01d7be                  __DMA6Interrupt
+                  0x01d7d2                  __DMA7Interrupt
+                  0x01d7e6                  __C1TxReqInterrupt
+                  0x01d7fa                  __C2TxReqInterrupt
+                  0x01d80e                  __AltINT0Interrupt
+                  0x01d822                  __AltIC1Interrupt
+                  0x01d836                  __AltOC1Interrupt
+                  0x01d84a                  __AltT1Interrupt
+                  0x01d85e                  __AltDMA0Interrupt
+                  0x01d872                  __AltIC2Interrupt
+                  0x01d886                  __AltOC2Interrupt
+                  0x01d89a                  __AltT2Interrupt
+                  0x01d8ae                  __AltT3Interrupt
+                  0x01d8c2                  __AltSPI1Interrupt
+                  0x01d8d6                  __AltU1TXInterrupt
+                  0x01d8ea                  __AltADC1Interrupt
+                  0x01d8fe                  __AltDMA1Interrupt
+                  0x01d912                  __AltSI2C1Interrupt
+                  0x01d926                  __AltMI2C1Interrupt
+                  0x01d93a                  __AltCNInterrupt
+                  0x01d94e                  __AltADC2Interrupt
+                  0x01d962                  __AltIC7Interrupt
+                  0x01d976                  __AltIC8Interrupt
+                  0x01d98a                  __AltDMA2Interrupt
+                  0x01d99e                  __AltOC3Interrupt
+                  0x01d9b2                  __AltOC4Interrupt
+                  0x01d9c6                  __AltT4Interrupt
+                  0x01d9da                  __AltINT2Interrupt
+                  0x01d9ee                  __AltU2RXInterrupt
+                  0x01da02                  __AltU2TXInterrupt
+                  0x01da16                  __AltSPI2ErrInterrupt
+                  0x01da2a                  __AltSPI2Interrupt
+                  0x01da3e                  __AltC1RxRdyInterrupt
+                  0x01da52                  __AltC1Interrupt
+                  0x01da66                  __AltDMA3Interrupt
+                  0x01da7a                  __AltIC3Interrupt
+                  0x01da8e                  __AltIC4Interrupt
+                  0x01daa2                  __AltIC5Interrupt
+                  0x01dab6                  __AltIC6Interrupt
+                  0x01daca                  __AltOC5Interrupt
+                  0x01dade                  __AltOC6Interrupt
+                  0x01daf2                  __AltOC7Interrupt
+                  0x01db06                  __AltOC8Interrupt
+                  0x01db1a                  __AltDMA4Interrupt
+                  0x01db2e                  __AltT6Interrupt
+                  0x01db42                  __AltSI2C2Interrupt
+                  0x01db56                  __AltMI2C2Interrupt
+                  0x01db6a                  __AltT8Interrupt
+                  0x01db7e                  __AltT9Interrupt
+                  0x01db92                  __AltINT3Interrupt
+                  0x01dba6                  __AltINT4Interrupt
+                  0x01dbba                  __AltC2RxRdyInterrupt
+                  0x01dbce                  __AltC2Interrupt
+                  0x01dbe2                  __AltDCIErrInterrupt
+                  0x01dbf6                  __AltDCIInterrupt
+                  0x01dc0a                  __AltDMA5Interrupt
+                  0x01dc1e                  __AltU1ErrInterrupt
+                  0x01dc32                  __AltU2ErrInterrupt
+                  0x01dc46                  __AltDMA6Interrupt
+                  0x01dc5a                  __AltDMA7Interrupt
+                  0x01dc6e                  __AltC1TxReqInterrupt
+                  0x01dc82                  __AltC2TxReqInterrupt
+                  0x01dc96                  __U1RXInterrupt
+                  0x01dcd6                  __AltU1RXInterrupt
+                  0x01dd16                  __INT1Interrupt
+                  0x01e03a                  __AltINT1Interrupt
+                  0x01e32c                  __OscillatorFail
+                  0x01e340                  __AltOscillatorFail
+                  0x01e354                  __T5Interrupt
+                  0x01e376                  __AltT5Interrupt
+                  0x01e396                  __T7Interrupt
+                  0x01e3b6                  __AltT7Interrupt
 
-.dinit            0x01cb02       0x1608
- .dinit           0x01cb02       0x1608 data_init
+.dinit            0x01e3d0       0x1608
+ .dinit           0x01e3d0       0x1608 data_init
 
-.text             0x01e10a       0x1110
- .text            0x01e10a        0xf9a build/default/production/_ext/1472/LC8004extFRAM_i.o
-                  0x01e10a                  _displayError
-                  0x01e1c2                  _write_Int_FRAM
-                  0x01e288                  _read_Int_FRAM
-                  0x01e3d0                  _write_longFRAM
-                  0x01e3fa                  _read_longFRAM
-                  0x01e424                  _read_float
-                  0x01e44e                  _write_Flt_FRAM
-                  0x01e57e                  _read_Flt_FRAM
-                  0x01e77e                  _selectBank
-                  0x01ea0a                  _sleepFRAM
-                  0x01eabc                  _testFRAM
-                  0x01f058                  _testNACK
- .text            0x01f0a4         0xc4 build/default/production/_ext/1472/AD5241b.o
-                  0x01f0a4                  _read_AD5241
-                  0x01f0fe                  _write_AD5241
- .text            0x01f168         0xb2 build/default/production/_ext/1472/LC8004delay_b.o
-                  0x01f168                  _delay
-                  0x01f180                  _shutdownTimer
-                  0x01f1d6                  _shutdownTimerwithReset
-                  0x01f214                  _StopshutdownTimer
+.text             0x01f9d8       0x1110
+ .text            0x01f9d8        0xf9a build/default/production/_ext/1472/LC8004extFRAM_i.o
+                  0x01f9d8                  _displayError
+                  0x01fa90                  _write_Int_FRAM
+                  0x01fb56                  _read_Int_FRAM
+                  0x01fc9e                  _write_longFRAM
+                  0x01fcc8                  _read_longFRAM
+                  0x01fcf2                  _read_float
+                  0x01fd1c                  _write_Flt_FRAM
+                  0x01fe4c                  _read_Flt_FRAM
+                  0x02004c                  _selectBank
+                  0x0202d8                  _sleepFRAM
+                  0x02038a                  _testFRAM
+                  0x020926                  _testNACK
+ .text            0x020972         0xc4 build/default/production/_ext/1472/AD5241b.o
+                  0x020972                  _read_AD5241
+                  0x0209cc                  _write_AD5241
+ .text            0x020a36         0xb2 build/default/production/_ext/1472/LC8004delay_b.o
+                  0x020a36                  _delay
+                  0x020a4e                  _shutdownTimer
+                  0x020aa4                  _shutdownTimerwithReset
+                  0x020ae2                  _StopshutdownTimer
 
-.init.delay32     0x01f21a         0x1c
- .init.delay32    0x01f21a         0x1c c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-pic30-elf.a(delay32.Leo)
-                  0x01f21a                  ___delay32
+.init.delay32     0x020ae8         0x1c
+ .init.delay32    0x020ae8         0x1c c:/program files (x86)/microchip/xc16/v1.26/bin/bin/../../lib\liblega-pic30-elf.a(delay32.Leo)
+                  0x020ae8                  ___delay32
 
-.shared.dinit     0x01f236          0x2
- .shared.dinit    0x01f236          0x2 shared_data_init
+.shared.dinit     0x020b04          0x2
+ .shared.dinit    0x020b04          0x2 shared_data_init
