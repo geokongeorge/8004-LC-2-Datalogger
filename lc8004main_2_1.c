@@ -377,7 +377,7 @@ int main(void)
     
     //LC2CONTROL2.flags2.scheduled=0;                                           REM REV 1.10  
     //write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);                  //store flag in FRAM REM REV 1.10
-    stopLogging();                                                              
+    //stopLogging();                                                              
     
     SLEEP12V = 0;                                                               //Set 12V regulator into switchmode
     wait2S();                                                                   //provide a 2S delay to allow DS3231 to stabilize
@@ -3006,7 +3006,7 @@ void CMDcomm(void)
                         }
 
                         MX8T();                                                 
-                        putsUART1(MUX8);                                        //Display 8 Channel Mux Selected.
+                        putsUART1(MUX8T);                                        //Display 8 Channel TH Mux Selected.
                         while (BusyUART1());
                         break;
                     }
