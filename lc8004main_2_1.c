@@ -14,12 +14,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		12/04/2017
+//	DATE:		12/05/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   2.1
-//	CHECKSUM:	0x529c  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0xec7c  (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	9164/30720   30%
-//	PGM(FLASH)MEM:  200073/261888 76%
+//	PGM(FLASH)MEM:  200892/261888 77%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -248,7 +248,7 @@
 //      2.0     12/01/17            Add 8 channel (4-wire) and 16 channel (2-wire) support:
 //                                  Change current MX8 to MX8V (VW 2 wire)
 //                                  Add MX8 (4 wire) & MX8T (Thermistor 2 wire)
-//      2.1     12/04/17            Add MX16V & MX16T configurations
+//      2.1     12/05/17            Add MX16V & MX16T configurations
 //
 //
 //
@@ -2921,7 +2921,7 @@ void CMDcomm(void)
 					}
 
 
-                    //case MXS, MX1, MX4, MX8, MX8V, MX8T, MX16, MX16V, MX16T MX32, MX32T:  REV 2.0
+                    //case MXS, MX1, MX4, MX8, MX8V, MX8T, MX16, MX16V, MX16T MX32V, MX32T:  REV 2.0
 
                     if (buffer[1] == capX && buffer[2] == capS && buffer[3] == cr) //Display multiplexer setup
                     {
@@ -3011,7 +3011,7 @@ void CMDcomm(void)
                         break;
                     }
 
-                    //VER 6.0.9:
+                    
                     if (buffer[1] == capX && buffer[2] == three && buffer[3] == two && buffer[4] == capT && buffer[5] == cr) //Select 32 channel thermistor mux
                     {
                         crlf();
@@ -3044,9 +3044,7 @@ void CMDcomm(void)
                         break;
                     }
 
-
-
-                    if (buffer[1] == capX && buffer[2] == three && buffer[3] == two && buffer[4] == cr) //Select 32 channel VW mux
+                    if (buffer[1] == capX && buffer[2] == one && buffer[3] == six && buffer[4] == capV && buffer[5] == cr) //Select 16 channel VW mux   REV 2.1
                     {
                         crlf();
 
@@ -3056,7 +3054,40 @@ void CMDcomm(void)
                             break;
                         }
 
-                        MX32();                                                 
+                        MX16V();                                                 
+                        putsUART1(MUX16V);                                       //Display 16 Channel VW Mux Selected.
+                        while (BusyUART1());
+                        break;
+                    }        
+                    
+                    if (buffer[1] == capX && buffer[2] == one && buffer[3] == six && buffer[4] == capT && buffer[5] == cr) //Select 16 channel TH mux   REV 2.1
+                    {
+                        crlf();
+
+                        if (LC2CONTROL.flags.Logging) {
+                            putsUART1(CnotAllowed);
+                            while (BusyUART1());
+                            break;
+                        }
+
+                        MX16T();                                                 
+                        putsUART1(MUX16T);                                       //Display 16 Channel TH Mux Selected.
+                        while (BusyUART1());
+                        break;
+                    }                                        
+
+
+                    if (buffer[1] == capX && buffer[2] == three && buffer[3] == two && buffer[4] == capV && buffer[5] == cr) //Select 32 channel VW mux
+                    {
+                        crlf();
+
+                        if (LC2CONTROL.flags.Logging) {
+                            putsUART1(CnotAllowed);
+                            while (BusyUART1());
+                            break;
+                        }
+
+                        MX32V();                                                 
                         putsUART1(MUX32V);                                      //Display 32 Channel VW Mux Selected.   REV 2.0
                         while (BusyUART1());
                         break;
@@ -6221,7 +6252,7 @@ void displayMUX(int displayChannel)
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
+        if(MUX4_ENABLE.mflags.mux16_4==TH16 | MUX4_ENABLE.mflags.mux16_4==TH32) //REV 2.1   
         {
             if (THMUX_ENABLE1_16.t1flags.CH9)                                   //Display ENABLED or DISABLED
                 putsUART1(Enabled);
@@ -6248,7 +6279,7 @@ void displayMUX(int displayChannel)
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
+        if(MUX4_ENABLE.mflags.mux16_4==TH16 | MUX4_ENABLE.mflags.mux16_4==TH32) //REV 2.1   
         {
             if (THMUX_ENABLE1_16.t1flags.CH10)                                  //Display ENABLED or DISABLED
                 putsUART1(Enabled);
@@ -6275,7 +6306,7 @@ void displayMUX(int displayChannel)
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
+        if(MUX4_ENABLE.mflags.mux16_4==TH16 | MUX4_ENABLE.mflags.mux16_4==TH32) //REV 2.1   
         {
             if (THMUX_ENABLE1_16.t1flags.CH11)                                  //Display ENABLED or DISABLED
                 putsUART1(Enabled);
@@ -6302,7 +6333,7 @@ void displayMUX(int displayChannel)
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
+        if(MUX4_ENABLE.mflags.mux16_4==TH16 | MUX4_ENABLE.mflags.mux16_4==TH32) //REV 2.1   
         {
             if (THMUX_ENABLE1_16.t1flags.CH12)                                  //Display ENABLED or DISABLED
                 putsUART1(Enabled);
@@ -6329,7 +6360,7 @@ void displayMUX(int displayChannel)
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
+        if(MUX4_ENABLE.mflags.mux16_4==TH16 | MUX4_ENABLE.mflags.mux16_4==TH32) //REV 2.1   
         {
             if (THMUX_ENABLE1_16.t1flags.CH13)                                  //Display ENABLED or DISABLED
                 putsUART1(Enabled);
@@ -6356,7 +6387,7 @@ void displayMUX(int displayChannel)
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
+        if(MUX4_ENABLE.mflags.mux16_4==TH16 | MUX4_ENABLE.mflags.mux16_4==TH32) //REV 2.1   
         {
             if (THMUX_ENABLE1_16.t1flags.CH14)                                  //Display ENABLED or DISABLED
                 putsUART1(Enabled);
@@ -6383,7 +6414,7 @@ void displayMUX(int displayChannel)
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
+        if(MUX4_ENABLE.mflags.mux16_4==TH16 | MUX4_ENABLE.mflags.mux16_4==TH32) //REV 2.1   
         {
             if (THMUX_ENABLE1_16.t1flags.CH15)                                  //Display ENABLED or DISABLED
                 putsUART1(Enabled);
@@ -6410,7 +6441,7 @@ void displayMUX(int displayChannel)
                 putsUART1(Disabled);
         }
         
-        if(MUX4_ENABLE.mflags.mux16_4==TH32)    
+        if(MUX4_ENABLE.mflags.mux16_4==TH16 | MUX4_ENABLE.mflags.mux16_4==TH32) //REV 2.1   
         {
             if (THMUX_ENABLE1_16.t1flags.CH16)                                  //Display ENABLED or DISABLED
                 putsUART1(Enabled);
@@ -6873,7 +6904,6 @@ void displayReading(int ch, unsigned long outputPosition)                       
     uarrays TXARRAY;                                                            //TXARRAY.ArrayBytes.msb, TXARRAY.array.lsb
     
     char BUF[10];                                                               //temporary storage for display data                          
-    //unsigned char NOB;                                                          //Number Of Bytes REM REV 2.0
     volatile unsigned int arrayIDX;                                                      
     unsigned char month;
     unsigned char day;
@@ -6915,64 +6945,34 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
     //calculate the external FRAM base address:
     if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                                   //Single Channel VW/TH //REV 2.0
-    {
         FRAMaddress = SingleVW_THPosition;                                         //REV 2.0
-        //NOB=28;                                                                 //28 bytes for binary download  REM REV 2.0
-    }
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW_TH4)                                      //4 Channel VW/TH
-    {
         FRAMaddress = VW_TH4Position;                                              //REV 2.0
-        //NOB=52;                                                                 REM REV 2.0
-    }
     
     if (MUX4_ENABLE.mflags.mux16_4 == VW_TH8)                                      //8 Channel VW/TH
-    {
-        FRAMaddress = VW_TH8Position;                                              //REV 2.0
-        //NOB=52;                                                                 REM REV 2.0
-    }    
+         FRAMaddress = VW_TH8Position;                                              //REV 2.0
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW8)                                      //8 Channel VW
-    {
         FRAMaddress = VW8Position;
-        //NOB=52;                                                                 REM REV 2.0
-    }
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW_TH16)                                     //16 Channel VW/TH
-    {
         FRAMaddress = VW_TH16Position;                                             //REV 2.0
-        //NOB=148;                                                                          REM REV 2.0
-    }
     
     if (MUX4_ENABLE.mflags.mux16_4 == VW16)                                     //16 Channel VW
-    {
         FRAMaddress = VW16Position;                                             //REV 2.1
-        //NOB=148;                                                                          REM REV 2.0
-    }
 
     if (MUX4_ENABLE.mflags.mux16_4 == VW32)                                     //32 Channel VW
-    {
         FRAMaddress = VW32Position;
-        //NOB=148;                                                                REM REV 2.0
-    }
 
     if (MUX4_ENABLE.mflags.mux16_4 == TH8)                                      //8 Channel thermistor
-    {
         FRAMaddress = TH8Position;
-        //NOB=52;                                                                 REM REV 2.0
-    }
     
     if (MUX4_ENABLE.mflags.mux16_4 == TH16)                                      //16 Channel thermistor    REV 2.1
-    {
         FRAMaddress = TH16Position;
-        //NOB=52;                                                                 REM REV 2.0
-    }    
 
     if (MUX4_ENABLE.mflags.mux16_4 == TH32)                                     //32 Channel thermistor
-    {
         FRAMaddress = TH32Position;
-        //NOB=148;                                                                REM REV 2.0
-    }
 
     if (!_232) 
         _232SHDN=1;                                                             
@@ -8043,7 +8043,7 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
 
     if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32 && MUX4_ENABLE.mflags.mux16_4 != TH16 &&    //REV 2.1
-            MUX4_ENABLE.mflags.mux16_4 != VW8 && MUX4_ENABLE.mflags.mux16_4 != VW32) //Thermistor display for VW 
+            MUX4_ENABLE.mflags.mux16_4 != VW8 && MUX4_ENABLE.mflags.mux16_4 != VW16 && MUX4_ENABLE.mflags.mux16_4 != VW32) //Thermistor display for VW REV 2.1
     {
         for (displayChannel = 1; displayChannel < maxchannelplusone; displayChannel++) 
         {
@@ -8400,7 +8400,7 @@ void displayReading(int ch, unsigned long outputPosition)                       
 
 
     if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH16 && MUX4_ENABLE.mflags.mux16_4 != TH32 &&    //REV 2.1
-           MUX4_ENABLE.mflags.mux16_4 != VW8 && MUX4_ENABLE.mflags.mux16_4 != VW32)
+           MUX4_ENABLE.mflags.mux16_4 != VW8 && MUX4_ENABLE.mflags.mux16_4 != VW16 && MUX4_ENABLE.mflags.mux16_4 != VW32)   //REV 2.1
         putcUART1(comma);                                                       // , DELIMITER
     sprintf(BUF, "%d", TXARRAY.array);                                       
     putsUART1(BUF);
@@ -9386,10 +9386,12 @@ void displayTempReading(void) {
         }                                                                       //end of 1st for(displayChannel) loop
     }
 
-
-    for (displayChannel = 1; displayChannel < maxchannelplusone; displayChannel++) {
-        putcUART1(comma);                                                       // , DELIMITER
-        while (BusyUART1());
+    if (MUX4_ENABLE.mflags.mux16_4 != TH8 && MUX4_ENABLE.mflags.mux16_4 != TH32 && MUX4_ENABLE.mflags.mux16_4 != TH16 &&    //REV 2.1
+            MUX4_ENABLE.mflags.mux16_4 != VW8 && MUX4_ENABLE.mflags.mux16_4 != VW16 && MUX4_ENABLE.mflags.mux16_4 != VW32) //Thermistor display for VW  REV 2.1
+    {
+        for (displayChannel = 1; displayChannel < maxchannelplusone; displayChannel++) {
+            putcUART1(comma);                                                       // , DELIMITER
+            while (BusyUART1());
 
         //EXTERNAL THERMISTOR
         IEC1bits.INT1IE = 0;                                                    //Disable INT2
@@ -10111,6 +10113,7 @@ void displayTempReading(void) {
 
             while (BusyUART1());
         }
+    }
                                                                  
     crlf();
 
@@ -13534,7 +13537,7 @@ void MODBUScomm(void)
                         break;                                                          //REV 1.13
                     if(tempStatusValue.status1flags._Logging)                           //if logging    REV 1.13
                         break;                                                          //Don't allow CFG change    REV 1.13                    
-                    MX32();
+                    MX32V();
                     break;
 
                 case 5:
@@ -13761,7 +13764,10 @@ void MODBUScomm(void)
                         }
 
                         if(tempValue2Value.status2flags._RST)
+                        {
+                            MODBUS_TX(ECHO);                                    //REV 2.1
                             RST();                                              //Reset uC  
+                        }
 
                         tempValue2Value.status2flags._RST=0;                    //clear this bit on exit
                         S_2.status2flags._RST=0;                                //clear the MODBUS status flag      
@@ -13780,7 +13786,8 @@ void MODBUScomm(void)
                         {
                             tempValue2Value.status2flags._CMD=0;                //clear this bit on exit 
                             S_2.status2flags._CMD=0;                            //clear the MODBUS status flag      
-                            write_Int_FRAM(MODBUS_STATUS2address,S_2.status2);      
+                            write_Int_FRAM(MODBUS_STATUS2address,S_2.status2); 
+                            MODBUS_TX(ECHO);                                    //REV 2.1
                             CMD_LINE();
                         }
 
@@ -14204,7 +14211,7 @@ void MX16T(void)                                                                
     loadDefaults();                                                             
 }
 
-void MX32(void)                                                                 
+void MX32V(void)                                                                 
 {
     MUX4_ENABLE.mflags.mux16_4 = VW32;                                          //32 channel VW mux selected
     write_Int_FRAM(MUX4_ENABLEflagsaddress,MUX4_ENABLE.mux);                    //store flag in FRAM 
@@ -16274,7 +16281,7 @@ void storeChannelReading(int ch) {
         Nop();
     }
     else
-        if (MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW32) //8 or 32 Channel VW    
+        if (MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW16 | MUX4_ENABLE.mflags.mux16_4 == VW32) //8,16 or 32 Channel VW    REV 2.1
         FRAMaddress = (baseAddress * (outputPosition - 1))+(4 * (ch - 1) + 12);
     else
         FRAMaddress = (baseAddress * (outputPosition - 1))+(6 * (ch - 1) + 12); //calculate the external FRAM address
@@ -16285,7 +16292,7 @@ void storeChannelReading(int ch) {
         write_Int_FRAM(FRAMaddress + 4, extThermreading);                       //store the external thermistor reading 12bit ADC value
     } 
     else
-    if (MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW32 | MUX4_ENABLE.mflags.mux16_4 == VW32) //REV 2.1
+    if (MUX4_ENABLE.mflags.mux16_4 == VW8 | MUX4_ENABLE.mflags.mux16_4 == VW16 | MUX4_ENABLE.mflags.mux16_4 == VW32) //REV 2.1
     {
         write_Flt_FRAM(FRAMaddress, VWreadingProcessed);                        //store the processed VW reading
     } 

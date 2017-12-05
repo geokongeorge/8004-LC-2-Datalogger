@@ -966,7 +966,7 @@ unsigned int decimalRTC;
 #define SingleVW_THPosition     SingleVW_THBytes*(outputPosition-1)             //address calculation
 #define VW_TH4Position          VW_TH4Bytes*(outputPosition-1)
 #define VW_TH8Position          VW_TH8Bytes*(outputPosition-1)
-#define VW_TH16Position            VW_TH16Bytes*(outputPosition-1)
+#define VW_TH16Position         VW_TH16Bytes*(outputPosition-1)
 #define VW8Position             VW8Bytes*(outputPosition-1)
 #define VW16Position            VW16Bytes*(outputPosition-1)
 #define VW32Position            VW32Bytes*(outputPosition-1)
@@ -1476,7 +1476,7 @@ void MX8T(void);
 void MX16(void);
 void MX16V(void);                                                               //REV 2.1
 void MX16T(void);                                                               //REV 2.1
-void MX32(void);                                                                
+void MX32V(void);                                                                
 void MX32T(void);                                                               
 void O_D(void);                                                                 
 void O_E(void);                                                                 
