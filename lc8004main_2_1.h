@@ -548,9 +548,7 @@ const unsigned int  maxThirtytwoVW=3720;                                        
 const unsigned int  maxEightTH=18640;                                           //522132/28 = 18647
 const unsigned int  maxThirtytwoTH=6870;                                        //522132/76 = 6870
 
-//const unsigned char minScanSingleVW=3;                                          REM REV 2.0
 const unsigned char minScanSingle=3;                                            //REV 2.0                                          
-//const unsigned char minScanFourVW=8;                                            REM REV 2.0
 const unsigned char minScanFour=10;                                              //REV 2.0 
 const unsigned char minScanEight=15;                                            //REV 2.0
 const unsigned char minScanSixteen=30;                                          //REV 2.0                                     
@@ -559,7 +557,7 @@ const unsigned char minScanSixteenVW=30;
 const unsigned char minScanSixteenTH=6;                                         //REV 2.0
 const unsigned char minScanThirtytwoVW=60;                                      
 const unsigned char minScanEightTH=4;                                                                                      
-const unsigned char minScanThirtytwoTH=10;                                       
+const unsigned char minScanThirtytwoTH=12;                                      //REV 2.1                                       
 
 const unsigned int  VAGC_MIN=0x0e66;                                            //2.25V VAGC minimum       
 
