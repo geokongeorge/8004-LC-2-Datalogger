@@ -16,8 +16,8 @@
 //	COMPANY:	GEOKON, INC
 //	DATE:		12/06/2017
 //	DESIGNER: 	GEORGE MOORE
-//	REVISION:   2.1
-//	CHECKSUM:	0x630a  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	REVISION:   2.2
+//	CHECKSUM:	0x630b  (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	9164/30720   30%
 //	PGM(FLASH)MEM:  201021/261888 77%
 
@@ -249,6 +249,8 @@
 //                                  Change current MX8 to MX8V (VW 2 wire)
 //                                  Add MX8 (4 wire) & MX8T (Thermistor 2 wire)
 //      2.1     12/06/17            Add MX16V & MX16T configurations
+//      2.2     12/06/17            Attempt to openup communications during a read cycle
+//                                  cleanup displayReading() and displayTempReading()
 //
 //
 //
@@ -300,7 +302,7 @@
 //	Header Files:
 //#include "p33FJ256GP710A.h"
 //#include "LC8004extFRAM_i.h"                              
-//#include "LC8004main_2_1.h"
+//#include "LC8004main_2_2.h"
 //#include "LC8004delay_b.h"
 //#include "AD5241b.h"
 //#include "FRAM_ADDRESSh.h                                                     
@@ -326,7 +328,7 @@
 //--------------------------------------------------------------
 #include "p33FJ256GP710A.h"
 #include "LC8004extFRAM_i.h"                                                    
-#include "LC8004main_2_1.h"
+#include "LC8004main_2_2.h"
 #include "LC8004delay_b.h"                                                      
 #include "AD5241b.h"                                                            
 #include "FRAM_ADDRESSh.h"                                                      
@@ -17001,7 +17003,7 @@ void take_One_Complete_Reading(unsigned char store)
     
     
     _3VX_on();                                                                  //power-up analog circuitry 
-    U1MODEbits.UARTEN=0;                                                        //Disable the COM PORT  
+    //U1MODEbits.UARTEN=0;                                                        //Disable the COM PORT  REM REV 2.2
   
     if (store) 
     {
