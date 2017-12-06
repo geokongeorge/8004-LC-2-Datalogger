@@ -1531,7 +1531,7 @@ void unpack(unsigned int);
 void upD8RTCAlarm1(void);
 float V_HT2C(float, unsigned int);                                              
 unsigned int vwf32toINT16(float);                                               
-void wait(void);
+//void wait(void);                                                              //REM REV 2.2
 void wait2S(void);                                                              
 void wrap_one(void);                                                            
 void wrap_stop(void);                                                           
