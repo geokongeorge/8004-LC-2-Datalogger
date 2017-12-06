@@ -17,9 +17,9 @@
 //	DATE:		12/06/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   2.2
-//	CHECKSUM:	0x630b  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x4bd5  (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	9164/30720   30%
-//	PGM(FLASH)MEM:  201021/261888 77%
+//	PGM(FLASH)MEM:  201012/261888 77%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -16862,9 +16862,11 @@ unsigned int take_analog_reading(unsigned char gt)
 
     if (gt >= 85 && gt <= 98)                                                           
     {
+        U1MODEbits.UARTEN=0;                                                    //Disable the COM PORT  REV 2.2
         if (gt == 86)                                                           //read the internal temperature 
         {
             internalTemperature=readDS3231temperature();                        //get the temp reading from the DS3231 RTC
+            U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  REV 2.2
             return internalTemperature;
         }
 
@@ -16934,7 +16936,8 @@ unsigned int take_analog_reading(unsigned char gt)
         if(gt==85)
             analog-=24;                                                         //CORRECT FOR READING ERROR
         IFS1bits.INT1IF=0;                                                      //clear the interrupt flag  
-        IPC5bits.INT1IP=7;                                                      //re-enable INT1 at priority level 7 (HIGHEST)    
+        IPC5bits.INT1IP=7;                                                      //re-enable INT1 at priority level 7 (HIGHEST)   
+        U1MODEbits.UARTEN=1;                                                    //Re-enable the COM PORT  REV 2.2
         return analog;                                                          //return the averaged 12 bit value	
     }
 
@@ -17998,11 +18001,12 @@ void take_One_Complete_Reading(unsigned char store)
 
                 if (!store)
                     IEC1bits.INT1IE = 0;                                        //temporarily disable the INT2 interrupt
-                //WDTSWEnable;                                                    //Start WDT                           
+                //WDTSWEnable;                                                    //Start WDT   
                 VWreading = take_reading(gageType,ch);                          //take VW reading (or other gage type) 
+
                 if(!VWreading)                                                  //retry if no response  
                 {
-                    VWflagsbits.retry=1;                                        
+                    VWflagsbits.retry=1;       
                     VWreading=take_reading(gageType,ch);                        
                     VWflagsbits.retry=0;                                        
                 }
@@ -18038,7 +18042,6 @@ void take_One_Complete_Reading(unsigned char store)
                         MUX4_ENABLE.mflags.mux16_4 == VW_TH8|                     //REV 2.0                        
                         MUX4_ENABLE.mflags.mux16_4 == VW_TH16)
                 {
-
                     extThermreading = take_analog_reading(85);                  //take external thermistor reading
                     if(extThermreading>5000)
                     {
@@ -18061,7 +18064,6 @@ void take_One_Complete_Reading(unsigned char store)
         else                                                                    //Thermistor logger
         {
             Blink(1);
-
             extThermreading = take_analog_reading(85);                          //take external thermistor reading
             if(extThermreading>5000)
             {
@@ -18257,6 +18259,7 @@ float take_reading(unsigned char gageType,int ch)                               
     float digits = 0.0;
     float lithium = 0.0;
 
+    U1MODEbits.UARTEN=0;                                                        //Disable the COM PORT  REV 2.2
     _3VX_on();                                                                  //power-up analog circuitry 
 
     if (gageType == 95)                                                         //lithium coin cell reading
@@ -18273,7 +18276,8 @@ float take_reading(unsigned char gageType,int ch)                               
         }
 
         lithtemp /= 16;                                                         //average the result
-        lithium = ((5.0 * lithtemp) / 4096.0);                                  //convert to voltage	
+        lithium = ((5.0 * lithtemp) / 4096.0);                                  //convert to voltage
+        U1MODEbits.UARTEN=1;                                                    //Re-enable the COM PORT  REV 2.2
         return lithium;                                                         //return the averaged 12 bit value		
     }
 
@@ -18308,7 +18312,8 @@ float take_reading(unsigned char gageType,int ch)                               
      
     delay(80000);                                                               //30mS delay for PLL settling 
     digits = read_vw();                                                         //get the VW digits
-    _3VX_off();                                                                 //power-down analog circuitry   
+    _3VX_off();                                                                 //power-down analog circuitry  
+    U1MODEbits.UARTEN=1;                                                        //Re-enable the COM PORT  REV 2.2
     return digits;                                                              //give it to take_One_Complete_Reading()
 }
 
@@ -19937,9 +19942,9 @@ void __attribute__((__interrupt__)) _U1RXInterrupt(void)                        
 {
     IFS0bits.U1RXIF = 0;                                                        //clear the UART1 interrupt flag
     U1STAbits.OERR = 0;
-    RxData = ReadUART1();                                                       //get the char
+    //RxData = ReadUART1();                                                       //get the char    REM REV 2.2
 
-    
+    /*REM REV 2.2:
     if (RxData == xoff)                                                         //Xoff received
     {
         wait();
@@ -19948,16 +19953,22 @@ void __attribute__((__interrupt__)) _U1RXInterrupt(void)                        
     {
         DISPLAY_CONTROL.flags.bail = 1;                                         //Set the bail flag
     }
-
+     * */
+    
+    //REV 2.2:
+    if(LC2CONTROL2.flags2.Modbus)                                       
+        MODBUScomm();                                                         
+     else                                                                
+        CMDcomm();
 }
 
 void __attribute__((__interrupt__)) _AltU1RXInterrupt(void)                     //This is the UART1 ALTERNATE Receive ISR 
 {
     IFS0bits.U1RXIF = 0;                                                        //clear the UART1 interrupt flag
     U1STAbits.OERR = 0;
-    RxData = ReadUART1();                                                       //get the char
+    //RxData = ReadUART1();                                                       //get the char    REM REV 2.2
 
-    
+    /*REM REV 2.2:
     if (RxData == xoff)                                                         //Xoff received
     {
         wait();
@@ -19966,7 +19977,13 @@ void __attribute__((__interrupt__)) _AltU1RXInterrupt(void)                     
     {
         DISPLAY_CONTROL.flags.bail = 1;                                         //Set the bail flag
     }
-
+     * */
+    
+    //REV 2.2:
+    if(LC2CONTROL2.flags2.Modbus)                                       
+        MODBUScomm();                                                         
+     else                                                                
+        CMDcomm();
 }
 
 void __attribute__((__interrupt__)) _INT1Interrupt(void)                        //This is the RTC ISR when time to read occurs  
