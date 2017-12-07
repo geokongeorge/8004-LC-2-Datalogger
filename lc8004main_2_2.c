@@ -14,12 +14,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		12/06/2017
+//	DATE:		12/07/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   2.2
-//	CHECKSUM:	0x4bd5  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0xf6ee  (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	9164/30720   30%
-//	PGM(FLASH)MEM:  201012/261888 77%
+//	PGM(FLASH)MEM:  200811/261888 77%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -249,8 +249,9 @@
 //                                  Change current MX8 to MX8V (VW 2 wire)
 //                                  Add MX8 (4 wire) & MX8T (Thermistor 2 wire)
 //      2.1     12/06/17            Add MX16V & MX16T configurations
-//      2.2     12/06/17            Attempt to openup communications during a read cycle
+//      2.2     12/07/17            Attempt to openup communications during a read cycle
 //                                  cleanup displayReading() and displayTempReading()
+//                                  Incorporate take_fast_analog_reading() into take_analog_reading()
 //
 //
 //
@@ -4409,7 +4410,8 @@ void configUARTnormal(void)
             UART_RX_OVERRUN_CLEAR;
     
     ConfigIntUART1(UART_RX_INT_EN &                                             //configure the UART interrupt                          
-            UART_RX_INT_PR2 &                                                   //priority 1 higher than CPU priority
+            //UART_RX_INT_PR2 &                                                   //priority 1 higher than CPU priority REM REV 2.2
+            UART_RX_INT_PR7 &                                                   //priority 7 highest priority   REV 2.2
             UART_TX_INT_DIS &
             UART_TX_INT_PR5);
 
@@ -10845,6 +10847,10 @@ unsigned char getSNbytes(unsigned int logicthreshold)                           
     T7CONbits.TCS=0;                                                            //set to count internal (Fosc/2) clocks 
     T6CONbits.TGATE=0;                                                          //Disable gated time accumulation
     
+    //Configure the analog input channel:                                       //REV 2.2
+    PMD1bits.AD1MD=0;                                                           //Enable the ADC
+    AD1CHS0 = 0x0004;                                                           //connect AN4 (Ext Therm) as CH0 positive input
+    
     for(b=0;b<6;b++)                                                            //will be receiving 6 bytes
     {
         PR6=mS1_5LSW;                                                           //Load TMR6 period register with 1.5mS least significant word   
@@ -15861,7 +15867,7 @@ void setup(void)
 void shutdown(void) 
 {
     _3VX_off();                                                                 //make sure analog +3VX is off
-    INTCON1bits.NSTDIS = 1;                                                     //disable interrupt nesting                         
+    //INTCON1bits.NSTDIS = 1;                                                     //disable interrupt nesting   REM REV 2.2
     CORCONbits.IPL3 = 0;                                                        //make sure IPL3 is not set                             
 
     _232SHDN=0;                                                                 //shut down the RS-232 Port 
@@ -16853,8 +16859,8 @@ void synch_zero(void)
 unsigned int take_analog_reading(unsigned char gt)                              
 {
     unsigned int analog;                                                        
-    unsigned int *ADC16Ptr;
-    unsigned int count;
+    //unsigned int *ADC16Ptr;                                                   REM REV 2.2
+    //unsigned int count;                                                       REM REV 2.2
     int internalTemperature=0;                                                  
         
     TRISB=0x033D;                                                               //Configure PORTB   
@@ -16862,18 +16868,20 @@ unsigned int take_analog_reading(unsigned char gt)
 
     if (gt >= 85 && gt <= 98)                                                           
     {
+        testPoint(2,1);                                                         //TEST REV 2.2
         U1MODEbits.UARTEN=0;                                                    //Disable the COM PORT  REV 2.2
         if (gt == 86)                                                           //read the internal temperature 
         {
             internalTemperature=readDS3231temperature();                        //get the temp reading from the DS3231 RTC
             U1MODEbits.UARTEN=1;                                                //Re-enable the COM PORT  REV 2.2
+            testPoint(2,2);                                                     //TEST REV 2.2
             return internalTemperature;
         }
 
         IPC5bits.INT1IP=0;                                                      //disable the INT1 interrupt    
         //Enable ADC:
-        AD1CON1bits.AD12B=1;                                                    //configure ADC for 12 bit operation    
-        IFS1bits.INT1IF=0;                                                      
+        //AD1CON1bits.AD12B=1;                                                    //configure ADC for 12 bit operation    REM REV 2.2
+        //IFS1bits.INT1IF=0;                                                      REM REV 2.2
         PMD1bits.AD1MD=0;                                                       //Enable the ADC1 module    
 
         if(gt!=98)                                                              //3VX already on    
@@ -16883,7 +16891,7 @@ unsigned int take_analog_reading(unsigned char gt)
         AD1PCFGH = 0xFFFF;                                                      //AN31..AN16 configured as digital I/O
         AD1PCFGL = 0xFCC2;                                                      //AN9,8,5,4,3,2,0 configured as analog inputs 
 
-        
+        /*                                                                      REM REV 2.2
         AD1CON1bits.ADSIDL=1;                                                   //Discontinue in Idle
         AD1CON1bits.AD12B=1;                                                    //12bit
         AD1CON1bits.FORM=0;                                                     //integer format
@@ -16894,7 +16902,7 @@ unsigned int take_analog_reading(unsigned char gt)
         AD1CON3bits.ADRC=0;                                                     
         AD1CON3bits.SAMC=0x1F;                                                  //Autosample time = 1 Tad   
         AD1CON3bits.ADCS=0x0F;                                                  //Conversion clock select   
-        
+        */
                                                                                 //integer output
         if (gt == 85)                                                           //read the external thermistor 
             AD1CHS0 = 0x0004;                                                   //connect AN4 as CH0 positive input
@@ -16910,6 +16918,7 @@ unsigned int take_analog_reading(unsigned char gt)
         if (gt==98)                                                              //read V_AGC    
             AD1CHS0=0x0009;                                                     //connect AN9 as CH0 input
 
+        /*                                                                      REM REV 2.2
         analog = 0;                                                             //clear the value
         ADC16Ptr = &ADC1BUF0;                                                   //initialize ADCBUF pointer
         IFS0bits.AD1IF = 0;                                                     //clear ADC interrupt flag
@@ -16926,18 +16935,22 @@ unsigned int take_analog_reading(unsigned char gt)
            IFS0bits.AD1IF=0;                                                    
            analog=analog+*ADC16Ptr;                                           
         }
-        AD1CON1bits.ADON = 0;                                                   //turn ADC off      
+        AD1CON1bits.ADON = 0;                                                   //turn ADC off   
+        */
+        analog=take_fast_analog_reading();                                      //REV 2.2
         SAMPLE_LITHIUM = 0;                                                     //turn off lithium battery sampling if on
         
         if(gt!=98)                                                              
             _3VX_off();                                                         //power-down analog circuitry   
 
-        analog = analog >> 4;                                                   //average the result    
-        if(gt==85)
-            analog-=24;                                                         //CORRECT FOR READING ERROR
-        IFS1bits.INT1IF=0;                                                      //clear the interrupt flag  
-        IPC5bits.INT1IP=7;                                                      //re-enable INT1 at priority level 7 (HIGHEST)   
+        //analog = analog >> 4;                                                   //average the result    REM REV 2.2
+        //if(gt==85)                                                            REM REV 2.2
+        //    analog-=24;                                                         //CORRECT FOR READING ERROR   REM REV 2.2
+        //IFS1bits.INT1IF=0;                                                      //clear the interrupt flag  REM REV 2.2
+        //IPC5bits.INT1IP=7;                                                      //re-enable INT1 at priority level 7 (HIGHEST)   REM REV 2.2
+        IPC5bits.INT1IP=6;                                                      //re-enable INT1 at priority level 6    REV 2.2   
         U1MODEbits.UARTEN=1;                                                    //Re-enable the COM PORT  REV 2.2
+        testPoint(2,2);                                                         //TEST REV 2.2
         return analog;                                                          //return the averaged 12 bit value	
     }
 
@@ -16962,7 +16975,7 @@ unsigned int take_fast_analog_reading(void)
     AD1CON3bits.ADRC=0;                                                             
     AD1CON3bits.SAMC=0x03;                                                      //sampling clock = 3 Tad
     AD1CON3bits.ADCS=0x0D;                                                      //conversion clock = 14 Tad (ADCS value +1)
-    AD1CHS0=0x0004;                                                             //AN4 is positive input
+    //AD1CHS0=0x0004;                                                             //AN4 is positive input   REM REV 2.2
     IFS0bits.AD1IF=0;                                                           //Clear the ADC interrupt flag
     
 
@@ -18259,6 +18272,7 @@ float take_reading(unsigned char gageType,int ch)                               
     float digits = 0.0;
     float lithium = 0.0;
 
+    testPoint(2,2);                                                             //TEST REV 2.2
     U1MODEbits.UARTEN=0;                                                        //Disable the COM PORT  REV 2.2
     _3VX_on();                                                                  //power-up analog circuitry 
 
@@ -18278,6 +18292,7 @@ float take_reading(unsigned char gageType,int ch)                               
         lithtemp /= 16;                                                         //average the result
         lithium = ((5.0 * lithtemp) / 4096.0);                                  //convert to voltage
         U1MODEbits.UARTEN=1;                                                    //Re-enable the COM PORT  REV 2.2
+        testPoint(2,2);                                                         //TEST REV 2.2
         return lithium;                                                         //return the averaged 12 bit value		
     }
 
@@ -18314,6 +18329,7 @@ float take_reading(unsigned char gageType,int ch)                               
     digits = read_vw();                                                         //get the VW digits
     _3VX_off();                                                                 //power-down analog circuitry  
     U1MODEbits.UARTEN=1;                                                        //Re-enable the COM PORT  REV 2.2
+    testPoint(2,2);                                                             //TEST REV 2.2
     return digits;                                                              //give it to take_One_Complete_Reading()
 }
 
@@ -19942,6 +19958,10 @@ void __attribute__((__interrupt__)) _U1RXInterrupt(void)                        
 {
     IFS0bits.U1RXIF = 0;                                                        //clear the UART1 interrupt flag
     U1STAbits.OERR = 0;
+    
+    testPoint(1,1);                                                             //TEST REV 2.2
+    //MODBUScomm();                                                               //TEST REV 2.2
+    
     //RxData = ReadUART1();                                                       //get the char    REM REV 2.2
 
     /*REM REV 2.2:
@@ -19956,16 +19976,18 @@ void __attribute__((__interrupt__)) _U1RXInterrupt(void)                        
      * */
     
     //REV 2.2:
-    if(LC2CONTROL2.flags2.Modbus)                                       
-        MODBUScomm();                                                         
-     else                                                                
-        CMDcomm();
+    //if(LC2CONTROL2.flags2.Modbus)                                       
+    //    MODBUScomm();                                                         
+    // else                                                                
+    //    CMDcomm();
 }
 
 void __attribute__((__interrupt__)) _AltU1RXInterrupt(void)                     //This is the UART1 ALTERNATE Receive ISR 
 {
     IFS0bits.U1RXIF = 0;                                                        //clear the UART1 interrupt flag
     U1STAbits.OERR = 0;
+    
+    testPoint(1,10);                                                            //TEST REV 2.2
     //RxData = ReadUART1();                                                       //get the char    REM REV 2.2
 
     /*REM REV 2.2:
@@ -19980,10 +20002,10 @@ void __attribute__((__interrupt__)) _AltU1RXInterrupt(void)                     
      * */
     
     //REV 2.2:
-    if(LC2CONTROL2.flags2.Modbus)                                       
-        MODBUScomm();                                                         
-     else                                                                
-        CMDcomm();
+    //if(LC2CONTROL2.flags2.Modbus)                                       
+    //    MODBUScomm();                                                         
+    // else                                                                
+    //    CMDcomm();
 }
 
 void __attribute__((__interrupt__)) _INT1Interrupt(void)                        //This is the RTC ISR when time to read occurs  
