@@ -17,9 +17,9 @@
 //	DATE:		12/07/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   2.2
-//	CHECKSUM:	0x4a3e  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	CHECKSUM:	0x45ee  (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	9164/30720   30%
-//	PGM(FLASH)MEM:  182655/261888 70%
+//	PGM(FLASH)MEM:  184092/261888 70%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -9540,17 +9540,15 @@ void displayTempReading(void) {
         switch (displayChannel) {
 
                 case 1:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 1 disabled    //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH1)
-                        //    |  
-                          if((MUX4_ENABLE.mflags.mux16_4==TH8     | MUX4_ENABLE.mflags.mux16_4==TH16    |       //REV 2.2
-                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH1)
+                        //Channel 1 disabled?                                   //REV 2.2
+                        if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                                              
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16) 
+                            &&  !MUX_ENABLE1_16.e1flags.CH1)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     | MUX4_ENABLE.mflags.mux16_4==TH16    |       
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH1))
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -9562,17 +9560,14 @@ void displayTempReading(void) {
 
 
                 case 2:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 2 disabled   //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH2)
-                        //    |  
-                          if((MUX4_ENABLE.mflags.mux16_4==TH8     | MUX4_ENABLE.mflags.mux16_4==TH16    |   //REV 2.2
-                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH2)
+                        //Channel 2 disabled?                                   //REV 2.2
+                        if (((MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                                              
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16) 
+                            &&  !MUX_ENABLE1_16.e1flags.CH2)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     | MUX4_ENABLE.mflags.mux16_4==TH16    |       
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH2))
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -9583,18 +9578,17 @@ void displayTempReading(void) {
                             break;
 
 
+
                 case 3:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 3 disabled    //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH3)
-                        //    |  
-                          if((MUX4_ENABLE.mflags.mux16_4==TH8     | MUX4_ENABLE.mflags.mux16_4==TH16    |   //REV 2.2
-                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH3)
+                       
+                        //Channel 3 disabled?                                   //REV 2.2
+                        if (((MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                                              
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16) 
+                            &&  !MUX_ENABLE1_16.e1flags.CH3)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     | MUX4_ENABLE.mflags.mux16_4==TH16    |       
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH3))
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -9606,17 +9600,14 @@ void displayTempReading(void) {
 
 
                 case 4:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 4 disabled    //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH4)
-                        //    |  
-                          if((MUX4_ENABLE.mflags.mux16_4==TH8     | MUX4_ENABLE.mflags.mux16_4==TH16    |   //REV 2.2
-                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH4)
+                        //Channel 4 disabled?                                   //REV 2.2
+                        if (((MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                                              
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16) 
+                            &&  !MUX_ENABLE1_16.e1flags.CH4)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     | MUX4_ENABLE.mflags.mux16_4==TH16    |       
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH4))
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -9628,17 +9619,13 @@ void displayTempReading(void) {
 
 
                 case 5:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 5 disabled    //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH5)
-                        //    |  
-                          if((MUX4_ENABLE.mflags.mux16_4==TH8     | MUX4_ENABLE.mflags.mux16_4==TH16    |   //REV 2.2
-                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH5)
+                        //Channel 5 disabled?                                   //REV 2.2
+                        if (((MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                                              
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16) 
+                            &&  !MUX_ENABLE1_16.e1flags.CH5)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     | MUX4_ENABLE.mflags.mux16_4==TH16    |       
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH5))
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -9650,17 +9637,13 @@ void displayTempReading(void) {
 
 
                 case 6:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 6 disabled    //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH6)
-                        //    |  
-                          if((MUX4_ENABLE.mflags.mux16_4==TH8     | MUX4_ENABLE.mflags.mux16_4==TH16    |   //REV 2.2
-                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH6)
+                        //Channel 6 disabled?                                   //REV 2.2
+                        if (((MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                                              
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16) 
+                            &&  !MUX_ENABLE1_16.e1flags.CH6)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     | MUX4_ENABLE.mflags.mux16_4==TH16    |       
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH6))
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -9669,20 +9652,17 @@ void displayTempReading(void) {
                                 putsUART1(BUF);                                 //No - display reading
                             }
                             break;
+
 
 
                 case 7:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 7 disabled   //REV 2.0 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH7)
-                        //    |  
-                          if((MUX4_ENABLE.mflags.mux16_4==TH8     | MUX4_ENABLE.mflags.mux16_4==TH16    |   //REV 2.2
-                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH7)
+                        //Channel 7 disabled?                                   //REV 2.2
+                        if (((MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                                              
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16) 
+                            &&  !MUX_ENABLE1_16.e1flags.CH7)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     | MUX4_ENABLE.mflags.mux16_4==TH16    |       
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH7))
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -9693,18 +9673,15 @@ void displayTempReading(void) {
                             break;
 
 
+
                 case 8:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 8 disabled    //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH8)
-                        //    |  
-                          if((MUX4_ENABLE.mflags.mux16_4==TH8     | MUX4_ENABLE.mflags.mux16_4==TH16    |   //REV 2.2
-                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH8)
+                        //Channel 8 disabled?                                   //REV 2.2
+                        if (((MUX4_ENABLE.mflags.mux16_4==VW_TH8    |                                              
+                            MUX4_ENABLE.mflags.mux16_4==VW_TH16) 
+                            &&  !MUX_ENABLE1_16.e1flags.CH8)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH8     | MUX4_ENABLE.mflags.mux16_4==TH16    |       
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH8))
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -9716,17 +9693,12 @@ void displayTempReading(void) {
 
 
                 case 9:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 9 disabled    //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH9)
-                        //    |  
-                          if((MUX4_ENABLE.mflags.mux16_4==TH16    |   //REV 2.2
-                                MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH9)
+                        //Channel 9 disabled?                                   //REV 2.2
+                        if (((MUX4_ENABLE.mflags.mux16_4==VW_TH16) 
+                            &&  !MUX_ENABLE1_16.e1flags.CH9)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH16    |       
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH9))
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -9738,17 +9710,12 @@ void displayTempReading(void) {
 
 
                 case 10:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 10 disabled   //REV 2.0 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH10)
-                        //    |  
-                          if((MUX4_ENABLE.mflags.mux16_4==TH16    |   //REV 2.2
-                                MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH10)
+                        //Channel 10 disabled?                                   //REV 2.2
+                        if (((MUX4_ENABLE.mflags.mux16_4==VW_TH16) 
+                            &&  !MUX_ENABLE1_16.e1flags.CH10)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH16    |       
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH10))
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -9760,17 +9727,12 @@ void displayTempReading(void) {
 
 
                 case 11:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 11 disabled   //REV 2.0 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH11)
-                        //    |  
-                          if((MUX4_ENABLE.mflags.mux16_4==TH16    |   //REV 2.2
-                                MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH11)
+                        //Channel 11 disabled?                                   //REV 2.2
+                        if (((MUX4_ENABLE.mflags.mux16_4==VW_TH16) 
+                            &&  !MUX_ENABLE1_16.e1flags.CH11)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH16    |       
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH11))
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -9779,20 +9741,16 @@ void displayTempReading(void) {
                                 putsUART1(BUF);                                 //No - display reading
                             }
                             break;
+
 
 
                 case 12:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 12 disabled    //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |              //REV 2.0 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH12)
-                        //    |  
-                          if((MUX4_ENABLE.mflags.mux16_4==TH16    |   //REV 2.2
-                                MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH12)
+                        //Channel 12 disabled?                                   //REV 2.2
+                        if (((MUX4_ENABLE.mflags.mux16_4==VW_TH16) 
+                            &&  !MUX_ENABLE1_16.e1flags.CH12)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH16    |       
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH12))
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -9803,18 +9761,14 @@ void displayTempReading(void) {
                             break;
 
 
+
                 case 13:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 13 disabled    //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH13)
-                        //    |  
-                          if((MUX4_ENABLE.mflags.mux16_4==TH16    |   //REV 2.2
-                                MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH13)
+                        //Channel 13 disabled?                                   //REV 2.2
+                        if (((MUX4_ENABLE.mflags.mux16_4==VW_TH16) 
+                            &&  !MUX_ENABLE1_16.e1flags.CH13)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH16    |       
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH13))
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -9826,17 +9780,12 @@ void displayTempReading(void) {
 
 
                 case 14:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 14 disabled    //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH14)
-                        //    |  
-                          if((MUX4_ENABLE.mflags.mux16_4==TH16    |   //REV 2.2
-                                MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH14)
+                        //Channel 14 disabled?                                   //REV 2.2
+                        if (((MUX4_ENABLE.mflags.mux16_4==VW_TH16) 
+                            &&  !MUX_ENABLE1_16.e1flags.CH14)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH16    |       
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH14))
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -9848,17 +9797,12 @@ void displayTempReading(void) {
 
 
                 case 15:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 15 disabled    //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH15)
-                        //    |  
-                          if((MUX4_ENABLE.mflags.mux16_4==TH16    |   //REV 2.2
-                                MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH15)
+                        //Channel 15 disabled?                                   //REV 2.2
+                        if (((MUX4_ENABLE.mflags.mux16_4==VW_TH16) 
+                            &&  !MUX_ENABLE1_16.e1flags.CH15)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH16    |       
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH15))
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -9867,20 +9811,16 @@ void displayTempReading(void) {
                                 putsUART1(BUF);                                 //No - display reading
                             }
                             break;
+
 
 
                 case 16:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 16 disabled    //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE1_16.e1flags.CH16)
-                        //    |  
-                          if((MUX4_ENABLE.mflags.mux16_4==TH16    |   //REV 2.2
-                                MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH16)
+                        //Channel 16 disabled?                                   //REV 2.2
+                        if (((MUX4_ENABLE.mflags.mux16_4==VW_TH16) 
+                            &&  !MUX_ENABLE1_16.e1flags.CH16)
+                            |  
+                            ((MUX4_ENABLE.mflags.mux16_4==TH16    |       
+                            MUX4_ENABLE.mflags.mux16_4==TH32)  && !THMUX_ENABLE1_16.t1flags.CH16))
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -9891,16 +9831,9 @@ void displayTempReading(void) {
                             break;
 
 
+
                 case 17:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 17 disabled    //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH17)
-                        //    |  
+                        //Channel 17 disabled                                   //REV 2.2
                           if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH17) //REV 2.2
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
@@ -9913,16 +9846,8 @@ void displayTempReading(void) {
 
 
                 case 18:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 18 disabled    //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH18)
-                        //    |  
-                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH18)  //REV 2.2
+                        //Channel 18 disabled                                   //REV 2.2
+                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH18) //REV 2.2
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -9931,18 +9856,11 @@ void displayTempReading(void) {
                                 putsUART1(BUF);                                 //No - display reading
                             }
                             break;
+
 
                 case 19:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 19 disabled   //REV 2.0 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH19)
-                        //    |  
-                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH19)  //REV 2.2
+                        //Channel 19 disabled                                   //REV 2.2
+                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH19) //REV 2.2
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -9951,18 +9869,11 @@ void displayTempReading(void) {
                                 putsUART1(BUF);                                 //No - display reading
                             }
                             break;
+
 
                 case 20:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 20 disabled    //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH20)
-                        //    |  
-                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH20)  //REV 2.2
+                        //Channel 20 disabled                                   //REV 2.2
+                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH20) //REV 2.2
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -9972,17 +9883,10 @@ void displayTempReading(void) {
                             }
                             break;
 
+
                 case 21:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 21 disabled    //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH21)
-                        //    |  
-                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH21)  //REV 2.2
+                        //Channel 21 disabled                                   //REV 2.2
+                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH21) //REV 2.2
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -9993,16 +9897,8 @@ void displayTempReading(void) {
                             break;
 
                 case 22:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 22 disabled   //REV 2.0 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH22)
-                        //    |  
-                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH22)  //REV 2.2
+                        //Channel 22 disabled                                   //REV 2.2
+                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH22) //REV 2.2
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -10011,18 +9907,11 @@ void displayTempReading(void) {
                                 putsUART1(BUF);                                 //No - display reading
                             }
                             break;
+
 
                 case 23:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 23 disabled    //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH23)
-                        //    |  
-                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH23)  //REV 2.2
+                        //Channel 23 disabled                                   //REV 2.2
+                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH23) //REV 2.2
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -10031,18 +9920,11 @@ void displayTempReading(void) {
                                 putsUART1(BUF);                                 //No - display reading
                             }
                             break;
+
 
                 case 24:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 24 disabled    //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH24)
-                        //    |  
-                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH24)  //REV 2.2
+                        //Channel 24 disabled                                   //REV 2.2
+                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH24) //REV 2.2
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -10051,18 +9933,11 @@ void displayTempReading(void) {
                                 putsUART1(BUF);                                 //No - display reading
                             }
                             break;
+
 
                 case 25:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 25 disabled    //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH25)
-                        //    |  
-                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH25)  //REV 2.2
+                        //Channel 25 disabled                                   //REV 2.2
+                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH25) //REV 2.2
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -10071,18 +9946,11 @@ void displayTempReading(void) {
                                 putsUART1(BUF);                                 //No - display reading
                             }
                             break;
+
 
                 case 26:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 26 disabled   //REV 2.0 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH26)
-                        //    |  
-                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH26)  //REV 2.2
+                        //Channel 26 disabled                                   //REV 2.2
+                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH26) //REV 2.2
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -10091,18 +9959,11 @@ void displayTempReading(void) {
                                 putsUART1(BUF);                                 //No - display reading
                             }
                             break;
+
 
                 case 27:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 27 disabled   //REV 2.0 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH27)
-                        //    |  
-                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH27)  //REV 2.2
+                        //Channel 27 disabled                                   //REV 2.2
+                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH27) //REV 2.2
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -10112,17 +9973,10 @@ void displayTempReading(void) {
                             }
                             break;
 
+
                 case 28:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 28 disabled  //REV 2.0  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |              //REV 2.0 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH28)
-                        //    |  
-                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH28)  //REV 2.2
+                        //Channel 28 disabled                                   //REV 2.2
+                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH28) //REV 2.2
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -10133,16 +9987,8 @@ void displayTempReading(void) {
                             break;
 
                 case 29:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 29 disabled    //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH29)
-                        //    |  
-                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH29)  //REV 2.2
+                        //Channel 29 disabled                                   //REV 2.2
+                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH29) //REV 2.2
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -10152,17 +9998,10 @@ void displayTempReading(void) {
                             }
                             break;
 
+
                 case 30:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 30 disabled    //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH30)
-                        //    |  
-                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH30)  //REV 2.2
+                        //Channel 30 disabled                                   //REV 2.2
+                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH30) //REV 2.2
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -10173,16 +10012,8 @@ void displayTempReading(void) {
                             break;
 
                 case 31:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 31 disabled  //REV 2.0  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH31)
-                        //    |  
-                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH31)  //REV 2.2
+                        //Channel 31 disabled                                   //REV 2.2
+                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH31) //REV 2.2
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -10191,18 +10022,11 @@ void displayTempReading(void) {
                                 putsUART1(BUF);                                 //No - display reading
                             }
                             break;
+
 
                 case 32:
-                        //REM REV 2.2:
-                        //if (((MUX4_ENABLE.mflags.mux16_4==SingleVW_TH  |             //Channel 32 disabled  //REV 2.0  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH4    |               //REV 2.0
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH8    |               //REV 2.0                                
-                        //    MUX4_ENABLE.mflags.mux16_4==VW8     | 
-                        //    MUX4_ENABLE.mflags.mux16_4==VW_TH16    |  
-                        //    MUX4_ENABLE.mflags.mux16_4==VW16    |               //REV 2.1                                      
-                        //    MUX4_ENABLE.mflags.mux16_4==VW32) && !MUX_ENABLE17_32.e2flags.CH32)
-                        //    |  
-                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH32)  //REV 2.2
+                        //Channel 32 disabled                                   //REV 2.2
+                          if(MUX4_ENABLE.mflags.mux16_4==TH32  && !THMUX_ENABLE17_32.t2flags.CH32) //REV 2.2
                             {
                                 putsUART1(DisabledDisplay);                     //Yes - display "---"
                             }
@@ -10211,7 +10035,6 @@ void displayTempReading(void) {
                                 putsUART1(BUF);                                 //No - display reading
                             }
                             break;
-
 
 
                 default:
