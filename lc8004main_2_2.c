@@ -14,7 +14,7 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		12/07/2017
+//	DATE:		12/08/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   2.2
 //	CHECKSUM:	0x45ee  (MPLABX ver 3.15 and XC16 ver 1.26)
@@ -249,7 +249,7 @@
 //                                  Change current MX8 to MX8V (VW 2 wire)
 //                                  Add MX8 (4 wire) & MX8T (Thermistor 2 wire)
 //      2.1     12/06/17            Add MX16V & MX16T configurations
-//      2.2     12/07/17            Cleanup displayReading() and displayTempReading()
+//      2.2     12/08/17            Cleanup displayReading() and displayTempReading()
 //
 //
 //
@@ -9506,7 +9506,7 @@ void displayTempReading(void) {
                         putsUART1(Error);                                       //"ERROR" (somethings wrong)
                         break;
                 }
-                while (BusyUART1());
+                while (BusyUART1());                                          
             }
         }                                                                       //end of 1st for(displayChannel) loop
     }
