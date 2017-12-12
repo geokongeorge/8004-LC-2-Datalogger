@@ -16,8 +16,8 @@
 //	COMPANY:	GEOKON, INC
 //	DATE:		12/08/2017
 //	DESIGNER: 	GEORGE MOORE
-//	REVISION:   2.3
-//	CHECKSUM:	0x45ef  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	REVISION:   2.2
+//	CHECKSUM:	0x45ee  (MPLABX ver 3.15 and XC16 ver 1.26)
 //	DATA(RAM)MEM:	9164/30720   30%
 //	PGM(FLASH)MEM:  184092/261888 70%
 
@@ -250,7 +250,6 @@
 //                                  Add MX8 (4 wire) & MX8T (Thermistor 2 wire)
 //      2.1     12/06/17            Add MX16V & MX16T configurations
 //      2.2     12/08/17            Cleanup displayReading() and displayTempReading()
-//      2.3     12/08/17            Allow for MODBUS communications during a read cycle instead of locking the port.
 //
 //
 //
@@ -302,7 +301,7 @@
 //	Header Files:
 //#include "p33FJ256GP710A.h"
 //#include "LC8004extFRAM_i.h"                              
-//#include "LC8004main_2_3.h"
+//#include "LC8004main_2_2.h"
 //#include "LC8004delay_b.h"
 //#include "AD5241b.h"
 //#include "FRAM_ADDRESSh.h                                                     
@@ -328,7 +327,7 @@
 //--------------------------------------------------------------
 #include "p33FJ256GP710A.h"
 #include "LC8004extFRAM_i.h"                                                    
-#include "LC8004main_2_3.h"
+#include "LC8004main_2_2.h"
 #include "LC8004delay_b.h"                                                      
 #include "AD5241b.h"                                                            
 #include "FRAM_ADDRESSh.h"                                                      
