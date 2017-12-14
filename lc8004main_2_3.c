@@ -14,12 +14,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		12/08/2017
+//	DATE:		12/14/2017
 //	DESIGNER: 	GEORGE MOORE
-//	REVISION:   2.2
-//	CHECKSUM:	0x45ee  (MPLABX ver 3.15 and XC16 ver 1.26)
-//	DATA(RAM)MEM:	9164/30720   30%
-//	PGM(FLASH)MEM:  184092/261888 70%
+//	REVISION:   2.3
+//	CHECKSUM:	0x86c2  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	DATA(RAM)MEM:	9168/30720   30%
+//	PGM(FLASH)MEM:  184230/261888 70%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -250,6 +250,7 @@
 //                                  Add MX8 (4 wire) & MX8T (Thermistor 2 wire)
 //      2.1     12/06/17            Add MX16V & MX16T configurations
 //      2.2     12/08/17            Cleanup displayReading() and displayTempReading()
+//      2.3     12/14/17            Add capability for Modbus comms during reading cycle
 //
 //
 //
@@ -301,7 +302,7 @@
 //	Header Files:
 //#include "p33FJ256GP710A.h"
 //#include "LC8004extFRAM_i.h"                              
-//#include "LC8004main_2_2.h"
+//#include "LC8004main_2_3.h"
 //#include "LC8004delay_b.h"
 //#include "AD5241b.h"
 //#include "FRAM_ADDRESSh.h                                                     
@@ -327,7 +328,7 @@
 //--------------------------------------------------------------
 #include "p33FJ256GP710A.h"
 #include "LC8004extFRAM_i.h"                                                    
-#include "LC8004main_2_2.h"
+#include "LC8004main_2_3.h"
 #include "LC8004delay_b.h"                                                      
 #include "AD5241b.h"                                                            
 #include "FRAM_ADDRESSh.h"                                                      
@@ -372,14 +373,7 @@ int main(void)
     
     
     restoreSettings();                                                          //reload the settings from FRAM    
-    
-    //LC2CONTROL.flags.Logging=0;                                               REM REV 1.10  
-    //write_Int_FRAM(LC2CONTROLflagsaddress,LC2CONTROL.full);                   REM REV 1.10  
-    
-    //LC2CONTROL2.flags2.scheduled=0;                                           REM REV 1.10  
-    //write_Int_FRAM(LC2CONTROL2flagsaddress,LC2CONTROL2.full2);                  //store flag in FRAM REM REV 1.10
     //stopLogging();                                                              
-    
     SLEEP12V = 0;                                                               //Set 12V regulator into switchmode
     wait2S();                                                                   //provide a 2S delay to allow DS3231 to stabilize
 
@@ -13660,9 +13654,14 @@ void MODBUScomm(void)
 
                         if(tempValueValue.status1flags._Logging)
                         {
+                            MODBUS_TX(ECHO);                                    //REV 2.1
+                            MBflagsbits.quiet=1;                                //REV 2.3
                             testvalue=START();                                  //Start Logging
-                            if(!testvalue)                                      //min scan error    
+                            if(!testvalue)                                      //min scan error   
+                            {
+                                MBflagsbits.quiet=0;                            //REV 2.3
                                 return;
+                            }
                         }
                         else
                         {    
@@ -13875,7 +13874,9 @@ void MODBUScomm(void)
     }
 
     //Transmit the array:
-    MODBUS_TX(ECHO);                                                            
+    if(!MBflagsbits.quiet)                                                      //REV 2.3
+        MODBUS_TX(ECHO);   
+    MBflagsbits.quiet=0;                                                        //REV 2.3
     IFS3bits.T9IF=0;                                                            
     shutdownTimer(TimeOut);                                                     //start 15S shutdown timer	
     return;
@@ -18021,6 +18022,31 @@ void take_One_Complete_Reading(unsigned char store)
                 U1STAbits.UTXEN=1;                                              
                 return;
             }
+        }
+        
+        if(LC2CONTROL2.flags2.Modbus)                                           //check for Modbus communications   REV 2.3
+        {
+            //Setup TMR9 as 0.5S background timer      
+            T8CONbits.T32=0;                                                    //Set TMR9 for 16 bit
+            PMD3bits.T9MD=0;                                                    //Enable TMR9
+            T9CONbits.TON=0;                                                    //Make sure timer is off
+            T9CONbits.TCS=0;                                                    //Internal Tcy
+            T9CONbits.TGATE=0;                                                  //Disable gated timer mode
+            T9CONbits.TCKPS=3;                                                  //1:256 prescaler 
+            TMR9=0;                                                             //clear the TMR9 register
+            PR9=mS250;                                                          //load the period register with 0.25S timeout value
+            IPC13bits.T9IP=1;                                                   //set TMR9 interrupt priority to 1 (lowest)
+            IFS3bits.T9IF=0;                                                    //Clear the interrupt flag
+            IEC3bits.T9IE=0;                                                    //Disable TMR9 interrupt
+
+            //Start the 0.25S background timer   
+            U1MODEbits.UARTEN=1;                                                //Enable the COM PORT  
+            T9CONbits.TON=1;
+            MODBUScomm();                                                       //Modbus comms?   
+            //Stop the 0.25S background timer
+            T8CONbits.T32=1;                                                    //set TMR8 back to 32 bit
+            T9CONbits.TON=0;
+            U1MODEbits.UARTEN=0;                                                //Disable the COM PORT  
         }
     }                                                                           //end of MUX loop for(ch)
 

@@ -1,6 +1,6 @@
 
-#ifndef LC8004main_2_2_H
-#define LC8004main_2_2_H
+#ifndef LC8004main_2_3_H
+#define LC8004main_2_3_H
 
 // DSPIC33FJ256GP710A Configuration Bit Settings
 
@@ -168,6 +168,14 @@ LoggingFlag2Bits flags2;
 }uflags2;
 uflags2 LC2CONTROL2;
 
+
+//MODBUS CONTROL FLAGS:                                                         //REV 2.3
+volatile unsigned char MBflags;                                                 //flags register
+struct
+{
+	unsigned quiet:1;                                                           //0=Allow Modbus Tx, 1=Block Modbus Tx
+}MBflagsbits;
+
 //MUX ENABLE FLAGS:
 typedef struct{
 	unsigned	mux16_4:4;                                                      //0=4 channel VW/TH mux selected  (VW_TH4) REV 2.0
@@ -182,6 +190,7 @@ typedef struct{
                                                                                 //9=16 channel TH mux selected  REV 2.0
 	
     unsigned	skip:1;                                                         //0=channel enabled, 1=skip channel
+    unsigned    ModbusShutup:1;                                                 //0=Allow Modbus TX, 1=Block Modbus TX  REV 2.3
 }Mux_ControlBits;
 typedef union{ unsigned int mux;
 Mux_ControlBits mflags;
@@ -809,6 +818,10 @@ unsigned int decimalRTC;
 #define mS500   0xe100                                                          //Fcy is 29.4912MHz here        
 
 //------------------------------------------------------------------------------
+//          250mS delay value for Modbus communications during reading cycle              
+#define mS250   0x7080                                                          //Fcy is 29.4912MHz here    REV 2.3
+
+//------------------------------------------------------------------------------
 //          100mS delay value for VW signal measurement          
 #define mS100   0x2d0000                                                        //Fcy is 29.4912MHz here    
 
@@ -1277,7 +1290,7 @@ char RESET[]={"RESET                  RESET processor"};
 char Resetting[]={"Resetting..."};								
 char ResetComplete[]={"RESET COMPLETE"};						
 char RevMAJOR[]={"2"};                                                          //255 MAX      
-char RevMINOR[]={"2"};                                                         //255 MAX   
+char RevMINOR[]={"3"};                                                         //255 MAX   
 char RnotAllowed[]={"RESET Not Allowed While Logging"};			
 char RUsure[]={"Are you sure(Y/N)?"};
 char RSN[]={"RSN                    Read transducer Serial Number"};            
