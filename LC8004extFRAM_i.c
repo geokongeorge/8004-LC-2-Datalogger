@@ -720,7 +720,8 @@ unsigned char selectBank(unsigned long absAdd, unsigned char x)
         }
     }     
     
-    if(absAdd>=393120 && absAdd<524160)                                         //FRAM4 (U6)
+    //if(absAdd>=393120 && absAdd<524160)                                         //FRAM4 (U6)  REM REV I
+    if(absAdd>=393120 && absAdd<524287)                                         //FRAM4 (U6)    REV I
     {
         if(absAdd>=393120 && absAdd<458640)                                     //FRAM4 page 0  
         {
