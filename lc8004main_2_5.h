@@ -1336,6 +1336,7 @@ char Space[]={" "};
 char Startlog[]={"SThh:mm                STart logging, hh:mm = start time"};
 char Stoplog[]={"SPhh:mm                StoP logging, hh:mm = stop time"};
 char StopTimeNotAllowed[]={"Stop Time Not Allowed While Log Intervals Are Enabled."};	
+char SN[]={"SN: "};                                                             //REV 2.5
 char sR[]={"SR                     Synchronize Readings(0=not synch'd,1=synch'd)"};	
 char SV[]={"SV                     Software Version"};
 char SwitchtoModbus[]={"Switch to MODBUS communications."};                     

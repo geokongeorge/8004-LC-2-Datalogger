@@ -17,9 +17,9 @@
 //	DATE:		12/28/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   2.5
-//	CHECKSUM:	0xdb69  (MPLABX ver 3.15 and XC16 ver 1.26)
-//	DATA(RAM)MEM:	9192/30720   30%
-//	PGM(FLASH)MEM:  183969/261888 70%
+//	CHECKSUM:	0x1ae0  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	DATA(RAM)MEM:	9198/30720   30%
+//	PGM(FLASH)MEM:  186762/261888 71%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -5801,8 +5801,8 @@ void displayGageInfo(int channel)                                               
         if(MUX4_ENABLE.mflags.mux16_4!=VW32)                                    //REV 2.5
         {
             //DISPLAY THERMAL FACTOR:
-            putsUART1(Tab);
-            while(BusyUART1());            
+            //putsUART1(Tab);
+            //while(BusyUART1());            
             putsUART1(K);                                                       
             while (BusyUART1());
             TEMPVAL=read_float(ThermalFactoraddress);                           //extract Thermal Factor from FRAM    
@@ -5998,6 +5998,8 @@ void displayMemoryStatus(void) {
 
 void displayMUX(int displayChannel) 
 {
+    unsigned long SerialNumber=0;                                               //REV 2.5
+    
     MUX_ENABLE1_16.MUXen1_16=read_Int_FRAM(MUX_ENABLE1_16flagsaddress);       
     MUX_ENABLE17_32.MUXen17_32=read_Int_FRAM(MUX_ENABLE17_32flagsaddress);          
     THMUX_ENABLE1_16.THMUXen1_16=read_Int_FRAM(THMUX_ENABLE1_16flagsaddress);       
@@ -6005,11 +6007,17 @@ void displayMUX(int displayChannel)
     //DISPLAY MUX SETUP TABLE:
     crlf();
 
-    if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                                   //Single Channel    //REV 2.0
+    if (MUX4_ENABLE.mflags.mux16_4 == SingleVW_TH)                              //Single Channel    //REV 2.0
     {
         putsUART1(MUX1setupmenu);                                               //"LC-4 Single Channel VW/TH Setup:"
         while (BusyUART1());
-        crlf();
+        crlf();                                                               
+        putsUART1(SN);                                                          //REV 2.5
+        while (BusyUART1());  
+        SerialNumber=read_longFRAM(GAGE1_SERIAL_MSWaddress);
+        sprintf(_SNbuf, "%ld", SerialNumber);                                   //format the serial number
+        putsUART1(_SNbuf);                                                      //display it
+        while (BusyUART1());            
         displayGageInfo(1);                                                     //Display gage information
         crlf();
         crlf();
@@ -6049,8 +6057,23 @@ void displayMUX(int displayChannel)
                 MUX4_ENABLE.mflags.mux16_4==VW_TH8  |                           //REV 2.0
                 MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 2.1
         {
-            if (MUX_ENABLE1_16.e1flags.CH1)                                     //Display ENABLED or DISABLED
-                putsUART1(Enabled);
+            if (MUX_ENABLE1_16.e1flags.CH1)                                     //Display ENABLED, Serial Number or DISABLED
+            {
+                if(MUX4_ENABLE.mflags.mux16_4==VW8 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)
+                {
+                    putsUART1(Enabled);                                         
+                }
+                else
+                {
+                    Nop();
+                    putsUART1(SN);                                                  //REV 2.5
+                    while (BusyUART1());  
+                    SerialNumber=read_longFRAM(GAGE1_SERIAL_MSWaddress+(4*displayChannel));
+                    sprintf(_SNbuf, "%ld", SerialNumber);                                //format the serial number
+                    putsUART1(_SNbuf);                                                   //display it
+                    while (BusyUART1());            
+                }
+            }
             else
                 putsUART1(Disabled);
         }
@@ -6071,6 +6094,7 @@ void displayMUX(int displayChannel)
 
     if (displayChannel == 2 | displayChannel == 0) 
     {
+        Nop();
         putsUART1(CH2);                                                         //CH2 setup
         while (BusyUART1());
 
@@ -6079,7 +6103,21 @@ void displayMUX(int displayChannel)
                 MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 2.1
         {
             if (MUX_ENABLE1_16.e1flags.CH2)                                     //Display ENABLED or DISABLED
-                putsUART1(Enabled);
+            {
+                if(MUX4_ENABLE.mflags.mux16_4==VW8 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)
+                {
+                    putsUART1(Enabled);                                         
+                }
+                else
+                {
+                    putsUART1(SN);                                                  //REV 2.5
+                    while (BusyUART1());  
+                    SerialNumber=read_longFRAM(GAGE2_SERIAL_MSWaddress);
+                    sprintf(_SNbuf, "%ld", SerialNumber);                                //format the serial number
+                    putsUART1(_SNbuf);                                                   //display it
+                    while (BusyUART1());            
+                }
+            }
             else
                 putsUART1(Disabled);
         }
@@ -6108,7 +6146,21 @@ void displayMUX(int displayChannel)
                 MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 2.1
         {
             if (MUX_ENABLE1_16.e1flags.CH3)                                     //Display ENABLED or DISABLED
-                putsUART1(Enabled);
+            {
+                if(MUX4_ENABLE.mflags.mux16_4==VW8 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)
+                {
+                    putsUART1(Enabled);                                         
+                }
+                else
+                {
+                    putsUART1(SN);                                                  //REV 2.5
+                    while (BusyUART1());  
+                    SerialNumber=read_longFRAM(GAGE3_SERIAL_MSWaddress);
+                    sprintf(_SNbuf, "%ld", SerialNumber);                                //format the serial number
+                    putsUART1(_SNbuf);                                                   //display it
+                    while (BusyUART1());            
+                }
+            }
             else
                 putsUART1(Disabled);
         }
@@ -6137,7 +6189,21 @@ void displayMUX(int displayChannel)
                 MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 2.1
         {
             if (MUX_ENABLE1_16.e1flags.CH4)                                     //Display ENABLED or DISABLED
-                putsUART1(Enabled);
+            {
+                if(MUX4_ENABLE.mflags.mux16_4==VW8 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)
+                {
+                    putsUART1(Enabled);                                         
+                }
+                else
+                {
+                    putsUART1(SN);                                                  //REV 2.5
+                    while (BusyUART1());  
+                    SerialNumber=read_longFRAM(GAGE4_SERIAL_MSWaddress);
+                    sprintf(_SNbuf, "%ld", SerialNumber);                                //format the serial number
+                    putsUART1(_SNbuf);                                                   //display it
+                    while (BusyUART1());            
+                }
+            }
             else
                 putsUART1(Disabled);
         }
@@ -6170,7 +6236,21 @@ void displayMUX(int displayChannel)
                 MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 2.1
         {
             if (MUX_ENABLE1_16.e1flags.CH5)                                     //Display ENABLED or DISABLED
-                putsUART1(Enabled);
+            {
+                if(MUX4_ENABLE.mflags.mux16_4==VW8 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)
+                {
+                    putsUART1(Enabled);                                         
+                }
+                else
+                {
+                    putsUART1(SN);                                                  //REV 2.5
+                    while (BusyUART1());  
+                    SerialNumber=read_longFRAM(GAGE5_SERIAL_MSWaddress);
+                    sprintf(_SNbuf, "%ld", SerialNumber);                                //format the serial number
+                    putsUART1(_SNbuf);                                                   //display it
+                    while (BusyUART1());            
+                }
+            }
             else
                 putsUART1(Disabled);
         }
@@ -6199,7 +6279,21 @@ void displayMUX(int displayChannel)
                 MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 2.1
         {
             if (MUX_ENABLE1_16.e1flags.CH6)                                     //Display ENABLED or DISABLED
-                putsUART1(Enabled);
+            {
+                if(MUX4_ENABLE.mflags.mux16_4==VW8 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)
+                {
+                    putsUART1(Enabled);                                         
+                }
+                else
+                {
+                    putsUART1(SN);                                                  //REV 2.5
+                    while (BusyUART1());  
+                    SerialNumber=read_longFRAM(GAGE6_SERIAL_MSWaddress);
+                    sprintf(_SNbuf, "%ld", SerialNumber);                                //format the serial number
+                    putsUART1(_SNbuf);                                                   //display it
+                    while (BusyUART1());            
+                }
+            }
             else
                 putsUART1(Disabled);
         }
@@ -6228,7 +6322,21 @@ void displayMUX(int displayChannel)
                 MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 2.1
         {
             if (MUX_ENABLE1_16.e1flags.CH7)                                     //Display ENABLED or DISABLED
-                putsUART1(Enabled);
+            {
+                if(MUX4_ENABLE.mflags.mux16_4==VW8 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)
+                {
+                    putsUART1(Enabled);                                         
+                }
+                else
+                {
+                    putsUART1(SN);                                                  //REV 2.5
+                    while (BusyUART1());  
+                    SerialNumber=read_longFRAM(GAGE7_SERIAL_MSWaddress);
+                    sprintf(_SNbuf, "%ld", SerialNumber);                                //format the serial number
+                    putsUART1(_SNbuf);                                                   //display it
+                    while (BusyUART1());            
+                }
+            }
             else
                 putsUART1(Disabled);
         }
@@ -6257,7 +6365,21 @@ void displayMUX(int displayChannel)
                 MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 2.1
         {
             if (MUX_ENABLE1_16.e1flags.CH8)                                     //Display ENABLED or DISABLED
-                putsUART1(Enabled);
+            {
+                if(MUX4_ENABLE.mflags.mux16_4==VW8 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)
+                {
+                    putsUART1(Enabled);                                         
+                }
+                else
+                {
+                    putsUART1(SN);                                                  //REV 2.5
+                    while (BusyUART1());  
+                    SerialNumber=read_longFRAM(GAGE8_SERIAL_MSWaddress);
+                    sprintf(_SNbuf, "%ld", SerialNumber);                                //format the serial number
+                    putsUART1(_SNbuf);                                                   //display it
+                    while (BusyUART1());            
+                }
+            }
             else
                 putsUART1(Disabled);
         }
@@ -6288,7 +6410,21 @@ void displayMUX(int displayChannel)
         if(MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 2.1
         {
             if (MUX_ENABLE1_16.e1flags.CH9)                                     //Display ENABLED or DISABLED
-                putsUART1(Enabled);
+            {
+                if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)
+                {
+                    putsUART1(Enabled);                                         
+                }
+                else
+                {
+                    putsUART1(SN);                                                  //REV 2.5
+                    while (BusyUART1());  
+                    SerialNumber=read_longFRAM(GAGE9_SERIAL_MSWaddress);
+                    sprintf(_SNbuf, "%ld", SerialNumber);                                //format the serial number
+                    putsUART1(_SNbuf);                                                   //display it
+                    while (BusyUART1());            
+                }
+            }
             else
                 putsUART1(Disabled);
         }
@@ -6315,7 +6451,21 @@ void displayMUX(int displayChannel)
         if(MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 2.1
         {
             if (MUX_ENABLE1_16.e1flags.CH10)                                    //Display ENABLED or DISABLED
-                putsUART1(Enabled);
+            {
+                if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)
+                {
+                    putsUART1(Enabled);                                         
+                }
+                else
+                {
+                    putsUART1(SN);                                                  //REV 2.5
+                    while (BusyUART1());  
+                    SerialNumber=read_longFRAM(GAGE10_SERIAL_MSWaddress);
+                    sprintf(_SNbuf, "%ld", SerialNumber);                                //format the serial number
+                    putsUART1(_SNbuf);                                                   //display it
+                    while (BusyUART1());            
+                }
+            }
             else
                 putsUART1(Disabled);
         }
@@ -6342,7 +6492,21 @@ void displayMUX(int displayChannel)
         if(MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 2.1
         {
             if (MUX_ENABLE1_16.e1flags.CH11)                                    //Display ENABLED or DISABLED
-                putsUART1(Enabled);
+            {
+                if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)
+                {
+                    putsUART1(Enabled);                                         
+                }
+                else
+                {
+                    putsUART1(SN);                                                  //REV 2.5
+                    while (BusyUART1());  
+                    SerialNumber=read_longFRAM(GAGE11_SERIAL_MSWaddress);
+                    sprintf(_SNbuf, "%ld", SerialNumber);                                //format the serial number
+                    putsUART1(_SNbuf);                                                   //display it
+                    while (BusyUART1());            
+                }
+            }
             else
                 putsUART1(Disabled);
         }
@@ -6369,7 +6533,21 @@ void displayMUX(int displayChannel)
         if(MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 2.1
         {
             if (MUX_ENABLE1_16.e1flags.CH12)                                    //Display ENABLED or DISABLED
-                putsUART1(Enabled);
+            {
+                if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)
+                {
+                    putsUART1(Enabled);                                         
+                }
+                else
+                {
+                    putsUART1(SN);                                                  //REV 2.5
+                    while (BusyUART1());  
+                    SerialNumber=read_longFRAM(GAGE12_SERIAL_MSWaddress);
+                    sprintf(_SNbuf, "%ld", SerialNumber);                                //format the serial number
+                    putsUART1(_SNbuf);                                                   //display it
+                    while (BusyUART1());            
+                }
+            }
             else
                 putsUART1(Disabled);
         }
@@ -6396,7 +6574,21 @@ void displayMUX(int displayChannel)
         if(MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 2.1
         {
             if (MUX_ENABLE1_16.e1flags.CH13)                                    //Display ENABLED or DISABLED
-                putsUART1(Enabled);
+            {
+                if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)
+                {
+                    putsUART1(Enabled);                                         
+                }
+                else
+                {
+                    putsUART1(SN);                                                  //REV 2.5
+                    while (BusyUART1());  
+                    SerialNumber=read_longFRAM(GAGE13_SERIAL_MSWaddress);
+                    sprintf(_SNbuf, "%ld", SerialNumber);                                //format the serial number
+                    putsUART1(_SNbuf);                                                   //display it
+                    while (BusyUART1());            
+                }
+            }
             else
                 putsUART1(Disabled);
         }
@@ -6423,7 +6615,21 @@ void displayMUX(int displayChannel)
         if(MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 2.1
         {
             if (MUX_ENABLE1_16.e1flags.CH14)                                    //Display ENABLED or DISABLED
-                putsUART1(Enabled);
+            {
+                if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)
+                {
+                    putsUART1(Enabled);                                         
+                }
+                else
+                {
+                    putsUART1(SN);                                                  //REV 2.5
+                    while (BusyUART1());  
+                    SerialNumber=read_longFRAM(GAGE14_SERIAL_MSWaddress);
+                    sprintf(_SNbuf, "%ld", SerialNumber);                                //format the serial number
+                    putsUART1(_SNbuf);                                                   //display it
+                    while (BusyUART1());            
+                }
+            }
             else
                 putsUART1(Disabled);
         }
@@ -6450,7 +6656,21 @@ void displayMUX(int displayChannel)
         if(MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 2.1
         {
             if (MUX_ENABLE1_16.e1flags.CH15)                                    //Display ENABLED or DISABLED
-                putsUART1(Enabled);
+            {
+                if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)
+                {
+                    putsUART1(Enabled);                                         
+                }
+                else
+                {
+                    putsUART1(SN);                                                  //REV 2.5
+                    while (BusyUART1());  
+                    SerialNumber=read_longFRAM(GAGE15_SERIAL_MSWaddress);
+                    sprintf(_SNbuf, "%ld", SerialNumber);                                //format the serial number
+                    putsUART1(_SNbuf);                                                   //display it
+                    while (BusyUART1());            
+                }
+            }
             else
                 putsUART1(Disabled);
         }
@@ -6477,7 +6697,21 @@ void displayMUX(int displayChannel)
         if(MUX4_ENABLE.mflags.mux16_4==VW_TH16 | MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)    //REV 2.1
         {
             if (MUX_ENABLE1_16.e1flags.CH16)                                    //Display ENABLED or DISABLED
-                putsUART1(Enabled);
+            {
+                if(MUX4_ENABLE.mflags.mux16_4==VW16 | MUX4_ENABLE.mflags.mux16_4==VW32)
+                {
+                    putsUART1(Enabled);                                         
+                }
+                else
+                {
+                    putsUART1(SN);                                                  //REV 2.5
+                    while (BusyUART1());  
+                    SerialNumber=read_longFRAM(GAGE16_SERIAL_MSWaddress);
+                    sprintf(_SNbuf, "%ld", SerialNumber);                                //format the serial number
+                    putsUART1(_SNbuf);                                                   //display it
+                    while (BusyUART1());            
+                }
+            }
             else
                 putsUART1(Disabled);
         }
@@ -12949,6 +13183,12 @@ void loadDefaults(void)
         write_Flt_FRAM(i,0.0);                                                  
     }    
     
+    //initialize serial number 0:                                               //REV 2.5
+    for (i = GAGE1_SERIAL_MSWaddress; i < GAGE16_SERIAL_LSWaddress + 1; i += 4) //channel serial number selection loop  
+    {
+        write_longFRAM(0,i);                                                  
+    }    
+    
     for(i=CH1THaddress;i<CH32THaddress+1;i+=0x0002)                             //all thermistors type 1    
 	{
 		write_Int_FRAM(i,1);                                                    //write 1 to channel thermistor type    
@@ -15033,9 +15273,19 @@ void ReadSN(int chan)
         IFS1bits.INT1IF=0;
     }
     
+    //REV 2.5:
     if(!LC2CONTROL2.flags2.Modbus)                          
     {
-        crlf();          
+      sprintf(SNBUF, "%d", chan);                                               //format the channel number
+      putsUART1(SNBUF);                                                         //display it
+      while (BusyUART1());   
+      putcUART1(backspace);
+      while (BusyUART1()); 
+      if(chan>=10)
+      {
+          putcUART1(backspace);
+          while (BusyUART1()); 
+      }
     }
     
     SerialNumber=0;
@@ -15050,21 +15300,18 @@ void ReadSN(int chan)
         }
         
         
-        
-        if(!LC2CONTROL2.flags2.Modbus)                          
-        {
-            sprintf(SNBUF, "%ld", SerialNumber);                                //format the serial number
-            putsUART1(SNBUF);                                                   //display it
-            while (BusyUART1());            
-        }
+        //REM REV 2.5:
+        //if(!LC2CONTROL2.flags2.Modbus)                          
+        //{
+        //    sprintf(SNBUF, "%ld", SerialNumber);                                //format the serial number
+        //    putsUART1(SNBUF);                                                   //display it
+        //    while (BusyUART1());            
+        //}
     }
     else                                                                        //display ERROR
     {
-        if(!LC2CONTROL2.flags2.Modbus)                          
-        {
-            putsUART1(Error);                                                   //"ERROR"  
-            while(BusyUART1());
-        }
+        Nop();
+        //SET ERROR FLAG HERE
     }    
     
     if(PORT_CONTROL.flags.temp)
