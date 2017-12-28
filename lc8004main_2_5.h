@@ -390,6 +390,7 @@ DecimalVWFBits vwf;
 }vwfflags;
 vwfflags	DEC_VWF;
 
+/*REM REV 2.5:
 typedef struct{
 	unsigned	bit0:1;                                                         //Byte LSB
 	unsigned	bit1:1;				
@@ -404,7 +405,23 @@ typedef union{ unsigned int sn;
 SerialNumberBits temp;
 }bits;
 bits	SN_BITS;
+*/
 
+//REV 2.5:
+typedef struct{
+	unsigned	bit0:1;                                                         //Byte LSB
+	unsigned	bit1:1;				
+	unsigned	bit2:1;				
+    unsigned    bit3:1;
+	unsigned	bit4:1;                                                         
+	unsigned	bit5:1;				
+	unsigned	bit6:1;				
+    unsigned    bit7:1;                                                         //Byte MSB
+}DataBits;
+typedef union{ unsigned int dt;
+DataBits temp;
+}bits;
+bits	DATA_BITS;
 
 typedef union                                                                   
 {                                              
@@ -488,7 +505,8 @@ s2flags	S_2;
 unsigned char MODBUS_RXbuf[126];                                                //125 registers max 
 unsigned char MODBUS_TXbuf[126];                                                //125 registers max 
 unsigned char TxBinaryBUF[152];                                                 
-unsigned char _SNbuf[10];                                                       
+unsigned char _SNbuf[10];                                                       //REM REV 2.5
+unsigned char _DATAbuf[22];                                                     //REV 2.5 
 char buffer[52];
 char NABUF[7];                                                                  //temporary storage for network address   
 char DS3231Integer=0;                                                           
@@ -812,6 +830,10 @@ unsigned int decimalRTC;
 //----------------------------------------------------------------------------
 #define FCY 29491200UL                                                          //Fcy = 29.4912MHz  
 
+//------------------------------------------------------------------------------
+//   800mS delay value for 0.8S background timer (TMR8/9 with 1:256 prescaler)  //REV 2.5        
+#define mS800H   0x0001                                                         //Fcy is 29.4912MHz here        
+#define mS800L   0x6800
 
 //------------------------------------------------------------------------------
 //   500mS delay value for 0.5S background timer (TMR8 with 1:256 prescaler)          
@@ -1180,6 +1202,8 @@ char Inttemp[]={"Internal temperature."};
 char Iterations[]={"Iterations: "};
 char iterations[]={"                       iii = iterations of interval"};
 
+char K[]={"   TF: "};                                                           //REV 2.5
+
 char LCfour[]={"LC-4"};          
 char LCfourbyfour[]={"LC-4x4"};
 char LCfourbyeight[]={"LC-4x8"};                                                //REV 2.0
@@ -1448,7 +1472,7 @@ void enableVWchannel(unsigned char gageType);
 unsigned int f32toINT16(float);                                                 
 unsigned int filterArray(unsigned int []);                                      
 void formatandDisplayGageInfo(float TEMPVAL);
-unsigned char getSNbytes(unsigned int);                                         
+unsigned char getDATAbytes(unsigned int);                                       //REV 2.5  
 int getConversion(void);
 int getChannel(void);
 void getGageInfo(unsigned char, int);

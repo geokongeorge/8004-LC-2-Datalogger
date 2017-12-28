@@ -1,5 +1,7 @@
-#ifndef FRAM_ADDRESSH_I
-#define FRAM_ADDRESSH_I
+//#ifndef FRAM_ADDRESSH_I                                                       REM REV I
+//#define FRAM_ADDRESSH_I                                                       REM REV I
+#ifndef FRAM_ADDRESSI_H                                                         //REV I
+#define FRAM_ADDRESSI_H                                                         //REV I
 
 //REV B 03/30/17    Remap memory so that common functions are grouped together
 //REV C 04/14/17    Remap memory to allow address 0x0000 to be used as MODBUS page select address
@@ -10,7 +12,8 @@
 //REV H 11/16/17    Add registers for narrow-band pluck reading storage
 //                  Add registers for THMUX_ENABLE flags
 //                  Add registers for Gage Serial Number
-//REV I 12/14/17    Add register for up to 32 32-bit Gage Serial Numbers
+//REV I 12/28/17    Add registers for up to 16 32-bit Gage Serial Numbers
+//                  Add registers for up t0 16 32-bit Thermal Factors
 
 
 //----------CONTROL/CONFIGURATION REGISTERS STORED IN EXTERNAL MEMORY------------------------------
@@ -524,6 +527,38 @@
 #define GAGE16_SERIAL_MSWaddress     0x7ffb0                                    //2 bytes      
 #define GAGE16_SERIAL_LSWaddress     0x7ffb2                                    //2 bytes   
  
+#define GAGE1_TF_MSWaddress          0x7ffb4                                    //2 bytes      
+#define GAGE1_TF_LSWaddress          0x7ffb6                                    //2 bytes   
+#define GAGE2_TF_MSWaddress          0x7ffb8                                    //2 bytes      
+#define GAGE2_TF_LSWaddress          0x7ffba                                    //2 bytes   
+#define GAGE3_TF_MSWaddress          0x7ffbc                                    //2 bytes      
+#define GAGE3_TF_LSWaddress          0x7ffbe                                    //2 bytes   
+#define GAGE4_TF_MSWaddress          0x7ffc0                                    //2 bytes      
+#define GAGE4_TF_LSWaddress          0x7ffc2                                    //2 bytes   
+#define GAGE5_TF_MSWaddress          0x7ffc4                                    //2 bytes      
+#define GAGE5_TF_LSWaddress          0x7ffc6                                    //2 bytes   
+#define GAGE6_TF_MSWaddress          0x7ffc8                                    //2 bytes      
+#define GAGE6_TF_LSWaddress          0x7ffca                                    //2 bytes   
+#define GAGE7_TF_MSWaddress          0x7ffcc                                    //2 bytes      
+#define GAGE7_TF_LSWaddress          0x7ffce                                    //2 bytes   
+#define GAGE8_TF_MSWaddress          0x7ffd0                                    //2 bytes      
+#define GAGE8_TF_LSWaddress          0x7ffd2                                    //2 bytes   
+#define GAGE9_TF_MSWaddress          0x7ffd4                                    //2 bytes      
+#define GAGE9_TF_LSWaddress          0x7ffd6                                    //2 bytes   
+#define GAGE10_TF_MSWaddress         0x7ffd8                                    //2 bytes      
+#define GAGE10_TF_LSWaddress         0x7ffda                                    //2 bytes   
+#define GAGE11_TF_MSWaddress         0x7ffdc                                    //2 bytes      
+#define GAGE11_TF_LSWaddress         0x7ffde                                    //2 bytes   
+#define GAGE12_TF_MSWaddress         0x7ffe0                                    //2 bytes      
+#define GAGE12_TF_LSWaddress         0x7ffe2                                    //2 bytes   
+#define GAGE13_TF_MSWaddress         0x7ffe4                                    //2 bytes      
+#define GAGE13_TF_LSWaddress         0x7ffe6                                    //2 bytes   
+#define GAGE14_TF_MSWaddress         0x7ffe8                                    //2 bytes      
+#define GAGE14_TF_LSWaddress         0x7ffea                                    //2 bytes   
+#define GAGE15_TF_MSWaddress         0x7ffec                                    //2 bytes      
+#define GAGE15_TF_LSWaddress         0x7ffee                                    //2 bytes   
+#define GAGE16_TF_MSWaddress         0x7fff0                                    //2 bytes      
+#define GAGE16_TF_LSWaddress         0x7fff2                                    //2 bytes   
 #define LastMemoryaddress            0x7ffff                              
 
                                                                                 

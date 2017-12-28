@@ -14,12 +14,12 @@
 //-------------------------------------------------------------
 //
 //	COMPANY:	GEOKON, INC
-//	DATE:		12/27/2017
+//	DATE:		12/28/2017
 //	DESIGNER: 	GEORGE MOORE
 //	REVISION:   2.5
-//	CHECKSUM:	0x9efb  (MPLABX ver 3.15 and XC16 ver 1.26)
-//	DATA(RAM)MEM:	9168/30720   30%
-//	PGM(FLASH)MEM:  184650/261888 71%
+//	CHECKSUM:	0xdb69  (MPLABX ver 3.15 and XC16 ver 1.26)
+//	DATA(RAM)MEM:	9192/30720   30%
+//	PGM(FLASH)MEM:  183969/261888 70%
 
 //  Target device is Microchip Technology DsPIC33FJ256GP710A
 //  clock is crystal type HSPLL @ 14.7456 MHz Crystal frequency
@@ -253,7 +253,9 @@
 //      2.3     12/14/17            Add capability for Modbus comms during reading cycle
 //      2.4     12/15/17            Add read,store and display of serial numbers of up to 16 VW sensors. Add new argument to take_one_complete_reading()
 //                                  to accomplish this
-//      2.5     12/27/16            Read data from gage in packet format: <SN><GF><PA><PB><TF><CHKSUM> and store in registers
+//      2.5     12/28/16            Read data from gage in packet format: <SN><GF><PA><PB><TF><CHKSUM> and store in registers
+//                                  Add TF column to MXS display
+//                                  Set TF default value to 0
 //
 //
 //
@@ -4540,15 +4542,15 @@ unsigned int CRC(_Bool test, unsigned char size)
     return crcREG;
 }
 
-unsigned int CRC_SN(void)                                                       
+unsigned int CRC_SN(void)                                                       //REV 2.5                                   
 {
     unsigned int crcREG=0xFFFF;
     unsigned int i=0;
     unsigned int x=0;
         
-    for(i=0;i<4;i++)                                                            //CRC calculation
+    for(i=0;i<20;i++)                                                            //CRC calculation
     {
-        crcREG^=_SNbuf[i];                                               
+        crcREG^=_DATAbuf[i];                                               
 
         for(x=0;x<8;x++)
         {
@@ -5036,7 +5038,8 @@ void displayGageInfo(int channel)                                               
     unsigned long PolyCoAaddress;                                               
     unsigned long PolyCoBaddress;                                               
     unsigned long PolyCoCaddress;                                               
-	unsigned long Thermaddress;                                                 
+	unsigned long Thermaddress; 
+    unsigned long ThermalFactoraddress;                                         //REV 2.5  
 	unsigned int TEMPTHERM;                                                     
 	char BUF[10];                                                                  
     float TEMPVAL;
@@ -5105,6 +5108,8 @@ void displayGageInfo(int channel)                                               
                     }
                 }
 			}
+            
+            ThermalFactoraddress=GAGE1_TF_MSWaddress;                           //set Thermal Factor address    REV 2.5
                 
             break;
 
@@ -5143,6 +5148,8 @@ void displayGageInfo(int channel)                                               
 					GageOffsetaddress=CH2GOaddress;                             //set the GageOffsetaddress
 				}
 			}
+            
+            ThermalFactoraddress=GAGE2_TF_MSWaddress;                           //set Thermal Factor address    REV 2.5
 
 			break;
 
@@ -5181,7 +5188,7 @@ void displayGageInfo(int channel)                                               
 				}
 			}
 
-
+            ThermalFactoraddress=GAGE3_TF_MSWaddress;                           //set Thermal Factor address    REV 2.5
 			break;
 
         case 4:
@@ -5219,6 +5226,7 @@ void displayGageInfo(int channel)                                               
 				}
 			}
 
+            ThermalFactoraddress=GAGE4_TF_MSWaddress;                           //set Thermal Factor address    REV 2.5
 			break;
 
         case 5:
@@ -5234,7 +5242,9 @@ void displayGageInfo(int channel)                                               
 				ZeroReadingaddress=CH5ZRaddress;                                //set the ZeroReadingaddress
 				GageFactoraddress=CH5GFaddress;                                 //set the GageFactoraddress
 				GageOffsetaddress=CH5GOaddress;                                 //set the GageOffsetaddress
-			}			
+			}
+
+            ThermalFactoraddress=GAGE5_TF_MSWaddress;                           //set Thermal Factor address    REV 2.5
 			
 			break;
 
@@ -5253,7 +5263,8 @@ void displayGageInfo(int channel)                                               
 				GageFactoraddress=CH6GFaddress;                                 //set the GageFactoraddress
 				GageOffsetaddress=CH6GOaddress;                                 //set the GageOffsetaddress
 			}			
-			
+
+            ThermalFactoraddress=GAGE6_TF_MSWaddress;                           //set Thermal Factor address    REV 2.5
 			break;
 
 
@@ -5270,7 +5281,9 @@ void displayGageInfo(int channel)                                               
 				ZeroReadingaddress=CH7ZRaddress;                                //set the ZeroReadingaddress
 				GageFactoraddress=CH7GFaddress;                                 //set the GageFactoraddress
 				GageOffsetaddress=CH7GOaddress;                                 //set the GageOffsetaddress
-			}			
+			}
+                
+            ThermalFactoraddress=GAGE7_TF_MSWaddress;                           //set Thermal Factor address    REV 2.5    
 			
 			break;
 
@@ -5288,7 +5301,9 @@ void displayGageInfo(int channel)                                               
 				ZeroReadingaddress=CH8ZRaddress;                                //set the ZeroReadingaddress
 				GageFactoraddress=CH8GFaddress;                                 //set the GageFactoraddress
 				GageOffsetaddress=CH8GOaddress;                                 //set the GageOffsetaddress
-			}			
+			}
+
+            ThermalFactoraddress=GAGE8_TF_MSWaddress;                           //set Thermal Factor address    REV 2.5
 			
 			break;
 
@@ -5307,7 +5322,9 @@ void displayGageInfo(int channel)                                               
 				ZeroReadingaddress=CH9ZRaddress;                                //set the ZeroReadingaddress
 				GageFactoraddress=CH9GFaddress;                                 //set the GageFactoraddress
 				GageOffsetaddress=CH9GOaddress;                                 //set the GageOffsetaddress
-			}			
+			}
+
+            ThermalFactoraddress=GAGE9_TF_MSWaddress;                           //set Thermal Factor address    REV 2.5
 			
 			break;
             
@@ -5326,7 +5343,9 @@ void displayGageInfo(int channel)                                               
 				ZeroReadingaddress=CH10ZRaddress;                               //set the ZeroReadingaddress
 				GageFactoraddress=CH10GFaddress;                                //set the GageFactoraddress
 				GageOffsetaddress=CH10GOaddress;                                //set the GageOffsetaddress
-			}			
+			}
+
+            ThermalFactoraddress=GAGE10_TF_MSWaddress;                          //set Thermal Factor address    REV 2.5
 			
 			break;
 
@@ -5344,7 +5363,9 @@ void displayGageInfo(int channel)                                               
 				ZeroReadingaddress=CH11ZRaddress;                               //set the ZeroReadingaddress
 				GageFactoraddress=CH11GFaddress;                                //set the GageFactoraddress
 				GageOffsetaddress=CH11GOaddress;                                //set the GageOffsetaddress
-			}			
+			}	
+            
+            ThermalFactoraddress=GAGE11_TF_MSWaddress;                          //set Thermal Factor address    REV 2.5
 			
 			break;
 
@@ -5363,7 +5384,9 @@ void displayGageInfo(int channel)                                               
 				ZeroReadingaddress=CH12ZRaddress;                               //set the ZeroReadingaddress
 				GageFactoraddress=CH12GFaddress;                                //set the GageFactoraddress
 				GageOffsetaddress=CH12GOaddress;                                //set the GageOffsetaddress
-			}			
+			}
+
+            ThermalFactoraddress=GAGE12_TF_MSWaddress;                          //set Thermal Factor address    REV 2.5
 			
 			break;
 
@@ -5381,7 +5404,9 @@ void displayGageInfo(int channel)                                               
 				ZeroReadingaddress=CH13ZRaddress;                               //set the ZeroReadingaddress
 				GageFactoraddress=CH13GFaddress;                                //set the GageFactoraddress
 				GageOffsetaddress=CH13GOaddress;                                //set the GageOffsetaddress
-			}			
+			}
+
+            ThermalFactoraddress=GAGE13_TF_MSWaddress;                          //set Thermal Factor address    REV 2.5
 			
 			break;
 
@@ -5401,7 +5426,9 @@ void displayGageInfo(int channel)                                               
 				ZeroReadingaddress=CH14ZRaddress;                               //set the ZeroReadingaddress
 				GageFactoraddress=CH14GFaddress;                                //set the GageFactoraddress
 				GageOffsetaddress=CH14GOaddress;                                //set the GageOffsetaddress
-			}			
+			}
+
+            ThermalFactoraddress=GAGE14_TF_MSWaddress;                          //set Thermal Factor address    REV 2.5
 			
 			break;
 
@@ -5419,7 +5446,9 @@ void displayGageInfo(int channel)                                               
 				ZeroReadingaddress=CH15ZRaddress;                               //set the ZeroReadingaddress
 				GageFactoraddress=CH15GFaddress;                                //set the GageFactoraddress
 				GageOffsetaddress=CH15GOaddress;                                //set the GageOffsetaddress
-			}			
+			}	
+            
+            ThermalFactoraddress=GAGE15_TF_MSWaddress;                          //set Thermal Factor address    REV 2.5
 			
 			break;
 
@@ -5438,7 +5467,9 @@ void displayGageInfo(int channel)                                               
 				ZeroReadingaddress=CH16ZRaddress;                               //set the ZeroReadingaddress
 				GageFactoraddress=CH16GFaddress;                                //set the GageFactoraddress
 				GageOffsetaddress=CH16GOaddress;                                //set the GageOffsetaddress
-			}			
+			}	
+            
+            ThermalFactoraddress=GAGE16_TF_MSWaddress;                          //set Thermal Factor address    REV 2.5
 			
 			break;
 
@@ -5765,6 +5796,17 @@ void displayGageInfo(int channel)                                               
             while (BusyUART1());
             TEMPVAL=read_float(ZeroReadingaddress+0x0100);                      //extract Gage Offset from FRAM 
             formatandDisplayGageInfo(TEMPVAL);
+        }
+        
+        if(MUX4_ENABLE.mflags.mux16_4!=VW32)                                    //REV 2.5
+        {
+            //DISPLAY THERMAL FACTOR:
+            putsUART1(Tab);
+            while(BusyUART1());            
+            putsUART1(K);                                                       
+            while (BusyUART1());
+            TEMPVAL=read_float(ThermalFactoraddress);                           //extract Thermal Factor from FRAM    
+            formatandDisplayGageInfo(TEMPVAL);  
         }
     }
     
@@ -10707,31 +10749,33 @@ unsigned int filterArray(unsigned int unfiltered[])
 void formatandDisplayGageInfo(float TEMPVAL) {
     char BUF[8];                                                                //temporary storage for gage info
 
-    if ((TEMPVAL >= 0.0 && TEMPVAL < 1.0) | (TEMPVAL >= -1.0 && TEMPVAL < 0.0))
-        sprintf(BUF, "%.5f", TEMPVAL);                                          //format it
-
-    if ((TEMPVAL >= 1.0 && TEMPVAL < 10.0) | (TEMPVAL >= -10.0 && TEMPVAL<-1.0))
-        sprintf(BUF, "%.5f", TEMPVAL);                                          //format it
-
-    if ((TEMPVAL >= 10.0 && TEMPVAL < 100.0) | (TEMPVAL >= -100.0 && TEMPVAL<-10.0))
-        sprintf(BUF, "%.5f", TEMPVAL);                                          //format it
-
-    if ((TEMPVAL >= 100.0 && TEMPVAL < 1000.0) | (TEMPVAL >= -1000.0 && TEMPVAL<-100.0))
-        sprintf(BUF, "%.4f", TEMPVAL);                                          //format it
-
-    if ((TEMPVAL >= 1000.0 && TEMPVAL < 10000.0) | (TEMPVAL >= -10000.0 && TEMPVAL<-1000.0))
-        sprintf(BUF, "%.3f", TEMPVAL);                                          //format it
-
-    if ((TEMPVAL >= 10000.0 && TEMPVAL < 100000.0) | (TEMPVAL >= -100000.0 && TEMPVAL<-10000.0))
-        sprintf(BUF, "%.2f", TEMPVAL);                                          //format it
-
-    if ((TEMPVAL >= 100000.0 && TEMPVAL < 1000000.0) | (TEMPVAL>-1000000.0 && TEMPVAL<-100000.0))
-        sprintf(BUF, "%.1f", TEMPVAL);                                          //format it
-
-    if (TEMPVAL >= 1000000.0 | TEMPVAL<-1000000.0)
-        sprintf(BUF, "%.0f", TEMPVAL);                                          //format it
+    //REM REV 2.5:
+    //if ((TEMPVAL >= 0.0 && TEMPVAL < 1.0) | (TEMPVAL >= -1.0 && TEMPVAL < 0.0))
+        //sprintf(BUF, "%.5f", TEMPVAL);                                          //format it   REM REV 2.5
 
 
+    //if ((TEMPVAL >= 1.0 && TEMPVAL < 10.0) | (TEMPVAL >= -10.0 && TEMPVAL<-1.0))
+    //    sprintf(BUF, "%.5f", TEMPVAL);                                          //format it
+
+    //if ((TEMPVAL >= 10.0 && TEMPVAL < 100.0) | (TEMPVAL >= -100.0 && TEMPVAL<-10.0))
+    //    sprintf(BUF, "%.5f", TEMPVAL);                                          //format it
+
+    //if ((TEMPVAL >= 100.0 && TEMPVAL < 1000.0) | (TEMPVAL >= -1000.0 && TEMPVAL<-100.0))
+    //    sprintf(BUF, "%.4f", TEMPVAL);                                          //format it
+
+    //if ((TEMPVAL >= 1000.0 && TEMPVAL < 10000.0) | (TEMPVAL >= -10000.0 && TEMPVAL<-1000.0))
+    //    sprintf(BUF, "%.3f", TEMPVAL);                                          //format it
+
+    //if ((TEMPVAL >= 10000.0 && TEMPVAL < 100000.0) | (TEMPVAL >= -100000.0 && TEMPVAL<-10000.0))
+    //    sprintf(BUF, "%.2f", TEMPVAL);                                          //format it
+
+    //if ((TEMPVAL >= 100000.0 && TEMPVAL < 1000000.0) | (TEMPVAL>-1000000.0 && TEMPVAL<-100000.0))
+    //    sprintf(BUF, "%.1f", TEMPVAL);                                          //format it
+
+    //if (TEMPVAL >= 1000000.0 | TEMPVAL<-1000000.0)
+    //    sprintf(BUF, "%.0f", TEMPVAL);                                          //format it
+
+    sprintf(BUF,"%.3e",TEMPVAL);                                                //format it REV 2.5
     putsUART1(BUF);                                                             //display it
     while (BusyUART1());
 }
@@ -10758,7 +10802,7 @@ int getChannel(void) {
 }
 
 
-unsigned char getSNbytes(unsigned int logicthreshold)                           //using the ADC as a halfassed UART    
+unsigned char getDATAbytes(unsigned int logicthreshold)                         //using the ADC as a halfassed UART    REV 2.5
 {                                                                               
     unsigned int databit=0;                                                     //value of bit received
     unsigned char b=0;                                                          //loop index
@@ -10775,7 +10819,8 @@ unsigned char getSNbytes(unsigned int logicthreshold)                           
     T7CONbits.TCS=0;                                                            //set to count internal (Fosc/2) clocks 
     T6CONbits.TGATE=0;                                                          //Disable gated time accumulation
     
-    for(b=0;b<6;b++)                                                            //will be receiving 6 bytes
+    //for(b=0;b<6;b++)                                                            //will be receiving 6 bytes   REM REV 2.5
+    for(b=0;b<22;b++)                                                            //will be receiving 22 bytes   REV 2.5 
     {
         PR6=mS1_5LSW;                                                           //Load TMR6 period register with 1.5mS least significant word   
         PR7=mS1_5MSW;                                                           //Load TMR7 period register with 1.5mS most significant word    
@@ -10788,14 +10833,16 @@ unsigned char getSNbytes(unsigned int logicthreshold)                           
 
         
         //wait for start bit:    
-        while((databit<logicthreshold) && !IFS3bits.T8IF)                       //wait for the start bit    
+        //while((databit<logicthreshold) && !IFS3bits.T8IF)                       //wait for the start bit    REM REV 2.5
+        while((databit<logicthreshold) && !IFS3bits.T9IF)                       //wait for the start bit  REV 2.5
         {
             databit=take_fast_analog_reading();                                 
         } 
         
-        if(IFS3bits.T8IF)                                                       //0.5S timeout?
+        //if(IFS3bits.T8IF)                                                       //0.5S timeout?   REM REV 2.5
+        if(IFS3bits.T9IF)                                                       //0.8S timeout? REV 2.5
         {
-            IFS3bits.T8IF=0;    
+            //IFS3bits.T8IF=0;                                                  REM REV 2.5
             INTCON2bits.ALTIVT=0;                                               //reset to use standard interrupt vectors
 
             T6CONbits.T32=0;                                                    //Set TMR6/7 for 16bit mode
@@ -10854,63 +10901,63 @@ unsigned char getSNbytes(unsigned int logicthreshold)                           
             {
                 case 0:
                 if(databit>logicthreshold)
-                    SN_BITS.temp.bit0=0;                                        //databit>threshold so logic 0
+                    DATA_BITS.temp.bit0=0;                                        //databit>threshold so logic 0
                 else
-                    SN_BITS.temp.bit0=1;                                        //databit<threshold so logic 1
+                    DATA_BITS.temp.bit0=1;                                        //databit<threshold so logic 1
                 break;
                 
                 case 1:
                 if(databit>logicthreshold)
-                    SN_BITS.temp.bit1=0;                                        //databit>threshold so logic 0
+                    DATA_BITS.temp.bit1=0;                                        //databit>threshold so logic 0
                 else
-                    SN_BITS.temp.bit1=1;                                        //databit<threshold so logic 1
+                    DATA_BITS.temp.bit1=1;                                        //databit<threshold so logic 1
                 break;
                 
                 case 2:
                 if(databit>logicthreshold)
-                    SN_BITS.temp.bit2=0;                                        //databit>threshold so logic 0
+                    DATA_BITS.temp.bit2=0;                                        //databit>threshold so logic 0
                 else
-                    SN_BITS.temp.bit2=1;                                        //databit<threshold so logic 1
+                    DATA_BITS.temp.bit2=1;                                        //databit<threshold so logic 1
                 break;               
                 
                 case 3:
                 if(databit>logicthreshold)
-                    SN_BITS.temp.bit3=0;                                        //databit>threshold so logic 0
+                    DATA_BITS.temp.bit3=0;                                        //databit>threshold so logic 0
                 else
-                    SN_BITS.temp.bit3=1;                                        //databit<threshold so logic 1
+                    DATA_BITS.temp.bit3=1;                                        //databit<threshold so logic 1
                 break;                
                 
                 case 4:
                 if(databit>logicthreshold)
-                    SN_BITS.temp.bit4=0;                                        //databit>threshold so logic 0
+                    DATA_BITS.temp.bit4=0;                                        //databit>threshold so logic 0
                 else
-                    SN_BITS.temp.bit4=1;                                        //databit<threshold so logic 1
+                    DATA_BITS.temp.bit4=1;                                        //databit<threshold so logic 1
                 break;               
                 
                 case 5:
                 if(databit>logicthreshold)
-                    SN_BITS.temp.bit5=0;                                        //databit>threshold so logic 0
+                    DATA_BITS.temp.bit5=0;                                        //databit>threshold so logic 0
                 else
-                    SN_BITS.temp.bit5=1;                                        //databit<threshold so logic 1
+                    DATA_BITS.temp.bit5=1;                                        //databit<threshold so logic 1
                 break;               
                 
                 case 6:
                 if(databit>logicthreshold)
-                    SN_BITS.temp.bit6=0;                                        //databit>threshold so logic 0
+                    DATA_BITS.temp.bit6=0;                                        //databit>threshold so logic 0
                 else
-                    SN_BITS.temp.bit6=1;                                        //databit<threshold so logic 1
+                    DATA_BITS.temp.bit6=1;                                        //databit<threshold so logic 1
                 break;               
                 
                 case 7:
                 if(databit>logicthreshold)
-                    SN_BITS.temp.bit7=0;                                        //databit>threshold so logic 0
+                    DATA_BITS.temp.bit7=0;                                        //databit>threshold so logic 0
                 else
-                    SN_BITS.temp.bit7=1;                                        //databit<threshold so logic 1
+                    DATA_BITS.temp.bit7=1;                                        //databit<threshold so logic 1
                 break;                
             }
         }
     
-        _SNbuf[b]=SN_BITS.sn;                                                   
+        _DATAbuf[b]=DATA_BITS.dt;                                                 //REV 2.5  
 
     }
 
@@ -12567,21 +12614,27 @@ unsigned char getSerialNumber(int ch)                                           
     TRISB=0x033D;                                                               //Configure PORTB
     LATB=0;                                                                     //Set PORTB outputs low
     
-    //Setup TMR8 as 0.5S background timer                                       
+    //Setup TMR8/9 as 0.8S background timer                                     //REV 2.5                                   
     PMD3bits.T8MD=0;                                                            //Enable TMR8
+    PMD3bits.T9MD=0;                                                            //Enable TMR9   REV 2.5
     T8CONbits.TON=0;                                                            //Make sure timer is off
-    T8CONbits.T32=0;                                                            //set to 16bit
+    T8CONbits.T32=1;                                                            //set to 32bit  REV 2.5
     T8CONbits.TCS=0;                                                            //Internal Tcy
     T8CONbits.TGATE=0;                                                          //Disable gated timer mode
     T8CONbits.TCKPS=3;                                                          //1:256 prescaler 
     TMR8=0;                                                                     //clear the TMR8 register
-    PR8=mS500;                                                                  //load the period register with 0.5S timeout value
+    TMR9=0;                                                                     //clear the TMR9 register   REV 2.5
+    PR8=mS800H;                                                                 //load the period register with 0.8S timeout value  REV 2.5
+    PR9=mS800L;                                                                 //REV 2.5
     IPC12bits.T8IP=1;                                                           //set TMR8 interrupt priority to 1 (lowest)
+    IPC13bits.T9IP=1;                                                           //set the TMR9 interrupt priority to 1 (lowest) REV 2.5
     IFS3bits.T8IF=0;                                                            //Clear the interrupt flag
+    IFS3bits.T9IF=0;                                                            //Clear the interrupt flag  REV 2.5
     IEC3bits.T8IE=0;                                                            //Disable TMR8 interrupt
+    IEC3bits.T9IE=0;                                                            //Disable TMR9 interrupt    REV 2.5
 
-    //Start the 0.5S background timer                                           
-    //T8CONbits.TON=1;                                                          TEST REM REV 2.5
+    //Start the 0.8S background timer                                           
+    //T8CONbits.TON=1;                                                          REM REV 2.5
     
     //Turn on +3VX:
     _3VX_on();
@@ -12598,10 +12651,12 @@ unsigned char getSerialNumber(int ch)                                           
     logicthreshold=therm+((Vmax-therm)/2);                                      //determine the logic threshold (varies with temperature)
     __delay32(mS10);                                                            //10mS delay 
     
-    while(1);                                                                   //TEST REV 2.5
+    //Start the 0.8S background timer                                           
+    T8CONbits.TON=1;                                                          
+    
  
-    //Get the 4 byte serial number and 2 byte checksum. 
-    result=getSNbytes(logicthreshold);                                        
+    //Get the 20 byte serial number,Gage Factor,PolyCoA,PolyCoB,Thermal Factor and 2 byte checksum. REV 2.5
+    result=getDATAbytes(logicthreshold);                                        //REV 2.5
     pluckOFF();
     _3VX_off();
     
@@ -12611,12 +12666,14 @@ unsigned char getSerialNumber(int ch)                                           
     //Check CRC:
     crc.c=CRC_SN();                                                             
     
-    if((_SNbuf[5] != crc.z[1]) | (_SNbuf[4] != crc.z[0]))                       //received crc does not agree with computed crc_    
+    //if((_SNbuf[5] != crc.z[1]) | (_SNbuf[4] != crc.z[0]))                       //received crc does not agree with computed crc_    REM REV 2.5
+    if((_DATAbuf[21] != crc.z[1]) | (_DATAbuf[20] != crc.z[0]))                 //received crc does not agree with computed crc_    REV 2.5
     {
         return 0;                                                               
     }
     else   
     {
+        /*REM REV 2.5
         //Store Serial Number in FRAM:                                          
         crc.z[1]=_SNbuf[0];                                                     //Serial Number MSB
         crc.z[0]=_SNbuf[1];
@@ -12625,6 +12682,49 @@ unsigned char getSerialNumber(int ch)                                           
         crc.z[0]=_SNbuf[3];                                                     //Serial Number LSB
         write_Int_FRAM((GAGE1_SERIAL_MSWaddress + (4*(ch-1))+2),crc.c);         //store Serial Number LSW in FRAM`REV 2.4
         return 1;                                                               //Serial Number reading good
+        */
+        //REV 2.5:
+        //Store Serial Number in FRAM:                                          
+        crc.z[1]=_DATAbuf[0];                                                   //Serial Number MSB
+        crc.z[0]=_DATAbuf[1];
+        write_Int_FRAM((GAGE1_SERIAL_MSWaddress + 4*(ch-1)),crc.c);             //store Serial Number MSW in FRAM`
+        crc.z[1]=_DATAbuf[2];                                               
+        crc.z[0]=_DATAbuf[3];                                                   //Serial Number LSB
+        write_Int_FRAM((GAGE1_SERIAL_MSWaddress + (4*(ch-1))+2),crc.c);         //store Serial Number LSW in FRAM`
+        
+        //Store Gage Factor in FRAM:
+        crc.z[1]=_DATAbuf[4];                                                   //Serial Number MSB
+        crc.z[0]=_DATAbuf[5];
+        write_Int_FRAM((CH1GFaddress + 4*(ch-1)),crc.c);                        //store Gage Factor MSW in FRAM`
+        crc.z[1]=_DATAbuf[6];                                               
+        crc.z[0]=_DATAbuf[7];                                                   //Serial Number LSB
+        write_Int_FRAM((CH1GFaddress + (4*(ch-1))+2),crc.c);                    //store Gage Factor LSW in FRAM`        
+        
+        //Store PolyCoA in FRAM:
+        crc.z[1]=_DATAbuf[8];                                                   //PolyCoA MSB
+        crc.z[0]=_DATAbuf[9];
+        write_Int_FRAM((CH1PolyCoAaddress + 4*(ch-1)),crc.c);                   //store PolyCoA MSW in FRAM`
+        crc.z[1]=_DATAbuf[10];                                               
+        crc.z[0]=_DATAbuf[11];                                                  //PolyCoA LSB
+        write_Int_FRAM((CH1PolyCoAaddress + (4*(ch-1))+2),crc.c);               //store PolyCoA LSW in FRAM`                
+        
+        //Store PolyCoB in FRAM:
+        crc.z[1]=_DATAbuf[12];                                                  //PolyCoB MSB
+        crc.z[0]=_DATAbuf[13];
+        write_Int_FRAM((CH1PolyCoBaddress + 4*(ch-1)),crc.c);                   //store PolyCoB MSW in FRAM`
+        crc.z[1]=_DATAbuf[14];                                               
+        crc.z[0]=_DATAbuf[15];                                                  //PolyCoB LSB
+        write_Int_FRAM((CH1PolyCoBaddress + (4*(ch-1))+2),crc.c);               //store PolyCoB LSW in FRAM`                   
+        
+        //Store Thermal Factor in FRAM:
+        crc.z[1]=_DATAbuf[16];                                                  //TF MSB
+        crc.z[0]=_DATAbuf[17];
+        write_Int_FRAM((GAGE1_TF_MSWaddress + 4*(ch-1)),crc.c);                 //store TF MSW in FRAM`
+        crc.z[1]=_DATAbuf[18];                                               
+        crc.z[0]=_DATAbuf[19];                                                  //TF LSB
+        write_Int_FRAM((GAGE1_TF_MSWaddress + (4*(ch-1))+2),crc.c);             //store TF LSW in FRAM`                           
+        
+        return 1;                                                               //Gage Data good
     }
 }
 
@@ -12843,10 +12943,18 @@ void loadDefaults(void)
         write_Flt_FRAM(i,0.0);                                                  
     }
     
+    //initialize thermal factor to 0:                                           //REV 2.5
+    for (i = GAGE1_TF_MSWaddress; i < GAGE16_TF_LSWaddress + 1; i += 4)         //channel thermal factor selection loop  
+    {
+        write_Flt_FRAM(i,0.0);                                                  
+    }    
+    
     for(i=CH1THaddress;i<CH32THaddress+1;i+=0x0002)                             //all thermistors type 1    
 	{
 		write_Int_FRAM(i,1);                                                    //write 1 to channel thermistor type    
 	}
+    
+    
     
     //Enable all thermistor channels:
    write_Int_FRAM(THMUX_ENABLE1_16flagsaddress, 0xFFFF);                        
