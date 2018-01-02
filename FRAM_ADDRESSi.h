@@ -558,7 +558,8 @@
 #define GAGE15_TF_MSWaddress         0x7ffec                                    //2 bytes      
 #define GAGE15_TF_LSWaddress         0x7ffee                                    //2 bytes   
 #define GAGE16_TF_MSWaddress         0x7fff0                                    //2 bytes      
-#define GAGE16_TF_LSWaddress         0x7fff2                                    //2 bytes   
+#define GAGE16_TF_LSWaddress         0x7fff2                                    //2 bytes  
+#define RSN_ERRORSaddress            0x7fff4                                    //2 bytes   REV I
 #define LastMemoryaddress            0x7ffff                              
 
                                                                                 
