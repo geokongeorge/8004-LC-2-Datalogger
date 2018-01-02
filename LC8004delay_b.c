@@ -1,6 +1,6 @@
 
 
-#include "LC8004delay_a.h"
+#include "LC8004delay_b.h"
 #include <timer.h>
 
 
@@ -13,8 +13,8 @@ extern	const float tcy;
 //
 //	Delay for a specific # of processor cycles
 //
-//	Parameters received: unsigned long (multiples of 7.3728MHz Fcy)
-//						 Tcy=1/7.3728E6=135.633680556nS
+//	Parameters received: unsigned long (multiples of 29.4912MHz Fcy)
+//						 Tcy=1/29.4912E6=33.9084201389 nS
 //	Returns: nothing
 //
 //	Called from: main()
@@ -22,7 +22,7 @@ extern	const float tcy;
 //***************************************************************************
 void delay(unsigned long x)
 {
-	while(--x);			//decrement x until 0
+	while(--x);                                                                 //decrement x until 0
 }
 
 
@@ -55,6 +55,7 @@ void shutdownTimer(unsigned int timerseconds)
 
     timerload=timerload-(timerseconds/tcy);                                     //compute value to count
 	
+    PMD3bits.T8MD=0;                                                            //Enable the module 
     ConfigIntTimer89(T9_INT_PRIOR_1 & T9_INT_OFF);
     OpenTimer89(T8_ON & T8_GATE_OFF &                                           //Start Timer89
 		T8_PS_1_1 & T8_32BIT_MODE_ON & 
@@ -93,11 +94,6 @@ void shutdownTimerwithReset(unsigned int timerseconds)
 
 	timerload=timerload-(timerseconds/tcy);								//compute value to count
 	
-//	ConfigIntTimer45(T5_INT_PRIOR_7 & T5_INT_ON);
-//	OpenTimer45(T4_ON & T4_GATE_OFF & 						//Start Timer45
-//				T4_PS_1_1 & T4_32BIT_MODE_ON & 
-//				T4_SOURCE_INT, 0xFFFF);	
-//	WriteTimer45(timerload);								//load Timer45
 }
 
 
@@ -106,7 +102,6 @@ void shutdownTimerwithReset(unsigned int timerseconds)
 //***************************************************************************
 void StopshutdownTimer(void)
 {
-	//CloseTimer45();											//Stop Timer45
 }
 
 
